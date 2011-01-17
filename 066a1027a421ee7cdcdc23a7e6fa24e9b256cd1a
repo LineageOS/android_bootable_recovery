@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAB3//+/8\u003d",
+        "filename": "mmcutils/mmcutils.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2011-01-17T04:55:20Z",
+      "side": 1,
+      "message": "The function name is misleading now, but I can live with it.",
+      "revId": "066a1027a421ee7cdcdc23a7e6fa24e9b256cd1a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAB3///AA\u003d",
+        "filename": "roots.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2011-01-17T04:55:20Z",
+      "side": 1,
+      "message": "Move this into format_unknown_device! I\u0027m trying to keep the AOSP code unmolested as possible for future merges.",
+      "revId": "066a1027a421ee7cdcdc23a7e6fa24e9b256cd1a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
