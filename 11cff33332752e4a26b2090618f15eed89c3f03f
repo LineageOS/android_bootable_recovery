@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAHH///bA\u003d",
+        "filename": "etc/init.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2011-06-23T22:06:35Z",
+      "side": 0,
+      "message": "mkdir /data/data before /data ??",
+      "revId": "11cff33332752e4a26b2090618f15eed89c3f03f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
