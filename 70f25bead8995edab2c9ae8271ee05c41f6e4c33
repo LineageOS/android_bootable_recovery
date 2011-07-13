@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAHX//+yc\u003d",
+        "filename": "dedupe/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2011-07-13T02:55:06Z",
+      "side": 1,
+      "message": "ANDROID_BUILD_TOP ?",
+      "revId": "70f25bead8995edab2c9ae8271ee05c41f6e4c33",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
