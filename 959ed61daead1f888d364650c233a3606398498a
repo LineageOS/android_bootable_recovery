@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAPH///eY\u003d",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 660,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2012-01-12T10:27:17Z",
+      "side": 1,
+      "message": "Derp. You should have rather just looked and seen how gShowBackButton was set, instead of changing 10 files to support allow_back.",
+      "revId": "959ed61daead1f888d364650c233a3606398498a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
