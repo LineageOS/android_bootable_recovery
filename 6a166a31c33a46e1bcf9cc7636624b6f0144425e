@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAPX///ls\u003d",
+        "filename": "recovery.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2012-01-17T23:54:45Z",
+      "side": 1,
+      "message": "hmm the recovery doesnt use TABs, could you clean them ? :p",
+      "revId": "6a166a31c33a46e1bcf9cc7636624b6f0144425e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
