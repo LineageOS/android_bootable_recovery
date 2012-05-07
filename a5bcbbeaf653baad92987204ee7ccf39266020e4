@@ -16,6 +16,24 @@
       "revId": "a5bcbbeaf653baad92987204ee7ccf39266020e4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAS3///64\u003d",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 2793
+      },
+      "writtenOn": "2012-05-07T04:08:08Z",
+      "side": 1,
+      "message": "Changed in patchset 2.\n\nI tried this originally without the Android.mk changes and it defaulted to 1 regardless of what the device tree set.\n\nSee minui/Android.mk handling of custom fonts - the Android.mk change is based on that.",
+      "parentUuid": "AAAAS3///74\u003d",
+      "revId": "a5bcbbeaf653baad92987204ee7ccf39266020e4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
