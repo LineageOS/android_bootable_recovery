@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAS3//+1I\u003d",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2012-05-12T01:31:39Z",
+      "side": 1,
+      "message": "maybe a second line to reduce line width..",
+      "revId": "a85338a54292dc6e93d91a229a13409f0c53ea57",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAS3//+1E\u003d",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2012-05-12T01:31:39Z",
+      "side": 1,
+      "message": "variable declaration are prefered on start of {} blocs",
+      "revId": "a85338a54292dc6e93d91a229a13409f0c53ea57",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
