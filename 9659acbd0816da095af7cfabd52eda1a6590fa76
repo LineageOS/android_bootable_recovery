@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AAAAS3//+xw\u003d",
+        "filename": "ui.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2012-05-12T12:01:53Z",
+      "side": 1,
+      "message": "you could reduce the number of key codes... 32 or 64 is enough",
+      "revId": "9659acbd0816da095af7cfabd52eda1a6590fa76",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAAS3//+yA\u003d",
         "filename": "ui.c",
         "patchSetId": 8
