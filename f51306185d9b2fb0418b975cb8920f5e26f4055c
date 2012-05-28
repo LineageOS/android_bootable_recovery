@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAATH//9tE\u003d",
+        "filename": "ui.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 883
+      },
+      "writtenOn": "2012-05-28T23:57:40Z",
+      "side": 1,
+      "message": "make it adjustable via boardconfig",
+      "revId": "f51306185d9b2fb0418b975cb8920f5e26f4055c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAATH//9tA\u003d",
+        "filename": "ui.c",
+        "patchSetId": 13
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 883
+      },
+      "writtenOn": "2012-05-28T23:57:40Z",
+      "side": 1,
+      "message": "make it adjustable via boardconfig",
+      "revId": "f51306185d9b2fb0418b975cb8920f5e26f4055c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
