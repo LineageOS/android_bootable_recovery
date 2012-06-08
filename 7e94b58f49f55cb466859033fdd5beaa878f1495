@@ -16,6 +16,24 @@
       "revId": "7e94b58f49f55cb466859033fdd5beaa878f1495",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAT3//9j4\u003d",
+        "filename": "nandroid.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2793
+      },
+      "writtenOn": "2012-06-08T21:20:35Z",
+      "side": 1,
+      "message": "I\u0027ll take a look at this and test when I get back on Sunday evening or Monday.",
+      "parentUuid": "AAAAT3//9pU\u003d",
+      "revId": "7e94b58f49f55cb466859033fdd5beaa878f1495",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
