@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAT3//9pU\u003d",
+        "filename": "nandroid.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1039
+      },
+      "writtenOn": "2012-06-08T21:13:12Z",
+      "side": 1,
+      "message": "not required it is linux/time.h for the struct timeval, \u003ctime.h\u003e seems enough",
+      "revId": "7e94b58f49f55cb466859033fdd5beaa878f1495",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
