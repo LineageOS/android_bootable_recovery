@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAWX///30\u003d",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 929,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2012-08-18T09:49:35Z",
+      "side": 0,
+      "message": "gotta remove this",
+      "revId": "c01469cd4ebbb9eef2e88f55c9d5510ade4a78f2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAWX///3w\u003d",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 964,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2012-08-18T09:49:35Z",
+      "side": 0,
+      "message": "and remove this",
+      "revId": "c01469cd4ebbb9eef2e88f55c9d5510ade4a78f2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
