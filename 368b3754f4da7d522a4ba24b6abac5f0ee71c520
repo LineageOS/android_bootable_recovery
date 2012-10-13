@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAY3//+VE\u003d",
+        "filename": "recovery.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2012-10-13T01:42:08Z",
+      "side": 1,
+      "message": "Let\u0027s move this into the install zip menu. The main menu already has a bunch of items. And this will not be an often used feature.",
+      "revId": "368b3754f4da7d522a4ba24b6abac5f0ee71c520",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}

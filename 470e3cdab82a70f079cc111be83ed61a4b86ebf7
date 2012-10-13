@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAY3//+VA\u003d",
+        "filename": "etc/init.rc",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2012-10-13T01:42:08Z",
+      "side": 0,
+      "message": "Is this syncing up with aosp?\n\nI agree that changing these values every prop change does not make much sense.",
+      "revId": "470e3cdab82a70f079cc111be83ed61a4b86ebf7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
