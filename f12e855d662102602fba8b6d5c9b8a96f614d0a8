@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAcn///OE\u003d",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-01-10T04:55:13Z",
+      "side": 1,
+      "message": "strcpy(menu[i], ui_translate(\" - +++++Go Back+++++\"));",
+      "revId": "f12e855d662102602fba8b6d5c9b8a96f614d0a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
