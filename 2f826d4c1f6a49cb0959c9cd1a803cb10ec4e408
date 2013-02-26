@@ -52,6 +52,24 @@
       "revId": "2f826d4c1f6a49cb0959c9cd1a803cb10ec4e408",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAdX//6zE\u003d",
+        "filename": "recovery.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1381
+      },
+      "writtenOn": "2013-02-26T10:54:53Z",
+      "side": 1,
+      "message": "Actually, since some devices have a custom recovery.rc, we\u0027ll need to handle both the case adb is disabled at start and also the (incorrect) case where adb is enabled.",
+      "parentUuid": "AAAAdX//6zM\u003d",
+      "revId": "2f826d4c1f6a49cb0959c9cd1a803cb10ec4e408",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
