@@ -156,7 +156,9 @@ ScreenRecoveryUI::ScreenRecoveryUI()
       max_stage(-1),
       locale_(""),
       rtl_locale_(false),
-      updateMutex(PTHREAD_MUTEX_INITIALIZER) {}
+      updateMutex(PTHREAD_MUTEX_INITIALIZER),
+      rainbow(false),
+      wrap_count(0) {}
 
 GRSurface* ScreenRecoveryUI::GetCurrentFrame() const {
   if (currentIcon == INSTALLING_UPDATE || currentIcon == ERASING) {
@@ -1221,31 +1223,54 @@ void ScreenRecoveryUI::StartMenu(bool is_main, menu_type_t type, const char* con
 }
 
 int ScreenRecoveryUI::SelectMenu(int sel) {
+  int wrapped = 0;
   pthread_mutex_lock(&updateMutex);
   if (show_menu) {
     int old_menu_sel = menu_sel;
 
     // Handle wrapping and back item
+    menu_sel = sel;
     if (sel < 0 && (menu_is_main_ || sel < -1)) {
-      sel = (int)menu_items_.size() - 1;
+      menu_sel = (int)menu_items_.size() - 1;
+      wrapped = -1;
     }
     if (sel >= (int)menu_items_.size()) {
-      sel = (menu_is_main_ ? 0 : -1);
+      menu_sel = (menu_is_main_ ? 0 : -1);
+      wrapped = 1;
     }
-    menu_sel = sel;
 
     // Scroll
-    if (menu_sel != -1 && sel < menu_show_start) {
-      menu_show_start = sel;
+    if (menu_sel != -1 && menu_sel < menu_show_start) {
+      menu_show_start = menu_sel;
     }
-    if (sel >= menu_show_start + menu_show_count) {
-      menu_show_start = sel - (menu_show_count - 1);
+    if (menu_sel >= menu_show_start + menu_show_count) {
+      menu_show_start = menu_sel - (menu_show_count - 1);
+    }
+
+    // Rainbows
+    if (rainbow) {
+      if (sel > old_menu_sel) {
+        move_rainbow(-1);
+      } else if (sel < old_menu_sel) {
+        move_rainbow(1);
+      }
+    }
+    if (wrapped != 0) {
+      if (wrap_count / wrapped > 0) {
+        wrap_count += wrapped;
+      } else {
+        wrap_count = wrapped;
+      }
+      if (wrap_count / wrapped >= 5) {
+        wrap_count = 0;
+        OMGRainbows();
+      }
     }
 
     if (menu_sel != old_menu_sel) update_screen_locked();
   }
   pthread_mutex_unlock(&updateMutex);
-  return sel;
+  return menu_sel;
 }
 
 int ScreenRecoveryUI::SelectMenu(const Point& point) {
@@ -1303,6 +1328,10 @@ int ScreenRecoveryUI::ScrollMenu(int updown) {
     } else if (menu_sel >= menu_show_start + menu_show_count) {
       menu_sel = menu_show_start + menu_show_count - 1;
     }
+
+    // Rainbows
+    int sign = (updown > 0) - (updown < 0);
+    move_rainbow(sign);
 
     update_screen_locked();
   }
@@ -1372,4 +1401,9 @@ void ScreenRecoveryUI::SetLocale(const std::string& new_locale) {
       rtl_locale_ = true;
     }
   }
+}
+
+void ScreenRecoveryUI::OMGRainbows() {
+  rainbow = rainbow ? false : true;
+  set_rainbow_mode(rainbow);
 }

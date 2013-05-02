@@ -152,4 +152,7 @@ std::vector<std::string> get_locales_in_png(const std::string& png_name);
 // functions.
 void res_free_surface(GRSurface* surface);
 
+void set_rainbow_mode(int enabled);
+void move_rainbow(int x);
+
 #endif
