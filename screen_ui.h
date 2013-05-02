@@ -283,11 +283,16 @@ class ScreenRecoveryUI : public RecoveryUI {
   pthread_mutex_t updateMutex;
 
  private:
+  bool rainbow;
+  int wrap_count;
+
   void SetLocale(const std::string&);
 
   // Display the background texts for "erasing", "error", "no_command" and "installing" for the
   // selected locale.
   void SelectAndShowBackgroundText(const std::vector<std::string>& locales_entries, size_t sel);
+
+  void OMGRainbows();
 };
 
 #endif  // RECOVERY_UI_H
