@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "iDovQaM",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 3255
+      },
+      "writtenOn": "2013-05-22T06:19:40Z",
+      "side": 1,
+      "message": "sync() doesn\u0027t do anything beyond introducing some delay.",
+      "revId": "7da4d2a79f9eebd289eb736c2de0c2c913fe6314",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iBosfao",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 3255
+      },
+      "writtenOn": "2013-05-22T06:19:40Z",
+      "side": 1,
+      "message": "I have also tried, to no avail:\nfsync(STDOUT_FILENO);\nclose(STDOUT_FILENO);\nexit(ret);",
+      "revId": "7da4d2a79f9eebd289eb736c2de0c2c913fe6314",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
