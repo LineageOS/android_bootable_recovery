@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "iJd00M8",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "s is defined as statfs here...",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iFd.OK8",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then stat is called on s rather than statfs",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iDdKpIQ",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then stat is called on s rather than statfs",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iBdPoJM",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then stat is called on s rather than statfs",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iPdDDGs",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "file_info is defined as stat here...",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iNdICIo",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then statfs is called on file_info rather than stat",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iLdetEM",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then statfs is called on file_info rather than stat",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iJdbsFQ",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then statfs is called on file_info rather than stat",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "iHdYHFc",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-06-06T01:29:23Z",
+      "side": 0,
+      "message": "... and then statfs is called on file_info rather than stat",
+      "revId": "c6834e32a0bfef51cc24d86d4955ffe078d2f746",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
