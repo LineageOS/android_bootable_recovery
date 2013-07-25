@@ -16,6 +16,24 @@
       "revId": "321278eb508cf59d198d8259472b8870f631892e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3acd31a7_c86d1fce",
+        "filename": "extendedcommands.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 1328,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2013-07-25T08:40:47Z",
+      "side": 1,
+      "message": "it\u0027s not missing, \"partition sdcard\" is option number 7, which gets overriden below in line 1341 or 1345 if a secondary sd exists.",
+      "parentUuid": "3acd31a7_8841673c",
+      "revId": "321278eb508cf59d198d8259472b8870f631892e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
