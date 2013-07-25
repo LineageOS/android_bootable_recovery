@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3acd31a7_3d93b3fc",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1324,
+      "author": {
+        "id": 5530
+      },
+      "writtenOn": "2013-07-25T04:56:55Z",
+      "side": 0,
+      "message": "Take this line out.",
+      "revId": "38a43568d03d86205df9aa9b8200116f0ba24762",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
