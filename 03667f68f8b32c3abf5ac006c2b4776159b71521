@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee8101_3c1df6bd",
+        "filename": "extendedcommands.c",
+        "patchSetId": 18
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-08-23T07:04:55Z",
+      "side": 0,
+      "message": "Let\u0027s just get rid of this /sdcard/update.zip option? It\u0027s stupid. We have a zip selector.",
+      "revId": "03667f68f8b32c3abf5ac006c2b4776159b71521",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_7c6a5e1c",
+        "filename": "extendedcommands.c",
+        "patchSetId": 18
+      },
+      "lineNbr": 1188,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-08-23T07:04:55Z",
+      "side": 0,
+      "message": "Did you mean to remove all thees options? Can\u0027t restore single partitions or delete nandroids?",
+      "revId": "03667f68f8b32c3abf5ac006c2b4776159b71521",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee8101_9c262215",
+        "filename": "etc/init.rc",
+        "patchSetId": 18
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-08-23T07:04:55Z",
+      "side": 1,
+      "message": "Seems sketchy to turn this on by default. Security issue?",
+      "revId": "130ec4f6408fede0de3a83a410423d9612086e94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_1c7912fd",
+        "filename": "extendedcommands.c",
+        "patchSetId": 18
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-08-23T07:04:55Z",
+      "side": 1,
+      "message": "I am guessing the free happens in the menu now? Why is this strduped?",
+      "revId": "130ec4f6408fede0de3a83a410423d9612086e94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_fc7d2ee8",
+        "filename": "extendedcommands.c",
+        "patchSetId": 18
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 65
+      },
+      "writtenOn": "2013-08-23T07:04:55Z",
+      "side": 1,
+      "message": "strduping this, but not the \"No\"? Where is it freed? Are the const char* \"No\" freed?",
+      "revId": "130ec4f6408fede0de3a83a410423d9612086e94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
