@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "baee8101_c2e72411",
+        "filename": "extendedcommands.c",
+        "patchSetId": 18
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 32
+      },
+      "writtenOn": "2013-08-23T10:49:09Z",
+      "side": 1,
+      "message": "Because it\u0027s passed as const, but this array is not const. The items array really should be const as well but I\u0027ve done enough refactoring for this patchset I think. Will free it though.",
+      "parentUuid": "baee8101_1c7912fd",
+      "revId": "130ec4f6408fede0de3a83a410423d9612086e94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baee8101_fc7d2ee8",
         "filename": "extendedcommands.c",
         "patchSetId": 18
