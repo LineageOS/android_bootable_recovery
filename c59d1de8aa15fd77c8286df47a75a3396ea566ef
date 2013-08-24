@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baee8101_4b4d8f71",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 998,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2013-08-24T22:35:39Z",
+      "side": 1,
+      "message": "add\nchar* list_tgz_default[]\nwith tar.gz (default)",
+      "revId": "c59d1de8aa15fd77c8286df47a75a3396ea566ef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baee8101_cb417f3b",
+        "filename": "nandroid.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2013-08-24T22:35:39Z",
+      "side": 1,
+      "message": "-3 compress option: gives around 30% compression with no speed impact\nHave no idea on default pigz setting",
+      "revId": "c59d1de8aa15fd77c8286df47a75a3396ea566ef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
