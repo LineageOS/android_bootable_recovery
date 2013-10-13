@@ -33,6 +33,23 @@
       "revId": "b3d547cceb672ccff3f543bbdf60b82bbeb3805d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a50d1a3_f05f8873",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2013-10-13T21:53:37Z",
+      "side": 1,
+      "message": "optional: you can move this to recovery.c just after the version display code\nThat way you display it once on start and do not take log rows along all recovery session",
+      "revId": "b3d547cceb672ccff3f543bbdf60b82bbeb3805d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
