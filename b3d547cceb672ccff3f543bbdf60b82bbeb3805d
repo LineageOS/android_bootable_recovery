@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a50d1a3_50bbdc0e",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2013-10-13T11:39:28Z",
+      "side": 1,
+      "message": "they should go here:\n#ifdef BOARD_RECOVERY_SWIPE\n#ifndef BOARD_TOUCH_RECOVERY",
+      "revId": "b3d547cceb672ccff3f543bbdf60b82bbeb3805d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a50d1a3_f036a8b3",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2013-10-13T11:39:28Z",
+      "side": 1,
+      "message": "abs is a C function\nuse another name for your array",
+      "revId": "b3d547cceb672ccff3f543bbdf60b82bbeb3805d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
