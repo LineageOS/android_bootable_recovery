@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a50d1a3_36ade888",
+        "filename": "swipe.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2013-10-15T07:56:50Z",
+      "side": 1,
+      "message": "kill it with fire",
+      "revId": "146057f4972c634c424e7ad8f045279f7c6c6b07",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
