@@ -74,6 +74,9 @@ static constexpr const char* CACHE_ROOT = "/cache";
 // into target_files.zip. Assert the version defined in code and in Android.mk are consistent.
 static_assert(kRecoveryApiVersion == RECOVERY_API_VERSION, "Mismatching recovery API versions.");
 
+static constexpr const char* adb_keys_data = "/data/misc/adb/adb_keys";
+static constexpr const char* adb_keys_root = "/adb_keys";
+
 static bool save_current_log = false;
 std::string stage;
 const char* reason = nullptr;
@@ -722,6 +725,62 @@ static void log_failure_code(ErrorCode code, const std::string& update_package) 
   LOG(INFO) << log_content;
 }
 
+static bool file_copy(const char* src, const char* dst) {
+  bool ret = false;
+  char tmpdst[PATH_MAX];
+  FILE* sfp;
+  FILE* dfp;
+
+  snprintf(tmpdst, sizeof(tmpdst), "%s.tmp", dst);
+  sfp = fopen(src, "r");
+  dfp = fopen(tmpdst, "w");
+  if (sfp && dfp) {
+    char buf[4096];
+    size_t nr, nw;
+    while ((nr = fread(buf, 1, sizeof(buf), sfp)) != 0) {
+      nw = fwrite(buf, 1, nr, dfp);
+      if (nr != nw) break;
+    }
+    ret = (!ferror(sfp) && !ferror(dfp));
+  }
+  if (dfp) fclose(dfp);
+  if (sfp) fclose(sfp);
+
+  if (ret) {
+    ret = (rename(tmpdst, dst) == 0);
+  } else {
+    unlink(tmpdst);
+  }
+
+  return ret;
+}
+
+
+static void copy_userdata_files() {
+  if (ensure_path_mounted("/data") == 0) {
+    if (access(adb_keys_root, F_OK) != 0) {
+      if (access(adb_keys_data, R_OK) == 0) {
+        file_copy(adb_keys_data, adb_keys_root);
+      }
+    }
+    ensure_path_unmounted("/data");
+  }
+}
+
+static void setup_adbd() {
+  int tries;
+  for (tries = 0; tries < 5; ++tries) {
+    if (access(adb_keys_root, F_OK) == 0) {
+      break;
+    }
+    sleep(1);
+  }
+
+  // Trigger (re)start of adb daemon
+  property_set("lineage.service.adb.root", "1");
+}
+
+
 Device::BuiltinAction start_recovery(Device* device, const std::vector<std::string>& args) {
   static constexpr struct option OPTIONS[] = {
     { "fastboot", no_argument, nullptr, 0 },
@@ -744,6 +803,12 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     { "wipe_package_size", required_argument, nullptr, 0 },
     { nullptr, 0, nullptr, 0 },
   };
+
+  if (is_ro_debuggable()) {
+    copy_userdata_files();
+    setup_adbd();
+  }
+
 
   const char* update_package = nullptr;
   bool should_wipe_data = false;
