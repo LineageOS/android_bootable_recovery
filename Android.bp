@@ -116,6 +116,8 @@ cc_binary {
     ],
 
     static_libs: [
+        "libmksh_driver",
+        "libreboot",
         "librecovery",
         "librecovery_ui_default",
     ],
@@ -127,6 +129,8 @@ cc_binary {
         "mke2fs.conf.recovery",
         "mke2fs.recovery",
         "recovery_deps",
+        "toybox_static",
+        "recovery_mkshrc",
     ],
 }
 

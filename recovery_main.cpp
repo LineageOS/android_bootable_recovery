@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +60,32 @@
 #include "recovery_ui/device.h"
 #include "recovery_ui/stub_ui.h"
 #include "recovery_ui/ui.h"
+#include "recovery_cmds.h"
+
+struct recovery_cmd {
+  const char* name;
+  int (*main_func)(int argc, char** argv);
+};
+
+static const struct recovery_cmd recovery_cmds[] = {
+  { "reboot", reboot_main },
+  { "poweroff", reboot_main },
+  { "sh", mksh_main },
+  { nullptr, nullptr },
+};
+
+struct recovery_cmd get_command(char* command) {
+  int i;
+
+  for (i = 0; recovery_cmds[i].name; i++) {
+    if (strcmp(command, recovery_cmds[i].name) == 0) {
+      break;
+    }
+  }
+
+  return recovery_cmds[i];
+}
+
 
 static constexpr const char* COMMAND_FILE = "/cache/recovery/command";
 static constexpr const char* LOCALE_FILE = "/cache/recovery/last_locale";
@@ -69,6 +96,9 @@ bool has_cache = false;
 
 RecoveryUI* ui = nullptr;
 struct selabel_handle* sehandle;
+
+static const char* adb_keys_data = "/data/misc/adb/adb_keys";
+static const char* adb_keys_root = "/adb_keys";
 
 static void UiLogger(android::base::LogId /* id */, android::base::LogSeverity severity,
                      const char* /* tag */, const char* /* file */, unsigned int /* line */,
@@ -178,6 +208,47 @@ static std::string load_locale_from_cache() {
   }
 
   return android::base::Trim(content);
+}
+
+static bool file_copy(const char* src, const char* dst) {
+  bool ret = false;
+  char tmpdst[PATH_MAX];
+  FILE* sfp;
+  FILE* dfp;
+
+  snprintf(tmpdst, sizeof(tmpdst), "%s.tmp", dst);
+  sfp = fopen(src, "r");
+  dfp = fopen(tmpdst, "w");
+  if (sfp && dfp) {
+    char buf[4096];
+    size_t nr, nw;
+    while ((nr = fread(buf, 1, sizeof(buf), sfp)) != 0) {
+      nw = fwrite(buf, 1, nr, dfp);
+      if (nr != nw) break;
+    }
+    ret = (!ferror(sfp) && !ferror(dfp));
+  }
+  if (dfp) fclose(dfp);
+  if (sfp) fclose(sfp);
+
+  if (ret) {
+    ret = (rename(tmpdst, dst) == 0);
+  } else {
+    unlink(tmpdst);
+  }
+
+  return ret;
+}
+
+static void copy_userdata_files() {
+  if (ensure_path_mounted("/data") == 0) {
+    if (access(adb_keys_root, F_OK) != 0) {
+      if (access(adb_keys_data, R_OK) == 0) {
+        file_copy(adb_keys_data, adb_keys_root);
+      }
+    }
+    ensure_path_unmounted("/data");
+  }
 }
 
 // Sets the usb config to 'state'.
@@ -324,6 +395,27 @@ int main(int argc, char** argv) {
   // Take action to refresh pmsg contents
   __android_log_pmsg_file_read(LOG_ID_SYSTEM, ANDROID_LOG_INFO, filter, logrotate, &do_rotate);
 
+  // Handle alternative invocations
+  char* command = argv[0];
+  char* stripped = strrchr(argv[0], '/');
+  if (stripped) {
+    command = stripped + 1;
+  }
+
+  if (strcmp(command, "recovery") != 0) {
+    struct recovery_cmd cmd = get_command(command);
+    if (cmd.name) {
+      return cmd.main_func(argc, argv);
+    }
+
+    LOG(ERROR) << "Unhandled command " << command;
+    return 1;
+  }
+
+  // Clear umask for packages that copy files out to /tmp and then over
+  // to /system without properly setting all permissions (eg. gapps).
+  umask(0);
+
   time_t start = time(nullptr);
 
   // redirect_stdio should be called only in non-sideload mode. Otherwise we may have two logger
@@ -446,6 +538,12 @@ int main(int argc, char** argv) {
   std::atomic<Device::BuiltinAction> action;
   std::thread listener_thread(ListenRecoverySocket, ui, std::ref(action));
   listener_thread.detach();
+
+  // Set up adb_keys and enable root before starting ADB.
+  if (is_ro_debuggable() && !fastboot) {
+    copy_userdata_files();
+    android::base::SetProperty("lineage.service.adb.root", "1");
+  }
 
   while (true) {
     std::string usb_config = fastboot ? "fastboot" : is_ro_debuggable() ? "adb" : "none";

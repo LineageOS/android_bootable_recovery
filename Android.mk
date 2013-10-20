@@ -1,4 +1,6 @@
 # Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2015 The CyanogenMod Project
+# Copyright (C) 2017-2019 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -70,7 +72,24 @@ ifeq ($(BOARD_CACHEIMAGE_PARTITION_SIZE),)
 LOCAL_REQUIRED_MODULES += recovery-refresh
 endif
 
+# Recovery symlinks
+RECOVERY_TOOLS := \
+    reboot \
+    sh
+LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf recovery $(TARGET_RECOVERY_ROOT_OUT)/system/bin/$(t);)
+
 include $(BUILD_PHONY_PACKAGE)
+
+# mkshrc
+# ===============================
+include $(CLEAR_VARS)
+LOCAL_MODULE := recovery_mkshrc
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+LOCAL_SRC_FILES := etc/mkshrc
+LOCAL_MODULE_STEM := mkshrc
+include $(BUILD_PREBUILT)
 
 include \
     $(LOCAL_PATH)/updater/Android.mk \
