@@ -25,6 +25,9 @@
 #define STRINGIFY(x) #x
 #define EXPAND(x) STRINGIFY(x)
 
+// Minimum valid seconds since epoch (2017-01-01 00:00:00)
+#define TV_MIN 1483228800
+
 class RecoveryUI;
 
 extern RecoveryUI* ui;
