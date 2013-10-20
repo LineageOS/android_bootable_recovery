@@ -126,7 +126,9 @@ cc_binary {
         "minadbd",
         "mke2fs.conf.recovery",
         "mke2fs.recovery",
+        "reboot.recovery",
         "recovery_deps",
+        "recovery_mkshrc",
     ],
 }
 
