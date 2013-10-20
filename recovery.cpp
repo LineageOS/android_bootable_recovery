@@ -75,6 +75,10 @@
 #include "stub_ui.h"
 #include "ui.h"
 
+extern "C" {
+#include "recovery_cmds.h"
+}
+
 static const struct option OPTIONS[] = {
   { "update_package", required_argument, NULL, 'u' },
   { "retry_count", required_argument, NULL, 'n' },
@@ -1348,6 +1352,39 @@ static void log_failure_code(ErrorCode code, const char *update_package) {
     LOG(INFO) << log_content;
 }
 
+
+static void
+setup_adbd() {
+    static const char *key_src = "/data/misc/adb/adb_keys";
+    static const char *key_dest = "/adb_keys";
+    struct stat f;
+    // Mount /data and copy adb_keys to root if it exists
+    ensure_path_mounted("/data");
+    if (stat(key_src, &f) == 0) {
+        FILE *file_src = fopen(key_src, "r");
+        if (file_src == NULL) {
+            LOG(ERROR) << "Can't open " << key_src;
+        } else {
+            FILE *file_dest = fopen(key_dest, "w");
+            if (file_dest == NULL) {
+                LOG(ERROR) << "Can't open " << key_dest;
+            } else {
+                char buf[4096];
+                while (fgets(buf, sizeof(buf), file_src)) fputs(buf, file_dest);
+                check_and_fclose(file_dest, key_dest);
+
+                // Enable secure adbd
+                property_set("ro.adb.secure", "1");
+            }
+            check_and_fclose(file_src, key_src);
+        }
+    }
+    ensure_path_unmounted("/data");
+
+    // Trigger (re)start of adb daemon
+    property_set("service.adb.root", "1");
+}
+
 int main(int argc, char **argv) {
     // We don't have logcat yet under recovery; so we'll print error on screen and
     // log to stdout (which is redirected to recovery.log) as we used to do.
@@ -1377,6 +1414,30 @@ int main(int argc, char **argv) {
         minadbd_main();
         return 0;
     }
+
+    // Handle alternative invocations
+    char* command = argv[0];
+    char* stripped = strrchr(argv[0], '/');
+    if (stripped)
+        command = stripped + 1;
+
+    if (strcmp(command, "recovery") != 0) {
+        struct recovery_cmd cmd = get_command(command);
+        if (cmd.name)
+            return cmd.main_func(argc, argv);
+
+        if (!strcmp(command, "setup_adbd")) {
+            load_volume_table();
+            setup_adbd();
+            return 0;
+        }
+        LOG(ERROR) << "Unhandled command " << command;
+        return 1;
+    }
+
+    // Clear umask for packages that copy files out to /tmp and then over
+    // to /system without properly setting all permissions (eg. gapps).
+    umask(0);
 
     time_t start = time(NULL);
 
