@@ -127,6 +127,7 @@ cc_binary {
         "mke2fs.conf.recovery",
         "mke2fs.recovery",
         "recovery_deps",
+        "recovery_mkshrc",
     ],
 }
 
