@@ -1,4 +1,6 @@
 # Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2015 The CyanogenMod Project
+# Copyright (C) 2017 The Lineage Android Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -159,12 +161,14 @@ LOCAL_STATIC_LIBRARIES := \
     libbatterymonitor
 
 LOCAL_STATIC_LIBRARIES += \
+    libmksh_driver \
     librecovery \
     libverifier \
     libbootloader_message \
     libfs_mgr \
     libext4_utils \
     libsparse \
+    libreboot \
     libziparchive \
     libotautil \
     libmounts \
@@ -204,7 +208,37 @@ ifeq ($(BOARD_CACHEIMAGE_PARTITION_SIZE),)
 LOCAL_REQUIRED_MODULES += recovery-persist recovery-refresh
 endif
 
+LOCAL_REQUIRED_MODULES += \
+    toybox_static \
+    recovery_mkshrc
+
+# Symlinks
+RECOVERY_TOOLS := \
+    reboot \
+    setup_adbd \
+    sh
+LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf ${LOCAL_MODULE} $(LOCAL_MODULE_PATH)/$(t);)
+
 include $(BUILD_EXECUTABLE)
+
+# mkshrc
+include $(CLEAR_VARS)
+LOCAL_MODULE := recovery_mkshrc
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/etc
+LOCAL_SRC_FILES := etc/mkshrc
+LOCAL_MODULE_STEM := mkshrc
+include $(BUILD_PREBUILT)
+
+# Reboot static library
+include $(CLEAR_VARS)
+LOCAL_MODULE := libreboot
+LOCAL_MODULE_TAGS := optional
+LOCAL_CFLAGS := -Dmain=reboot_main
+LOCAL_SRC_FILES := ../../system/core/reboot/reboot.c
+include $(BUILD_STATIC_LIBRARY)
+
 
 # recovery-persist (system partition dynamic executable run after /data mounts)
 # ===============================
