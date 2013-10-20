@@ -73,6 +73,32 @@
 #include "stub_ui.h"
 #include "ui.h"
 
+#include "recovery_cmds.h"
+
+struct recovery_cmd {
+  const char *name;
+  int (*main_func)(int argc, char **argv);
+};
+
+static const struct recovery_cmd recovery_cmds[] = {
+  { "reboot",         reboot_main },
+  { "poweroff",       reboot_main },
+  { "sh",             mksh_main },
+  { nullptr, nullptr },
+};
+
+struct recovery_cmd get_command(char* command) {
+  int i;
+
+  for (i = 0; recovery_cmds[i].name; i++) {
+    if (strcmp(command, recovery_cmds[i].name) == 0) {
+      break;
+    }
+  }
+
+  return recovery_cmds[i];
+}
+
 static const struct option OPTIONS[] = {
   { "update_package", required_argument, NULL, 'u' },
   { "retry_count", required_argument, NULL, 'n' },
@@ -131,6 +157,12 @@ static_assert(kRecoveryApiVersion == RECOVERY_API_VERSION, "Mismatching recovery
 
 static std::string locale;
 static bool has_cache = false;
+
+static const char* adb_keys_data = "/data/misc/adb/adb_keys";
+static const char* adb_keys_root = "/adb_keys";
+static const char* time_off_1_data = "/data/time/ats_1";
+static const char* time_off_2_data = "/data/system/time/ats_1";
+static const char* time_off_root = "/ats";
 
 RecoveryUI* ui = nullptr;
 bool modified_flash = false;
@@ -208,6 +240,38 @@ static void check_and_fclose(FILE *fp, const char *name) {
         PLOG(ERROR) << "Error in " << name;
     }
     fclose(fp);
+}
+
+static bool file_copy(const char* src, const char* dst) {
+  bool ret = false;
+  char tmpdst[PATH_MAX];
+  FILE* sfp;
+  FILE* dfp;
+
+  snprintf(tmpdst, sizeof(tmpdst), "%s.tmp", dst);
+  sfp = fopen(src, "r");
+  dfp = fopen(tmpdst, "w");
+  if (sfp && dfp) {
+    char buf[4096];
+    size_t nr, nw;
+    while ((nr = fread(buf, 1, sizeof(buf), sfp)) != 0) {
+      nw = fwrite(buf, 1, nr, dfp);
+      if (nr != nw)
+        break;
+    }
+    ret = (!ferror(sfp) && !ferror(dfp));
+  }
+  if (dfp) fclose(dfp);
+  if (sfp) fclose(sfp);
+
+  if (ret) {
+    ret = (rename(tmpdst, dst) == 0);
+  }
+  else {
+    unlink(tmpdst);
+  }
+
+  return ret;
 }
 
 bool is_ro_debuggable() {
@@ -1333,6 +1397,59 @@ static void log_failure_code(ErrorCode code, const char *update_package) {
     LOG(INFO) << log_content;
 }
 
+static void copy_userdata_files() {
+  if (ensure_path_mounted("/data") == 0) {
+    if (access(adb_keys_root, F_OK) != 0) {
+      if (access(adb_keys_data, R_OK) == 0) {
+        file_copy(adb_keys_data, adb_keys_root);
+      }
+    }
+    if (access(time_off_root, F_OK) != 0) {
+      if (access(time_off_1_data, R_OK) == 0) {
+        file_copy(time_off_1_data, time_off_root);
+      }
+      else if (access(time_off_2_data, R_OK) == 0) {
+        file_copy(time_off_2_data, time_off_root);
+      }
+    }
+    ensure_path_unmounted("/data");
+  }
+}
+
+static void set_time() {
+  struct timeval now;
+  FILE* fp;
+
+  gettimeofday(&now, nullptr);
+  if (now.tv_sec <= TV_MIN) {
+    fp = fopen(time_off_root, "r");
+    if (fp) {
+      uint64_t off;
+      if (fread(&off, 1, sizeof(off), fp) == sizeof(off)) {
+        now.tv_sec = off / 1000;
+        now.tv_usec = (off % 1000) * 1000;
+        if (now.tv_sec > TV_MIN) {
+          settimeofday(&now, nullptr);
+        }
+      }
+      fclose(fp);
+    }
+  }
+}
+
+static void setup_adbd() {
+  int tries;
+  for (tries = 0; tries < 5; ++tries) {
+    if (access(adb_keys_root, F_OK) == 0) {
+      break;
+    }
+    sleep(1);
+  }
+
+  // Trigger (re)start of adb daemon
+  property_set("lineage.service.adb.root", "1");
+}
+
 int main(int argc, char **argv) {
   // We don't have logcat yet under recovery; so we'll print error on screen and
   // log to stdout (which is redirected to recovery.log) as we used to do.
@@ -1359,16 +1476,45 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  time_t start = time(nullptr);
+  // Handle alternative invocations
+  char* command = argv[0];
+  char* stripped = strrchr(argv[0], '/');
+  if (stripped) {
+    command = stripped + 1;
+  }
+
+  if (strcmp(command, "recovery") != 0) {
+    struct recovery_cmd cmd = get_command(command);
+    if (cmd.name) {
+      return cmd.main_func(argc, argv);
+    }
+
+    if (!strcmp(command, "setup_adbd")) {
+      setup_adbd();
+      return 0;
+    }
+    LOG(ERROR) << "Unhandled command " << command;
+    return 1;
+  }
+
+  // Clear umask for packages that copy files out to /tmp and then over
+  // to /system without properly setting all permissions (eg. gapps).
+  umask(0);
 
   // redirect_stdio should be called only in non-sideload mode. Otherwise
   // we may have two logger instances with different timestamps.
   redirect_stdio(TEMPORARY_LOG_FILE);
 
-  printf("Starting recovery (pid %d) on %s", getpid(), ctime(&start));
-
   load_volume_table();
   has_cache = volume_for_mount_point(CACHE_ROOT) != nullptr;
+
+  copy_userdata_files();
+  set_time();
+  setup_adbd();
+
+  time_t start = time(nullptr);
+
+  printf("Starting recovery (pid %d) on %s", getpid(), ctime(&start));
 
   std::vector<std::string> args = get_args(argc, argv);
   std::vector<char*> args_to_parse(args.size());
