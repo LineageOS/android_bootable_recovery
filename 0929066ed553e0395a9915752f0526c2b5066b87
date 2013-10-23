@@ -16,6 +16,24 @@
       "revId": "0929066ed553e0395a9915752f0526c2b5066b87",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a50d1a3_c8b5fc7e",
+        "filename": "minui/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2013-10-23T11:46:28Z",
+      "side": 1,
+      "message": "I did TARGET_RECOVERY_LCD_BACKLIGHT_PATH :\u003d \\\"sys/class/lcd/panel/backlight\\\" instead, like how BOARD_USE_CUSTOM_RECOVERY_FONT is done.",
+      "parentUuid": "3a50d1a3_08bc446b",
+      "revId": "0929066ed553e0395a9915752f0526c2b5066b87",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
