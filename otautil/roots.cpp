@@ -49,12 +49,28 @@ using android::fs_mgr::Fstab;
 using android::fs_mgr::FstabEntry;
 using android::fs_mgr::ReadDefaultFstab;
 
+static void write_fstab_entry(const FstabEntry& entry, FILE* file) {
+  if (entry.fs_type != "emmc" && !entry.fs_mgr_flags.vold_managed && !entry.blk_device.empty() &&
+      entry.blk_device[0] == '/' && !entry.mount_point.empty() && entry.mount_point[0] == '/') {
+    fprintf(file, "%s ", entry.blk_device.c_str());
+    fprintf(file, "%s ", entry.mount_point.c_str());
+    fprintf(file, "%s ", entry.fs_type.c_str());
+    fprintf(file, "%s 0 0\n", entry.fs_options.empty() ? entry.fs_options.c_str() : "defaults");
+  }
+}
+
 static Fstab fstab;
 
 void load_volume_table() {
   if (!ReadDefaultFstab(&fstab)) {
     LOG(ERROR) << "Failed to read default fstab";
     return;
+  }
+
+  // Create a boring /etc/fstab so tools like Busybox work
+  FILE* file = fopen("/etc/fstab", "w");
+  if (!file) {
+    LOG(ERROR) << "Unable to create /etc/fstab";
   }
 
   fstab.emplace_back(FstabEntry{
@@ -66,8 +82,15 @@ void load_volume_table() {
     std::cout << "  " << i << " " << entry.mount_point << " "
               << " " << entry.fs_type << " " << entry.blk_device << " " << entry.length
               << std::endl;
+    if (file) {
+      write_fstab_entry(entry, file);
+    }
   }
   std::cout << std::endl;
+
+  if (file) {
+    fclose(file);
+  }
 }
 
 Volume* volume_for_mount_point(const std::string& mount_point) {
