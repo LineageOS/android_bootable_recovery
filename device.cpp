@@ -52,6 +52,8 @@ static_assert(sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]) ==
               "MENU_ITEMS and MENU_ACTIONS should have the same length, "
               "except for the extra NULL entry in MENU_ITEMS.");
 
+extern int ui_root_menu;
+
 const char* const* Device::GetMenuItems() {
   return MENU_ITEMS;
 }
@@ -66,17 +68,30 @@ int Device::HandleMenuKey(int key, int visible) {
   }
 
   switch (key) {
+    case KEY_RIGHTSHIFT:
     case KEY_DOWN:
     case KEY_VOLUMEDOWN:
+    case KEY_MENU:
       return kHighlightDown;
 
+    case KEY_LEFTSHIFT:
     case KEY_UP:
     case KEY_VOLUMEUP:
+    case KEY_SEARCH:
       return kHighlightUp;
 
     case KEY_ENTER:
     case KEY_POWER:
+    case BTN_MOUSE:
+    case KEY_HOME:
+    case KEY_HOMEPAGE:
+    case KEY_SEND:
       return kInvokeItem;
+
+    case KEY_BACKSPACE:
+    case KEY_BACK:
+      if (!ui_root_menu)
+        return kGoBack;
 
     default:
       // If you have all of the above buttons, any other buttons
