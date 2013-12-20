@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a7e1126_ef30fda0",
+        "filename": "recovery.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1003,
+      "author": {
+        "id": 7692
+      },
+      "writtenOn": "2013-12-20T03:35:35Z",
+      "side": 1,
+      "message": "Is it intended not to execute prompt_and_wait() if a non-user-initiated command failed?",
+      "revId": "a81817cbd8d0e7e5e845b6489edae1d87ac9a1d5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
