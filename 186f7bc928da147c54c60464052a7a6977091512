@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a5ae5dd_47347cdd",
+        "filename": "extendedcommands.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2014-01-15T07:31:16Z",
+      "side": 1,
+      "message": "I think all headers[] would be better like this, at least for multi-line menus:\n\n    static const char* headers[] \u003d {\n        \"Install update from zip file\",\n        \"\",\n        NULL\n    };",
+      "revId": "186f7bc928da147c54c60464052a7a6977091512",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
