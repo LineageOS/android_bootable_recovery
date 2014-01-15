@@ -16,6 +16,24 @@
       "revId": "186f7bc928da147c54c60464052a7a6977091512",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a5ae5dd_6748985c",
+        "filename": "extendedcommands.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-01-15T07:40:11Z",
+      "side": 1,
+      "message": "I thought about this a bit, too.  I can see the usefulness for multi-line headers, but I really don\u0027t see any need to expand the structure of the array for single-line headers.  I\u0027m partial to this layout, but if another chimes in requesting the change, I\u0027ll expand it.",
+      "parentUuid": "5a5ae5dd_47347cdd",
+      "revId": "186f7bc928da147c54c60464052a7a6977091512",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
