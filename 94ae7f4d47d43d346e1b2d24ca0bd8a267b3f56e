@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fade3982_990c4144",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-02-12T13:44:00Z",
+      "side": 1,
+      "message": "Fix spelling: current_dir_pos",
+      "revId": "94ae7f4d47d43d346e1b2d24ca0bd8a267b3f56e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_3917f552",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-02-12T13:44:00Z",
+      "side": 1,
+      "message": "current_dir_pos",
+      "revId": "94ae7f4d47d43d346e1b2d24ca0bd8a267b3f56e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
