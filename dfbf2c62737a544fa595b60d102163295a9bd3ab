@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fade3982_aa31e1ee",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-02-13T12:47:49Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "fade3982_9f00a1ac",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fade3982_7f4b1d2c",
         "filename": "extendedcommands.c",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-13T10:05:58Z",
       "side": 1,
       "message": "[0] The previous while loop is useless, if you are cleaning up do you want to remove it as well?",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_0a4d6d72",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-02-13T12:47:49Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "fade3982_7f4b1d2c",
       "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fade3982_ea512910",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-02-13T12:47:49Z",
+      "side": 1,
+      "message": "-2 the way you wrote it\nBut could be cleaned up",
+      "parentUuid": "fade3982_ff2bad31",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fade3982_bf9f655e",
         "filename": "extendedcommands.c",
         "patchSetId": 2
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "fade3982_4a6e55ca",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-02-13T12:47:49Z",
+      "side": 1,
+      "message": "-10\nGood luck understanding the crazy reentrant loop and the reason of this fix",
+      "parentUuid": "fade3982_bf9f655e",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fade3982_7f95dd3e",
         "filename": "extendedcommands.c",
         "patchSetId": 2
@@ -81,6 +153,24 @@
       "writtenOn": "2014-02-13T10:05:58Z",
       "side": 1,
       "message": "[0] This code is equivalent to\n\nreturn_value \u003d strdup(files[chosen_item - numDirs]);\n\ndo you want to clean this up too?  If you do then you can remove char ret[PATH_MAX] which is nice to remove from the stack.",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_2a5dd1e9",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-02-13T12:47:49Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "fade3982_7f95dd3e",
       "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
