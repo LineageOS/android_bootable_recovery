@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fade3982_4a99356e",
+        "filename": "extendedcommands.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T13:08:38Z",
+      "side": 1,
+      "message": "not needed when you remove the code, below.",
+      "revId": "eda5629d6cc8f8975845dcea0c34a54441ec9999",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_aad8c11e",
+        "filename": "extendedcommands.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T13:08:38Z",
+      "side": 1,
+      "message": "[-2] I think that this part of the change is still not necessary.  Have you tried it after restoring this to the original \"continue\"?\n\nThe logic is not actually complicated now that you\u0027ve cleaned the original mess of code.  If you don\u0027t believe it, just search for fixed_headers in the code.\n\nIt is declared, initialized and then passed to get_menu_selection.  That function doesn\u0027t modify it and there are no other references to it left in the code (except for this bit here which is why I claim it is not necessary to add).",
+      "revId": "eda5629d6cc8f8975845dcea0c34a54441ec9999",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
