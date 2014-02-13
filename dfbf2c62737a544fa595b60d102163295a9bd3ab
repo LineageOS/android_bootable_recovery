@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fade3982_9f00a1ac",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T10:05:58Z",
+      "side": 1,
+      "message": "[-1] dir and de are also unused and should be removed if you are going to clean this up.",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_7f4b1d2c",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T10:05:58Z",
+      "side": 1,
+      "message": "[0] The previous while loop is useless, if you are cleaning up do you want to remove it as well?",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_ff2bad31",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T10:05:58Z",
+      "side": 1,
+      "message": "[0] This code looks like it is equivalent to\n\nreturn_value \u003d subret;\n\nto me.  Do you want to clean that up as well?",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_bf9f655e",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T10:05:58Z",
+      "side": 1,
+      "message": "[-2] I don\u0027t believe this part of the change is necessary.\n\nSince fixed_headers is local then fixed_headers[current_dir_pos] should still be a pointer to directory which should still contain the current directory.\n\nDid you by any chance add this code before removing the static?",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fade3982_7f95dd3e",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 6351
+      },
+      "writtenOn": "2014-02-13T10:05:58Z",
+      "side": 1,
+      "message": "[0] This code is equivalent to\n\nreturn_value \u003d strdup(files[chosen_item - numDirs]);\n\ndo you want to clean this up too?  If you do then you can remove char ret[PATH_MAX] which is nice to remove from the stack.",
+      "revId": "dfbf2c62737a544fa595b60d102163295a9bd3ab",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
