@@ -16,6 +16,24 @@
       "revId": "389a266d7a67eb2f73f903795cbe718f06fa62ec",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bae84128_51929358",
+        "filename": "minui/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-03-03T10:59:03Z",
+      "side": 1,
+      "message": "yes, else it breaks because of missing kernel header includes in new graphics_overlay.c file",
+      "parentUuid": "bae84128_51e4530c",
+      "revId": "389a266d7a67eb2f73f903795cbe718f06fa62ec",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
