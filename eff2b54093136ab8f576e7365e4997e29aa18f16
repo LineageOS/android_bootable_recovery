@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bae84128_907240e4",
+        "filename": "install.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-03-24T08:33:12Z",
+      "side": 1,
+      "message": "dup(propfd): wont next line segfault if dup returns -1?\n\nAlso, there are no way to check legacy_properties_init() returns success. If it fails, next commands will segfault probably\n\nMaybe legacy_properties_init() should be turned from void to int?\n\nAny thoughts?",
+      "revId": "eff2b54093136ab8f576e7365e4997e29aa18f16",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
