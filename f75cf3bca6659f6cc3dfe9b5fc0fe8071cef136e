@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bae84128_c65ecf44",
+        "filename": "install.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-03-26T09:37:22Z",
+      "side": 1,
+      "message": "so that ricardo finds it more fair, what about adding:\n        ui_print(\"Using legacy property environment for update-binary...\\n\");\n        ui_print(\"Please upgrade to latest binary...\\n\");\n\nInstead of silent logging?",
+      "revId": "f75cf3bca6659f6cc3dfe9b5fc0fe8071cef136e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
