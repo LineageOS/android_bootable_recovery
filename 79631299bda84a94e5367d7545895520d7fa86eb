@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bae84128_667263e7",
+        "filename": "propsrvc/legacy_property_service.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-03-26T09:28:33Z",
+      "side": 1,
+      "message": "if[space](",
+      "revId": "79631299bda84a94e5367d7545895520d7fa86eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bae84128_c677efd2",
+        "filename": "propsrvc/legacy_property_service.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-03-26T09:28:33Z",
+      "side": 1,
+      "message": "if[space](",
+      "revId": "79631299bda84a94e5367d7545895520d7fa86eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
