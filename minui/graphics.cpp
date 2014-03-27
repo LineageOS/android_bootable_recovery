@@ -36,6 +36,8 @@
 #include "graphics.h"
 
 static GRFont* gr_font = NULL;
+static GRFont* gr_font_menu = NULL;
+static GRFont* gr_font_log = NULL;
 static minui_backend* gr_backend = NULL;
 
 static int overscan_percent = OVERSCAN_PERCENT;
@@ -57,6 +59,16 @@ static bool outside(int x, int y)
 const GRFont* gr_sys_font()
 {
     return gr_font;
+}
+
+const GRFont* gr_menu_font()
+{
+    return gr_font_menu;
+}
+
+const GRFont* gr_log_font()
+{
+    return gr_font_log;
 }
 
 int gr_measure(const GRFont* font, const char *s)
@@ -323,6 +335,14 @@ static void gr_init_font(void)
 {
     int res = gr_init_font("font", &gr_font);
     if (res == 0) {
+        if (gr_init_font("font_menu", &gr_font_menu) != 0) {
+            printf("failed to read menu font\n");
+            gr_font_menu = gr_font;
+        }
+        if (gr_init_font("font_log", &gr_font_log) != 0) {
+            printf("failed to read log font\n");
+            gr_font_log = gr_font;
+        }
         return;
     }
 
