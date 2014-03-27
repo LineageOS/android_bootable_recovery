@@ -204,8 +204,8 @@ void WearRecoveryUI::InitTextParams() {
 void WearRecoveryUI::Init() {
     ScreenRecoveryUI::Init();
 
-    LoadBitmap("icon_error", &backgroundIcon[ERROR]);
-    backgroundIcon[NO_COMMAND] = backgroundIcon[ERROR];
+    LoadBitmap("icon_error", &backgroundIcon[D_ERROR]);
+    backgroundIcon[NO_COMMAND] = backgroundIcon[D_ERROR];
 
     // This leaves backgroundIcon[INSTALLING_UPDATE] and backgroundIcon[ERASING]
     // as NULL which is fine since draw_background_locked() doesn't use them.
@@ -271,7 +271,7 @@ void WearRecoveryUI::StartMenu(const char* const * headers, const char* const * 
     pthread_mutex_unlock(&updateMutex);
 }
 
-int WearRecoveryUI::SelectMenu(int sel) {
+int WearRecoveryUI::SelectMenu(int sel, bool abs /* = false */) {
     int old_sel;
     pthread_mutex_lock(&updateMutex);
     if (show_menu) {
