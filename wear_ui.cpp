@@ -271,7 +271,7 @@ void WearRecoveryUI::StartMenu(const char* const * headers, const char* const * 
     pthread_mutex_unlock(&updateMutex);
 }
 
-int WearRecoveryUI::SelectMenu(int sel) {
+int WearRecoveryUI::SelectMenu(int sel, bool abs /* = false */) {
     int old_sel;
     pthread_mutex_lock(&updateMutex);
     if (show_menu) {
