@@ -21,6 +21,8 @@
 
 #include <stack>
 
+#define KEY_FLAG_ABS 0x8000
+
 struct menu;
 
 class Device : public VoldWatcher {

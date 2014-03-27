@@ -59,6 +59,8 @@ ScreenRecoveryUI::ScreenRecoveryUI() :
     progressScopeSize(0),
     progress(0),
     pagesIdentical(false),
+    log_text_cols_(0),
+    log_text_rows_(0),
     text_cols_(0),
     text_rows_(0),
     text_(nullptr),
@@ -71,6 +73,7 @@ ScreenRecoveryUI::ScreenRecoveryUI() :
     show_menu(false),
     menu_items(0),
     menu_sel(0),
+    menu_show_start_(0),
     file_viewer_text_(nullptr),
     intro_frames(0),
     loop_frames(0),
@@ -95,7 +98,7 @@ GRSurface* ScreenRecoveryUI::GetCurrentFrame() {
 GRSurface* ScreenRecoveryUI::GetCurrentText() {
     switch (currentIcon) {
         case ERASING: return erasing_text;
-        case ERROR: return error_text;
+        case D_ERROR: return error_text;
         case INSTALLING_UPDATE: return installing_text;
         case NO_COMMAND: return no_command_text;
         case NONE: abort();
@@ -236,13 +239,13 @@ void ScreenRecoveryUI::SetColor(UIElement e) {
             break;
         case MENU:
         case MENU_SEL_BG:
-            gr_color(106, 103, 102, 255);
+            gr_color(84, 81, 80, 255);
             break;
         case MENU_SEL_BG_ACTIVE:
             gr_color(138, 135, 134, 255);
             break;
         case MENU_SEL_FG:
-            gr_color(0, 177, 229, 255);
+            gr_color(22, 124, 128, 255);
             break;
         case LOG:
             gr_color(196, 196, 196, 255);
@@ -285,6 +288,33 @@ static const char* LONG_PRESS_HELP[] = {
     NULL
 };
 
+int ScreenRecoveryUI::draw_header_icon()
+{
+    GRSurface* surface = headerIcon;
+    int iw = header_width_;
+    int ih = header_height_;
+    int ix = (gr_fb_width() - iw) / 2;
+    int iy = 0;
+    gr_blit(surface, 0, 0, iw, ih, ix, iy);
+    return ih;
+}
+
+void ScreenRecoveryUI::draw_menu_item(int textrow, const char *text, int selected)
+{
+    if (selected) {
+        SetColor(MENU_SEL_BG);
+        gr_fill(0, (textrow) * char_height_,
+                gr_fb_width(), (textrow+3) * char_height_ - 1);
+        SetColor(MENU_SEL_FG);
+        gr_text(gr_menu_font(), 4, (textrow+1) * char_height_ - 1, text, 0);
+        SetColor(MENU);
+    }
+    else {
+        SetColor(MENU);
+        gr_text(gr_menu_font(), 4, (textrow+1) * char_height_ - 1, text, 0);
+    }
+}
+
 // Redraw everything on the screen.  Does not flip pages.
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::draw_screen_locked() {
@@ -297,37 +327,14 @@ void ScreenRecoveryUI::draw_screen_locked() {
 
         int y = 0;
         if (show_menu) {
-            char recovery_fingerprint[PROPERTY_VALUE_MAX];
-            property_get("ro.bootimage.build.fingerprint", recovery_fingerprint, "");
-
-            SetColor(INFO);
-            DrawTextLine(TEXT_INDENT, &y, "Android Recovery", true);
-            for (auto& chunk : android::base::Split(recovery_fingerprint, ":")) {
-                DrawTextLine(TEXT_INDENT, &y, chunk.c_str(), false);
+            draw_header_icon();
+            int nr_items = menu_items - menu_show_start_;
+            if (nr_items > max_menu_rows_)
+                nr_items = max_menu_rows_;
+            for (int i = 0; i < nr_items; ++i) {
+                draw_menu_item(text_first_row_ + 3*i, menu_[menu_show_start_ + i],
+                        ((menu_show_start_ + i) == menu_sel));
             }
-            DrawTextLines(TEXT_INDENT, &y, HasThreeButtons() ? REGULAR_HELP : LONG_PRESS_HELP);
-
-            SetColor(HEADER);
-            DrawTextLines(TEXT_INDENT, &y, menu_headers_);
-
-            SetColor(MENU);
-            DrawHorizontalRule(&y);
-            y += 4;
-            for (int i = 0; i < menu_items; ++i) {
-                if (i == menu_sel) {
-                    // Draw the highlight bar.
-                    SetColor(IsLongPress() ? MENU_SEL_BG_ACTIVE : MENU_SEL_BG);
-                    gr_fill(0, y - 2, gr_fb_width(), y + char_height_ + 2);
-                    // Bold white text for the selected item.
-                    SetColor(MENU_SEL_FG);
-                    gr_text(gr_sys_font(), 4, y, menu_[i], true);
-                    SetColor(MENU);
-                } else {
-                    gr_text(gr_sys_font(), 4, y, menu_[i], false);
-                }
-                y += char_height_ + 4;
-            }
-            DrawHorizontalRule(&y);
         }
 
         // display from the bottom up, until we hit the top of the
@@ -462,9 +469,13 @@ void ScreenRecoveryUI::SetSystemUpdateText(bool security_update) {
 void ScreenRecoveryUI::InitTextParams() {
     gr_init();
 
-    gr_font_size(gr_sys_font(), &char_width_, &char_height_);
+    gr_font_size(gr_menu_font(), &char_width_, &char_height_);
     text_rows_ = gr_fb_height() / char_height_;
     text_cols_ = gr_fb_width() / char_width_;
+
+    gr_font_size(gr_log_font(), &log_char_width_, &log_char_height_);
+    log_text_rows_ = gr_fb_height() / log_char_height_;
+    log_text_cols_ = gr_fb_width() / log_char_width_;
 }
 
 void ScreenRecoveryUI::Init() {
@@ -486,6 +497,14 @@ void ScreenRecoveryUI::Init() {
     text_top_ = 1;
 
     LoadBitmap("icon_error", &error_icon);
+
+    LoadBitmap("icon_header", &headerIcon);
+    header_height_ = gr_get_height(headerIcon);
+    header_width_ = gr_get_width(headerIcon);
+
+    text_first_row_ = (header_height_ / char_height_) + 1;
+    menu_item_start_ = text_first_row_ * char_height_;
+    max_menu_rows_ = (text_rows_ - text_first_row_) / 3;
 
     LoadBitmap("progress_empty", &progressBarEmpty);
     LoadBitmap("progress_fill", &progressBarFill);
@@ -636,13 +655,13 @@ void ScreenRecoveryUI::PrintV(const char* fmt, bool copy_to_stdout, va_list ap) 
     }
 
     pthread_mutex_lock(&updateMutex);
-    if (text_rows_ > 0 && text_cols_ > 0) {
+    if (log_text_rows_ > 0 && log_text_cols_ > 0) {
         for (const char* ptr = str.c_str(); *ptr != '\0'; ++ptr) {
-            if (*ptr == '\n' || text_col_ >= text_cols_) {
+            if (*ptr == '\n' || text_col_ >= log_text_cols_) {
                 text_[text_row_][text_col_] = '\0';
                 text_col_ = 0;
-                text_row_ = (text_row_ + 1) % text_rows_;
-                if (text_row_ == text_top_) text_top_ = (text_top_ + 1) % text_rows_;
+                text_row_ = (text_row_ + 1) % log_text_rows_;
+                if (text_row_ == text_top_) text_top_ = (text_top_ + 1) % log_text_rows_;
             }
             if (*ptr != '\n') text_[text_row_][text_col_++] = *ptr;
         }
@@ -777,14 +796,21 @@ void ScreenRecoveryUI::StartMenu(const char* const * headers, const char* const 
         menu_items = i;
         show_menu = true;
         menu_sel = initial_selection;
+        if (menu_show_start_ <= menu_sel - max_menu_rows_ ||
+                menu_show_start_ > menu_sel) {
+            menu_show_start_ = menu_sel;
+        }
         update_screen_locked();
     }
     pthread_mutex_unlock(&updateMutex);
 }
 
-int ScreenRecoveryUI::SelectMenu(int sel) {
+int ScreenRecoveryUI::SelectMenu(int sel, bool abs /* = false */) {
     int wrapped = 0;
     pthread_mutex_lock(&updateMutex);
+    if (abs) {
+        sel += menu_show_start_;
+    }
     if (show_menu) {
         int old_sel = menu_sel;
         menu_sel = sel;
@@ -799,11 +825,17 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
         }
         if (menu_sel < 0) {
             wrapped = -1;
-            menu_sel = menu_items - 1;
+            menu_sel = menu_items + menu_sel;
         }
         if (menu_sel >= menu_items) {
             wrapped = 1;
-            menu_sel = 0;
+            menu_sel = menu_sel - menu_items;
+        }
+        if (menu_sel < menu_show_start_ && menu_show_start_ > 0) {
+            menu_show_start_ = menu_sel;
+        }
+        if (menu_sel - menu_show_start_ >= max_menu_rows_) {
+            menu_show_start_ = menu_sel - max_menu_rows_ + 1;
         }
         sel = menu_sel;
         if (wrapped != 0) {

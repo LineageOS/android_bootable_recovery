@@ -137,6 +137,13 @@ ifeq ($(TARGET_BUILD_VARIANT),user)
     LOCAL_CFLAGS += -DRELEASE_BUILD
 endif
 
+# Handling for EV_REL is disabled by default because some accelerometers
+# send EV_REL events.  Actual EV_REL devices are rare on modern hardware
+# so it's cleaner just to disable it by default.
+ifneq ($(BOARD_RECOVERY_NEEDS_REL_INPUT),)
+    LOCAL_CFLAGS += -DBOARD_RECOVERY_NEEDS_REL_INPUT
+endif
+
 LOCAL_CFLAGS += -DUSE_EXT4 -DMINIVOLD
 LOCAL_C_INCLUDES += system/extras/ext4_utils system/core/fs_mgr/include external/fsck_msdos
 LOCAL_C_INCLUDES += system/vold
@@ -319,6 +326,7 @@ include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libverifier
 LOCAL_MODULE_TAGS := tests
+LOCAL_CFLAGS += -DVERIFIER_TEST
 LOCAL_SRC_FILES := \
     asn1_decoder.cpp \
     verifier.cpp \
