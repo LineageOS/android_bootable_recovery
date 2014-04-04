@@ -49,6 +49,8 @@
 #include <vintf/VintfObjectRecovery.h>
 #include <ziparchive/zip_archive.h>
 
+#include <cutils/properties.h>
+
 #include "common.h"
 #include "otautil/SysUtil.h"
 #include "otautil/ThermalUtil.h"
@@ -614,8 +616,10 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
   }
 
   // Verify package.
+  set_perf_mode(true);
   if (!verify_package(map.addr, map.length)) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
+    set_perf_mode(false);
     return INSTALL_CORRUPT;
   }
 
@@ -627,6 +631,7 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipOpenFailure));
 
     CloseArchive(zip);
+    set_perf_mode(false);
     return INSTALL_CORRUPT;
   }
 
@@ -648,6 +653,7 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
   ui->Print("\n");
 
   CloseArchive(zip);
+  set_perf_mode(false);
   return result;
 }
 
@@ -760,4 +766,9 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
     return false;
   }
   return true;
+}
+
+void
+set_perf_mode(bool enable) {
+    property_set("recovery.perf.mode", enable ? "1" : "0");
 }
