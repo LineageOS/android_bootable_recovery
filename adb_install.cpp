@@ -172,11 +172,15 @@ void stop_sideload() {
 }
 
 int wait_sideload(RecoveryUI* ui) {
+    set_perf_mode(true);
+
     pthread_join(sideload_thread, nullptr);
 
     ui->FlushKeys();
 
     maybe_restart_adbd(ui);
+
+    set_perf_mode(false);
 
     return sideload_data.result;
 }
