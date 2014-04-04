@@ -175,11 +175,14 @@ void stop_sideload() {
 }
 
 int wait_sideload() {
+  set_perf_mode(true);
   pthread_join(sideload_thread, nullptr);
 
   ui->FlushKeys();
 
   maybe_restart_adbd();
+
+  set_perf_mode(false);
 
   return sideload_data.result;
 }
