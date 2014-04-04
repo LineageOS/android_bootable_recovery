@@ -40,4 +40,6 @@ bool read_metadata_from_package(ZipArchiveHandle zip, std::string* metadata);
 // entry doesn't exist.
 bool verify_package_compatibility(ZipArchiveHandle package_zip);
 
+void set_perf_mode(bool enable);
+
 #endif  // RECOVERY_INSTALL_H_
