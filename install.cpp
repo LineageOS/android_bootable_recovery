@@ -50,6 +50,8 @@
 #include "ui.h"
 #include "verifier.h"
 
+#include "cutils/properties.h"
+
 extern RecoveryUI* ui;
 
 #define ASSUMED_UPDATE_BINARY_NAME  "META-INF/com/google/android/update-binary"
@@ -524,6 +526,8 @@ static int
 really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
                        std::vector<std::string>& log_buffer, int retry_count)
 {
+    int ret = 0;
+
     ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
     ui->Print("Finding update package...\n");
     // Give verification half the progress bar...
@@ -570,10 +574,13 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
         return INSTALL_CORRUPT;
     }
 
+    set_perf_mode(true);
+
     // Verify package.
     if (!verify_package(map.addr, map.length)) {
         log_buffer.push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
         sysReleaseMap(&map);
+        set_perf_mode(false);
         return INSTALL_CORRUPT;
     }
 
@@ -585,6 +592,7 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
         log_buffer.push_back(android::base::StringPrintf("error: %d", kZipOpenFailure));
 
         sysReleaseMap(&map);
+        set_perf_mode(false);
         return INSTALL_CORRUPT;
     }
 
@@ -594,7 +602,7 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
         ui->Print("Retry attempt: %d\n", retry_count);
     }
     ui->SetEnableReboot(false);
-    int result = try_update_binary(path, &zip, wipe_cache, log_buffer, retry_count);
+    ret = try_update_binary(path, &zip, wipe_cache, log_buffer, retry_count);
     ui->SetEnableReboot(true);
     ui->Print("\n");
 
@@ -602,7 +610,7 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
 
 #ifdef USE_MDTP
     /* If MDTP update failed, return an error such that recovery will not finish. */
-    if (result == INSTALL_SUCCESS) {
+    if (ret == INSTALL_SUCCESS) {
         if (!mdtp_update()) {
             ui->Print("Unable to verify integrity of /system for MDTP, update aborted.\n");
             return INSTALL_ERROR;
@@ -611,7 +619,8 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
     }
 #endif /* USE_MDTP */
 
-    return result;
+    set_perf_mode(false);
+    return ret;
 }
 
 int
@@ -699,4 +708,9 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
         return false;
     }
     return true;
+}
+
+void
+set_perf_mode(bool enable) {
+    property_set("recovery.perf.mode", enable ? "1" : "0");
 }

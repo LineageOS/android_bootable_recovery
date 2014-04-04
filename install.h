@@ -38,4 +38,6 @@ bool verify_package(const unsigned char* package_data, size_t package_size);
 // Return true if succeed, otherwise return false.
 bool read_metadata_from_package(ZipArchive* zip, std::string* meta_data);
 
+void set_perf_mode(bool enable);
+
 #endif  // RECOVERY_INSTALL_H_
