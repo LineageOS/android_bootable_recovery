@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7af24918_efa5bbb5",
+        "filename": "default_recovery_keys.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-04-20T05:01:43Z",
+      "side": 0,
+      "message": "These three keys are confusing me. I would say SEARCH should act as SELECT_ITEM, BACKSPACE should act as GO_BACK, and END should act as HIGHLIGHT_DOWN. Do you agree?",
+      "revId": "613db95dbbabfaa94a6f86c886120ec2a2df7ec1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
