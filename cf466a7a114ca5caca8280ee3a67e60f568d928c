@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7af24918_6f6a4b1c",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-04-20T05:39:31Z",
+      "side": 1,
+      "message": "Is this function necessary anymore? It looks like it could also be removed we can just ui_is_showing_back_button(). This would clear up confusion between these very similarly named functions.",
+      "revId": "cf466a7a114ca5caca8280ee3a67e60f568d928c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
