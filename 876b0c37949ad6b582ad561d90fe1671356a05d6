@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af94dfe_81621ed7",
+        "filename": "Android.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-05-08T07:05:23Z",
+      "side": 1,
+      "message": "BOARD_RECOVERY_SWIPE_SWAPXY has been removed by your commit",
+      "revId": "876b0c37949ad6b582ad561d90fe1671356a05d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
