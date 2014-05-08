@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af94dfe_21c7ca46",
+        "filename": "touch.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 8964
+      },
+      "writtenOn": "2014-05-08T10:09:18Z",
+      "side": 1,
+      "message": "changed to 160 :)",
+      "revId": "a0259163e363f48d4dae2edef55a5d2f4b8bf9b3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
