@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af94dfe_4113f65c",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1549,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-05-08T06:35:10Z",
+      "side": 1,
+      "message": "you do not need all this loop and variables\n\nJust add ui_wait_key()\n\nIn my expierience, you should also probably clear the key  queue after such code probably\n\nAlso, action should have been compared to NO_ACTION, not NULL !",
+      "revId": "ff615997cc36283cf26cccc24ab4a32b217f62c2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1af94dfe_e10de238",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-05-08T06:35:10Z",
+      "side": 1,
+      "message": "trailing new line !",
+      "revId": "ff615997cc36283cf26cccc24ab4a32b217f62c2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
