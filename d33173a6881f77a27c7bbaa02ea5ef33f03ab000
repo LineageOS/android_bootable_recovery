@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da0c15f0_e25b1c2d",
+        "filename": "extendedcommands.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 1606,
+      "author": {
+        "id": 5574
+      },
+      "writtenOn": "2014-05-11T03:11:31Z",
+      "side": 1,
+      "message": "That will work only on one device.\n\n+ this code should be simplified like...\n\n case 0: \n   brightness \u003d 26;\n   break;\n case 1:\n   brightness \u003d 51;\n   break;\n ...\n __system(\"echo %d \u003e %s\", brightness, path);\n // I\u0027m unsure if we could store path this ^ way,\n // but you get the point...",
+      "revId": "d33173a6881f77a27c7bbaa02ea5ef33f03ab000",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
