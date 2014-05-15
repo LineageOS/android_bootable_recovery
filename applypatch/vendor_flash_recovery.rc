@@ -1,3 +1,8 @@
 service vendor_flash_recovery /vendor/bin/install-recovery.sh
     class main
     oneshot
+    disabled
+
+# update recovery if enabled
+on property:persist.vendor.recovery_update=true
+    start vendor_flash_recovery
