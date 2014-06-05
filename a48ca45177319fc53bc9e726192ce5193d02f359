@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da0c15f0_1bfdbf3a",
+        "filename": "extendedcommands.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 5728
+      },
+      "writtenOn": "2014-06-05T01:28:33Z",
+      "side": 1,
+      "message": "if (!enable_f2fs_ext4_conversion) {",
+      "revId": "a48ca45177319fc53bc9e726192ce5193d02f359",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da0c15f0_fbf9eb4e",
+        "filename": "extendedcommands.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 974,
+      "author": {
+        "id": 5728
+      },
+      "writtenOn": "2014-06-05T01:28:33Z",
+      "side": 1,
+      "message": "}",
+      "revId": "a48ca45177319fc53bc9e726192ce5193d02f359",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da0c15f0_5b9577e2",
+        "filename": "extendedcommands.c",
+        "patchSetId": 17
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 5728
+      },
+      "writtenOn": "2014-06-05T01:28:33Z",
+      "side": 1,
+      "message": "Without above 2 \"else\", next routine will check unsupported file system",
+      "revId": "a48ca45177319fc53bc9e726192ce5193d02f359",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
