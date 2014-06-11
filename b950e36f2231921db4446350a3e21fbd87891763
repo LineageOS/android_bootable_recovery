@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_b8b959ef",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-11T07:02:15Z",
+      "side": 1,
+      "message": "menu_items use is wrong here. You are outside any menu. it has no sense outside a menu screen. It will just cut your display rows. You could eventually probe for show_menu before running this code to avoid someone calling it without ending a menu\n\nAlso, you should lock mutex before probing any part of these variables\n\nFinally: we have\n#define MAX_ROWS 32\n\nso, setting it to 32, won\u0027t cause any harm as all cwm users will get the last lines that fit their screen. Some would get a small scroll sadly without your implementation, but not a big deal after all for that simple function",
+      "revId": "b950e36f2231921db4446350a3e21fbd87891763",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
