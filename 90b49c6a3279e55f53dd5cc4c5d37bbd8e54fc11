@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_38954940",
+        "filename": "nandroid-md5.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-11T07:20:29Z",
+      "side": 1,
+      "message": "won\u0027t you \"exit 1;\" here to avoid continuing operations despite it failed ?\n\nIt is not original cwm implementation but won\u0027t do any harm",
+      "revId": "90b49c6a3279e55f53dd5cc4c5d37bbd8e54fc11",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
