@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_acf2bb6d",
+        "filename": "recovery.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-13T14:35:42Z",
+      "side": 0,
+      "message": "this is duplicated on line 53",
+      "revId": "4998303de2aa4608ffa38b07733ebee032acb321",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
