@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_ed72edac",
+        "filename": "ui.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-16T09:24:20Z",
+      "side": 1,
+      "message": "I think this covers the exception you mentioned. draw_progress_locked() then covers the case where BACKGROUND_ICON_INSTALLING .",
+      "revId": "1b687b53567aa4a51f033d50774f965819754fc9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
