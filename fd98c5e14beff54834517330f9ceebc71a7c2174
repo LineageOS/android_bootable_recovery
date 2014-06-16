@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_6de25da1",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-16T18:43:47Z",
+      "side": 1,
+      "message": "static void ui_increment_frame() {\n    gInstallingFrame \u003d\n        (gInstallingFrame + 1) % ui_parameters.installing_frames;\n}\n\nstatic so no one calls it directly anymore (not even implicit declaration allowed)\n\n!ui_has_initialized check is no more needed",
+      "revId": "fd98c5e14beff54834517330f9ceebc71a7c2174",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_edecad91",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-16T18:43:47Z",
+      "side": 1,
+      "message": "int duration is of no use as we have locked the mutex\n\nadding an else if statement for second if (gProgressBarType \u003d\u003d PROGRESSBAR_TYPE_NORMAL) ends up in less code processing",
+      "revId": "fd98c5e14beff54834517330f9ceebc71a7c2174",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_adf2b56d",
+        "filename": "ui.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 682,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-16T18:43:47Z",
+      "side": 1,
+      "message": "this should be fixed\n\nIt causes the progress bar persisting until a few menu navigation under some circumstances\n\nThis was assuming all variables are set to 0, which is wrong. Only last one is set to 0",
+      "revId": "fd98c5e14beff54834517330f9ceebc71a7c2174",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
