@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_22122f63",
+        "filename": "nandroid.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-17T21:07:51Z",
+      "side": 1,
+      "message": "we could only keep one function:\n\nstatic int print_and_error(const char* message, int ret);\n\nalso, we should stop appending \\n to message as it is done in the code. We end up with 2 new lines",
+      "revId": "c897af18cb3f5b2bca06cc449d112f1e1540b51a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_02172b52",
+        "filename": "nandroid.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-17T21:07:51Z",
+      "side": 1,
+      "message": "not needed probably in CWM",
+      "revId": "c897af18cb3f5b2bca06cc449d112f1e1540b51a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
