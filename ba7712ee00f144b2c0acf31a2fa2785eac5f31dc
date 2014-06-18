@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_d8c6c215",
+        "filename": "input/touch.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 4704
+      },
+      "writtenOn": "2014-06-18T22:07:20Z",
+      "side": 1,
+      "message": "KEY_ENTER default no action, I use KEY_HOMEPAGE.",
+      "revId": "ba7712ee00f144b2c0acf31a2fa2785eac5f31dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
