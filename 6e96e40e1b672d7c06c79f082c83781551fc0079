@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_eefe6004",
+        "filename": "input/touch.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-19T17:43:15Z",
+      "side": 1,
+      "message": "Tom, why did you choose ev-\u003evalue \u003d 2? For EV_KEY it looks like this should only be 0 (press) or 1 (release).",
+      "revId": "6e96e40e1b672d7c06c79f082c83781551fc0079",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
