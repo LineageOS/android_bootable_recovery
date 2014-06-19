@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ba0121b8_b3e7af3f",
+        "filename": "input/touch.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-19T06:23:07Z",
+      "side": 1,
+      "message": "Perhaps. I made this change to the original swipe implementation a while ago, but the swipe distance hasn\u0027t been as consistent as I expected. Not to mention, users have an intuition that larger screen must mean a larger swipe is necessary. It\u0027s a tricky issue. This 1/4 screen width swipe actually isn\u0027t that bad. I\u0027ll still think about it, though.\n\nDid you experiment with using CHAR_WIDTH?",
+      "parentUuid": "ba0121b8_73dd1770",
+      "revId": "ba7712ee00f144b2c0acf31a2fa2785eac5f31dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba0121b8_d8c6c215",
         "filename": "input/touch.c",
         "patchSetId": 3
