@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba0121b8_73dd1770",
+        "filename": "input/touch.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2014-06-19T06:13:59Z",
+      "side": 1,
+      "message": "You probably want to implement proper swipe widths here using lcd density.",
+      "revId": "ba7712ee00f144b2c0acf31a2fa2785eac5f31dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba0121b8_d8c6c215",
         "filename": "input/touch.c",
         "patchSetId": 3
