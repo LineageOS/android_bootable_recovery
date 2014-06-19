@@ -16,6 +16,24 @@
       "revId": "ba7712ee00f144b2c0acf31a2fa2785eac5f31dc",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_f3e80719",
+        "filename": "input/touch.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-19T06:06:23Z",
+      "side": 1,
+      "message": "It sounds like you stripped away too many keys from your custom keys file. You should be using https://github.com/CyanogenMod/android_bootable_recovery/blob/cm-11.0/default_recovery_keys.c as a base (notice line 24) and only adding/removing keys that conflict or do not work. KEY_ENTER is correct here.",
+      "parentUuid": "ba0121b8_d8c6c215",
+      "revId": "ba7712ee00f144b2c0acf31a2fa2785eac5f31dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
