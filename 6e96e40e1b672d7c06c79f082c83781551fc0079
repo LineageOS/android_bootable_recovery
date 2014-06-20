@@ -16,6 +16,24 @@
       "revId": "6e96e40e1b672d7c06c79f082c83781551fc0079",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_8eb6c43b",
+        "filename": "input/touch.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2014-06-20T00:16:22Z",
+      "side": 1,
+      "message": "I was having problems getting the code to work.  I didn\u0027t see a way to inject press then release.  The value 2 is handled here:\n\nhttps://github.com/CyanogenMod/android_bootable_recovery/blob/cm-11.0/ui.c#L474\n\nThis is probably the wrong way to do it.  If you can find a better way, I\u0027d love to see it... :)",
+      "parentUuid": "ba0121b8_eefe6004",
+      "revId": "6e96e40e1b672d7c06c79f082c83781551fc0079",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
