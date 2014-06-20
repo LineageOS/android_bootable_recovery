@@ -34,6 +34,23 @@
       "revId": "6e96e40e1b672d7c06c79f082c83781551fc0079",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_0e81144b",
+        "filename": "input/touch.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2014-06-20T00:22:44Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be checking min_x_swipe_px?",
+      "revId": "6e96e40e1b672d7c06c79f082c83781551fc0079",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
