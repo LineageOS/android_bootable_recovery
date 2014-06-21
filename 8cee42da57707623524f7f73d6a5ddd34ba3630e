@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_84b6a33b",
+        "filename": "nandroid.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-21T10:14:42Z",
+      "side": 1,
+      "message": "this is probably needed by CWM touch builds to create an update.zip file\n\nIt is the only possible way to ensure the update.zip creation using a tar format when default format is dup or tar.gz",
+      "revId": "8cee42da57707623524f7f73d6a5ddd34ba3630e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_e4815f4f",
+        "filename": "ui.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-21T10:14:42Z",
+      "side": 1,
+      "message": "probably needed by touch gui",
+      "revId": "8cee42da57707623524f7f73d6a5ddd34ba3630e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
