@@ -16,6 +16,41 @@
       "revId": "33d8c4798ff722eb6a0ef5a83a9a72ed279c8977",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_f39f60b2",
+        "filename": "nandroid_md5.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-23T16:21:13Z",
+      "side": 1,
+      "message": "Oops, strike that comment, this is the backup function.",
+      "parentUuid": "ba0121b8_1374949a",
+      "revId": "33d8c4798ff722eb6a0ef5a83a9a72ed279c8977",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_53a56c02",
+        "filename": "nandroid_md5.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-23T16:21:13Z",
+      "side": 1,
+      "message": "I need to increment the md5matches variable and only show this if at least one file was verified.",
+      "revId": "33d8c4798ff722eb6a0ef5a83a9a72ed279c8977",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
