@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_1374949a",
+        "filename": "nandroid_md5.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-23T14:50:38Z",
+      "side": 1,
+      "message": "I should probably change this to a warning that MD5 verification cannot proceed, but still allow restore if user desires.",
+      "revId": "33d8c4798ff722eb6a0ef5a83a9a72ed279c8977",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
