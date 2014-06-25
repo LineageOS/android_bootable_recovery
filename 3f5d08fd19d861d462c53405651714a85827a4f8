@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_6479c82f",
+        "filename": "nandroid_md5.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-25T07:59:22Z",
+      "side": 1,
+      "message": "isn\u0027t fread much faster ?\n\nYou could easily add size progress here too, but maybe in another commit",
+      "revId": "3f5d08fd19d861d462c53405651714a85827a4f8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
