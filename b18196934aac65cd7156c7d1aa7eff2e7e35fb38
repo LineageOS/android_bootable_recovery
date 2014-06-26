@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_14091796",
+        "filename": "extendedcommands.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 869,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-26T23:34:17Z",
+      "side": 1,
+      "message": "insert an usb OTG and this will enable the menu",
+      "revId": "b18196934aac65cd7156c7d1aa7eff2e7e35fb38",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
