@@ -16,6 +16,24 @@
       "revId": "0830d2445a4b49fe49af672b0b59a837fd6360ec",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_a56d9734",
+        "filename": "recovery.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-27T10:06:14Z",
+      "side": 1,
+      "message": "hmm? ui is initd. how else would the ui_prints for swipe instructions work?",
+      "parentUuid": "ba0121b8_a5e75711",
+      "revId": "0830d2445a4b49fe49af672b0b59a837fd6360ec",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
