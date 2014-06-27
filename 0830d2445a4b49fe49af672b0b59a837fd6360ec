@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_a5e75711",
+        "filename": "recovery.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1066,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-27T09:27:34Z",
+      "side": 1,
+      "message": "you cannot use ui_print at such early recovery boot phase!",
+      "revId": "0830d2445a4b49fe49af672b0b59a837fd6360ec",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
