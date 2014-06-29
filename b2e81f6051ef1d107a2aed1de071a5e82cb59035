@@ -16,6 +16,24 @@
       "revId": "b2e81f6051ef1d107a2aed1de071a5e82cb59035",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba0121b8_54b6e8dc",
+        "filename": "input/touch.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-29T08:03:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba0121b8_348d3432",
+      "revId": "b2e81f6051ef1d107a2aed1de071a5e82cb59035",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
