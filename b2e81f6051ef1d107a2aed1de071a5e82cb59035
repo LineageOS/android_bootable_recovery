@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_348d3432",
+        "filename": "input/touch.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-29T06:36:38Z",
+      "side": 1,
+      "message": "According to https://source.android.com/devices/tech/input/touch-devices.html virtual keys can alternatively be placed on separate lines, so this needs to be modified to read more than one.",
+      "revId": "b2e81f6051ef1d107a2aed1de071a5e82cb59035",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
