@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_7487ac0f",
+        "filename": "input/touch.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2014-06-29T06:39:37Z",
+      "side": 1,
+      "message": "initialize touch_min and touch_max to zero so calibration doesn\u0027t compare uninitialized ints if ioctl() fails",
+      "revId": "78cbc99ae151107ff8c8efc444acc455b56ec5fc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
