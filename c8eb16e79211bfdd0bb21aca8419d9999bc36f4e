@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_dadd0172",
+        "filename": "nandroid_md5.c",
+        "patchSetId": 8
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-06-30T10:50:45Z",
+      "side": 1,
+      "message": "all these prompts will break nandroid shell commands with an infinite pause",
+      "revId": "c8eb16e79211bfdd0bb21aca8419d9999bc36f4e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
