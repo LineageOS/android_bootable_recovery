@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1b2928_96cb8c1e",
+        "filename": "ui.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 6051
+      },
+      "writtenOn": "2014-08-13T23:14:31Z",
+      "side": 1,
+      "message": "I chose not to reuse install_overlay_offset_y if we ever need to call setstage multiple times without reboot recovery.\n\nCurrently, it is not the case, so your amendment looks good to me\n\nI did not compile the code though: you can try it by adding this line:\n\nhttps://github.com/PhilZ-cwm6/philz_touch_cwm6/commit/9156138d08ea40a43bc4684c25eb32f0dba2ec8e#diff-0db90179aac11637852352e3ea884bf8R1138\n\ncompile recovery and try to manually install the zip. If the overlay looks good, then it is fine",
+      "revId": "c5463c91c4852db8837ae47653df5716dd657ca2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
