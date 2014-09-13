@@ -567,9 +567,6 @@ static bool erase_volume(const char* volume, bool force = false) {
   bool is_cache = (strcmp(volume, CACHE_ROOT) == 0);
   bool is_data = (strcmp(volume, DATA_ROOT) == 0);
 
-  ui->SetBackground(RecoveryUI::ERASING);
-  ui->SetProgressType(RecoveryUI::INDETERMINATE);
-
   std::vector<saved_log_file> log_files;
 
   if (!force && is_cache) {
@@ -611,6 +608,9 @@ static bool erase_volume(const char* volume, bool force = false) {
   }
 
   ui->Print("Formatting %s...\n", volume);
+
+  ui->SetBackground(RecoveryUI::ERASING);
+  ui->SetProgressType(RecoveryUI::INDETERMINATE);
 
   if (volume[0] == '/') {
     ensure_path_unmounted(volume);
