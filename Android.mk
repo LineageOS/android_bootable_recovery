@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifeq ($(call my-dir),$(call project-path-for,recovery))
+
 LOCAL_PATH := $(call my-dir)
 
 # Needed by build/make/core/Makefile.
@@ -268,3 +270,5 @@ include \
     $(LOCAL_PATH)/uncrypt/Android.mk \
     $(LOCAL_PATH)/updater/Android.mk \
     $(LOCAL_PATH)/update_verifier/Android.mk \
+
+endif
