@@ -26,7 +26,7 @@ LOCAL_MODULE := libapplypatch
 LOCAL_MODULE_TAGS := eng
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/include \
-    bootable/recovery
+    $(call project-path-for,recovery)
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := \
     libotafault \
@@ -49,7 +49,7 @@ LOCAL_SRC_FILES := \
 LOCAL_MODULE := libimgpatch
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/include \
-    bootable/recovery
+    $(call project-path-for,recovery)
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := \
     libcrypto \
@@ -72,7 +72,7 @@ LOCAL_MODULE := libimgpatch
 LOCAL_MODULE_HOST_OS := linux
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/include \
-    bootable/recovery
+    $(call project-path-for,recovery)
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_STATIC_LIBRARIES := \
     libcrypto \
@@ -91,7 +91,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
     applypatch_modes.cpp
 LOCAL_MODULE := libapplypatch_modes
-LOCAL_C_INCLUDES := bootable/recovery
+LOCAL_C_INCLUDES := $(call project-path-for,recovery)
 LOCAL_STATIC_LIBRARIES := \
     libapplypatch \
     libbase \
@@ -105,7 +105,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := applypatch_main.cpp
 LOCAL_MODULE := applypatch
-LOCAL_C_INCLUDES := bootable/recovery
+LOCAL_C_INCLUDES := $(call project-path-for,recovery)
 LOCAL_STATIC_LIBRARIES := \
     libapplypatch_modes \
     libapplypatch \

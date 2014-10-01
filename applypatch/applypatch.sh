@@ -10,8 +10,13 @@
 # TODO: find some way to get this run regularly along with the rest of
 # the tests.
 
+RECOVERY_DIR=$(get_build_var pathmap_PROJ | grep -o 'recovery:[^ ]*' | cut -d':' -f2)
+if [ -z "$RECOVERY_DIR" ]; then
+  RECOVERY_DIR="bootable/recovery"
+fi
+
 EMULATOR_PORT=5580
-DATA_DIR=$ANDROID_BUILD_TOP/bootable/recovery/applypatch/testdata
+DATA_DIR=$ANDROID_BUILD_TOP/$RECOVERY_DIR/applypatch/testdata
 
 # This must be the filename that applypatch uses for its copies.
 CACHE_TEMP_SOURCE=/cache/saved.file
