@@ -39,7 +39,7 @@ LOCAL_SRC_FILES := \
     unit/zip_test.cpp \
     unit/ziputil_test.cpp
 
-LOCAL_C_INCLUDES := bootable/recovery
+LOCAL_C_INCLUDES := $(call project-path-for,recovery)
 LOCAL_SHARED_LIBRARIES := liblog
 include $(BUILD_NATIVE_TEST)
 
@@ -58,7 +58,7 @@ LOCAL_SHARED_LIBRARIES := \
     liblog \
     libpng
 
-resource_files := $(call find-files-in-subdirs, bootable/recovery, \
+resource_files := $(call find-files-in-subdirs, $(call project-path-for,recovery), \
     "*_text.png", \
     res-mdpi/images \
     res-hdpi/images \
@@ -73,7 +73,7 @@ GEN := $(addprefix $(testimage_out_path)/, $(resource_files))
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = cp $< $@
-$(GEN): $(testimage_out_path)/% : bootable/recovery/%
+$(GEN): $(testimage_out_path)/% : $(call project-path-for,recovery)/%
 	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN)
 
@@ -92,7 +92,7 @@ LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
 endif
 
 LOCAL_MODULE := recovery_component_test
-LOCAL_C_INCLUDES := bootable/recovery
+LOCAL_C_INCLUDES := $(call project-path-for,recovery)
 LOCAL_SRC_FILES := \
     component/applypatch_test.cpp \
     component/bootloader_message_test.cpp \
