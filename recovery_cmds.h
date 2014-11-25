@@ -28,6 +28,7 @@ int poweroff_main(int argc, char **argv);
 int start_main(int argc, char **argv);
 int stop_main(int argc, char **argv);
 int mksh_main(int argc, char **argv);
+int vdc_main(int argc, char **argv);
 
 /* Filesystem tools */
 int e2fsck_main(int argc, char **argv);
@@ -62,6 +63,7 @@ static const struct recovery_cmd recovery_cmds[] = {
     { "unzip",          miniunz_main },
     { "zip",            minizip_main },
     { "sh",             mksh_main },
+    { "vdc",            vdc_main },
 
     /* Filesystem tools */
     { "e2fsck",         e2fsck_main },

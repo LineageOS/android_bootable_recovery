@@ -72,6 +72,7 @@
 #include "screen_ui.h"
 #include "stub_ui.h"
 #include "ui.h"
+#include "voldclient.h"
 
 // For e2fsprogs
 extern "C" {
@@ -116,7 +117,6 @@ static const char *CONVERT_FBE_DIR = "/tmp/convert_fbe";
 static const char *CONVERT_FBE_FILE = "/tmp/convert_fbe/convert_fbe";
 static const char *CACHE_ROOT = "/cache";
 static const char *DATA_ROOT = "/data";
-static const char *SDCARD_ROOT = "/sdcard";
 static const char *TEMPORARY_LOG_FILE = "/tmp/recovery.log";
 static const char *TEMPORARY_INSTALL_FILE = "/tmp/last_install";
 static const char *LAST_KMSG_FILE = "/cache/recovery/last_kmsg";
@@ -667,8 +667,8 @@ static bool erase_volume(const char* volume) {
 // return a positive number beyond the given range. Caller sets 'menu_only' to true to ensure only
 // a menu item gets selected. 'initial_selection' controls the initial cursor location. Returns the
 // (non-negative) chosen item number, or -1 if timed out waiting for input.
-static int get_menu_selection(const char* const* headers, const char* const* items, bool menu_only,
-                              int initial_selection, Device* device) {
+int get_menu_selection(const char* const* headers, const char* const* items, bool menu_only,
+                       int initial_selection, Device* device) {
   // Throw away keys pressed previously, so user doesn't accidentally trigger menu items.
   ui->FlushKeys();
 
@@ -710,12 +710,16 @@ static int get_menu_selection(const char* const* headers, const char* const* ite
         case Device::kGoHome:
           chosen_item = Device::kGoHome;
           break;
+        case Device::kRefresh:
+          chosen_item = Device::kRefresh;
+          break;
       }
     } else if (!menu_only) {
       chosen_item = action;
     }
     if (chosen_item == Device::kGoBack ||
-        chosen_item == Device::kGoHome) {
+        chosen_item == Device::kGoHome ||
+        chosen_item == Device::kRefresh) {
       break;
     }
   }
@@ -726,8 +730,6 @@ static int get_menu_selection(const char* const* headers, const char* const* ite
 
 // Returns the selected filename, or an empty string.
 static std::string browse_directory(const std::string& path, Device* device) {
-  ensure_path_mounted(path.c_str());
-
   std::unique_ptr<DIR, decltype(&closedir)> d(opendir(path.c_str()), closedir);
   if (!d) {
     PLOG(ERROR) << "error opening " << path;
@@ -773,6 +775,9 @@ static std::string browse_directory(const std::string& path, Device* device) {
     if (chosen_item == Device::kGoBack || chosen_item == 0) {
       // Go up but continue browsing (if the caller is browse_directory).
       return "";
+    }
+    if (chosen_item == Device::kRefresh) {
+      return "@refresh";
     }
 
     const std::string& item = zips[chosen_item];
@@ -1085,33 +1090,88 @@ static void run_graphics_test() {
   ui->ShowText(true);
 }
 
-static int apply_from_sdcard(Device* device, bool* wipe_cache) {
+static int apply_from_storage(Device* device, const std::string& id, bool* wipe_cache) {
     modified_flash = true;
 
-    if (ensure_path_mounted(SDCARD_ROOT) != 0) {
-        ui->Print("\n-- Couldn't mount %s.\n", SDCARD_ROOT);
+    int status;
+
+    if (!vdc->volumeMount(id)) {
         return INSTALL_ERROR;
     }
 
-    std::string path = browse_directory(SDCARD_ROOT, device);
-    if (path == "@") {
-        return INSTALL_NONE;
+    VolumeInfo vi = vdc->getVolume(id);
+
+    std::string path;
+    do {
+        path = browse_directory(vi.mInternalPath, device);
+        if (path == "@") {
+            return INSTALL_NONE;
+        }
     }
+    while (path == "@refresh");
+
     if (path.empty()) {
         ui->Print("\n-- No package file selected.\n");
-        ensure_path_unmounted(SDCARD_ROOT);
-        return INSTALL_ERROR;
+        vdc->volumeUnmount(vi.mId);
+        return INSTALL_NONE;
     }
 
     ui->Print("\n-- Install %s ...\n", path.c_str());
     set_sdcard_update_bootloader_message();
     void* token = start_sdcard_fuse(path.c_str());
 
-    int status = install_package(FUSE_SIDELOAD_HOST_PATHNAME, wipe_cache,
+    vdc->volumeUnmount(vi.mId, true);
+
+    status = install_package(FUSE_SIDELOAD_HOST_PATHNAME, wipe_cache,
                                  TEMPORARY_INSTALL_FILE, false, 0/*retry_count*/);
 
     finish_sdcard_fuse(token);
-    ensure_path_unmounted(SDCARD_ROOT);
+    return status;
+}
+
+static int
+show_apply_update_menu(Device* device, bool* wipe_cache) {
+    static const char* headers[] = { "Apply update", nullptr };
+    char* menu_items[MAX_NUM_MANAGED_VOLUMES + 1 + 1];
+    std::vector<VolumeInfo> volumes = vdc->getVolumes();
+
+    const int item_sideload = 0;
+    int n, i;
+    std::vector<VolumeInfo>::iterator vitr;
+
+refresh:
+    menu_items[item_sideload] = strdup("Apply from ADB");
+
+    n = item_sideload + 1;
+    for (vitr = volumes.begin(); vitr != volumes.end(); ++vitr) {
+        menu_items[n] = (char*)malloc(256);
+        sprintf(menu_items[n], "Choose from %s", vitr->mLabel.c_str());
+        ++n;
+    }
+    menu_items[n] = nullptr;
+
+    int status = INSTALL_ERROR;
+
+    for (;;) {
+        int chosen = get_menu_selection(headers, menu_items, 0, 0, device);
+        for (i = 0; i < n; ++i) {
+            free(menu_items[i]);
+        }
+        if (chosen == Device::kRefresh) {
+            goto refresh;
+        }
+        if (chosen == Device::kGoBack) {
+            break;
+        }
+        if (chosen == item_sideload) {
+            status = apply_from_adb(wipe_cache, TEMPORARY_INSTALL_FILE);
+        }
+        else {
+            std::string id = volumes[chosen - 1].mId;
+            status = apply_from_storage(device, id, wipe_cache);
+        }
+    }
+
     return status;
 }
 
@@ -1136,7 +1196,8 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     int chosen_item = get_menu_selection(nullptr, device->GetMenuItems(), false, 0, device);
     // We are already in the main menu
     if (chosen_item == Device::kGoBack ||
-        chosen_item == Device::kGoHome) {
+        chosen_item == Device::kGoHome ||
+        chosen_item == Device::kRefresh) {
       continue;
     }
 
@@ -1171,15 +1232,9 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
         if (!ui->IsTextVisible()) return Device::NO_ACTION;
         break;
 
-      case Device::APPLY_ADB_SIDELOAD:
-      case Device::APPLY_SDCARD:
+      case Device::APPLY_UPDATE:
         {
-          bool adb = (chosen_action == Device::APPLY_ADB_SIDELOAD);
-          if (adb) {
-            status = apply_from_adb(&should_wipe_cache, TEMPORARY_INSTALL_FILE);
-          } else {
-            status = apply_from_sdcard(device, &should_wipe_cache);
-          }
+          status = show_apply_update_menu(device, &should_wipe_cache);
 
           if (status == INSTALL_SUCCESS && should_wipe_cache) {
             if (!wipe_cache(false, device)) {
@@ -1194,7 +1249,7 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
           } else if (!ui->IsTextVisible()) {
             return Device::NO_ACTION;  // reboot if logs aren't visible
           } else {
-            ui->Print("\nInstall from %s complete.\n", adb ? "ADB" : "SD card");
+            ui->Print("\nInstall complete.\n");
           }
         }
         break;
@@ -1576,6 +1631,9 @@ int main(int argc, char **argv) {
         }
     }
 
+    vdc = new VoldClient(device);
+    vdc->start();
+
     // Set background string to "installing security update" for security update,
     // otherwise set it to "installing system update".
     ui->SetSystemUpdateText(security_update);
@@ -1733,6 +1791,11 @@ int main(int argc, char **argv) {
 
     // Save logs and clean up before rebooting or shutting down.
     finish_recovery();
+
+    vdc->unmountAll();
+    vdc->stop();
+
+    sync();
 
     switch (after) {
         case Device::SHUTDOWN:
