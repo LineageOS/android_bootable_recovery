@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "voldclient.h"
+
 /*
  * Simple representation of a (x,y) coordinate with convenience operators
  */
@@ -159,6 +161,9 @@ class RecoveryUI {
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
 
+  // Notify of volume state change
+  void onVolumeChanged() { volumes_changed_ = 1; }
+
  protected:
   void EnqueueKey(int key_code);
 
@@ -176,6 +181,7 @@ class RecoveryUI {
   bool touch_screen_allowed_;
 
  private:
+  bool volumes_changed_;
   // The sensitivity when detecting a swipe.
   const int kTouchLowThreshold;
   const int kTouchHighThreshold;
@@ -229,6 +235,8 @@ class RecoveryUI {
   void ProcessKey(int key_code, int updown);
 
   bool IsUsbConnected();
+
+  bool VolumesChanged();
 
   static void* time_key_helper(void* cookie);
   void time_key(int key_code, int count);

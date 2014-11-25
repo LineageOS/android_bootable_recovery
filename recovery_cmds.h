@@ -28,6 +28,7 @@ int poweroff_main(int argc, char **argv);
 int start_main(int argc, char **argv);
 int stop_main(int argc, char **argv);
 int mksh_main(int argc, char **argv);
+int vdc_main(int argc, char **argv);
 
 struct recovery_cmd {
     const char *name;
@@ -42,6 +43,7 @@ static const struct recovery_cmd recovery_cmds[] = {
     { "unzip",          miniunz_main },
     { "zip",            minizip_main },
     { "sh",             mksh_main },
+    { "vdc",            vdc_main },
     { NULL, NULL },
 };
 
