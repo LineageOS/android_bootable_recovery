@@ -83,6 +83,15 @@ int unmount_mounted_volume(MountedVolume* volume) {
     return umount(mount_point.c_str());
 }
 
+int unmount_mounted_volume_detach(MountedVolume* volume) {
+    // Intentionally pass the empty string to umount if the caller tries
+    // to unmount a volume they already unmounted using this
+    // function.
+    std::string mount_point = volume->mount_point;
+    volume->mount_point.clear();
+    return umount2(mount_point.c_str(), MNT_DETACH);
+}
+
 int remount_read_only(MountedVolume* volume) {
     return mount(volume->device.c_str(), volume->mount_point.c_str(), volume->filesystem.c_str(),
                  MS_NOATIME | MS_NODEV | MS_NODIRATIME | MS_RDONLY | MS_REMOUNT, 0);
