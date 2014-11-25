@@ -1232,30 +1232,28 @@ refresh:
 
   int status = INSTALL_ERROR;
 
-  for (;;) {
-    int chosen = get_menu_selection(headers, menu_items, 0, 0, device);
-    for (i = 0; i < n; ++i) {
-      free(menu_items[i]);
-    }
-    if (chosen == Device::kRefresh) {
-      goto refresh;
-    }
-    if (chosen == Device::kGoBack) {
-      break;
-    }
-    if (chosen == item_sideload) {
-      static const char* headers[] = { "ADB Sideload", nullptr };
-      static const char* list[] = { "Cancel sideload", nullptr };
+  int chosen = get_menu_selection(headers, menu_items, 0, 0, device);
+  for (i = 0; i < n; ++i) {
+    free(menu_items[i]);
+  }
+  if (chosen == Device::kRefresh) {
+    goto refresh;
+  }
+  if (chosen == Device::kGoBack) {
+    return INSTALL_NONE;
+  }
+  if (chosen == item_sideload) {
+    static const char* headers[] = { "ADB Sideload", nullptr };
+    static const char* list[] = { "Cancel sideload", nullptr };
 
-      start_sideload(wipe_cache, TEMPORARY_INSTALL_FILE);
-      int item = get_menu_selection(headers, list, 0, 0, device);
-      if (item != Device::kNoAction) {
-        stop_sideload();
-      }
-      status = wait_sideload();
-    } else {
-      status = apply_from_storage(device, volumes[chosen - 1], wipe_cache);
+    start_sideload(wipe_cache, TEMPORARY_INSTALL_FILE);
+    int item = get_menu_selection(headers, list, 0, 0, device);
+    if (item != Device::kNoAction) {
+      stop_sideload();
     }
+    status = wait_sideload();
+  } else {
+    status = apply_from_storage(device, volumes[chosen - 1], wipe_cache);
   }
 
   return status;
