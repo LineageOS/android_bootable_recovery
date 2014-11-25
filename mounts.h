@@ -26,6 +26,7 @@ MountedVolume* find_mounted_volume_by_device(const char* device);
 MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
 
 int unmount_mounted_volume(MountedVolume* volume);
+int unmount_mounted_volume_detach(MountedVolume* volume);
 
 int remount_read_only(MountedVolume* volume);
 
