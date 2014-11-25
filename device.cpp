@@ -19,8 +19,7 @@
 static const char* MENU_ITEMS[] = {
     "Reboot system now",
     "Reboot to bootloader",
-    "Apply update from ADB",
-    "Apply update from SD card",
+    "Apply update",
     "Wipe data/factory reset",
 #ifndef AB_OTA_UPDATER
     "Wipe cache partition",
