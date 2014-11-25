@@ -1482,7 +1482,6 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
   }
 
   menu_.reset();
-  Redraw();
 
   return chosen_item;
 }
