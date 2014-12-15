@@ -699,6 +699,8 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
   }
   LOG(INFO) << loadedKeys.size() << " key(s) loaded from " << PUBLIC_KEYS_FILE;
 
+#ifndef DISABLE_SIGCHECK
+  ui->Print("Verifying update package...\n");
   // Verify package.
   ui->Print("Verifying update package...\n");
   auto t0 = std::chrono::system_clock::now();
@@ -711,5 +713,6 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
     LOG(ERROR) << "error: " << kZipVerificationFailure;
     return false;
   }
+#endif
   return true;
 }

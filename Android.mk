@@ -179,6 +179,11 @@ LOCAL_STATIC_LIBRARIES := \
 
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
 
+# Disable signature checking on eng and userdebug builds
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+    LOCAL_CFLAGS += -DDISABLE_SIGCHECK
+endif
+
 ifeq ($(AB_OTA_UPDATER),true)
     LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
 endif
