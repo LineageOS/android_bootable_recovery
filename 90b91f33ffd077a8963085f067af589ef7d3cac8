@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aa08908_a3e73711",
+        "filename": "install.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1063
+      },
+      "writtenOn": "2014-12-20T11:09:55Z",
+      "side": 1,
+      "message": "Nit: } else {",
+      "revId": "90b91f33ffd077a8963085f067af589ef7d3cac8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
