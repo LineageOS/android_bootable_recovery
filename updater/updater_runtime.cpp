@@ -100,6 +100,17 @@ int UpdaterRuntime::Mount(const std::string_view location, const std::string_vie
   unsigned mount_flags = 0;
   std::string fs_options;
 
+  // Try overriding fs_type with what we detect via blkid
+  char* detected_fs_type = blkid_get_tag_value(NULL, "TYPE", location.c_str());
+  if (detected_fs_type) {
+    LOG(INFO) << "detected filesystem " << detected_fs_type << " for " << location.c_str();
+    fs_type = detected_fs_type;
+    free(detected_fs_type);
+  } else {
+    LOG(INFO) << "could not detect filesystem for " << location.c_str() << ", assuming " <<
+             fs_type.c_str();
+  }
+
   if (sehandle_) {
     selabel_lookup(sehandle_, &secontext, mount_point_string.c_str(), 0755);
     setfscreatecon(secontext);
