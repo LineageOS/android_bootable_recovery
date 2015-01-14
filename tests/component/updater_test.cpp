@@ -48,6 +48,11 @@
 #include "updater/install.h"
 #include "updater/updater.h"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "updater";
+}
+
 struct selabel_handle *sehandle = nullptr;
 
 static void expect(const char* expected, const char* expr_str, CauseCode cause_code,
