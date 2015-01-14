@@ -41,6 +41,9 @@ LOCAL_STATIC_LIBRARIES += \
     libsparse_static \
     libz
 
+LOCAL_C_INCLUDES += external/e2fsprogs/lib
+LOCAL_STATIC_LIBRARIES += libext2_blkid libext2_uuid
+
 LOCAL_STATIC_LIBRARIES += $(TARGET_RECOVERY_UPDATER_LIBS) $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS)
 LOCAL_STATIC_LIBRARIES += libapplypatch libbase libotafault libedify libmtdutils libminzip libz
 LOCAL_STATIC_LIBRARIES += libbz
