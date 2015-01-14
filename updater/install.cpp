@@ -16,6 +16,7 @@
 
 #include "updater/install.h"
 
+#include <blkid/blkid.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -387,6 +388,16 @@ Value* MountFn(const char* name, State* state, const std::vector<std::unique_ptr
       freecon(secontext);
       setfscreatecon(nullptr);
     }
+  }
+
+  char* detected_fs_type = blkid_get_tag_value(NULL, "TYPE", location.c_str());
+  if (detected_fs_type) {
+    uiPrintf(state, "detected filesystem %s for %s\n", detected_fs_type, location.c_str());
+    fs_type = detected_fs_type;
+    free(detected_fs_type);
+  } else {
+    uiPrintf(state, "could not detect filesystem for %s, assuming %s\n", location.c_str(),
+             fs_type.c_str());
   }
 
   if (mount(location.c_str(), mount_point.c_str(), fs_type.c_str(),
