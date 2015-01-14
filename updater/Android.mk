@@ -101,6 +101,14 @@ LOCAL_STATIC_LIBRARIES := \
     $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS) \
     $(updater_common_static_libraries)
 
+# XXX: this does not seem to work, why?
+# LOCAL_HEADER_LIBRARIES := libext2-headers
+
+LOCAL_C_INCLUDES += \
+    bootable/recovery/otafault \
+    external/e2fsprogs/lib
+LOCAL_STATIC_LIBRARIES += libext2_blkid libext2_uuid
+
 # Each library in TARGET_RECOVERY_UPDATER_LIBS should have a function
 # named "Register_<libname>()".  Here we emit a little C function that
 # gets #included by updater.c.  It calls all those registration
