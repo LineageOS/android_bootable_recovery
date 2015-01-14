@@ -27,6 +27,7 @@
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 #include <android-base/unique_fd.h>
+#include <blkid/blkid.h>
 #include <ext4_utils/wipe.h>
 #include <fs_mgr.h>
 #include <selinux/label.h>
@@ -96,9 +97,22 @@ int UpdaterRuntime::Mount(const std::string_view location, const std::string_vie
                           const std::string_view fs_type, const std::string_view mount_options) {
   std::string mount_point_string(mount_point);
   std::string mount_options_string(mount_options);
+  std::string location_string(location);
+  std::string fs_type_string(fs_type);
   char* secontext = nullptr;
   unsigned mount_flags = 0;
   std::string fs_options;
+
+  // Try overriding fs_type with what we detect via blkid
+  char* detected_fs_type = blkid_get_tag_value(NULL, "TYPE", location_string.c_str());
+  if (detected_fs_type) {
+    LOG(INFO) << "detected filesystem " << detected_fs_type << " for " << location_string;
+    fs_type_string = detected_fs_type;
+    free(detected_fs_type);
+  } else {
+    LOG(INFO) << "could not detect filesystem for " << location_string << ", assuming " <<
+        fs_type_string;
+  }
 
   if (sehandle_) {
     selabel_lookup(sehandle_, &secontext, mount_point_string.c_str(), 0755);
@@ -117,8 +131,8 @@ int UpdaterRuntime::Mount(const std::string_view location, const std::string_vie
     mount_flags = MS_NOATIME | MS_NODEV | MS_NODIRATIME;
   }
 
-  return mount(std::string(location).c_str(), mount_point_string.c_str(),
-               std::string(fs_type).c_str(), mount_flags, fs_options.c_str());
+  return mount(location_string.c_str(), mount_point_string.c_str(),
+               fs_type_string.c_str(), mount_flags, fs_options.c_str());
 }
 
 bool UpdaterRuntime::IsMounted(const std::string_view mount_point) const {
