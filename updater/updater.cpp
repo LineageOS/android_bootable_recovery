@@ -42,6 +42,11 @@
 // registration functions for device-specific extensions.
 #include "register.inc"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "updater";
+}
+
 // Where in the package we expect to find the edify script to execute.
 // (Note it's "updateR-script", not the older "update-script".)
 static constexpr const char* SCRIPT_NAME = "META-INF/com/google/android/updater-script";
