@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a9d85d2_6f9c206a",
+        "filename": "updater/install.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-17T12:55:08Z",
+      "side": 1,
+      "message": "Why not just do away with this if statement altogether?",
+      "revId": "7b5822f5a6de111b2e5937e3b1ad55f86c244ec5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
