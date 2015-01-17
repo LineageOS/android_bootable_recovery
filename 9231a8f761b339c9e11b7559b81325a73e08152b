@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a9d85d2_ef5e5075",
+        "filename": "roots.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 3671
+      },
+      "writtenOn": "2015-01-17T14:29:03Z",
+      "side": 1,
+      "message": "These two lines are impossible to get to now. I also think above we should add a check on blkid_get_tag_value that if it doesn\u0027t return something useful, return with this error.",
+      "revId": "9231a8f761b339c9e11b7559b81325a73e08152b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
