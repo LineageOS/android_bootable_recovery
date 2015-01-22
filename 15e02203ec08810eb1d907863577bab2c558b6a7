@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad55976_9399c622",
+        "filename": "roots.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-22T09:44:06Z",
+      "side": 1,
+      "message": "80 characters",
+      "revId": "15e02203ec08810eb1d907863577bab2c558b6a7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
