@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "fad55976_91341bdf",
+        "filename": "updater/install.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-23T23:18:45Z",
+      "side": 1,
+      "message": "detected_fs_type \u003d",
+      "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_7131a7ec",
+        "filename": "updater/install.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-23T23:18:45Z",
+      "side": 1,
+      "message": "if (detected_fs_type)",
+      "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_d14cd378",
+        "filename": "updater/install.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-23T23:18:45Z",
+      "side": 1,
+      "message": "uiPrintf(state, \"detected filesystem %s for %s\\n\",\t175\n\t\t\tdetected_fs_type, location);\nfstype\u003ddetected_fs_type;",
+      "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad55976_5f558f1b",
         "filename": "updater/install.c",
         "patchSetId": 10
@@ -13,6 +64,23 @@
       "writtenOn": "2015-01-23T22:14:09Z",
       "side": 1,
       "message": "This causes install to fail on encrypted devices\n\ncould not detect filesystem for /dev/block/platform/msm_sdcc.1/by-name/userdata",
+      "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_b1515f11",
+        "filename": "updater/install.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-23T23:18:45Z",
+      "side": 1,
+      "message": "uiPrintf(\"filesytem type not detected using fs_type from updater_script\");\n\ninstead?",
       "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
