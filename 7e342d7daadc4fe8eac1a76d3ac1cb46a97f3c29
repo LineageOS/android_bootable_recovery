@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad55976_5f558f1b",
+        "filename": "updater/install.c",
+        "patchSetId": 10
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-23T22:14:09Z",
+      "side": 1,
+      "message": "This causes install to fail on encrypted devices\n\ncould not detect filesystem for /dev/block/platform/msm_sdcc.1/by-name/userdata",
+      "revId": "7e342d7daadc4fe8eac1a76d3ac1cb46a97f3c29",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
