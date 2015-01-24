@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad55976_9476c93c",
+        "filename": "roots.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-24T13:01:03Z",
+      "side": 1,
+      "message": "This logic looks like it can be combined with the while condition.",
+      "revId": "50968fabb7db23349338ff2497fd9810d1c45b48",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_3479dd30",
+        "filename": "roots.cpp",
+        "patchSetId": 12
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-24T13:01:03Z",
+      "side": 1,
+      "message": "Why not save the original candidate instead of re-fetching?",
+      "revId": "50968fabb7db23349338ff2497fd9810d1c45b48",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
