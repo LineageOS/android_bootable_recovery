@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad55976_25f3650c",
+        "filename": "roots.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-25T10:03:29Z",
+      "side": 1,
+      "message": "Might be worth it to short circuit on rec \u003d\u003d NULL here to make it easier to read.\n\nif (rec \u003d\u003d NULL) {\nreturn NULL;\n}",
+      "revId": "d2569b65d83bf83906892b0e97230dbea5cc75f8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_05f8e1e4",
+        "filename": "roots.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-25T10:03:29Z",
+      "side": 1,
+      "message": "Probably worth it to short circuit detected_fs_type \u003d\u003d NULL here to make it easier to read also.\n\nif (detected_fs_type \u003d\u003d NULL) { return rec; }",
+      "revId": "d2569b65d83bf83906892b0e97230dbea5cc75f8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
