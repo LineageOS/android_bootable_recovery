@@ -33,6 +33,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_760075ab",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-26T18:00:04Z",
+      "side": 1,
+      "message": "This is done because fs_mgr uses the first fstab entry yet release tools always defaults to the last entry..... Not sure how to fix the release tool parsing of fstab to match fs_mgr",
+      "parentUuid": "fad55976_36f6fdd7",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
