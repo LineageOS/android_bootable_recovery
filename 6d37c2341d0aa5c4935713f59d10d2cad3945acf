@@ -51,6 +51,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_5620d149",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 3671
+      },
+      "writtenOn": "2015-01-26T18:11:08Z",
+      "side": 1,
+      "message": "Not sure how you\u0027d really add more intelligence higher up. This is getting its parameters right from edify. It could be moved and switched earlier, but you really don\u0027t want to perform this on an MTD partition, so that\u0027s why I put it here.\n\nI agree about the indenting though. Its ugly and I wish I could have avoided it.",
+      "parentUuid": "fad55976_760075ab",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
