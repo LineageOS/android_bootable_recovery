@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad55976_56f9f1c7",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-26T17:56:20Z",
+      "side": 1,
+      "message": "I\u0027m not really sure I like the idea of indenting everything here.",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_36f6fdd7",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-26T17:56:20Z",
+      "side": 1,
+      "message": "It kind of weirds me out to completely ignore the fs_type parameter here and just do whatever with the matching filesystem. Can\u0027t we put more intelligence further up the stack so we don\u0027t have to do this?",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
