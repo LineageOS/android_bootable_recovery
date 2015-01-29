@@ -87,6 +87,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_c77d26e9",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-29T15:03:39Z",
+      "side": 1,
+      "message": "It only changes to detected type if there is a detectable format in place, otherwise it uses the value from the updater script. I can\u0027t see a case where a user would have it previously formatted to an invalid type? Plus this only kicks in if ext4 or f2fs in the updater script to begin with.",
+      "parentUuid": "fad55976_a720f2f8",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
