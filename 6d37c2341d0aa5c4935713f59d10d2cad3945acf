@@ -141,6 +141,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_67db9aee",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-29T15:30:12Z",
+      "side": 1,
+      "message": "ext2/3 are mounted as ext4 and are mutually compatible. This would leave you potentially unable to format a partition.",
+      "parentUuid": "fad55976_47513662",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
