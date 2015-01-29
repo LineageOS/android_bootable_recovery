@@ -123,6 +123,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_47513662",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-01-29T15:24:43Z",
+      "side": 1,
+      "message": "if ((detected_fs_type !\u003d NULL \u0026\u0026 strcmp(fs_type, detected_fs_type) !\u003d 0) \u0026\u0026\n        ((strcmp(detected_fs_type, \"ext4\") \u003d\u003d 0 || strcmp(detected_fs_type, \"f2fs\") \u003d\u003d 0)) {\n    fs_type \u003d detected_fs_type;\n}",
+      "parentUuid": "fad55976_a7775201",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
