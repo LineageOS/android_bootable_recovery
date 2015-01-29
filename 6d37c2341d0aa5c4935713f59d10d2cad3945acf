@@ -105,6 +105,24 @@
       "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad55976_a7775201",
+        "filename": "updater/install.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-01-29T15:09:18Z",
+      "side": 1,
+      "message": "You may get detected_fs_type \u003d \"ext2\" or \"ext3\". It may not be the user who has formatted to what you consider an \"invalid\" type. Some factories have some partitions formatted as ext2 or ext3.",
+      "parentUuid": "fad55976_c77d26e9",
+      "revId": "6d37c2341d0aa5c4935713f59d10d2cad3945acf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
