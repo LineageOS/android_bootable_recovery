@@ -49,6 +49,9 @@ on init
     # Start essential services
     start servicemanager
 
+    # pstore/ramoops previous console log
+    mount pstore pstore /sys/fs/pstore
+
 on boot
     ifup lo
     hostname localhost
