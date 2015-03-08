@@ -37,6 +37,9 @@ on init
     write /proc/sys/kernel/panic_on_oops 1
     write /proc/sys/vm/max_map_count 1000000
 
+    # pstore/ramoops previous console log
+    mount pstore pstore /sys/fs/pstore
+
 on boot
     ifup lo
     hostname localhost
