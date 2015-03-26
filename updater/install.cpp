@@ -1290,6 +1290,13 @@ Value* RebootNowFn(const char* name, State* state, const std::vector<std::unique
   android::base::SetProperty(ANDROID_RB_PROPERTY, reboot_cmd);
 
   sleep(5);
+
+  // Attempt to reboot using older methods in case the recovery
+  // that we are updating does not support init reboots
+  android_reboot(ANDROID_RB_RESTART, 0, 0);
+
+  sleep(5);
+
   return ErrorAbort(state, kRebootFailure, "%s() failed to reboot", name);
 }
 
