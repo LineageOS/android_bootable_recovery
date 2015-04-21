@@ -35,6 +35,7 @@ class MinuiBackendFbdev : public MinuiBackend {
 
   GRSurface gr_framebuffer[2];
   bool double_buffered;
+  bool force_single_buffered = FORCED_SINGLE_BUFFERED;
   GRSurface* gr_draw;
   int displayed_buffer;
   fb_var_screeninfo vi;

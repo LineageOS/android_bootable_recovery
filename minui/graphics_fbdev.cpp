@@ -109,7 +109,7 @@ GRSurface* MinuiBackendFbdev::Init() {
   memset(gr_framebuffer[0].data, 0, gr_framebuffer[0].height * gr_framebuffer[0].row_bytes);
 
   /* check if we can use double buffering */
-  if (vi.yres * fi.line_length * 2 <= fi.smem_len) {
+  if (!force_single_buffered && (vi.yres * fi.line_length * 2 <= fi.smem_len)) {
     double_buffered = true;
 
     memcpy(gr_framebuffer + 1, gr_framebuffer, sizeof(GRSurface));
