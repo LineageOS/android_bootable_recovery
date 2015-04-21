@@ -28,6 +28,7 @@
 
 #include <memory>
 
+#include <android-base/properties.h>
 #include <android-base/unique_fd.h>
 
 #include "minui/minui.h"
@@ -111,7 +112,8 @@ GRSurface* MinuiBackendFbdev::Init() {
                              gr_framebuffer[0]->row_bytes, gr_framebuffer[0]->pixel_bytes);
 
   /* check if we can use double buffering */
-  if (vi.yres * fi.line_length * 2 <= fi.smem_len) {
+  if (!android::base::GetBoolProperty("ro.minui.force_single_buffered", false) &&
+      (vi.yres * fi.line_length * 2 <= fi.smem_len)) {
     double_buffered = true;
 
     gr_framebuffer[1]->buffer_ =
