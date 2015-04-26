@@ -121,6 +121,10 @@ endif
 
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 
+ifeq ($(BOARD_HAS_DOWNLOAD_MODE), true)
+    LOCAL_CFLAGS += -DDOWNLOAD_MODE
+endif
+
 LOCAL_CFLAGS += -DUSE_EXT4 -DMINIVOLD
 LOCAL_C_INCLUDES += system/extras/ext4_utils system/core/fs_mgr/include external/fsck_msdos
 LOCAL_C_INCLUDES += system/vold
