@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7fb54a_d4e87519",
+        "filename": "updater/blockimg.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 8964
+      },
+      "writtenOn": "2015-04-28T08:59:35Z",
+      "side": 1,
+      "message": "printf(\" blkdiscard failed, ignoring: %s\\n\", strerror(errno));",
+      "range": {
+        "startLine": 737,
+        "startChar": 24,
+        "endLine": 738,
+        "endChar": 47
+      },
+      "revId": "382c87a5cdc544de3a005752b4843bb6d54d3ce8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
