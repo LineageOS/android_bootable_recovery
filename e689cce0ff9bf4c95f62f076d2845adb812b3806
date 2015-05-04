@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a89bdaa_5f62cbd9",
+        "filename": "updater/blockimg.c",
+        "patchSetId": 5
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-05-04T16:28:12Z",
+      "side": 1,
+      "message": "Why not just skip this call altogether then?",
+      "revId": "e689cce0ff9bf4c95f62f076d2845adb812b3806",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
