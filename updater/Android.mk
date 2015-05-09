@@ -94,6 +94,10 @@ LOCAL_CFLAGS := \
     -Wno-unused-parameter \
     -Werror
 
+ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
+    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
+endif
+
 LOCAL_STATIC_LIBRARIES := \
     libupdater \
     $(TARGET_RECOVERY_UPDATER_LIBS) \
