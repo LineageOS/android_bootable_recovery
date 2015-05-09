@@ -32,13 +32,11 @@
 #include <time.h>
 #include <unistd.h>
 #include <fec/io.h>
-
 #include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
 #include <android-base/logging.h>
 #include <android-base/parseint.h>
 #include <android-base/strings.h>
@@ -48,7 +46,6 @@
 #include <openssl/sha.h>
 #include <private/android_filesystem_config.h>
 #include <ziparchive/zip_archive.h>
-
 #include "edify/expr.h"
 #include "error_code.h"
 #include "ota_io.h"
@@ -56,7 +53,6 @@
 #include "updater/install.h"
 #include "updater/rangeset.h"
 #include "updater/updater.h"
-
 // Set this to 0 to interpret 'erase' transfers to mean do a
 // BLKDISCARD ioctl (the normal behavior).  Set to 1 to interpret
 // erase to mean fill the region with zeroes.
@@ -66,11 +62,9 @@ static constexpr size_t BLOCKSIZE = 4096;
 static constexpr const char* STASH_DIRECTORY_BASE = "/cache/recovery";
 static constexpr mode_t STASH_DIRECTORY_MODE = 0700;
 static constexpr mode_t STASH_FILE_MODE = 0600;
-
 static CauseCode failure_type = kNoCause;
 static bool is_retry = false;
 static std::unordered_map<std::string, RangeSet> stash_map;
-
 static int read_all(int fd, uint8_t* data, size_t size) {
     size_t so_far = 0;
     while (so_far < size) {
@@ -1369,10 +1363,12 @@ static int PerformCommandErase(CommandParameters& params) {
       // length in bytes
       blocks[1] = (range.second - range.first) * static_cast<uint64_t>(BLOCKSIZE);
 
+#ifndef SUPPRESS_EMMC_WIPE
       if (ioctl(params.fd, BLKDISCARD, &blocks) == -1) {
         PLOG(ERROR) << "BLKDISCARD ioctl failed";
         return -1;
       }
+#endif
     }
   }
 
