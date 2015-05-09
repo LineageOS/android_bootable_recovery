@@ -49,6 +49,10 @@ LOCAL_STATIC_LIBRARIES += \
 LOCAL_C_INCLUDES += external/e2fsprogs/lib
 LOCAL_STATIC_LIBRARIES += libext2_blkid libext2_uuid
 
+ifeq ($(BOARD_SUPPRESS_EMMC_WIPE),true)
+    LOCAL_CFLAGS += -DSUPPRESS_EMMC_WIPE
+endif
+
 LOCAL_STATIC_LIBRARIES += $(TARGET_RECOVERY_UPDATER_LIBS) $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS)
 LOCAL_STATIC_LIBRARIES += libapplypatch libbase libotafault libedify libmtdutils libminzip libz
 LOCAL_STATIC_LIBRARIES += libbz
