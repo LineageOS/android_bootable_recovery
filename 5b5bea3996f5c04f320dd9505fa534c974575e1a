@@ -16,6 +16,24 @@
       "revId": "5b5bea3996f5c04f320dd9505fa534c974575e1a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a89bdaa_7e6228da",
+        "filename": "updater/blockimg.c",
+        "patchSetId": 6
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-05-11T07:00:42Z",
+      "side": 1,
+      "message": "You\u0027re right, it is. I may be mixing this up with the other commit that does something similar.",
+      "parentUuid": "9a89bdaa_de789492",
+      "revId": "5b5bea3996f5c04f320dd9505fa534c974575e1a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
