@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f1d235d_bb7ce8b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-08-25T21:20:11Z",
+      "side": 1,
+      "message": "Line break",
+      "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f1d235d_9b4b6c86",
+        "filename": "updater/install.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2015-08-25T21:20:11Z",
+      "side": 1,
+      "message": "I\u0027m not sure you want to discard the partition_type value altogether. I remember we had this discussion before, the real issue is that the functions which call this function should be doing the detection, but are sometimes reading off fstab instead.",
+      "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
