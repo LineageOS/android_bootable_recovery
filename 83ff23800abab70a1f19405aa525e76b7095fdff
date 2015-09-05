@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3f1d235d_a198276a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 13908
+      },
+      "writtenOn": "2015-09-05T16:30:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f1d235d_bb7ce8b5",
+      "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f1d235d_9b4b6c86",
         "filename": "updater/install.c",
         "patchSetId": 1
@@ -30,6 +48,41 @@
       "writtenOn": "2015-08-25T21:20:11Z",
       "side": 1,
       "message": "I\u0027m not sure you want to discard the partition_type value altogether. I remember we had this discussion before, the real issue is that the functions which call this function should be doing the detection, but are sometimes reading off fstab instead.",
+      "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f1d235d_61a20f9d",
+        "filename": "updater/install.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 13908
+      },
+      "writtenOn": "2015-09-05T16:30:53Z",
+      "side": 1,
+      "message": "I think it is impossible to make the call before.",
+      "parentUuid": "3f1d235d_9b4b6c86",
+      "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f1d235d_819d2b5b",
+        "filename": "updater/install.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 1708,
+      "author": {
+        "id": 13908
+      },
+      "writtenOn": "2015-09-05T16:30:53Z",
+      "side": 1,
+      "message": "FormatFn is bound with format\u0027s edify script.\n\nI think it is called directly, there is no way to make the detection prior to this.",
       "revId": "83ff23800abab70a1f19405aa525e76b7095fdff",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
