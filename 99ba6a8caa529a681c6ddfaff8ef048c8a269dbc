@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f1d235d_01a91b7a",
+        "filename": "updater/install.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 13908
+      },
+      "writtenOn": "2015-09-05T16:30:27Z",
+      "side": 1,
+      "message": "Should this line specify be\n\n#if defined(USE_EXT4) || defined(USE_F2FS)  \n\n?\n\nIt would recquire to define the USE_F2FS variable as well",
+      "revId": "99ba6a8caa529a681c6ddfaff8ef048c8a269dbc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
