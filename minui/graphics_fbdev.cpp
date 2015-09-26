@@ -44,6 +44,11 @@ void MinuiBackendFbdev::SetDisplayedFramebuffer(unsigned n) {
   if (ioctl(fb_fd, FBIOPUT_VSCREENINFO, &vi) < 0) {
     perror("active fb swap failed");
   }
+#ifdef BOARD_RECOVERY_NEEDS_FBIOPAN_DISPLAY
+  if (ioctl(fb_fd, FBIOPAN_DISPLAY, &vi) < 0) {
+    perror("pan failed");
+  }
+#endif
   displayed_buffer = n;
 }
 
