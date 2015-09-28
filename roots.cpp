@@ -202,27 +202,24 @@ int format_volume(const char* volume, const char* directory) {
                 result = make_ext4fs_directory(v->blk_device, length, volume, sehandle, directory);
             }
         } else {   /* Has to be f2fs because we checked earlier. */
-            if (v->key_loc != NULL && strcmp(v->key_loc, "footer") == 0 && length < 0) {
-                LOG(ERROR) << "format_volume: crypt footer + negative length (" << length
-                           << ") not supported on " << v->fs_type;
-                return -1;
-            }
+            char bytes_reserved[20], num_sectors[20];
+            const char* f2fs_argv[6] = {"mkfs.f2fs", "-t1"};
             if (length < 0) {
-                LOG(ERROR) << "format_volume: negative length (" << length
-                           << ") not supported on " << v->fs_type;
-                return -1;
-            }
-            char *num_sectors;
-            if (asprintf(&num_sectors, "%zd", length / 512) <= 0) {
-                LOG(ERROR) << "format_volume: failed to create " << v->fs_type
-                           << " command for " << v->blk_device;
-                return -1;
+                snprintf(bytes_reserved, sizeof(bytes_reserved), "%zd", -length);
+                f2fs_argv[2] = "-r";
+                f2fs_argv[3] = bytes_reserved;
+                f2fs_argv[4] = v->blk_device;
+                f2fs_argv[5] = NULL;
+            } else {
+                /* num_sectors can be zero which mean whole device space */
+                snprintf(num_sectors, sizeof(num_sectors), "%zd", length / 512);
+                f2fs_argv[2] = v->blk_device;
+                f2fs_argv[3] = num_sectors;
+                f2fs_argv[4] = NULL;
             }
             const char *f2fs_path = "/sbin/mkfs.f2fs";
-            const char* const f2fs_argv[] = {"mkfs.f2fs", "-t", "-d1", v->blk_device, num_sectors, NULL};
 
             result = exec_cmd(f2fs_path, (char* const*)f2fs_argv);
-            free(num_sectors);
         }
         if (result != 0) {
             PLOG(ERROR) << "format_volume: make " << v->fs_type << " failed on " << v->blk_device;
