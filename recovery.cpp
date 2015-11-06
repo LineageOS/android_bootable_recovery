@@ -713,8 +713,8 @@ get_menu_selection(const char* const * headers, const char* const * items,
                 ui->EndMenu();
                 return 0; // XXX fixme
             }
-        } else if (key == -2) { // we are returning from ui_cancel_wait_key(): trigger a GO_BACK
-            return Device::kGoBack;
+        } else if (key == -2) { // we are returning from ui_cancel_wait_key(): no action
+            return Device::kNoAction;
         }
         else if (key == -6) {
             return Device::kRefresh;
@@ -1164,7 +1164,10 @@ static int apply_from_storage(Device* device, const std::string& id, bool* wipe_
     int result = INSTALL_ERROR;
     int status;
     bool waited = false;
-    for (int i = 0; i < SDCARD_INSTALL_TIMEOUT; ++i) {
+    time_t start_time = time(NULL);
+    time_t now = start_time;
+
+    while (now - start_time < SDCARD_INSTALL_TIMEOUT) {
         if (waitpid(child, &status, WNOHANG) == -1) {
             result = INSTALL_ERROR;
             waited = true;
@@ -1173,8 +1176,9 @@ static int apply_from_storage(Device* device, const std::string& id, bool* wipe_
 
         struct stat sb;
         if (stat(FUSE_SIDELOAD_HOST_PATHNAME, &sb) == -1) {
-            if (errno == ENOENT && i < SDCARD_INSTALL_TIMEOUT-1) {
+            if (errno == ENOENT && (now - start_time) < SDCARD_INSTALL_TIMEOUT-1) {
                 sleep(1);
+				now = time(NULL);
                 continue;
             } else {
                 LOGE("Timed out waiting for the fuse-provided package.\n");
@@ -1243,7 +1247,18 @@ refresh:
             break;
         }
         if (chosen == item_sideload) {
-            status = apply_from_adb(ui, &wipe_cache, TEMPORARY_INSTALL_FILE);
+            static const char* headers[] = {  "ADB Sideload",
+                                        "",
+                                        NULL
+            };
+            static const char* list[] = { "Cancel sideload", NULL };
+
+            start_sideload(ui, &wipe_cache, TEMPORARY_INSTALL_FILE);
+            int item = get_menu_selection(headers, list, 0, 0, device);
+            if (item != Device::kNoAction) {
+                stop_sideload();
+            }
+            status = wait_sideload();
         }
         else {
             std::string id = volumes[chosen - 1].mId;
@@ -1307,15 +1322,15 @@ prompt_and_wait(Device* device, int status) {
                     break;
 
                 case Device::APPLY_UPDATE:
-                    {
-                        status = show_apply_update_menu(device);
+                    status = show_apply_update_menu(device);
 
-                        if (status == INSTALL_SUCCESS && should_wipe_cache) {
-                            if (!wipe_cache(false, device)) {
-                                status = INSTALL_ERROR;
-                            }
+                    if (status == INSTALL_SUCCESS && should_wipe_cache) {
+                        if (!wipe_cache(false, device)) {
+                            status = INSTALL_ERROR;
                         }
+                    }
 
+                    if (status >= 0 && status != INSTALL_NONE) {
                         if (status != INSTALL_SUCCESS) {
                             ui->SetBackground(RecoveryUI::ERROR);
                             ui->Print("Installation aborted.\n");
@@ -1324,9 +1339,8 @@ prompt_and_wait(Device* device, int status) {
                             return Device::NO_ACTION;  // reboot if logs aren't visible
                         } else {
                             ui->Print("\nInstall complete.\n");
+                        }
                     }
-                    break;
-                }
                     break;
 
                 case Device::VIEW_RECOVERY_LOGS:
@@ -1337,26 +1351,26 @@ prompt_and_wait(Device* device, int status) {
                     run_graphics_test(device);
                     break;
 
-            case Device::MOUNT_SYSTEM:
-                char system_root_image[PROPERTY_VALUE_MAX];
-                property_get("ro.build.system_root_image", system_root_image, "");
+                case Device::MOUNT_SYSTEM:
+                    char system_root_image[PROPERTY_VALUE_MAX];
+                    property_get("ro.build.system_root_image", system_root_image, "");
 
-                // For a system image built with the root directory (i.e.
-                // system_root_image == "true"), we mount it to /system_root, and symlink /system
-                // to /system_root/system to make adb shell work (the symlink is created through
-                // the build system).
-                // Bug: 22855115
-                if (strcmp(system_root_image, "true") == 0) {
-                    if (ensure_path_mounted_at("/", "/system_root") != -1) {
-                        ui->Print("Mounted /system.\n");
+                    // For a system image built with the root directory (i.e.
+                    // system_root_image == "true"), we mount it to /system_root, and symlink /system
+                    // to /system_root/system to make adb shell work (the symlink is created through
+                    // the build system).
+                    // Bug: 22855115
+                    if (strcmp(system_root_image, "true") == 0) {
+                        if (ensure_path_mounted_at("/", "/system_root") != -1) {
+                            ui->Print("Mounted /system.\n");
+                        }
+                    } else {
+                        if (ensure_path_mounted("/system") != -1) {
+                            ui->Print("Mounted /system.\n");
+                        }
                     }
-                } else {
-                    if (ensure_path_mounted("/system") != -1) {
-                        ui->Print("Mounted /system.\n");
-                    }
-                }
-
-                break;
+                    break;
+            }
         }
     }
 }
@@ -1889,7 +1903,8 @@ int main(int argc, char **argv) {
         if (!sideload_auto_reboot) {
             ui->ShowText(true);
         }
-        status = apply_from_adb(ui, &should_wipe_cache, TEMPORARY_INSTALL_FILE);
+        start_sideload(ui, &should_wipe_cache, TEMPORARY_INSTALL_FILE);
+        status = wait_sideload();
         if (status == INSTALL_SUCCESS && should_wipe_cache) {
             if (!wipe_cache(false, device)) {
                 status = INSTALL_ERROR;
