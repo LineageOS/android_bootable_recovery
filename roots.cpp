@@ -273,7 +273,60 @@ static int exec_cmd(const char* path, char* const argv[]) {
     return WEXITSTATUS(status);
 }
 
-int format_volume(const char* volume, const char* directory) {
+static int rmtree_except(const char* path, const char* except)
+{
+    char pathbuf[PATH_MAX];
+    int rc = 0;
+    DIR* dp = opendir(path);
+    if (dp == NULL) {
+        return -1;
+    }
+    struct dirent* de;
+    while ((de = readdir(dp)) != NULL) {
+        if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
+            continue;
+        if (except && !strcmp(de->d_name, except))
+            continue;
+        struct stat st;
+        snprintf(pathbuf, sizeof(pathbuf), "%s/%s", path, de->d_name);
+        rc = lstat(pathbuf, &st);
+        if (rc != 0) {
+            LOG(ERROR) << "Failed to stat " << pathbuf;
+            break;
+        }
+        if (S_ISDIR(st.st_mode)) {
+            rc = rmtree_except(pathbuf, NULL);
+            if (rc != 0)
+                break;
+            rc = rmdir(pathbuf);
+        }
+        else {
+            rc = unlink(pathbuf);
+        }
+        if (rc != 0) {
+            LOG(INFO) << "Failed to remove " << pathbuf << ": " << strerror(errno);
+            break;
+        }
+    }
+    closedir(dp);
+    return rc;
+}
+
+int format_volume(const char* volume, const char* directory, bool force) {
+    if (strcmp(volume, "media") == 0) {
+        if (!vdc->isEmulatedStorage()) {
+            return 0;
+        }
+        if (ensure_path_mounted("/data") != 0) {
+            LOG(ERROR) << "format_volume failed to mount /data";
+            return -1;
+        }
+        int rc = 0;
+        rc = rmtree_except("/data/media", NULL);
+        ensure_path_unmounted("/data");
+        return rc;
+    }
+
     Volume* v = volume_for_path(volume);
     if (v == NULL) {
         LOG(ERROR) << "unknown volume \"" << volume << "\"";
@@ -287,6 +340,38 @@ int format_volume(const char* volume, const char* directory) {
     if (strcmp(v->mount_point, volume) != 0) {
         LOG(ERROR) << "can't give path \"" << volume << "\" to format_volume";
         return -1;
+    }
+
+    if (!force && strcmp(volume, "/data") == 0 && vdc->isEmulatedStorage()) {
+        if (ensure_path_mounted("/data") == 0) {
+            // Preserve .layout_version to avoid "nesting bug"
+            LOG(INFO) << "Preserving layout version";
+            unsigned char layout_buf[256];
+            ssize_t layout_buflen = -1;
+            int fd;
+            fd = open("/data/.layout_version", O_RDONLY);
+            if (fd != -1) {
+                layout_buflen = read(fd, layout_buf, sizeof(layout_buf));
+                close(fd);
+            }
+
+            int rc = rmtree_except("/data", "media");
+
+            // Restore .layout_version
+            if (layout_buflen > 0) {
+                LOG(INFO) << "Restoring layout version";
+                fd = open("/data/.layout_version", O_WRONLY | O_CREAT | O_EXCL, 0600);
+                if (fd != -1) {
+                    write(fd, layout_buf, layout_buflen);
+                    close(fd);
+                }
+            }
+
+            ensure_path_unmounted(volume);
+
+            return rc;
+        }
+        LOG(ERROR) << "format_volume failed to mount /data, formatting instead";
     }
 
     if (ensure_path_unmounted(volume) != 0) {
@@ -358,8 +443,8 @@ int format_volume(const char* volume, const char* directory) {
     return -1;
 }
 
-int format_volume(const char* volume) {
-  return format_volume(volume, nullptr);
+int format_volume(const char* volume, bool force) {
+  return format_volume(volume, nullptr, force);
 }
 
 int setup_install_mounts() {
