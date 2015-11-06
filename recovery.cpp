@@ -85,6 +85,7 @@ static const struct option OPTIONS[] = {
   { "retry_count", required_argument, NULL, 'n' },
   { "wipe_data", no_argument, NULL, 'w' },
   { "wipe_cache", no_argument, NULL, 'c' },
+  { "wipe_media", no_argument, NULL, 'm' },
   { "show_text", no_argument, NULL, 't' },
   { "sideload", no_argument, NULL, 's' },
   { "sideload_auto_reboot", no_argument, NULL, 'a' },
@@ -562,7 +563,7 @@ struct saved_log_file {
   std::string data;
 };
 
-static bool erase_volume(const char* volume) {
+static bool erase_volume(const char* volume, bool force = false) {
   bool is_cache = (strcmp(volume, CACHE_ROOT) == 0);
   bool is_data = (strcmp(volume, DATA_ROOT) == 0);
 
@@ -571,7 +572,7 @@ static bool erase_volume(const char* volume) {
 
   std::vector<saved_log_file> log_files;
 
-  if (is_cache) {
+  if (!force && is_cache) {
     // If we're reformatting /cache, we load any past logs
     // (i.e. "/cache/recovery/last_*") and the current log
     // ("/cache/recovery/log") into memory, so we can restore them after
@@ -611,7 +612,9 @@ static bool erase_volume(const char* volume) {
 
   ui->Print("Formatting %s...\n", volume);
 
-  ensure_path_unmounted(volume);
+  if (volume[0] == '/') {
+    ensure_path_unmounted(volume);
+  }
 
   int result;
 
@@ -632,10 +635,10 @@ static bool erase_volume(const char* volume) {
     remove(CONVERT_FBE_FILE);
     rmdir(CONVERT_FBE_DIR);
   } else {
-    result = format_volume(volume);
+    result = format_volume(volume, force);
   }
 
-  if (is_cache) {
+  if (!force && is_cache) {
     // Re-create the log dir and write back the log entries.
     if (ensure_path_mounted(CACHE_LOG_DIR) == 0 &&
         dirCreateHierarchy(CACHE_LOG_DIR, 0777, nullptr, false, sehandle) == 0) {
@@ -806,13 +809,13 @@ static bool ask_to_wipe_data(Device* device) {
 }
 
 // Return true on success.
-static bool wipe_data(Device* device) {
+static bool wipe_data(Device* device, bool force = false) {
     modified_flash = true;
 
     ui->Print("\n-- Wiping data...\n");
     bool success =
         device->PreWipeData() &&
-        erase_volume("/data") &&
+        erase_volume("/data", force) &&
         (has_cache ? erase_volume("/cache") : true) &&
         device->PostWipeData();
     ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
@@ -839,7 +842,7 @@ static bool prompt_and_wipe_data(Device* device) {
       return true;  // Just reboot, no wipe; not a failure, user asked for it
     }
     if (ask_to_wipe_data(device)) {
-      return wipe_data(device);
+      return wipe_data(device, true);
     }
   }
 }
@@ -860,6 +863,19 @@ static bool wipe_cache(bool should_confirm, Device* device) {
     ui->Print("\n-- Wiping cache...\n");
     bool success = erase_volume("/cache");
     ui->Print("Cache wipe %s.\n", success ? "complete" : "failed");
+    return success;
+}
+
+// Return true on success.
+static bool wipe_media(Device* device) {
+    modified_flash = true;
+
+    ui->Print("\n-- Wiping media...\n");
+    bool success =
+        device->PreWipeMedia() &&
+        erase_volume("media") &&
+        device->PostWipeData();
+    ui->Print("Media wipe %s.\n", success ? "complete" : "failed");
     return success;
 }
 
@@ -1231,6 +1247,17 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
         }
         break;
 
+      case Device::WIPE_FULL:
+        if (ui->IsTextVisible()) {
+          if (ask_to_wipe_data(device)) {
+            wipe_data(device, true);
+          }
+        } else {
+          wipe_data(device, true);
+          return Device::NO_ACTION;
+        }
+        break;
+
       case Device::WIPE_CACHE:
         wipe_cache(ui->IsTextVisible(), device);
         if (!ui->IsTextVisible()) return Device::NO_ACTION;
@@ -1568,6 +1595,7 @@ int main(int argc, char **argv) {
     bool should_wipe_cache = false;
     bool should_wipe_ab = false;
     size_t wipe_package_size = 0;
+    bool should_wipe_media = false;
     bool show_text = false;
     bool sideload = false;
     bool sideload_auto_reboot = false;
@@ -1585,6 +1613,7 @@ int main(int argc, char **argv) {
         case 'u': update_package = optarg; break;
         case 'w': should_wipe_data = true; break;
         case 'c': should_wipe_cache = true; break;
+        case 'm': should_wipe_media = true; break;
         case 't': show_text = true; break;
         case 's': sideload = true; break;
         case 'a': sideload = true; sideload_auto_reboot = true; break;
@@ -1724,7 +1753,7 @@ int main(int argc, char **argv) {
             }
         }
     } else if (should_wipe_data) {
-        if (!wipe_data(device)) {
+        if (!wipe_data(device, should_wipe_media)) {
             status = INSTALL_ERROR;
         }
     } else if (should_prompt_and_wipe_data) {
@@ -1736,6 +1765,10 @@ int main(int argc, char **argv) {
         ui->ShowText(false);
     } else if (should_wipe_cache) {
         if (!wipe_cache(false, device)) {
+            status = INSTALL_ERROR;
+        }
+    } else if (should_wipe_media) {
+        if (!wipe_media(device)) {
             status = INSTALL_ERROR;
         }
     } else if (should_wipe_ab) {
