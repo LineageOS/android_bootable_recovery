@@ -20,7 +20,10 @@ static const char* MENU_ITEMS[] = {
     "Reboot system now",
     "Reboot to bootloader",
     "Apply update",
-    "Wipe data/factory reset",
+#ifndef RELEASE_BUILD
+    "Wipe data (keep media)",
+#endif
+    "Full factory reset",
 #ifndef AB_OTA_UPDATER
     "Wipe cache partition",
 #endif  // !AB_OTA_UPDATER
@@ -35,7 +38,10 @@ static const Device::BuiltinAction MENU_ACTIONS[] = {
     Device::REBOOT,
     Device::REBOOT_BOOTLOADER,
     Device::APPLY_UPDATE,
+#ifndef RELEASE_BUILD
     Device::WIPE_DATA,
+#endif
+    Device::WIPE_FULL,
 #ifndef AB_OTA_UPDATER
     Device::WIPE_CACHE,
 #endif  // !AB_OTA_UPDATER
