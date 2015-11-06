@@ -116,6 +116,9 @@ class RecoveryUI {
   // Waits for a key and return it. May return -1 after timeout.
   virtual int WaitKey();
 
+    // Cancel a WaitKey()
+    virtual void CancelWaitKey();
+
   virtual bool IsKeyPressed(int key);
   virtual bool IsLongPress();
 

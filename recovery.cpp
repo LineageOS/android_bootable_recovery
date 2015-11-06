@@ -1164,7 +1164,15 @@ refresh:
             break;
         }
         if (chosen == item_sideload) {
-            status = apply_from_adb(wipe_cache, TEMPORARY_INSTALL_FILE);
+            static const char* headers[] = { "ADB Sideload", nullptr };
+            static const char* list[] = { "Cancel sideload", nullptr };
+
+            start_sideload(wipe_cache, TEMPORARY_INSTALL_FILE);
+            int item = get_menu_selection(headers, list, 0, 0, device);
+            if (item != Device::kNoAction) {
+                stop_sideload();
+            }
+            status = wait_sideload();
         }
         else {
             std::string id = volumes[chosen - 1].mId;
@@ -1242,14 +1250,16 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
             }
           }
 
-          if (status != INSTALL_SUCCESS) {
-            ui->SetBackground(RecoveryUI::ERROR);
-            ui->Print("Installation aborted.\n");
-            copy_logs();
-          } else if (!ui->IsTextVisible()) {
-            return Device::NO_ACTION;  // reboot if logs aren't visible
-          } else {
-            ui->Print("\nInstall complete.\n");
+          if (status > 0 && status != INSTALL_NONE) {
+            if (status != INSTALL_SUCCESS) {
+              ui->SetBackground(RecoveryUI::ERROR);
+              ui->Print("Installation aborted.\n");
+              copy_logs();
+            } else if (!ui->IsTextVisible()) {
+              return Device::NO_ACTION;  // reboot if logs aren't visible
+            } else {
+              ui->Print("\nInstall complete.\n");
+            }
           }
         }
         break;
@@ -1746,7 +1756,8 @@ int main(int argc, char **argv) {
         if (!sideload_auto_reboot) {
             ui->ShowText(true);
         }
-        status = apply_from_adb(&should_wipe_cache, TEMPORARY_INSTALL_FILE);
+        start_sideload(&should_wipe_cache, TEMPORARY_INSTALL_FILE);
+        status = wait_sideload();
         if (status == INSTALL_SUCCESS && should_wipe_cache) {
             if (!wipe_cache(false, device)) {
                 status = INSTALL_ERROR;
