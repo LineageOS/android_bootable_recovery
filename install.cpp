@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <setjmp.h>
 #include <sys/mount.h>
 
 #include <chrono>
@@ -297,6 +298,12 @@ update_binary_command(const char* path, ZipArchive* zip, int retry_count,
     return 0;
 }
 #endif  // !AB_OTA_UPDATER
+
+static jmp_buf jb;
+static void sig_bus(int sig)
+{
+    longjmp(jb, 1);
+}
 
 // If the package contains an update binary, extract it and run it.
 static int
@@ -666,9 +673,20 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
     // Verify package.
     ui->Print("Verifying update package...\n");
     auto t0 = std::chrono::system_clock::now();
-    int err = verify_file(const_cast<unsigned char*>(package_data), package_size, loadedKeys);
-    std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
-    ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
+    int err;
+
+    // Because we mmap() the update file which is backed by FUSE, we get
+    // SIGBUS when the host aborts the transfer.  We handle this by using
+    // setjmp/longjmp.
+    signal(SIGBUS, sig_bus);
+    if (setjmp(jb) == 0) {
+        err = verify_file(const_cast<unsigned char*>(package_data), package_size, loadedKeys);
+        std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
+        ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
+    } else {
+        err = VERIFY_FAILURE;
+    }
+    signal(SIGBUS, SIG_DFL);
     if (err != VERIFY_SUCCESS) {
         LOGE("Signature verification failed\n");
         LOGE("error: %d\n", kZipVerificationFailure);
