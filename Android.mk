@@ -111,6 +111,13 @@ ifeq ($(AB_OTA_UPDATER),true)
     LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
 endif
 
+# OEMLOCK support requires a device specific liboemlock be supplied.
+# See comments in recovery.cpp for the API.
+ifeq ($(TARGET_HAVE_OEMLOCK), true)
+    LOCAL_CFLAGS += -DHAVE_OEMLOCK
+    LOCAL_STATIC_LIBRARIES += liboemlock
+endif
+
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 
 LOCAL_CFLAGS += -DUSE_EXT4 -DMINIVOLD
