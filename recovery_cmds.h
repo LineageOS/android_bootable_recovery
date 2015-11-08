@@ -20,6 +20,9 @@
 #include <stdio.h>
 #include <string.h>
 
+int pigz_main(int argc, char **argv);
+int miniunz_main(int argc, char **argv);
+int minizip_main(int argc, char **argv);
 int reboot_main(int argc, char **argv);
 int poweroff_main(int argc, char **argv);
 int start_main(int argc, char **argv);
@@ -34,6 +37,10 @@ struct recovery_cmd {
 static const struct recovery_cmd recovery_cmds[] = {
     { "reboot",         reboot_main },
     { "poweroff",       reboot_main },
+    { "gunzip",         pigz_main },
+    { "gzip",           pigz_main },
+    { "unzip",          miniunz_main },
+    { "zip",            minizip_main },
     { "sh",             mksh_main },
     { NULL, NULL },
 };
