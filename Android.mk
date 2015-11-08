@@ -161,6 +161,10 @@ LOCAL_STATIC_LIBRARIES := \
     libsparse \
     libreboot \
     libziparchive \
+    libminipigz_static \
+    libzopfli_static \
+    libminizip_static \
+    libminiunz_static \
     libotautil \
     libmounts \
     libz \
@@ -207,7 +211,11 @@ LOCAL_REQUIRED_MODULES += \
 RECOVERY_TOOLS := \
     reboot \
     setup_adbd \
-    sh
+    sh \
+    gunzip \
+    gzip \
+    unzip \
+    zip
 LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf ${LOCAL_MODULE} $(LOCAL_MODULE_PATH)/$(t);)
 
 include $(BUILD_EXECUTABLE)
@@ -221,6 +229,30 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/etc
 LOCAL_SRC_FILES := etc/mkshrc
 LOCAL_MODULE_STEM := mkshrc
 include $(BUILD_PREBUILT)
+
+# Minizip static library
+include $(CLEAR_VARS)
+LOCAL_MODULE := libminizip_static
+LOCAL_MODULE_TAGS := optional
+LOCAL_CFLAGS := -Dmain=minizip_main -D__ANDROID__ -DIOAPI_NO_64
+LOCAL_C_INCLUDES := external/zlib
+LOCAL_SRC_FILES := \
+    ../../external/zlib/src/contrib/minizip/ioapi.c \
+    ../../external/zlib/src/contrib/minizip/minizip.c \
+    ../../external/zlib/src/contrib/minizip/zip.c
+include $(BUILD_STATIC_LIBRARY)
+
+# Miniunz static library
+include $(CLEAR_VARS)
+LOCAL_MODULE := libminiunz_static
+LOCAL_MODULE_TAGS := optional
+LOCAL_CFLAGS := -Dmain=miniunz_main -D__ANDROID__ -DIOAPI_NO_64
+LOCAL_C_INCLUDES := external/zlib
+LOCAL_SRC_FILES := \
+    ../../external/zlib/src/contrib/minizip/ioapi.c \
+    ../../external/zlib/src/contrib/minizip/miniunz.c \
+    ../../external/zlib/src/contrib/minizip/unzip.c
+include $(BUILD_STATIC_LIBRARY)
 
 # Reboot static library
 include $(CLEAR_VARS)
