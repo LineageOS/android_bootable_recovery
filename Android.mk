@@ -85,12 +85,6 @@ LOCAL_MODULE := recovery
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
-ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
-ifeq ($(HOST_OS),linux)
-LOCAL_REQUIRED_MODULES := mkfs.f2fs
-endif
-endif
-
 LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
 LOCAL_CFLAGS += -Wno-unused-parameter -Werror
 LOCAL_CLANG := true
@@ -203,6 +197,7 @@ endif
 ifeq ($(ONE_SHOT_MAKEFILE),)
 LOCAL_ADDITIONAL_DEPENDENCIES += \
     toybox_static \
+    fstools \
     recovery_mkshrc
 endif
 
@@ -334,5 +329,6 @@ include \
     $(LOCAL_PATH)/uncrypt/Android.mk \
     $(LOCAL_PATH)/updater/Android.mk \
     $(LOCAL_PATH)/update_verifier/Android.mk \
+    $(LOCAL_PATH)/fstools/Android.mk
 
 endif
