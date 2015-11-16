@@ -269,7 +269,8 @@ endif
 
 LOCAL_REQUIRED_MODULES += \
     toybox_static \
-    recovery_mkshrc
+    recovery_mkshrc \
+    bu_recovery
 
 # Symlinks
 RECOVERY_TOOLS := \
@@ -298,6 +299,51 @@ LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/etc
 LOCAL_SRC_FILES := etc/mkshrc
 LOCAL_MODULE_STEM := mkshrc
 include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := bu_recovery
+LOCAL_MODULE_STEM := bu
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_FORCE_STATIC_EXECUTABLE := true
+LOCAL_SRC_FILES := \
+    bu.cpp \
+    backup.cpp \
+    restore.cpp \
+    roots.cpp
+LOCAL_CFLAGS += -DMINIVOLD
+LOCAL_CFLAGS += -Wno-unused-parameter
+LOCAL_STATIC_LIBRARIES += \
+    libext4_utils \
+    libsparse \
+    libmounts \
+    libz \
+    libminadbd \
+    libminui \
+    libfs_mgr \
+    libtar \
+    libcrypto \
+    libbase \
+    libcutils \
+    libutils \
+    liblog \
+    libselinux \
+    libm \
+    libc
+
+LOCAL_C_INCLUDES += \
+    system/core/fs_mgr/include \
+    system/core/include \
+    system/core/libcutils \
+    system/extras/ext4_utils \
+    system/vold \
+    external/libtar \
+    external/libtar/listhash \
+    external/openssl/include \
+    external/zlib \
+    bionic/libc/bionic
+
+include $(BUILD_EXECUTABLE)
 
 # Minizip static library
 include $(CLEAR_VARS)
