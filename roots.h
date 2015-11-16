@@ -29,11 +29,11 @@ Volume* volume_for_path(const char* path);
 
 // Make sure that the volume 'path' is on is mounted.  Returns 0 on
 // success (volume is mounted).
-int ensure_volume_mounted(Volume* v);
-int ensure_path_mounted(const char* path);
+int ensure_volume_mounted(Volume* v, bool force_rw=false);
+int ensure_path_mounted(const char* path, bool force_rw=false);
 
 // Similar to ensure_path_mounted, but allows one to specify the mount_point.
-int ensure_path_mounted_at(const char* path, const char* mount_point);
+int ensure_path_mounted_at(const char* path, const char* mount_point, bool force_rw=false);
 
 // Make sure that the volume 'path' is on is unmounted.  Returns 0 on
 // success (volume is unmounted);
@@ -56,6 +56,10 @@ int format_volume(const char* volume, const char* directory);
 int setup_install_mounts();
 
 int get_num_volumes();
+
+bool volume_is_mountable(Volume *v);
+bool volume_is_readonly(Volume *v);
+bool volume_is_verity(Volume *v);
 
 #define MAX_NUM_MANAGED_VOLUMES 10
 
