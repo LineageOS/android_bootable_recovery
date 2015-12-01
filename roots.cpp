@@ -209,7 +209,7 @@ int ensure_path_mounted_at(const char* path, const char* mount_point, bool force
   mkdir_p(mount_point, 0755);  // in case it doesn't already exist
 
   if (strcmp(v->fs_type, "ext4") == 0 || strcmp(v->fs_type, "squashfs") == 0 ||
-      strcmp(v->fs_type, "vfat") == 0) {
+      strcmp(v->fs_type, "vfat") == 0 || strcmp(v->fs_type, "f2fs") == 0) {
     unsigned long mntflags = v->flags;
     if (!force_rw) {
       if ((v->flags & MS_RDONLY) || fs_mgr_is_verified(v)) {
