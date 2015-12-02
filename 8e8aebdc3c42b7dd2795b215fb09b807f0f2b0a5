@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf8cb3f7_efe5ed0b",
+        "filename": "Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 8640
+      },
+      "writtenOn": "2015-12-02T06:23:58Z",
+      "side": 0,
+      "message": "Shouldn\u0027t this be in a separate commit?",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 35
+      },
+      "revId": "8e8aebdc3c42b7dd2795b215fb09b807f0f2b0a5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
