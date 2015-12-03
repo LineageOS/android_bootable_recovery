@@ -866,8 +866,6 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   property_list(print_property, nullptr);
   printf("\n");
 
-  ui->Print("Supported API: %d\n", kRecoveryApiVersion);
-
   int status = INSTALL_SUCCESS;
   // next_action indicates the next target to reboot into upon finishing the install. It could be
   // overridden to a different reboot target per user request.
