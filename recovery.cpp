@@ -1696,8 +1696,6 @@ int main(int argc, char **argv) {
     property_list(print_property, NULL);
     printf("\n");
 
-    ui->Print("Supported API: %d\n", RECOVERY_API_VERSION);
-
     int status = INSTALL_SUCCESS;
 
     if (update_package != NULL) {
