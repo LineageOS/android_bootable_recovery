@@ -1832,8 +1832,6 @@ int main(int argc, char **argv) {
   property_list(print_property, nullptr);
   printf("\n");
 
-  ui->Print("Supported API: %d\n", kRecoveryApiVersion);
-
   int status = INSTALL_SUCCESS;
 
   if (update_package != nullptr) {
