@@ -2044,8 +2044,6 @@ int main(int argc, char **argv) {
     property_list(print_property, NULL);
     printf("\n");
 
-    ui->Print("Supported API: %d\n", RECOVERY_API_VERSION);
-
 #ifdef HAVE_OEMLOCK
     if (oem_lock == OEM_LOCK_UNLOCK) {
         device->PreWipeData();
