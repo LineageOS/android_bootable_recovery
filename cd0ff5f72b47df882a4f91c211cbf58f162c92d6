@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f91af0f_1f272367",
+        "filename": "minui/events.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2015-12-05T07:34:46Z",
+      "side": 1,
+      "message": "Not clear on why this line change is relevant?",
+      "revId": "cd0ff5f72b47df882a4f91c211cbf58f162c92d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
