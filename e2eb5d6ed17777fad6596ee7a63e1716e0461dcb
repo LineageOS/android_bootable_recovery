@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fce034c_bb9a9ec2",
+        "filename": "roots.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 13409
+      },
+      "writtenOn": "2016-01-08T08:48:16Z",
+      "side": 1,
+      "message": "This needs moved above the rmtree_except call.",
+      "revId": "e2eb5d6ed17777fad6596ee7a63e1716e0461dcb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
