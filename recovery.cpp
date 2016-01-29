@@ -659,6 +659,9 @@ static bool erase_volume(const char* volume, bool force = false) {
     copy_logs();
   }
 
+  ui->SetBackground(RecoveryUI::NONE);
+  ui->SetProgressType(RecoveryUI::EMPTY);
+
   return (result == 0);
 }
 
@@ -842,7 +845,11 @@ static bool prompt_and_wipe_data(Device* device) {
       return true;  // Just reboot, no wipe; not a failure, user asked for it
     }
     if (ask_to_wipe_data(device)) {
-      return wipe_data(device);
+      bool rc = wipe_data(device);
+      if (!rc && yes_no(device, "Wipe failed, format instead?", "  THIS CAN NOT BE UNDONE!")) {
+        rc = wipe_data(device, true);
+      }
+      return rc;
     }
   }
 }
