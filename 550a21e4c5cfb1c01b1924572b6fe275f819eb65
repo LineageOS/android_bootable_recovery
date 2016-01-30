@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1fcbff3d_431933d5",
+        "filename": "device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2016-01-30T06:57:39Z",
+      "side": 1,
+      "message": "Actually it should be ACTION_INVOKE.  I had this as a submenu originally then decided keeping reboot-to-android on the top menu was better.  Will fix, thanks.",
+      "parentUuid": "1fcbff3d_a33ed726",
+      "revId": "550a21e4c5cfb1c01b1924572b6fe275f819eb65",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fcbff3d_033a4b35",
         "filename": "device.cpp",
         "patchSetId": 2
