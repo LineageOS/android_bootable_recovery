@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fcbff3d_033a4b35",
+        "filename": "device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 10094
+      },
+      "writtenOn": "2016-01-30T06:55:22Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 112,
+        "startChar": 4,
+        "endLine": 112,
+        "endChar": 35
+      },
+      "revId": "550a21e4c5cfb1c01b1924572b6fe275f819eb65",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fcbff3d_c33be335",
+        "filename": "device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 10094
+      },
+      "writtenOn": "2016-01-30T06:55:22Z",
+      "side": 1,
+      "message": "I think this is safe even when it\u0027s empty.",
+      "range": {
+        "startLine": 121,
+        "startChar": 12,
+        "endLine": 121,
+        "endChar": 29
+      },
+      "revId": "550a21e4c5cfb1c01b1924572b6fe275f819eb65",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fcbff3d_6348efcb",
+        "filename": "device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 10094
+      },
+      "writtenOn": "2016-01-30T06:55:22Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 126,
+        "startChar": 2,
+        "endLine": 126,
+        "endChar": 33
+      },
+      "revId": "550a21e4c5cfb1c01b1924572b6fe275f819eb65",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
