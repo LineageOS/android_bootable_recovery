@@ -83,6 +83,30 @@
     },
     {
       "key": {
+        "uuid": "1fcbff3d_2362e73f",
+        "filename": "device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2016-01-30T07:12:19Z",
+      "side": 1,
+      "message": "I don\u0027t see any docs that indicate this is so.  Better safe than sorry?",
+      "parentUuid": "1fcbff3d_c33be335",
+      "range": {
+        "startLine": 121,
+        "startChar": 12,
+        "endLine": 121,
+        "endChar": 29
+      },
+      "revId": "550a21e4c5cfb1c01b1924572b6fe275f819eb65",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fcbff3d_6348efcb",
         "filename": "device.cpp",
         "patchSetId": 2
