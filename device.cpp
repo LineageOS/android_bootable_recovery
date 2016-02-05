@@ -39,7 +39,9 @@ struct menu_entry {
 };
 
 static const char* WIPE_MENU_NAMES[] = {
+#ifndef RELEASE_BUILD
     "System reset (keep media)",
+#endif
     "Full factory reset",
 #ifndef AB_OTA_UPDATER
     "Wipe cache partition",
@@ -47,7 +49,9 @@ static const char* WIPE_MENU_NAMES[] = {
     nullptr
 };
 static const menu_entry WIPE_MENU_ENTRIES[] = {
+#ifndef RELEASE_BUILD
     { ACTION_INVOKE, { .action = Device::WIPE_DATA } },
+#endif
     { ACTION_INVOKE, { .action = Device::WIPE_FULL } },
 #ifndef AB_OTA_UPDATER
     { ACTION_INVOKE, { .action = Device::WIPE_CACHE } },
