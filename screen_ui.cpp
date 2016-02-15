@@ -74,6 +74,7 @@ ScreenRecoveryUI::ScreenRecoveryUI() :
     menu_items(0),
     menu_sel(0),
     menu_show_start_(0),
+    sysbar_state(0),
     file_viewer_text_(nullptr),
     intro_frames(0),
     loop_frames(0),
@@ -315,6 +316,45 @@ void ScreenRecoveryUI::draw_menu_item(int textrow, const char *text, int selecte
     }
 }
 
+void ScreenRecoveryUI::draw_sysbar()
+{
+    GRSurface* surface;
+    int sw = gr_fb_width();
+    int sh = gr_fb_height();
+    int iw;
+    int ih;
+    SetColor(TEXT_FILL);
+    gr_fill(0, sh - sysbar_height_, sw, sh);
+
+    // Left third is back button
+    if (!HasBackKey()) {
+        if (sysbar_state & SYSBAR_BACK) {
+            surface = sysbarBackHighlightIcon;
+        }
+        else {
+            surface = sysbarBackIcon;
+        }
+        iw = gr_get_width(surface);
+        ih = gr_get_height(surface);
+        gr_blit(surface, 0, 0, iw, ih,
+                1 * (sw / 6) - (iw / 2), sh - ih);
+    }
+
+    // Middle third is home button
+    if (!HasHomeKey()) {
+        if (sysbar_state & SYSBAR_HOME) {
+            surface = sysbarHomeHighlightIcon;
+        }
+        else {
+            surface = sysbarHomeIcon;
+        }
+        iw = gr_get_width(surface);
+        ih = gr_get_height(surface);
+        gr_blit(surface, 0, 0, iw, ih,
+                3 * (sw / 6) - (iw / 2), sh - ih);
+    }
+}
+
 // Redraw everything on the screen.  Does not flip pages.
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::draw_screen_locked() {
@@ -328,6 +368,7 @@ void ScreenRecoveryUI::draw_screen_locked() {
         int y = 0;
         if (show_menu) {
             draw_header_icon();
+            draw_sysbar();
             int nr_items = menu_items - menu_show_start_;
             if (nr_items > max_menu_rows_)
                 nr_items = max_menu_rows_;
@@ -489,18 +530,29 @@ void ScreenRecoveryUI::Init() {
     // Are we the large variant of our base layout?
     if (gr_fb_height() > PixelsFromDp(800)) ++layout_;
 
-    text_ = Alloc2d(text_rows_, text_cols_ + 1);
-    file_viewer_text_ = Alloc2d(text_rows_, text_cols_ + 1);
-    menu_ = Alloc2d(text_rows_, text_cols_ + 1);
-
     text_col_ = text_row_ = 0;
     text_top_ = 1;
 
     LoadBitmap("icon_error", &error_icon);
 
     LoadBitmap("icon_header", &headerIcon);
+    LoadBitmap("icon_sysbar_back", &sysbarBackIcon);
+    LoadBitmap("icon_sysbar_back_highlight", &sysbarBackHighlightIcon);
+    LoadBitmap("icon_sysbar_home", &sysbarHomeIcon);
+    LoadBitmap("icon_sysbar_home_highlight", &sysbarHomeHighlightIcon);
+
     header_height_ = gr_get_height(headerIcon);
     header_width_ = gr_get_width(headerIcon);
+
+    sysbar_height_ = gr_get_height(sysbarBackIcon);
+
+    // Recalculate rows
+    text_rows_ = (gr_fb_height() - sysbar_height_) / char_height_;
+    log_text_rows_ = (gr_fb_height() - sysbar_height_) / log_char_height_;
+
+    text_ = Alloc2d(log_text_rows_, log_text_cols_ + 1);
+    file_viewer_text_ = Alloc2d(text_rows_, text_cols_ + 1);
+    menu_ = Alloc2d(text_rows_, text_cols_ + 1);
 
     text_first_row_ = (header_height_ / char_height_) + 1;
     menu_item_start_ = text_first_row_ * char_height_;
@@ -781,6 +833,18 @@ void ScreenRecoveryUI::ShowFile(const char* filename) {
     text_col_ = old_text_col;
     text_row_ = old_text_row;
     text_top_ = old_text_top;
+}
+
+void ScreenRecoveryUI::SetSysbarState(int state)
+{
+    if (HasBackKey()) {
+        state &= ~SYSBAR_BACK;
+    }
+    if (HasHomeKey()) {
+        state &= ~SYSBAR_HOME;
+    }
+    sysbar_state = state;
+    Redraw();
 }
 
 void ScreenRecoveryUI::StartMenu(const char* const * headers, const char* const * items,
