@@ -16,6 +16,24 @@
       "revId": "6ff2c0d1d7a068538856bc3946b493fc69e012eb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ffb9cba7_ac4c879e",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 977,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2016-03-08T05:47:34Z",
+      "side": 1,
+      "message": "This is actually needed.  See the added lines 808..812.",
+      "parentUuid": "ffb9cba7_011d5cbc",
+      "revId": "6ff2c0d1d7a068538856bc3946b493fc69e012eb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
