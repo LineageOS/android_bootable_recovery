@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dfbec78f_0f138968",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 898,
+      "author": {
+        "id": 10094
+      },
+      "writtenOn": "2016-03-14T18:34:32Z",
+      "side": 1,
+      "message": "logic is backward.  if it has a hardware key, clear the state.",
+      "range": {
+        "startLine": 898,
+        "startChar": 4,
+        "endLine": 898,
+        "endChar": 24
+      },
+      "revId": "9fd087db30a832b2f70dea85095a215cd5054ce3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfbec78f_2f18cd7f",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 10094
+      },
+      "writtenOn": "2016-03-14T18:34:32Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 901,
+        "startChar": 4,
+        "endLine": 901,
+        "endChar": 24
+      },
+      "revId": "9fd087db30a832b2f70dea85095a215cd5054ce3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
