@@ -296,6 +296,16 @@ status_t Disk::readPartitions() {
     int res = sgdisk_read(mDevPath.c_str(), ptbl, partitions);
     if (res != 0) {
         LOG(WARNING) << "sgdisk failed to scan " << mDevPath;
+
+        std::string fsType, unused;
+        if (ReadMetadataUntrusted(mDevPath, fsType, unused, unused) == OK) {
+            if (fsType == "iso9660") {
+                LOG(INFO) << "Detect iso9660";
+                createPublicVolume(mDevice);
+                res = OK;
+            }
+        }
+
         VolumeManager::Instance()->notifyEvent(ResponseCode::DiskScanned);
         return res;
     }
