@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fa7e38b_d8021d3f",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-06-28T20:12:05Z",
+      "side": 1,
+      "message": "I\u0027m not sure you need to be freeing this, this can point to an optarg.",
+      "range": {
+        "startLine": 1492,
+        "startChar": 12,
+        "endLine": 1492,
+        "endChar": 24
+      },
+      "revId": "67b2a073ead3faf8675d42db18d94062870be943",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fa7e38b_b8f9614e",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1500,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-06-28T20:12:05Z",
+      "side": 1,
+      "message": "Is this part necessary? It doesn\u0027t look like we were doing that before.",
+      "range": {
+        "startLine": 1496,
+        "startChar": 8,
+        "endLine": 1500,
+        "endChar": 47
+      },
+      "revId": "67b2a073ead3faf8675d42db18d94062870be943",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
