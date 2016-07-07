@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fa7e38b_b0d72624",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1482,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-07-07T20:25:34Z",
+      "side": 1,
+      "message": "Wrong indentation",
+      "range": {
+        "startLine": 1482,
+        "startChar": 8,
+        "endLine": 1482,
+        "endChar": 10
+      },
+      "revId": "48099915929a8942475015451fe8c18307989b8f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fa7e38b_50dcb245",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1497,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-07-07T20:25:34Z",
+      "side": 1,
+      "message": "Same as above",
+      "range": {
+        "startLine": 1497,
+        "startChar": 8,
+        "endLine": 1497,
+        "endChar": 10
+      },
+      "revId": "48099915929a8942475015451fe8c18307989b8f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
