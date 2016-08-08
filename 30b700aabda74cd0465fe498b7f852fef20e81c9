@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fa7e38b_3e3bc4eb",
+        "filename": "recovery.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 1476,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-08-08T02:48:40Z",
+      "side": 1,
+      "message": "This code looks really similar to the code found in apply_from_storage, maybe we could merge the codepaths, or add a helper function for using apply_from_storage?",
+      "revId": "30b700aabda74cd0465fe498b7f852fef20e81c9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
