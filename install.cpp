@@ -426,9 +426,11 @@ install_package(const char* path, bool* wipe_cache, const char* install_file,
     } else {
         LOGE("failed to open last_install: %s\n", strerror(errno));
     }
-    int result;
+    int result = 0;
     std::vector<std::string> log_buffer;
-    if (setup_install_mounts() != 0) {
+    if (needs_mount == true)
+            result = setup_install_mounts();
+    if (result != 0) {
         LOGE("failed to set up expected mounts for install; aborting\n");
         result = INSTALL_ERROR;
     } else {
