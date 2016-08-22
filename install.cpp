@@ -291,13 +291,22 @@ mdtp_update()
     ui->Print("Running MDTP integrity verification and update...\n");
 
     /* Make sure system partition is mounted, so MDTP can process its content. */
-    mkdir("/system", 0755);
     status = mount("/dev/block/bootdevice/by-name/system", "/system", "ext4",
                  MS_NOATIME | MS_NODEV | MS_NODIRATIME |
                  MS_RDONLY, "");
 
     if (status) {
         LOGE("Failed to mount the system partition, error=%s.\n", strerror(errno));
+        free(args);
+        return 0;
+    }
+
+    status = mount("/dev/block/bootdevice/by-name/modem", "/firmware", "vfat",
+                   MS_NOATIME | MS_NODEV | MS_NODIRATIME |
+                   MS_RDONLY, "");
+
+    if (status) {
+        LOGE("Failed to mount the modem (firmware) partition, error=%s.\n", strerror(errno));
         free(args);
         return 0;
     }
@@ -318,6 +327,7 @@ mdtp_update()
 
     /* Leave the system partition unmounted before we finish. */
     umount("/system");
+    umount("/firmware");
 
     free(args);
 
