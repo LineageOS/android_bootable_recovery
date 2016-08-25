@@ -51,7 +51,7 @@ LOCAL_SRC_FILES += \
     ../../system/core/toolbox/newfs_msdos.c \
     ../../system/core/toolbox/start.c \
     ../../system/core/toolbox/stop.c \
-    ../../system/vold/vdc.c
+    ../../system/vold/vdc.cpp
 
 LOCAL_MODULE := recovery
 
@@ -253,7 +253,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_CFLAGS := -Dmain=make_ext4fs_main
 LOCAL_SRC_FILES := \
     ../../system/extras/ext4_utils/make_ext4fs_main.c \
-    ../../system/extras/ext4_utils/canned_fs_config.c
+    ../../system/core/libcutils/canned_fs_config.c
 include $(BUILD_STATIC_LIBRARY)
 
 # Minizip static library
