@@ -1346,8 +1346,6 @@ error:
 static int apply_from_storage(Device* device, const std::string& id, bool* wipe_cache) {
     modified_flash = true;
 
-    int status;
-
     if (is_ufs_dev()) {
         if (do_sdcard_mount_for_ufs() != 0) {
             return INSTALL_ERROR;
@@ -1401,7 +1399,7 @@ static int apply_from_storage(Device* device, const std::string& id, bool* wipe_
 
         struct stat sb;
         if (stat(FUSE_SIDELOAD_HOST_PATHNAME, &sb) == -1) {
-            if (errno == ENOENT && i < SDCARD_INSTALL_TIMEOUT-1) {
+            if (errno == ENOENT) {
                 sleep(1);
 				now = time(NULL);
                 continue;
@@ -1492,7 +1490,7 @@ refresh:
     }
 
     if (status != INSTALL_SUCCESS && status != INSTALL_NONE) {
-        ui->DialogShowErrorLog("Install failed");
+        ui->Print("Install failed");
     }
 
     return status;
@@ -1513,7 +1511,7 @@ prompt_and_wait(Device* device, int status) {
 
             case INSTALL_ERROR:
             case INSTALL_CORRUPT:
-                ui->SetBackground(RecoveryUI::D_ERROR);
+                ui->SetBackground(RecoveryUI::ERROR);
                 break;
         }
         ui->SetProgressType(RecoveryUI::EMPTY);
@@ -1564,17 +1562,16 @@ prompt_and_wait(Device* device, int status) {
 
                         if (status >= 0 && status != INSTALL_NONE) {
                             if (status != INSTALL_SUCCESS) {
-                                ui->SetBackground(RecoveryUI::D_ERROR);
+                                ui->SetBackground(RecoveryUI::ERROR);
                                 ui->Print("Installation aborted.\n");
                                 copy_logs();
                             } else if (!ui->IsTextVisible()) {
                                 return Device::NO_ACTION;  // reboot if logs aren't visible
                             } else {
                                 ui->Print("\nInstall complete.\n");
+                            }
                         }
                     }
-                    break;
-                }
                     break;
 
                 case Device::VIEW_RECOVERY_LOGS:
@@ -2205,7 +2202,7 @@ int main(int argc, char **argv) {
 error:
     if (!sideload_auto_reboot && (status == INSTALL_ERROR || status == INSTALL_CORRUPT)) {
         copy_logs();
-        ui->SetBackground(RecoveryUI::D_ERROR);
+        ui->SetBackground(RecoveryUI::ERROR);
     }
 
     Device::BuiltinAction after = shutdown_after ? Device::SHUTDOWN : Device::REBOOT;
