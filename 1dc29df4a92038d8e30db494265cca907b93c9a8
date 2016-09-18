@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fa4df85_9d3c2ac9",
+        "filename": "recovery.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-09-18T14:24:36Z",
+      "side": 1,
+      "message": "This seems to be unused. path (\u003d\u003d update_package) will never be null per line 1475",
+      "range": {
+        "startLine": 1485,
+        "startChar": 0,
+        "endLine": 1492,
+        "endChar": 9
+      },
+      "revId": "1dc29df4a92038d8e30db494265cca907b93c9a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa4df85_1d4efa6e",
+        "filename": "recovery.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1494,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-09-18T14:24:36Z",
+      "side": 1,
+      "message": "void* token \u003d start_sdcard_fuse(update_package); if we remove L1485-L1492",
+      "range": {
+        "startLine": 1494,
+        "startChar": 40,
+        "endLine": 1494,
+        "endChar": 44
+      },
+      "revId": "1dc29df4a92038d8e30db494265cca907b93c9a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa4df85_fd5afe27",
+        "filename": "recovery.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1508,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-09-18T14:24:36Z",
+      "side": 1,
+      "message": "Could be written like:\n\nif (token \u003d\u003d NULL) {\n    status \u003d install_package(update_package,\n            \u0026should_wipe_cache, TEMPORARY_INSTALL_FILE, true);\n} else {\n    status \u003d install_package(FUSE_SIDELOAD_HOST_PATHNAME,\n            \u0026should_wipe_cache, TEMPORARY_INSTALL_FILE, false);\n}\n\nto preserve original behaviour",
+      "range": {
+        "startLine": 1501,
+        "startChar": 0,
+        "endLine": 1508,
+        "endChar": 64
+      },
+      "revId": "1dc29df4a92038d8e30db494265cca907b93c9a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa4df85_7d312eec",
+        "filename": "recovery.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1511,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-09-18T14:24:36Z",
+      "side": 1,
+      "message": "Not needed if we remove L1485-L1492",
+      "range": {
+        "startLine": 1511,
+        "startChar": 0,
+        "endLine": 1511,
+        "endChar": 20
+      },
+      "revId": "1dc29df4a92038d8e30db494265cca907b93c9a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
