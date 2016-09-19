@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fa4df85_caddf542",
+        "filename": "recovery.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1496,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-09-19T17:18:43Z",
+      "side": 1,
+      "message": "It\u0027s probably better to be specific about the entry condition here, ie. make this if (token !\u003d NULL) { ... } else { // do normal thing }",
+      "range": {
+        "startLine": 1493,
+        "startChar": 8,
+        "endLine": 1496,
+        "endChar": 9
+      },
+      "revId": "d1124ff519ff493dff96ab4bfa1e63b0105980f2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fa4df85_2ad7e925",
+        "filename": "recovery.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 1498,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-09-19T17:18:43Z",
+      "side": 1,
+      "message": "Might as well move this into the else block.",
+      "range": {
+        "startLine": 1498,
+        "startChar": 8,
+        "endLine": 1498,
+        "endChar": 34
+      },
+      "revId": "d1124ff519ff493dff96ab4bfa1e63b0105980f2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
