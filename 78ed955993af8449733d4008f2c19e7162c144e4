@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff2e2bb8_b63720e4",
+        "filename": "recovery.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1492,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-10-01T02:11:41Z",
+      "side": 1,
+      "message": "This is some weird indentation",
+      "revId": "78ed955993af8449733d4008f2c19e7162c144e4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff2e2bb8_d63aa4cb",
+        "filename": "recovery.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1493,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2016-10-01T02:11:41Z",
+      "side": 1,
+      "message": "stray tab, please convert to spaces.",
+      "revId": "78ed955993af8449733d4008f2c19e7162c144e4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
