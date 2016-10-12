@@ -177,15 +177,6 @@ int main(int argc, char** argv) {
             fprintf(cmd_pipe, "ui_print\n");
         }
 
-        if (state.error_code != kNoError) {
-            fprintf(cmd_pipe, "log error: %d\n", state.error_code);
-            // Cause code should provide additional information about the abort;
-            // report only when an error exists.
-            if (state.cause_code != kNoCause) {
-                fprintf(cmd_pipe, "log cause: %d\n", state.cause_code);
-            }
-        }
-
         free(state.errmsg);
         return 7;
     } else {
