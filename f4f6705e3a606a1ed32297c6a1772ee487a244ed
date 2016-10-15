@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff2e2bb8_72946445",
+        "filename": "updater/blockimg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2016-10-15T14:03:34Z",
+      "side": 1,
+      "message": "We could also use this instead of ifdeffing the BLKDISCARD code",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 22
+      },
+      "revId": "f4f6705e3a606a1ed32297c6a1772ee487a244ed",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
