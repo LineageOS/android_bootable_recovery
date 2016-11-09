@@ -19,6 +19,7 @@ on init
     mkdir /data
     mkdir /cache
     mkdir /sideload
+    mkdir /firmware
     mount tmpfs tmpfs /tmp
 
     chown root shell /tmp
