@@ -1659,7 +1659,6 @@ int main(int argc, char **argv) {
         }
     }
 error:
-    if (is_ro_debuggable()) ui->ShowText(true);
     if (!sideload_auto_reboot && (status == INSTALL_ERROR || status == INSTALL_CORRUPT)) {
         copy_logs();
         ui->SetBackground(RecoveryUI::ERROR);
