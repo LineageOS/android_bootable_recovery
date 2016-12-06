@@ -31,7 +31,6 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
     adb_install.cpp \
     asn1_decoder.cpp \
-    bootloader.cpp \
     device.cpp \
     fuse_sdcard_provider.cpp \
     install.cpp \
@@ -66,6 +65,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_STATIC_LIBRARIES := \
     libbatterymonitor \
+    libbootloader_message \
     libext4_utils_static \
     libsparse_static \
     libminzip \
@@ -91,6 +91,10 @@ ifeq ($(TARGET_USERIMAGES_USE_EXT4), true)
     LOCAL_CFLAGS += -DUSE_EXT4
     LOCAL_C_INCLUDES += system/extras/ext4_utils
     LOCAL_STATIC_LIBRARIES += libext4_utils_static libz
+endif
+
+ifeq ($(AB_OTA_UPDATER),true)
+    LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
 endif
 
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
@@ -143,15 +147,17 @@ LOCAL_SRC_FILES := \
 LOCAL_STATIC_LIBRARIES := libcrypto_static
 include $(BUILD_STATIC_LIBRARY)
 
-include $(LOCAL_PATH)/minui/Android.mk \
+include \
+    $(LOCAL_PATH)/applypatch/Android.mk \
+    $(LOCAL_PATH)/bootloader_message/Android.mk \
+    $(LOCAL_PATH)/edify/Android.mk \
+    $(LOCAL_PATH)/minui/Android.mk \
     $(LOCAL_PATH)/minzip/Android.mk \
     $(LOCAL_PATH)/minadbd/Android.mk \
     $(LOCAL_PATH)/mtdutils/Android.mk \
+    $(LOCAL_PATH)/otafault/Android.mk \
     $(LOCAL_PATH)/tests/Android.mk \
     $(LOCAL_PATH)/tools/Android.mk \
-    $(LOCAL_PATH)/edify/Android.mk \
     $(LOCAL_PATH)/uncrypt/Android.mk \
-    $(LOCAL_PATH)/otafault/Android.mk \
     $(LOCAL_PATH)/updater/Android.mk \
     $(LOCAL_PATH)/update_verifier/Android.mk \
-    $(LOCAL_PATH)/applypatch/Android.mk
