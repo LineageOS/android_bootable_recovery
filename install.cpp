@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -25,12 +26,16 @@
 #include <sys/mount.h>
 
 #include <chrono>
+#include <limits>
+#include <map>
 #include <string>
 #include <vector>
 
+#include <android-base/file.h>
 #include <android-base/parseint.h>
 #include <android-base/stringprintf.h>
 #include <android-base/strings.h>
+#include <cutils/properties.h>
 
 #include "common.h"
 #include "error_code.h"
@@ -47,8 +52,11 @@
 extern RecoveryUI* ui;
 
 #define ASSUMED_UPDATE_BINARY_NAME  "META-INF/com/google/android/update-binary"
+static constexpr const char* AB_OTA_PAYLOAD_PROPERTIES = "payload_properties.txt";
+static constexpr const char* AB_OTA_PAYLOAD = "payload.bin";
 #define PUBLIC_KEYS_FILE "/res/keys"
 static constexpr const char* METADATA_PATH = "META-INF/com/android/metadata";
+static constexpr const char* UNCRYPT_STATUS = "/cache/recovery/uncrypt_status";
 
 // Default allocation of progress bar segments to operations
 static const int VERIFICATION_PROGRESS_TIME = 60;
@@ -71,20 +79,27 @@ static int parse_build_number(std::string str) {
     return -1;
 }
 
-// Read the build.version.incremental of src/tgt from the metadata and log it to last_install.
-static void read_source_target_build(ZipArchive* zip, std::vector<std::string>& log_buffer) {
+bool read_metadata_from_package(ZipArchive* zip, std::string* meta_data) {
     const ZipEntry* meta_entry = mzFindZipEntry(zip, METADATA_PATH);
     if (meta_entry == nullptr) {
         LOGE("Failed to find %s in update package.\n", METADATA_PATH);
-        return;
+        return false;
     }
 
-    std::string meta_data(meta_entry->uncompLen, '\0');
-    if (!mzReadZipEntry(zip, meta_entry, &meta_data[0], meta_entry->uncompLen)) {
+    meta_data->resize(meta_entry->uncompLen, '\0');
+    if (!mzReadZipEntry(zip, meta_entry, &(*meta_data)[0], meta_entry->uncompLen)) {
         LOGE("Failed to read metadata in update package.\n");
+        return false;
+    }
+    return true;
+}
+
+// Read the build.version.incremental of src/tgt from the metadata and log it to last_install.
+static void read_source_target_build(ZipArchive* zip, std::vector<std::string>& log_buffer) {
+    std::string meta_data;
+    if (!read_metadata_from_package(zip, &meta_data)) {
         return;
     }
-
     // Examples of the pre-build and post-build strings in metadata:
     // pre-build-incremental=2943039
     // post-build-incremental=2951741
@@ -107,17 +122,152 @@ static void read_source_target_build(ZipArchive* zip, std::vector<std::string>& 
     }
 }
 
-// If the package contains an update binary, extract it and run it.
+// Extract the update binary from the open zip archive |zip| located at |path|
+// and store into |cmd| the command line that should be called. The |status_fd|
+// is the file descriptor the child process should use to report back the
+// progress of the update.
 static int
-try_update_binary(const char* path, ZipArchive* zip, bool* wipe_cache,
-                  std::vector<std::string>& log_buffer, int retry_count)
-{
-    read_source_target_build(zip, log_buffer);
+update_binary_command(const char* path, ZipArchive* zip, int retry_count,
+                      int status_fd, std::vector<std::string>* cmd);
 
+#ifdef AB_OTA_UPDATER
+
+// Parses the metadata of the OTA package in |zip| and checks whether we are
+// allowed to accept this A/B package. Downgrading is not allowed unless
+// explicitly enabled in the package and only for incremental packages.
+static int check_newer_ab_build(ZipArchive* zip)
+{
+    std::string metadata_str;
+    if (!read_metadata_from_package(zip, &metadata_str)) {
+        return INSTALL_CORRUPT;
+    }
+    std::map<std::string, std::string> metadata;
+    for (const std::string& line : android::base::Split(metadata_str, "\n")) {
+        size_t eq = line.find('=');
+        if (eq != std::string::npos) {
+            metadata[line.substr(0, eq)] = line.substr(eq + 1);
+        }
+    }
+    char value[PROPERTY_VALUE_MAX];
+
+    property_get("ro.product.device", value, "");
+    const std::string& pkg_device = metadata["pre-device"];
+    if (pkg_device != value || pkg_device.empty()) {
+        LOGE("Package is for product %s but expected %s\n",
+             pkg_device.c_str(), value);
+        return INSTALL_ERROR;
+    }
+
+    // We allow the package to not have any serialno, but if it has a non-empty
+    // value it should match.
+    property_get("ro.serialno", value, "");
+    const std::string& pkg_serial_no = metadata["serialno"];
+    if (!pkg_serial_no.empty() && pkg_serial_no != value) {
+        LOGE("Package is for serial %s\n", pkg_serial_no.c_str());
+        return INSTALL_ERROR;
+    }
+
+    if (metadata["ota-type"] != "AB") {
+        LOGE("Package is not A/B\n");
+        return INSTALL_ERROR;
+    }
+
+    // Incremental updates should match the current build.
+    property_get("ro.build.version.incremental", value, "");
+    const std::string& pkg_pre_build = metadata["pre-build-incremental"];
+    if (!pkg_pre_build.empty() && pkg_pre_build != value) {
+        LOGE("Package is for source build %s but expected %s\n",
+             pkg_pre_build.c_str(), value);
+        return INSTALL_ERROR;
+    }
+    property_get("ro.build.fingerprint", value, "");
+    const std::string& pkg_pre_build_fingerprint = metadata["pre-build"];
+    if (!pkg_pre_build_fingerprint.empty() &&
+        pkg_pre_build_fingerprint != value) {
+        LOGE("Package is for source build %s but expected %s\n",
+             pkg_pre_build_fingerprint.c_str(), value);
+        return INSTALL_ERROR;
+    }
+
+    // Check for downgrade version.
+    int64_t build_timestampt = property_get_int64(
+            "ro.build.date.utc", std::numeric_limits<int64_t>::max());
+    int64_t pkg_post_timespampt = 0;
+    // We allow to full update to the same version we are running, in case there
+    // is a problem with the current copy of that version.
+    if (metadata["post-timestamp"].empty() ||
+        !android::base::ParseInt(metadata["post-timestamp"].c_str(),
+                                 &pkg_post_timespampt) ||
+        pkg_post_timespampt < build_timestampt) {
+        if (metadata["ota-downgrade"] != "yes") {
+            LOGE("Update package is older than the current build, expected a "
+                 "build newer than timestamp %" PRIu64 " but package has "
+                 "timestamp %" PRIu64 " and downgrade not allowed.\n",
+                 build_timestampt, pkg_post_timespampt);
+            return INSTALL_ERROR;
+        }
+        if (pkg_pre_build_fingerprint.empty()) {
+            LOGE("Downgrade package must have a pre-build version set, not "
+                 "allowed.\n");
+            return INSTALL_ERROR;
+        }
+    }
+
+    return 0;
+}
+
+static int
+update_binary_command(const char* path, ZipArchive* zip, int retry_count,
+                      int status_fd, std::vector<std::string>* cmd)
+{
+    int ret = check_newer_ab_build(zip);
+    if (ret) {
+        return ret;
+    }
+
+    // For A/B updates we extract the payload properties to a buffer and obtain
+    // the RAW payload offset in the zip file.
+    const ZipEntry* properties_entry =
+            mzFindZipEntry(zip, AB_OTA_PAYLOAD_PROPERTIES);
+    if (!properties_entry) {
+        LOGE("Can't find %s\n", AB_OTA_PAYLOAD_PROPERTIES);
+        return INSTALL_CORRUPT;
+    }
+    std::vector<unsigned char> payload_properties(
+            mzGetZipEntryUncompLen(properties_entry));
+    if (!mzExtractZipEntryToBuffer(zip, properties_entry,
+                                   payload_properties.data())) {
+        LOGE("Can't extract %s\n", AB_OTA_PAYLOAD_PROPERTIES);
+        return INSTALL_CORRUPT;
+    }
+
+    const ZipEntry* payload_entry = mzFindZipEntry(zip, AB_OTA_PAYLOAD);
+    if (!payload_entry) {
+        LOGE("Can't find %s\n", AB_OTA_PAYLOAD);
+        return INSTALL_CORRUPT;
+    }
+    long payload_offset = mzGetZipEntryOffset(payload_entry);
+    *cmd = {
+        "/sbin/update_engine_sideload",
+        android::base::StringPrintf("--payload=file://%s", path),
+        android::base::StringPrintf("--offset=%ld", payload_offset),
+        "--headers=" + std::string(payload_properties.begin(),
+                                   payload_properties.end()),
+        android::base::StringPrintf("--status_fd=%d", status_fd),
+    };
+    return 0;
+}
+
+#else  // !AB_OTA_UPDATER
+
+static int
+update_binary_command(const char* path, ZipArchive* zip, int retry_count,
+                      int status_fd, std::vector<std::string>* cmd)
+{
+    // On traditional updates we extract the update binary from the package.
     const ZipEntry* binary_entry =
             mzFindZipEntry(zip, ASSUMED_UPDATE_BINARY_NAME);
     if (binary_entry == NULL) {
-        mzCloseZipArchive(zip);
         return INSTALL_CORRUPT;
     }
 
@@ -125,21 +275,47 @@ try_update_binary(const char* path, ZipArchive* zip, bool* wipe_cache,
     unlink(binary);
     int fd = creat(binary, 0755);
     if (fd < 0) {
-        mzCloseZipArchive(zip);
         LOGE("Can't make %s\n", binary);
         return INSTALL_ERROR;
     }
     bool ok = mzExtractZipEntryToFile(zip, binary_entry, fd);
     close(fd);
-    mzCloseZipArchive(zip);
 
     if (!ok) {
         LOGE("Can't copy %s\n", ASSUMED_UPDATE_BINARY_NAME);
         return INSTALL_ERROR;
     }
 
+    *cmd = {
+        binary,
+        EXPAND(RECOVERY_API_VERSION),   // defined in Android.mk
+        std::to_string(status_fd),
+        path,
+    };
+    if (retry_count > 0)
+        cmd->push_back("retry");
+    return 0;
+}
+#endif  // !AB_OTA_UPDATER
+
+// If the package contains an update binary, extract it and run it.
+static int
+try_update_binary(const char* path, ZipArchive* zip, bool* wipe_cache,
+                  std::vector<std::string>& log_buffer, int retry_count)
+{
+    read_source_target_build(zip, log_buffer);
+
     int pipefd[2];
     pipe(pipefd);
+
+    std::vector<std::string> args;
+    int ret = update_binary_command(path, zip, retry_count, pipefd[1], &args);
+    mzCloseZipArchive(zip);
+    if (ret) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return ret;
+    }
 
     // When executing the update binary contained in the package, the
     // arguments passed are:
@@ -190,22 +366,19 @@ try_update_binary(const char* path, ZipArchive* zip, bool* wipe_cache,
     //   update attempt.
     //
 
-    const char** args = (const char**)malloc(sizeof(char*) * 6);
-    args[0] = binary;
-    args[1] = EXPAND(RECOVERY_API_VERSION);   // defined in Android.mk
-    char* temp = (char*)malloc(10);
-    sprintf(temp, "%d", pipefd[1]);
-    args[2] = temp;
-    args[3] = (char*)path;
-    args[4] = retry_count > 0 ? "retry" : NULL;
-    args[5] = NULL;
+    // Convert the vector to a NULL-terminated char* array suitable for execv.
+    const char* chr_args[args.size() + 1];
+    chr_args[args.size()] = NULL;
+    for (size_t i = 0; i < args.size(); i++) {
+        chr_args[i] = args[i].c_str();
+    }
 
     pid_t pid = fork();
     if (pid == 0) {
         umask(022);
         close(pipefd[0]);
-        execv(binary, (char* const*)args);
-        fprintf(stdout, "E:Can't run %s (%s)\n", binary, strerror(errno));
+        execv(chr_args[0], const_cast<char**>(chr_args));
+        fprintf(stdout, "E:Can't run %s (%s)\n", chr_args[0], strerror(errno));
         _exit(-1);
     }
     close(pipefd[1]);
@@ -291,13 +464,22 @@ mdtp_update()
     ui->Print("Running MDTP integrity verification and update...\n");
 
     /* Make sure system partition is mounted, so MDTP can process its content. */
-    mkdir("/system", 0755);
     status = mount("/dev/block/bootdevice/by-name/system", "/system", "ext4",
                  MS_NOATIME | MS_NODEV | MS_NODIRATIME |
                  MS_RDONLY, "");
 
     if (status) {
         LOGE("Failed to mount the system partition, error=%s.\n", strerror(errno));
+        free(args);
+        return 0;
+    }
+
+    status = mount("/dev/block/bootdevice/by-name/modem", "/firmware", "vfat",
+                   MS_NOATIME | MS_NODEV | MS_NODIRATIME |
+                   MS_RDONLY, "");
+
+    if (status) {
+        LOGE("Failed to mount the modem (firmware) partition, error=%s.\n", strerror(errno));
         free(args);
         return 0;
     }
@@ -318,6 +500,7 @@ mdtp_update()
 
     /* Leave the system partition unmounted before we finish. */
     umount("/system");
+    umount("/firmware");
 
     free(args);
 
@@ -353,31 +536,16 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount,
         return INSTALL_CORRUPT;
     }
 
-    // Load keys.
-    std::vector<Certificate> loadedKeys;
-    if (!load_keys(PUBLIC_KEYS_FILE, loadedKeys)) {
-        LOGE("Failed to load keys\n");
-        return INSTALL_CORRUPT;
-    }
-    LOGI("%zu key(s) loaded from %s\n", loadedKeys.size(), PUBLIC_KEYS_FILE);
-
     // Verify package.
-    ui->Print("Verifying update package...\n");
-    auto t0 = std::chrono::system_clock::now();
-    int err = verify_file(map.addr, map.length, loadedKeys);
-    std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
-    ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
-    if (err != VERIFY_SUCCESS) {
-        LOGE("signature verification failed\n");
+    if (!verify_package(map.addr, map.length)) {
         log_buffer.push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
-
         sysReleaseMap(&map);
         return INSTALL_CORRUPT;
     }
 
     // Try to open the package.
     ZipArchive zip;
-    err = mzOpenZipArchive(map.addr, map.length, &zip);
+    int err = mzOpenZipArchive(map.addr, map.length, &zip);
     if (err != 0) {
         LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
         log_buffer.push_back(android::base::StringPrintf("error: %d", kZipOpenFailure));
@@ -419,35 +587,71 @@ install_package(const char* path, bool* wipe_cache, const char* install_file,
     modified_flash = true;
     auto start = std::chrono::system_clock::now();
 
-    FILE* install_log = fopen_path(install_file, "w");
-    if (install_log) {
-        fputs(path, install_log);
-        fputc('\n', install_log);
-    } else {
-        LOGE("failed to open last_install: %s\n", strerror(errno));
-    }
-    int result;
+    int result = 0;
     std::vector<std::string> log_buffer;
-    if (setup_install_mounts() != 0) {
+    if (needs_mount == true)
+            result = setup_install_mounts();
+    if (result != 0) {
         LOGE("failed to set up expected mounts for install; aborting\n");
         result = INSTALL_ERROR;
     } else {
         result = really_install_package(path, wipe_cache, needs_mount, log_buffer, retry_count);
     }
-    if (install_log != nullptr) {
-        fputc(result == INSTALL_SUCCESS ? '1' : '0', install_log);
-        fputc('\n', install_log);
-        std::chrono::duration<double> duration = std::chrono::system_clock::now() - start;
-        int count = static_cast<int>(duration.count());
-        // Report the time spent to apply OTA update in seconds.
-        fprintf(install_log, "time_total: %d\n", count);
-        fprintf(install_log, "retry: %d\n", retry_count);
 
-        for (const auto& s : log_buffer) {
-            fprintf(install_log, "%s\n", s.c_str());
+    // Measure the time spent to apply OTA update in seconds.
+    std::chrono::duration<double> duration = std::chrono::system_clock::now() - start;
+    int time_total = static_cast<int>(duration.count());
+
+    if (ensure_path_mounted(UNCRYPT_STATUS) != 0) {
+        LOGW("Can't mount %s\n", UNCRYPT_STATUS);
+    } else {
+        std::string uncrypt_status;
+        if (!android::base::ReadFileToString(UNCRYPT_STATUS, &uncrypt_status)) {
+            LOGW("failed to read uncrypt status: %s\n", strerror(errno));
+        } else if (!android::base::StartsWith(uncrypt_status, "uncrypt_")) {
+            LOGW("corrupted uncrypt_status: %s: %s\n", uncrypt_status.c_str(), strerror(errno));
+        } else {
+            log_buffer.push_back(android::base::Trim(uncrypt_status));
         }
-
-        fclose(install_log);
     }
+
+    // The first two lines need to be the package name and install result.
+    std::vector<std::string> log_header = {
+        path,
+        result == INSTALL_SUCCESS ? "1" : "0",
+        "time_total: " + std::to_string(time_total),
+        "retry: " + std::to_string(retry_count),
+    };
+    std::string log_content = android::base::Join(log_header, "\n") + "\n" +
+            android::base::Join(log_buffer, "\n");
+    if (!android::base::WriteStringToFile(log_content, install_file)) {
+        LOGE("failed to write %s: %s\n", install_file, strerror(errno));
+    }
+
+    // Write a copy into last_log.
+    LOGI("%s\n", log_content.c_str());
+
     return result;
+}
+
+bool verify_package(const unsigned char* package_data, size_t package_size) {
+    std::vector<Certificate> loadedKeys;
+    if (!load_keys(PUBLIC_KEYS_FILE, loadedKeys)) {
+        LOGE("Failed to load keys\n");
+        return false;
+    }
+    LOGI("%zu key(s) loaded from %s\n", loadedKeys.size(), PUBLIC_KEYS_FILE);
+
+    // Verify package.
+    ui->Print("Verifying update package...\n");
+    auto t0 = std::chrono::system_clock::now();
+    int err = verify_file(const_cast<unsigned char*>(package_data), package_size, loadedKeys);
+    std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
+    ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
+    if (err != VERIFY_SUCCESS) {
+        LOGE("Signature verification failed\n");
+        LOGE("error: %d\n", kZipVerificationFailure);
+        return false;
+    }
+    return true;
 }

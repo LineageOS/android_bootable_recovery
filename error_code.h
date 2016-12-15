@@ -21,7 +21,8 @@ enum ErrorCode {
     kNoError = -1,
     kLowBattery = 20,
     kZipVerificationFailure,
-    kZipOpenFailure
+    kZipOpenFailure,
+    kBootreasonInBlacklist
 };
 
 enum CauseCode {
@@ -41,6 +42,28 @@ enum CauseCode {
     kTune2FsFailure,
     kRebootFailure,
     kVendorFailure = 200
+};
+
+enum UncryptErrorCode {
+    kUncryptNoError = -1,
+    kUncryptErrorPlaceholder = 50,
+    kUncryptTimeoutError = 100,
+    kUncryptFileRemoveError,
+    kUncryptFileOpenError,
+    kUncryptSocketOpenError,
+    kUncryptSocketWriteError,
+    kUncryptSocketListenError,
+    kUncryptSocketAcceptError,
+    kUncryptFstabReadError,
+    kUncryptFileStatError,
+    kUncryptBlockOpenError,
+    kUncryptIoctlError,
+    kUncryptReadError,
+    kUncryptWriteError,
+    kUncryptFileSyncError,
+    kUncryptFileCloseError,
+    kUncryptFileRenameError,
+    kUncryptPackageMissingError,
 };
 
 #endif
