@@ -1415,7 +1415,11 @@ main(int argc, char **argv) {
     if (show_text) ui->ShowText(true);
 
     /*enable the backlight*/
+#ifdef BOARD_RECOVERY_LCD_BRIGHTNESS_ENABLE
+    write_file("/sys/class/leds/lcd-backlight/brightness", BOARD_RECOVERY_LCD_BRIGHTNESS_ENABLE);
+#else
     write_file("/sys/class/leds/lcd-backlight/brightness", "128");
+#endif
 
     struct selinux_opt seopts[] = {
       { SELABEL_OPT_PATH, "/file_contexts" }
