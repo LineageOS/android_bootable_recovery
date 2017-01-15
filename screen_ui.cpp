@@ -80,13 +80,13 @@ ScreenRecoveryUI::ScreenRecoveryUI() :
     menu_show_start_(0),
     sysbar_state(0),
     file_viewer_text_(nullptr),
+    progressCondition(PTHREAD_COND_INITIALIZER),
     intro_frames(0),
     loop_frames(0),
     animation_fps(30), // TODO: there's currently no way to infer this.
     stage(-1),
     max_stage(-1),
     updateMutex(PTHREAD_MUTEX_INITIALIZER),
-    progressCondition(PTHREAD_COND_INITIALIZER),
     rtl_locale(false),
     rainbow(false),
     wrap_count(0) {
