@@ -1888,7 +1888,7 @@ int main(int argc, char **argv) {
     // we may have two logger instances with different timestamps.
     redirect_stdio(TEMPORARY_LOG_FILE);
 
-    printf("Starting recovery (pid %d) on %s", getpid(), ctime(&start));
+    printf("Starting LineageOS recovery (pid %d) on %s", getpid(), ctime(&start));
 
     load_volume_table();
     has_cache = volume_for_path(CACHE_ROOT) != nullptr;
