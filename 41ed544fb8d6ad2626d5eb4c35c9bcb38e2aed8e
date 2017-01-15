@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da3975d1_66d5b442",
+        "filename": "device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 13589
+      },
+      "writtenOn": "2017-01-15T00:02:22Z",
+      "side": 1,
+      "message": "Related wipe entry",
+      "revId": "41ed544fb8d6ad2626d5eb4c35c9bcb38e2aed8e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
