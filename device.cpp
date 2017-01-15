@@ -40,7 +40,7 @@ struct menu_entry {
 
 static const char* WIPE_MENU_NAMES[] = {
 #ifndef RELEASE_BUILD
-    "System reset (keep media)",
+    "Wipe data (keep media)",
 #endif
     "Full factory reset",
     "Wipe cache partition",
