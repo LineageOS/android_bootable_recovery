@@ -78,8 +78,13 @@ int ev_init(ev_callback input_cb, void* data) {
                 continue;
             }
 
-            // We assume that only EV_KEY, EV_REL, EV_SW, and EV_ABS event types are ever needed.
+            // We assume that only EV_KEY, EV_SW, and EV_ABS event types are ever needed.
+            // EV_REL should be enabled explicitly in device tree.
+#ifdef BOARD_RECOVERY_NEEDS_REL_INPUT
             if (!test_bit(EV_KEY, ev_bits) && !test_bit(EV_REL, ev_bits) && !test_bit(EV_SW, ev_bits) && !test_bit(EV_ABS, ev_bits)) {
+#else
+            if (!test_bit(EV_KEY, ev_bits) && !test_bit(EV_SW, ev_bits) && !test_bit(EV_ABS, ev_bits)) {
+#endif
                 close(fd);
                 continue;
             }
