@@ -24,6 +24,14 @@ cc_library {
         "include",
     ],
 
+    product_variables: {
+        lineage: {
+            recovery_skip_ev_rel_input: {
+                cflags: ["-DSKIP_EV_REL"],
+            },
+        },
+    },
+
     srcs: [
         "events.cpp",
         "graphics.cpp",
