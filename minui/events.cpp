@@ -31,6 +31,7 @@
 #include <memory>
 #include <string>
 
+#include <android-base/properties.h>
 #include <android-base/strings.h>
 #include <android-base/unique_fd.h>
 
@@ -63,6 +64,11 @@ static size_t g_ev_count = 0;
 static size_t g_ev_dev_count = 0;
 static size_t g_ev_misc_count = 0;
 
+static bool should_skip_ev_rel() {
+  static bool prop = android::base::GetBoolProperty("ro.recovery.skip_ev_rel_input", false);
+  return prop;
+}
+
 static bool test_bit(size_t bit, unsigned long* array) { // NOLINT
   return (array[bit / BITS_PER_LONG] & (1UL << (bit % BITS_PER_LONG))) != 0;
 }
@@ -76,9 +82,12 @@ static bool should_add_input_device(int fd, bool allow_touch_inputs) {
     return false;
   }
 
-  // We assume that only EV_KEY, EV_REL, and EV_SW event types are ever needed. EV_ABS is also
-  // allowed if allow_touch_inputs is set.
-  if (!test_bit(EV_KEY, ev_bits) && !test_bit(EV_REL, ev_bits) && !test_bit(EV_SW, ev_bits)) {
+  // We assume that only EV_ABS, EV_KEY, EV_REL, and EV_SW event types are ever needed.
+  // EV_ABS is only allowed if allow_touch_inputs is set.
+  // EV_REL can be explicitly disallowed. This is needed to skip sensor inputs on some devices.
+  if (!test_bit(EV_KEY, ev_bits) &&
+      !test_bit(EV_SW, ev_bits) &&
+      (should_skip_ev_rel() || !test_bit(EV_REL, ev_bits))) {
     if (!allow_touch_inputs || !test_bit(EV_ABS, ev_bits)) {
       return false;
     }
