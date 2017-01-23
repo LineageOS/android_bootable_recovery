@@ -353,12 +353,12 @@ void RecoveryUI::ProcessRel(input_device* dev, int code, int value) {
         // key event.
         dev->rel_sum += value;
         if (dev->rel_sum > 3) {
-            process_key(dev, KEY_DOWN, 1);   // press down key
-            process_key(dev, KEY_DOWN, 0);   // and release it
+            ProcessKey(dev, KEY_DOWN, 1);   // press down key
+            ProcessKey(dev, KEY_DOWN, 0);   // and release it
             dev->rel_sum = 0;
         } else if (dev->rel_sum < -3) {
-            process_key(dev, KEY_UP, 1);     // press up key
-            process_key(dev, KEY_UP, 0);     // and release it
+            ProcessKey(dev, KEY_UP, 1);     // press up key
+            ProcessKey(dev, KEY_UP, 0);     // and release it
             dev->rel_sum = 0;
         }
     }
