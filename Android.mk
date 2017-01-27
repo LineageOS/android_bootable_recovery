@@ -62,6 +62,10 @@ LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
 LOCAL_CFLAGS += -Wno-unused-parameter
 LOCAL_CLANG := true
 
+# selinux permissive
+PROJECT_PATH_AGREES := true
+BOARD_SEPOLICY_DIRS += bootable/recovery/sepolicy
+
 LOCAL_C_INCLUDES += \
     system/vold \
     system/extras/ext4_utils \
@@ -353,5 +357,4 @@ include \
     $(LOCAL_PATH)/updater/Android.mk \
     $(LOCAL_PATH)/update_verifier/Android.mk \
     $(LOCAL_PATH)/fstools/Android.mk
-
 endif

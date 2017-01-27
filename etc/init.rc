@@ -1,11 +1,19 @@
 import /init.recovery.${ro.hardware}.rc
 
 on early-init
+    # Set the security context for the init process.
+    # This should occur before anything else (e.g. ueventd) is started.
+    setcon u:r:init:s0
+
     # Set the security context of /postinstall if present.
     restorecon /postinstall
 
     start ueventd
     start healthd
+
+service sh setenforce 0
+    oneshot
+    seclabel u:r:recovery:s0
 
 on init
     export ANDROID_ROOT /system
