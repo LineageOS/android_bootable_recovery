@@ -62,6 +62,26 @@ LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
 LOCAL_CFLAGS += -Wno-unused-parameter
 LOCAL_CLANG := true
 
+# selinux permissive start
+LOCAL_ADDITIONAL_DEPENDENCIES += \
+    permissive.sh
+
+ifdef project-path-for
+    ifeq ($(LOCAL_PATH),$(call project-path-for,recovery))
+        PROJECT_PATH_AGREES := true
+        BOARD_SEPOLICY_DIRS += $(call project-path-for,recovery)/sepolicy
+    endif
+else
+    ifeq ($(LOCAL_PATH),bootable/recovery)
+        PROJECT_PATH_AGREES := true
+        BOARD_SEPOLICY_DIRS += bootable/recovery/sepolicy
+    endif
+endif
+
+BOARD_SEPOLICY_UNION += recovery.te
+# selinux permissve stop
+
+
 LOCAL_C_INCLUDES += \
     system/vold \
     system/extras/ext4_utils \
