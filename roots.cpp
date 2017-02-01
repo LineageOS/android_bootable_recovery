@@ -583,3 +583,18 @@ int setup_install_mounts() {
     }
     return 0;
 }
+
+int is_data_encrypted(bool *encrypted)
+{
+    for (int i = 0; i < fstab->num_entries; ++i) {
+        struct fstab_rec* v = &fstab->recs[i];
+        if (!v->mount_point) {
+            continue;
+        }
+        if (!strcmp("/data", v->mount_point)) {
+            *encrypted = !!fs_mgr_is_file_encrypted(v);
+            return 0;
+        }
+    }
+    return -1;
+}

@@ -62,6 +62,8 @@ bool volume_is_mountable(Volume *v);
 bool volume_is_readonly(Volume *v);
 bool volume_is_verity(Volume *v);
 
+int is_data_encrypted(bool *encrypted);
+
 #define MAX_NUM_MANAGED_VOLUMES 10
 
 #endif  // RECOVERY_ROOTS_H_

@@ -1603,24 +1603,39 @@ static void
 setup_adbd() {
     struct stat f;
     // Mount /data and copy adb_keys to root if it exists
-    ensure_path_mounted("/data");
-    if (stat(key_src, &f) == 0) {
-        FILE *file_src = fopen(key_src, "r");
-        if (file_src == NULL) {
-            LOGE("Can't open %s\n", key_src);
+    bool encrypted;
+    if (!is_data_encrypted(&encrypted) && encrypted) {
+        // /data is encrypted, allow insecure adbd
+        property_set("ro.adb.secure", "0");
+    } else {
+        if (ensure_path_mounted("/data")) {
+            // /data is not encrypted and we couldn't mount it.
+            // Enable secure adbd, just in case
+            property_set("ro.adb.secure", "1");
         } else {
-            FILE *file_dest = fopen(key_dest, "w");
-            if (file_dest == NULL) {
-                LOGE("Can't open %s\n", key_dest);
+            if (access("/data/data", R_OK)) {
+                // /data is empty, allow insecure adbd
+                property_set("ro.adb.secure", "0");
             } else {
-                char buf[4096];
-                while (fgets(buf, sizeof(buf), file_src)) fputs(buf, file_dest);
-                check_and_fclose(file_dest, key_dest);
-
                 // Enable secure adbd
                 property_set("ro.adb.secure", "1");
+                if (stat(key_src, &f) == 0) {
+                    FILE *file_src = fopen(key_src, "r");
+                    if (file_src == NULL) {
+                        LOGE("Can't open %s\n", key_src);
+                    } else {
+                        FILE *file_dest = fopen(key_dest, "w");
+                        if (file_dest == NULL) {
+                            LOGE("Can't open %s\n", key_dest);
+                        } else {
+                            char buf[4096];
+                            while (fgets(buf, sizeof(buf), file_src)) fputs(buf, file_dest);
+                            check_and_fclose(file_dest, key_dest);
+                        }
+                        check_and_fclose(file_src, key_src);
+                    }
+                }
             }
-            check_and_fclose(file_src, key_src);
         }
     }
     ensure_path_unmounted("/data");
