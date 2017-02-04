@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a288981_227316b3",
+        "filename": "Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2017-02-04T18:17:06Z",
+      "side": 1,
+      "message": "Do you know what this does? I do, because I wrote it... FOR TWRP.",
+      "revId": "da2ad1f1c973e9d50765546278c17974e0575faf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a288981_02681ab9",
+        "filename": "etc/init.rc",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5531
+      },
+      "writtenOn": "2017-02-04T18:17:06Z",
+      "side": 1,
+      "message": "Directly copied and pasted from:\nhttps://github.com/omnirom/android_bootable_recovery/blob/android-7.1/etc/init.rc#L10-L12",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 22
+      },
+      "revId": "da2ad1f1c973e9d50765546278c17974e0575faf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
