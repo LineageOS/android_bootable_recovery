@@ -115,7 +115,7 @@ static bool write_misc_partition(const void* p, size_t size, size_t offset, std:
   }
   int open_flags = O_WRONLY | O_SYNC;
   if (offset > 0)
-    open_flags = O_RDWR | O_APPEND | O_SYNC;
+    open_flags = O_RDWR | O_SYNC;
   android::base::unique_fd fd(open(misc_blk_device.c_str(), open_flags));
   if (fd.get() == -1) {
     *err = android::base::StringPrintf("failed to open %s: %s", misc_blk_device.c_str(),
