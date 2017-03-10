@@ -159,6 +159,7 @@ int main(int argc, char** argv) {
   SLOGI("Booting slot %u: isSlotMarkedSuccessful=%d\n", current_slot, is_successful);
   if (is_successful == 0) {
     // The current slot has not booted successfully.
+#ifdef PRODUCT_SUPPORTS_VERITY
     char verity_mode[PROPERTY_VALUE_MAX];
     if (property_get("ro.boot.veritymode", verity_mode, "") == -1) {
       SLOGE("Failed to get dm-verity mode");
@@ -175,6 +176,9 @@ int main(int argc, char** argv) {
       SLOGE("Failed to verify all blocks in care map file.\n");
       return -1;
     }
+#else
+    LOG(WARNING) << "dm-verity not enabled; marking without verification.";
+#endif
 
     int ret = module->markBootSuccessful(module);
     if (ret != 0) {
