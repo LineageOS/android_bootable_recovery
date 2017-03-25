@@ -23,9 +23,10 @@ namespace android {
 namespace volmgr {
 namespace iso9660 {
 
-bool IsSupported();
+bool IsIso9660Supported();
+bool IsUdfSupported();
 status_t Mount(const std::string& source, const std::string& target,
-        int ownerUid, int ownerGid );
+        int ownerUid, int ownerGid);
 
 }  // namespace iso9660
 }  // namespace vold
