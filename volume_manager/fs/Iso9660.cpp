@@ -29,8 +29,7 @@ bool IsSupported() {
 }
 
 status_t Mount(const std::string& source, const std::string& target,
-        int ownerUid, int ownerGid ) {
-    int rc;
+        int ownerUid, int ownerGid, const char* type) {
     unsigned long flags;
     char mountData[256];
 
@@ -42,12 +41,7 @@ status_t Mount(const std::string& source, const std::string& target,
     snprintf(mountData, sizeof(mountData),
             "utf8,uid=%d,gid=%d", ownerUid, ownerGid);
 
-    rc = mount(c_source, c_target, "iso9660", flags, mountData);
-    if (rc != 0) {
-        rc = mount(c_source, c_target, "udf", flags, mountData);
-    }
-
-    return rc;
+    return mount(c_source, c_target, type, flags, mountData);
 }
 
 }  // namespace iso9660

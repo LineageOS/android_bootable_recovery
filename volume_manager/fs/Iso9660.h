@@ -25,7 +25,7 @@ namespace iso9660 {
 
 bool IsSupported();
 status_t Mount(const std::string& source, const std::string& target,
-        int ownerUid, int ownerGid );
+        int ownerUid, int ownerGid, const char* type);
 
 }  // namespace iso9660
 }  // namespace vold
