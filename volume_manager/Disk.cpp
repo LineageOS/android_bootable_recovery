@@ -303,8 +303,8 @@ status_t Disk::readPartitions() {
 
         std::string fsType, unused;
         if (ReadMetadataUntrusted(mDevPath, fsType, unused, unused) == OK) {
-            if (fsType == "iso9660") {
-                LOG(INFO) << "Detect iso9660";
+            if (fsType == "iso9660" || fsType == "udf") {
+                LOG(INFO) << "Detect " << fsType;
                 createPublicVolume(mDevice);
                 res = OK;
             }

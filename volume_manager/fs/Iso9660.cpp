@@ -24,8 +24,12 @@ namespace android {
 namespace volmgr {
 namespace iso9660 {
 
-bool IsSupported() {
+bool IsIso9660Supported() {
     return IsFilesystemSupported("iso9660");
+}
+
+bool IsUdfSupported() {
+    return IsFilesystemSupported("udf");
 }
 
 status_t Mount(const std::string& source, const std::string& target,
@@ -33,6 +37,9 @@ status_t Mount(const std::string& source, const std::string& target,
     int mountFlags = MS_NODEV | MS_NOEXEC | MS_NOSUID | MS_RDONLY;
     auto mountData = android::base::StringPrintf("uid=%d,gid=%d", ownerUid, ownerGid);
     if (mount(source.c_str(), target.c_str(), "iso9660", mountFlags, mountData.c_str()) == 0) {
+        return 0;
+    }
+    if (mount(source.c_str(), target.c_str(), "udf", mountFlags, mountData.c_str()) == 0) {
         return 0;
     }
     return -1;
