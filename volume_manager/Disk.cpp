@@ -70,6 +70,7 @@ static const unsigned int kMajorBlockScsiP = 135;
 static const unsigned int kMajorBlockMmc = 179;
 static const unsigned int kMajorBlockExperimentalMin = 240;
 static const unsigned int kMajorBlockExperimentalMax = 254;
+static const unsigned int kMajorBlockCdrom = 11;
 
 static const char* kGptBasicData = "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7";
 static const char* kGptLinuxFilesystem = "0FC63DAF-8483-4772-8E79-3D69D8477DE4";
@@ -205,6 +206,9 @@ status_t Disk::readMetadata() {
             mLabel = "Virtual";
             break;
         }
+        case kMajorBlockCdrom:
+             LOG(DEBUG) << "Found a CDROM: " << mSysPath;
+             FALLTHROUGH_INTENDED;
         case kMajorBlockScsiA:
         case kMajorBlockScsiB:
         case kMajorBlockScsiC:
@@ -405,6 +409,9 @@ int Disk::getMaxMinors() {
         case kMajorBlockScsiP: {
             // Per Documentation/devices.txt this is static
             return 15;
+        }
+        case kMajorBlockCdrom: {
+            return 0;
         }
         case kMajorBlockMmc: {
             // Per Documentation/devices.txt this is dynamic
