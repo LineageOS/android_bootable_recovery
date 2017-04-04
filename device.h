@@ -62,11 +62,12 @@ class Device : public VoldWatcher {
     WIPE_DATA = 5,
     WIPE_FULL = 6,
     WIPE_CACHE = 7,
-    REBOOT_BOOTLOADER = 8,
-    SHUTDOWN = 9,
-    VIEW_RECOVERY_LOGS = 10,
-    MOUNT_SYSTEM = 11,
-    RUN_GRAPHICS_TEST = 12,
+    WIPE_SYSTEM = 8,
+    REBOOT_BOOTLOADER = 9,
+    SHUTDOWN = 10,
+    VIEW_RECOVERY_LOGS = 11,
+    MOUNT_SYSTEM = 12,
+    RUN_GRAPHICS_TEST = 13,
   };
 
   // Return the list of menu items (an array of strings, NULL-terminated). The menu_position passed
