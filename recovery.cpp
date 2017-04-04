@@ -918,6 +918,20 @@ static bool wipe_cache(bool should_confirm, Device* device) {
     return success;
 }
 
+static bool ask_to_wipe_system(Device* device) {
+    return yes_no(device, "Wipe system?", "  THIS CAN NOT BE UNDONE!");
+}
+
+// Return true on success.
+static bool wipe_system() {
+    modified_flash = true;
+
+    ui->Print("\n-- Wiping system...\n");
+    bool success = erase_volume("/system");
+    ui->Print("System wipe %s.\n", success ? "complete" : "failed");
+    return success;
+}
+
 // Secure-wipe a given partition. It uses BLKSECDISCARD, if supported. Otherwise, it goes with
 // BLKDISCARD (if device supports BLKDISCARDZEROES) or BLKZEROOUT.
 static bool secure_wipe_partition(const std::string& partition) {
@@ -1287,6 +1301,17 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
       case Device::WIPE_CACHE:
         wipe_cache(ui->IsTextVisible(), device);
         if (!ui->IsTextVisible()) return Device::NO_ACTION;
+        break;
+
+      case Device::WIPE_SYSTEM:
+        if (ui->IsTextVisible()) {
+          if (ask_to_wipe_system(device)) {
+            wipe_system();
+          }
+        } else {
+          wipe_system();
+          return Device::NO_ACTION;
+        }
         break;
 
       case Device::APPLY_UPDATE:
