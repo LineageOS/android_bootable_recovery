@@ -969,6 +969,20 @@ static bool wipe_cache(bool should_confirm, Device* device) {
     return success;
 }
 
+// Return true on success.
+static bool wipe_system(Device* device) {
+    if (!yes_no(device, "Wipe system?", "  THIS CAN NOT BE UNDONE!")) {
+        return false;
+    }
+
+    modified_flash = true;
+
+    ui->Print("\n-- Wiping system...\n");
+    bool success = erase_volume("/system");
+    ui->Print("System wipe %s.\n", success ? "complete" : "failed");
+    return success;
+}
+
 // Secure-wipe a given partition. It uses BLKSECDISCARD, if supported.
 // Otherwise, it goes with BLKDISCARD (if device supports BLKDISCARDZEROES) or
 // BLKZEROOUT.
@@ -1420,6 +1434,10 @@ prompt_and_wait(Device* device, int status) {
 
                 case Device::RUN_GRAPHICS_TEST:
                     run_graphics_test(device);
+                    break;
+
+                case Device::WIPE_SYSTEM:
+                    wipe_system(device);
                     break;
 
                 case Device::MOUNT_SYSTEM:
