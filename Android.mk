@@ -95,13 +95,12 @@ LOCAL_STATIC_LIBRARIES := \
     libdiskconfig \
     libsysutils \
     libfs_mgr \
-    libcrypto_utils_static \
-    libcrypto_static \
     libbase \
     libutils \
     liblog \
     liblogwrap \
     libselinux \
+    libcrypto_static \
     libscrypt_static \
     libnl \
     libc++_static \
@@ -111,7 +110,8 @@ LOCAL_STATIC_LIBRARIES := \
     libext2_uuid \
     libfec \
     libfec_rs \
-    libsquashfs_utils
+    libsquashfs_utils \
+    libmincrypt
 
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
 LOCAL_WHOLE_STATIC_LIBRARIES += libcutils
@@ -223,7 +223,6 @@ LOCAL_STATIC_LIBRARIES += \
     libminui \
     libfs_mgr \
     libtar \
-    libcrypto_utils_static \
     libcrypto_static \
     libselinux \
     libutils \
@@ -324,7 +323,7 @@ LOCAL_SRC_FILES := \
     verifier.cpp \
     ui.cpp
 LOCAL_C_INCLUDES := system/core/fs_mgr/include
-LOCAL_STATIC_LIBRARIES := libcrypto_utils_static libcrypto_static
+LOCAL_STATIC_LIBRARIES := libcrypto_static
 include $(BUILD_STATIC_LIBRARY)
 
 include \
