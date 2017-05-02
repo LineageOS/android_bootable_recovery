@@ -1460,6 +1460,11 @@ prompt_and_wait(Device* device, int status) {
                     }
                     break;
             }
+            if (status == Device::kRefresh) {
+                status = 0;
+                continue;
+            }
+            break;
         }
     }
 }
