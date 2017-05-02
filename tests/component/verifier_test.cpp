@@ -77,6 +77,9 @@ class MockUI : public RecoveryUI {
 
     virtual int MenuItemStart() const { return 0; }
     virtual int MenuItemHeight() const { return 0; }
+
+    virtual void Blank(bool) {}
+    virtual bool Blanked() const { return true; }
 };
 
 void
