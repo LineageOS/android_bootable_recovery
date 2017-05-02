@@ -42,6 +42,7 @@
 #include "voldclient.h"
 
 #define UI_WAIT_KEY_TIMEOUT_SEC    120
+#define UI_WAIT_KEY_BLANK_SEC      30
 
 /* Some extra input defines */
 #ifndef ABS_MT_ANGLE
@@ -579,7 +580,7 @@ void RecoveryUI::EnqueueKey(int key_code) {
     pthread_mutex_unlock(&key_queue_mutex);
 }
 
-int RecoveryUI::WaitKey() {
+int RecoveryUI::WaitKey(bool allow_timeout /* = true */) {
     pthread_mutex_lock(&key_queue_mutex);
     int timeouts = UI_WAIT_KEY_TIMEOUT_SEC;
 
@@ -600,7 +601,21 @@ int RecoveryUI::WaitKey() {
                 pthread_mutex_unlock(&key_queue_mutex);
                 return Device::kRefresh;
             }
-            timeouts--;
+            if (allow_timeout && timeouts > 0) {
+                timeouts--;
+            }
+            if (key_queue_len > 0) {
+                if (Blanked()) {
+                    Blank(false);
+                    key_queue_len = 0;
+                    timeouts = UI_WAIT_KEY_TIMEOUT_SEC;
+                }
+            }
+            else {
+                if (timeouts == UI_WAIT_KEY_TIMEOUT_SEC - UI_WAIT_KEY_BLANK_SEC) {
+                    Blank(true);
+                }
+            }
         }
     } while ((timeouts || IsUsbConnected()) && key_queue_len == 0);
 

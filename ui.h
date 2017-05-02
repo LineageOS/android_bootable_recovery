@@ -143,7 +143,7 @@ class RecoveryUI {
     // --- key handling ---
 
     // Wait for a key and return it.  May return -1 after timeout.
-    virtual int WaitKey();
+    virtual int WaitKey(bool allow_timeout = true);
 
     // Cancel a WaitKey()
     virtual void CancelWaitKey();
@@ -204,6 +204,9 @@ class RecoveryUI {
     // End menu mode, resetting the text overlay so that ui_print()
     // statements will be displayed.
     virtual void EndMenu() = 0;
+
+    virtual void Blank(bool enable) = 0;
+    virtual bool Blanked() const = 0;
 
     // Notify of volume state change
     void onVolumeChanged() { v_changed = 1; }
