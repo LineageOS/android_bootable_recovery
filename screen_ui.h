@@ -69,6 +69,9 @@ class ScreenRecoveryUI : public RecoveryUI {
     int SelectMenu(int sel, bool abs = false);
     void EndMenu();
 
+    void Blank(bool enable);
+    bool Blanked() const { return blanked_; }
+
     void KeyLongPress(int);
 
     void Redraw();
@@ -116,6 +119,8 @@ class ScreenRecoveryUI : public RecoveryUI {
 
     // true when both graphics pages are the same (except for the progress bar).
     bool pagesIdentical;
+
+    bool blanked_;
 
     size_t log_text_cols_, log_text_rows_;
     size_t text_cols_, text_rows_;
@@ -208,6 +213,9 @@ class ScreenRecoveryUI : public RecoveryUI {
     void DrawTextLines(int x, int* y, const char* const* lines);
 
     void OMGRainbows();
+
+    // for screen blanking
+    char brightness[5];
 };
 
 #endif  // RECOVERY_UI_H

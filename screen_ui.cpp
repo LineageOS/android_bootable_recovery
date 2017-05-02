@@ -42,13 +42,65 @@
 #include "ui.h"
 #include "cutils/properties.h"
 
+#define ARRAY_SIZE(a) sizeof(a) / sizeof(a[0])
+
 #define TEXT_INDENT     4
+
+#define BRIGHTNESS_FILE "/sys/class/leds/lcd-backlight/brightness"
 
 // Return the current time as a double (including fractions of a second).
 static double now() {
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec / 1000000.0;
+}
+
+static int read_file(const char *path, char *s, const int num_bytes)
+{
+    int fd, ret = 0, len;
+
+    fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        return -errno;
+    }
+
+    len = read(fd, s, num_bytes - 1);
+    if (len < 0) {
+        ret = -errno;
+    } else {
+        // do not store newlines, but terminate the string instead
+        if (s[len-1] == '\n') {
+            s[len-1] = '\0';
+        } else {
+            s[len] = '\0';
+        }
+    }
+
+    close(fd);
+
+    return ret;
+}
+
+static int write_file(const char *path, const char *value)
+{
+    int fd, ret, len;
+
+    fd = open(path, O_WRONLY|O_CREAT, 0622);
+    if (fd < 0)
+        return -errno;
+
+    len = strlen(value);
+
+    do {
+        ret = write(fd, value, len);
+    } while (ret < 0 && errno == EINTR);
+
+    close(fd);
+    if (ret < 0) {
+        return -errno;
+    } else {
+        return 0;
+    }
 }
 
 ScreenRecoveryUI::ScreenRecoveryUI() :
@@ -59,6 +111,7 @@ ScreenRecoveryUI::ScreenRecoveryUI() :
     progressScopeSize(0),
     progress(0),
     pagesIdentical(false),
+    blanked_(true),
     log_text_cols_(0),
     log_text_rows_(0),
     text_cols_(0),
@@ -358,6 +411,11 @@ void ScreenRecoveryUI::draw_sysbar()
 // Redraw everything on the screen.  Does not flip pages.
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::draw_screen_locked() {
+    if (blanked_) {
+        gr_color(0, 0, 0, 255);
+        gr_clear();
+        return;
+    }
     if (!show_text) {
         draw_background_locked();
         draw_foreground_locked();
@@ -921,6 +979,19 @@ void ScreenRecoveryUI::EndMenu() {
     pthread_mutex_lock(&updateMutex);
     if (show_menu && text_rows_ > 0 && text_cols_ > 0) {
         show_menu = false;
+    }
+    pthread_mutex_unlock(&updateMutex);
+}
+
+void ScreenRecoveryUI::Blank(bool enable) {
+    pthread_mutex_lock(&updateMutex);
+    if (blanked_ != enable) {
+        blanked_ = enable;
+        gr_fb_blank(enable);
+        // grab current brightness value from sysfs
+        read_file(BRIGHTNESS_FILE, brightness, ARRAY_SIZE(brightness));
+        write_file(BRIGHTNESS_FILE, (enable ? "0" : brightness));
+        update_screen_locked();
     }
     pthread_mutex_unlock(&updateMutex);
 }
