@@ -739,7 +739,8 @@ static bool erase_volume(const char* volume, bool force = false) {
 
 int
 get_menu_selection(const char* const * headers, const char* const * items,
-                   int menu_only, int initial_selection, Device* device) {
+                   int menu_only, int initial_selection, Device* device,
+                   bool allow_timeout = true) {
     // throw away keys pressed previously, so user doesn't
     // accidentally trigger menu items.
     ui->FlushKeys();
@@ -757,10 +758,13 @@ get_menu_selection(const char* const * headers, const char* const * items,
             chosen_item != Device::kGoBack &&
             chosen_item != Device::kGoHome &&
             chosen_item != Device::kRefresh) {
-        int key = ui->WaitKey();
+        int key = ui->WaitKey(allow_timeout);
         int visible = ui->IsTextVisible();
 
         if (key == -1) {   // ui_wait_key() timed out
+            if (!allow_timeout) {
+                continue;
+            }
             if (ui->WasTextEverVisible()) {
                 continue;
             } else {
@@ -1379,7 +1383,7 @@ refresh:
         static const char* list[] = { "Cancel sideload", NULL };
 
         start_sideload(ui, &wipe_cache, TEMPORARY_INSTALL_FILE);
-        int item = get_menu_selection(headers, list, 0, 0, device);
+        int item = get_menu_selection(headers, list, 0, 0, device, false);
         if (item != Device::kNoAction) {
             stop_sideload();
         }
@@ -1743,28 +1747,6 @@ static ssize_t logrotate(
     return __android_log_pmsg_file_write(logId, prio, name.c_str(), buf, len);
 }
 
-static int write_file(const char *path, const char *value)
-{
-    int fd, ret, len;
-
-    fd = open(path, O_WRONLY|O_CREAT, 0622);
-    if (fd < 0)
-        return -errno;
-
-    len = strlen(value);
-
-    do {
-        ret = write(fd, value, len);
-    } while (ret < 0 && errno == EINTR);
-
-    close(fd);
-    if (ret < 0) {
-        return -errno;
-    } else {
-        return 0;
-    }
-}
-
 int main(int argc, char **argv) {
     // Take last pmsg contents and rewrite it to the current pmsg session.
     static const char filter[] = "recovery/";
@@ -1919,8 +1901,7 @@ int main(int argc, char **argv) {
     ui->SetBackground(RecoveryUI::NONE);
     if (show_text) ui->ShowText(true);
 
-    /*enable the backlight*/
-    write_file("/sys/class/leds/lcd-backlight/brightness", "128");
+    ui->Blank(false);
 
     struct selinux_opt seopts[] = {
       { SELABEL_OPT_PATH, "/file_contexts" }
@@ -2096,8 +2077,7 @@ int main(int argc, char **argv) {
 
     sync();
 
-    write_file("/sys/class/leds/lcd-backlight/brightness", "0");
-    gr_fb_blank(true);
+    ui->Blank(true);
 
     switch (after) {
         case Device::SHUTDOWN:
