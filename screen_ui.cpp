@@ -502,8 +502,6 @@ void ScreenRecoveryUI::Init() {
     LoadLocalizedBitmap("error_text", &error_text);
 
     LoadAnimation();
-
-    RecoveryUI::Init();
 }
 
 void ScreenRecoveryUI::LoadAnimation() {
