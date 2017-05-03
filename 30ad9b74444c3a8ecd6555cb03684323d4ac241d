@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a486d77_979f9d03",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2017-05-03T02:39:24Z",
+      "side": 1,
+      "message": "I don\u0027t think this one path (or the values) will work on all devices. Some devices have 4000 something as the max brightness (leeco comes to mind). As far as brightness paths, it\u0027s very common in twrp to have a board flag to specify the screen brightness path because for whatever reason, the default one doesn\u0027t work. (Then again, TWRP could be doing something else entirely for screen brightness/blanking on devices that don\u0027t specify a path, so I have no idea)",
+      "revId": "30ad9b74444c3a8ecd6555cb03684323d4ac241d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
