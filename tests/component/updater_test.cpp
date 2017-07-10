@@ -578,7 +578,7 @@ TEST_F(UpdaterTest, block_image_update) {
   UpdaterInfo updater_info;
   updater_info.package_zip = handle;
   TemporaryFile temp_pipe;
-  updater_info.cmd_pipe = fopen(temp_pipe.path, "wb");
+  updater_info.cmd_pipe = fopen(temp_pipe.path, "wbe");
   updater_info.package_zip_addr = map.addr;
   updater_info.package_zip_len = map.length;
 
