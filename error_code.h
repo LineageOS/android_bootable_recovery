@@ -66,6 +66,8 @@ enum UncryptErrorCode {
   kUncryptFileCloseError,
   kUncryptFileRenameError,
   kUncryptPackageMissingError,
+  kUncryptRealpathFindError,
+  kUncryptBlockDeviceFindError,
 };
 
 #endif // _ERROR_CODE_H_
