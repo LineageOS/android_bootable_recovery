@@ -16,6 +16,24 @@
       "revId": "30ad9b74444c3a8ecd6555cb03684323d4ac241d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42b336b2_d81036f5",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 7155
+      },
+      "writtenOn": "2017-08-02T11:57:23Z",
+      "side": 1,
+      "message": "We should just read the current brightness before blanking, store it, and restore when needed.",
+      "parentUuid": "1a486d77_979f9d03",
+      "revId": "30ad9b74444c3a8ecd6555cb03684323d4ac241d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
