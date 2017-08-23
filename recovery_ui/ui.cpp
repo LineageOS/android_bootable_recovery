@@ -57,7 +57,7 @@ RecoveryUI::RecoveryUI()
       brightness_dimmed_(25),
       brightness_file_(BRIGHTNESS_FILE),
       max_brightness_file_(MAX_BRIGHTNESS_FILE),
-      touch_screen_allowed_(false),
+      touch_screen_allowed_(true),
       fastbootd_logo_enabled_(false),
       touch_low_threshold_(android::base::GetIntProperty("ro.recovery.ui.touch_low_threshold",
                                                          kDefaultTouchLowThreshold)),
