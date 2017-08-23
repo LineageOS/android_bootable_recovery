@@ -54,7 +54,7 @@ RecoveryUI::RecoveryUI()
       rtl_locale_(false),
       brightness_normal_(50),
       brightness_dimmed_(25),
-      touch_screen_allowed_(false),
+      touch_screen_allowed_(true),
       kTouchLowThreshold(RECOVERY_UI_TOUCH_LOW_THRESHOLD),
       kTouchHighThreshold(RECOVERY_UI_TOUCH_HIGH_THRESHOLD),
       key_queue_len(0),

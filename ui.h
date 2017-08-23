@@ -135,7 +135,7 @@ class RecoveryUI {
   unsigned int brightness_normal_;
   unsigned int brightness_dimmed_;
 
-  // Whether we should listen for touch inputs (default: false).
+  // Whether we should listen for touch inputs (default: true).
   bool touch_screen_allowed_;
 
  private:
