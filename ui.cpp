@@ -58,7 +58,7 @@ RecoveryUI::RecoveryUI()
       brightness_dimmed_(25),
       brightness_file_(BRIGHTNESS_FILE),
       max_brightness_file_(MAX_BRIGHTNESS_FILE),
-      touch_screen_allowed_(false),
+      touch_screen_allowed_(true),
       kTouchLowThreshold(RECOVERY_UI_TOUCH_LOW_THRESHOLD),
       kTouchHighThreshold(RECOVERY_UI_TOUCH_HIGH_THRESHOLD),
       key_queue_len(0),
