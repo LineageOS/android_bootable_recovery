@@ -151,7 +151,7 @@ class RecoveryUI {
   std::string brightness_file_;
   std::string max_brightness_file_;
 
-  // Whether we should listen for touch inputs (default: false).
+  // Whether we should listen for touch inputs (default: true).
   bool touch_screen_allowed_;
 
  private:
