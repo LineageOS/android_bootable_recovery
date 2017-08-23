@@ -67,7 +67,7 @@ RecoveryUI::RecoveryUI()
           android::base::GetProperty("ro.recovery.ui.brightness_file", DEFAULT_BRIGHTNESS_FILE)),
       max_brightness_file_(android::base::GetProperty("ro.recovery.ui.max_brightness_file",
                                                       DEFAULT_MAX_BRIGHTNESS_FILE)),
-      touch_screen_allowed_(false),
+      touch_screen_allowed_(true),
       fastbootd_logo_enabled_(false),
       touch_low_threshold_(android::base::GetIntProperty("ro.recovery.ui.touch_low_threshold",
                                                          kDefaultTouchLowThreshold)),
