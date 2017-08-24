@@ -1232,9 +1232,18 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
           break;
         case Device::kNoAction:
           break;
+        case Device::kGoBack:
+          chosen_item = Device::kGoBack;
+          break;
+        case Device::kGoHome:
+          chosen_item = Device::kGoHome;
+          break;
       }
     } else if (!menu_only) {
       chosen_item = action;
+    }
+    if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome) {
+      break;
     }
   }
 
