@@ -192,6 +192,9 @@ int ApplyFromSdcard(Device* device, RecoveryUI* ui) {
   }
 
   std::string path = BrowseDirectory(SDCARD_ROOT, device, ui);
+  if (path == "@") {
+    return INSTALL_NONE;
+  }
   if (path.empty()) {
     LOG(ERROR) << "\n-- No package file selected.\n";
     ensure_path_unmounted(SDCARD_ROOT);

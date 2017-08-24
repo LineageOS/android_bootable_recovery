@@ -264,6 +264,7 @@ class RecoveryUI {
   const int touch_low_threshold_;
   const int touch_high_threshold_;
 
+  void OnTouchDeviceDetected(int fd);
   void OnKeyDetected(int key_code);
   void OnTouchEvent();
   int OnInputEvent(int fd, uint32_t epevents);
@@ -294,12 +295,19 @@ class RecoveryUI {
   bool has_down_key;
   bool has_touch_screen;
 
+  struct vkey_t {
+    int keycode;
+    Point min_;
+    Point max_;
+  };
+
   // Touch event related variables. See the comments in RecoveryUI::OnInputEvent().
   int touch_slot_;
   Point touch_pos_;
   Point touch_start_;
   bool touch_finger_down_;
   bool touch_swiping_;
+  std::vector<vkey_t> virtual_keys_;
   bool is_bootreason_recovery_ui_;
 
   std::thread input_thread_;
