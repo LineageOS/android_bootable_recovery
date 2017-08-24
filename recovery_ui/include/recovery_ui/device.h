@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +33,8 @@ class Device {
   static constexpr const int kHighlightUp = -2;
   static constexpr const int kHighlightDown = -3;
   static constexpr const int kInvokeItem = -4;
+  static constexpr const int kGoBack = -5;
+  static constexpr const int kGoHome = -6;
 
   // ENTER vs REBOOT: The latter will trigger a reboot that goes through bootloader, which allows
   // using a new bootloader / recovery image if applicable. For example, REBOOT_RESCUE goes from
