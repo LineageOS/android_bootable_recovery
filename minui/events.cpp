@@ -325,7 +325,7 @@ int ev_sync_key_state(const ev_set_key_callback& set_key_cb) {
   return 0;
 }
 
-void ev_iterate_available_keys(const std::function<void(int)>& f) {
+void ev_iterate_available_keys(const std::function<void(int)>& key_detected) {
   // Use unsigned long to match ioctl's parameter type.
   unsigned long ev_bits[BITS_TO_LONGS(EV_MAX)];    // NOLINT
   unsigned long key_bits[BITS_TO_LONGS(KEY_MAX)];  // NOLINT
@@ -348,13 +348,13 @@ void ev_iterate_available_keys(const std::function<void(int)>& f) {
 
     for (int key_code = 0; key_code <= KEY_MAX; ++key_code) {
       if (test_bit(key_code, key_bits)) {
-        f(key_code);
+        key_detected(key_code);
       }
     }
   }
 }
 
-void ev_iterate_touch_inputs(const std::function<void(int)>& action) {
+void ev_iterate_touch_inputs(const std::function<void(int)>& key_detected) {
   for (size_t i = 0; i < g_ev_dev_count; ++i) {
     // Use unsigned long to match ioctl's parameter type.
     unsigned long ev_bits[BITS_TO_LONGS(EV_MAX)] = {};  // NOLINT
@@ -372,7 +372,7 @@ void ev_iterate_touch_inputs(const std::function<void(int)>& action) {
 
     for (int key_code = 0; key_code <= KEY_MAX; ++key_code) {
       if (test_bit(key_code, key_bits)) {
-        action(key_code);
+        key_detected(key_code);
       }
     }
   }
