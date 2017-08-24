@@ -89,6 +89,48 @@ RecoveryUI::~RecoveryUI() {
   }
 }
 
+void RecoveryUI::OnTouchDeviceDetected(int fd) {
+  char name[256];
+  char path[PATH_MAX];
+  char buf[4096];
+
+  memset(name, 0, sizeof(name));
+  if (ioctl(fd, EVIOCGNAME(sizeof(name)), name) < 0) {
+    return;
+  }
+  sprintf(path, "/sys/board_properties/virtualkeys.%s", name);
+  int vkfd = open(path, O_RDONLY);
+  if (vkfd < 0) {
+    LOG(INFO) << "vkeys: could not open " << path;
+    return;
+  }
+  ssize_t len = read(vkfd, buf, sizeof(buf));
+  close(vkfd);
+  if (len <= 0) {
+    LOG(ERROR) << "vkeys: could not read " << path;
+    return;
+  }
+  buf[len] = '\0';
+
+  char* p = buf;
+  char* endp;
+  for (size_t n = 0; p < buf + len && *p == '0'; ++n) {
+    int val[6];
+    int f;
+    for (f = 0; *p && f < 6; ++f) {
+      val[f] = strtol(p, &endp, 0);
+      if (p == endp) break;
+      p = endp + 1;
+    }
+    if (f != 6 || val[0] != 0x01) break;
+    vkey_t vk;
+    vk.keycode = val[1];
+    vk.min_ = Point(val[2] - val[4] / 2, val[3] - val[5] / 2);
+    vk.max_ = Point(val[2] + val[4] / 2, val[3] + val[5] / 2);
+    virtual_keys_.push_back(vk);
+  }
+}
+
 void RecoveryUI::OnKeyDetected(int key_code) {
   if (key_code == KEY_POWER) {
     has_power_key = true;
@@ -147,7 +189,9 @@ bool RecoveryUI::Init(const std::string& /* locale */) {
   ev_iterate_available_keys(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
 
   if (touch_screen_allowed_) {
-    ev_iterate_touch_inputs(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+    ev_iterate_touch_inputs(
+        std::bind(&RecoveryUI::OnTouchDeviceDetected, this, std::placeholders::_1),
+        std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
 
     // Parse /proc/cmdline to determine if it's booting into recovery with a bootreason of
     // "recovery_ui". This specific reason is set by some (wear) bootloaders, to allow an easier way
@@ -191,6 +235,14 @@ void RecoveryUI::OnTouchEvent() {
   } else if (abs(delta.x()) < touch_low_threshold_ && abs(delta.y()) > touch_high_threshold_) {
     direction = delta.y() < 0 ? SwipeDirection::UP : SwipeDirection::DOWN;
   } else {
+    for (const auto& vk : virtual_keys_) {
+      if (touch_start_.x() >= vk.min_.x() && touch_start_.x() < vk.max_.x() &&
+          touch_start_.y() >= vk.min_.y() && touch_start_.y() < vk.max_.y()) {
+        ProcessKey(vk.keycode, 1);  // press key
+        ProcessKey(vk.keycode, 0);  // and release it
+        return;
+      }
+    }
     LOG(DEBUG) << "Ignored " << delta.x() << " " << delta.y() << " (low: " << touch_low_threshold_
                << ", high: " << touch_high_threshold_ << ")";
     return;
@@ -215,6 +267,9 @@ void RecoveryUI::OnTouchEvent() {
       break;
 
     case SwipeDirection::LEFT:
+      ProcessKey(KEY_BACK, 1);  // press back key
+      ProcessKey(KEY_BACK, 0);  // and release it
+      break;
     case SwipeDirection::RIGHT:
       ProcessKey(KEY_POWER, 1);  // press power key
       ProcessKey(KEY_POWER, 0);  // and release it
