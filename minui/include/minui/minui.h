@@ -78,7 +78,7 @@ int ev_init(ev_callback input_cb, bool allow_touch_inputs = false);
 void ev_exit();
 int ev_add_fd(int fd, ev_callback cb);
 void ev_iterate_available_keys(const std::function<void(int)>& f);
-void ev_iterate_touch_inputs(const std::function<void(int)>& action);
+void ev_iterate_touch_inputs(const std::function<void(int)>& key_detected);
 int ev_sync_key_state(const ev_set_key_callback& set_key_cb);
 
 // 'timeout' has the same semantics as poll(2).
