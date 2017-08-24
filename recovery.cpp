@@ -724,9 +724,19 @@ static int get_menu_selection(const char* const* headers, const char* const* ite
           break;
         case Device::kNoAction:
           break;
+        case Device::kGoBack:
+          chosen_item = Device::kGoBack;
+          break;
+        case Device::kGoHome:
+          chosen_item = Device::kGoHome;
+          break;
       }
     } else if (!menu_only) {
       chosen_item = action;
+    }
+    if (chosen_item == Device::kGoBack ||
+        chosen_item == Device::kGoHome) {
+      break;
     }
   }
 
@@ -777,12 +787,15 @@ static std::string browse_directory(const std::string& path, Device* device) {
   int chosen_item = 0;
   while (true) {
     chosen_item = get_menu_selection(headers, entries, true, chosen_item, device);
-
-    const std::string& item = zips[chosen_item];
-    if (chosen_item == 0) {
+    if (chosen_item == Device::kGoHome) {
+      return "@";
+    }
+    if (chosen_item == Device::kGoBack || chosen_item == 0) {
       // Go up but continue browsing (if the caller is browse_directory).
       return "";
     }
+
+    const std::string& item = zips[chosen_item];
 
     std::string new_path = path + "/" + item;
     if (new_path.back() == '/') {
@@ -1048,7 +1061,10 @@ static void choose_recovery_file(Device* device) {
   int chosen_item = 0;
   while (true) {
     chosen_item = get_menu_selection(headers, menu_entries.data(), true, chosen_item, device);
-    if (entries[chosen_item] == "Back") break;
+    if (chosen_item == Device::kGoHome ||
+            chosen_item == Device::kGoBack || chosen_item == 0) {
+        break;
+    }
 
     ui->ShowFile(entries[chosen_item].c_str());
   }
@@ -1106,6 +1122,9 @@ static int apply_from_sdcard(Device* device, bool* wipe_cache) {
     }
 
     std::string path = browse_directory(SDCARD_ROOT, device);
+    if (path == "@") {
+        return INSTALL_NONE;
+    }
     if (path.empty()) {
         ui->Print("\n-- No package file selected.\n");
         ensure_path_unmounted(SDCARD_ROOT);
@@ -1143,6 +1162,11 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     ui->SetProgressType(RecoveryUI::EMPTY);
 
     int chosen_item = get_menu_selection(nullptr, device->GetMenuItems(), false, 0, device);
+    // We are already in the main menu
+    if (chosen_item == Device::kGoBack ||
+        chosen_item == Device::kGoHome) {
+      continue;
+    }
 
     // Device-specific code may take some action here. It may return one of the core actions
     // handled in the switch statement below.
