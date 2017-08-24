@@ -164,10 +164,10 @@ class RecoveryUI {
 
   // Touch event related variables. See the comments in RecoveryUI::OnInputEvent().
   int touch_slot_;
-  int touch_X_;
-  int touch_Y_;
-  int touch_start_X_;
-  int touch_start_Y_;
+  int touch_x_;
+  int touch_y_;
+  int touch_start_x_;
+  int touch_start_y_;
   bool touch_finger_down_;
   bool touch_swiping_;
   bool is_bootreason_recovery_ui_;
@@ -181,7 +181,7 @@ class RecoveryUI {
   pthread_t input_thread_;
 
   void OnKeyDetected(int key_code);
-  void OnTouchDetected(int dx, int dy);
+  void OnTouchEvent();
   int OnInputEvent(int fd, uint32_t epevents);
   void ProcessKey(int key_code, int updown);
 

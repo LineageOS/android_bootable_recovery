@@ -166,7 +166,9 @@ bool RecoveryUI::Init(const std::string& locale) {
   return true;
 }
 
-void RecoveryUI::OnTouchDetected(int dx, int dy) {
+void RecoveryUI::OnTouchEvent() {
+  int dx = touch_x_ - touch_start_x_;
+  int dy = touch_y_ - touch_start_y_;
   enum SwipeDirection { UP, DOWN, RIGHT, LEFT } direction;
 
   // We only consider a valid swipe if:
@@ -239,12 +241,12 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       // There might be multiple SYN_REPORT events. We should only detect a swipe after lifting the
       // contact.
       if (touch_finger_down_ && !touch_swiping_) {
-        touch_start_X_ = touch_X_;
-        touch_start_Y_ = touch_Y_;
+        touch_start_x_ = touch_x_;
+        touch_start_y_ = touch_y_;
         touch_swiping_ = true;
       } else if (!touch_finger_down_ && touch_swiping_) {
         touch_swiping_ = false;
-        OnTouchDetected(touch_X_ - touch_start_X_, touch_Y_ - touch_start_Y_);
+        OnTouchEvent();
       }
     }
     return 0;
@@ -280,12 +282,12 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
 
     switch (ev.code) {
       case ABS_MT_POSITION_X:
-        touch_X_ = ev.value;
+        touch_x_ = ev.value;
         touch_finger_down_ = true;
         break;
 
       case ABS_MT_POSITION_Y:
-        touch_Y_ = ev.value;
+        touch_y_ = ev.value;
         touch_finger_down_ = true;
         break;
 
