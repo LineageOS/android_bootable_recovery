@@ -179,18 +179,19 @@ bool RecoveryUI::Init(const std::string& /* locale */) {
   return true;
 }
 
-void RecoveryUI::OnTouchDetected(int dx, int dy) {
+void RecoveryUI::OnTouchEvent() {
+  Point delta = touch_pos_ - touch_start_;
   enum SwipeDirection { UP, DOWN, RIGHT, LEFT } direction;
 
   // We only consider a valid swipe if:
   // - the delta along one axis is below touch_low_threshold_;
   // - and the delta along the other axis is beyond touch_high_threshold_.
-  if (abs(dy) < touch_low_threshold_ && abs(dx) > touch_high_threshold_) {
-    direction = dx < 0 ? SwipeDirection::LEFT : SwipeDirection::RIGHT;
-  } else if (abs(dx) < touch_low_threshold_ && abs(dy) > touch_high_threshold_) {
-    direction = dy < 0 ? SwipeDirection::UP : SwipeDirection::DOWN;
+  if (abs(delta.y()) < touch_low_threshold_ && abs(delta.x()) > touch_high_threshold_) {
+    direction = delta.x() < 0 ? SwipeDirection::LEFT : SwipeDirection::RIGHT;
+  } else if (abs(delta.x()) < touch_low_threshold_ && abs(delta.y()) > touch_high_threshold_) {
+    direction = delta.y() < 0 ? SwipeDirection::UP : SwipeDirection::DOWN;
   } else {
-    LOG(DEBUG) << "Ignored " << dx << " " << dy << " (low: " << touch_low_threshold_
+    LOG(DEBUG) << "Ignored " << delta.x() << " " << delta.y() << " (low: " << touch_low_threshold_
                << ", high: " << touch_high_threshold_ << ")";
     return;
   }
@@ -252,12 +253,11 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       // There might be multiple SYN_REPORT events. We should only detect a swipe after lifting the
       // contact.
       if (touch_finger_down_ && !touch_swiping_) {
-        touch_start_X_ = touch_X_;
-        touch_start_Y_ = touch_Y_;
+        touch_start_ = touch_pos_;
         touch_swiping_ = true;
       } else if (!touch_finger_down_ && touch_swiping_) {
         touch_swiping_ = false;
-        OnTouchDetected(touch_X_ - touch_start_X_, touch_Y_ - touch_start_Y_);
+        OnTouchEvent();
       }
     }
     return 0;
@@ -293,12 +293,12 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
 
     switch (ev.code) {
       case ABS_MT_POSITION_X:
-        touch_X_ = ev.value;
+        touch_pos_.x(ev.value);
         touch_finger_down_ = true;
         break;
 
       case ABS_MT_POSITION_Y:
-        touch_Y_ = ev.value;
+        touch_pos_.y(ev.value);
         touch_finger_down_ = true;
         break;
 
