@@ -66,17 +66,31 @@ int Device::HandleMenuKey(int key, bool visible) {
   }
 
   switch (key) {
+    case KEY_RIGHTSHIFT:
     case KEY_DOWN:
     case KEY_VOLUMEDOWN:
+    case KEY_MENU:
       return kHighlightDown;
 
+    case KEY_LEFTSHIFT:
     case KEY_UP:
     case KEY_VOLUMEUP:
+    case KEY_SEARCH:
       return kHighlightUp;
 
     case KEY_ENTER:
     case KEY_POWER:
+    case BTN_MOUSE:
+    case KEY_SEND:
       return kInvokeItem;
+
+    case KEY_HOME:
+    case KEY_HOMEPAGE:
+      return kGoHome;
+
+    case KEY_BACKSPACE:
+    case KEY_BACK:
+      return kGoBack;
 
     default:
       // If you have all of the above buttons, any other buttons

@@ -71,9 +71,52 @@ RecoveryUI::RecoveryUI()
       touch_slot_(0),
       is_bootreason_recovery_ui_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
+  memset(virtual_keys_, 0, sizeof(vkey_t) * MAX_NR_VKEYS);
   pthread_mutex_init(&key_queue_mutex, nullptr);
   pthread_cond_init(&key_queue_cond, nullptr);
   memset(key_pressed, 0, sizeof(key_pressed));
+}
+
+void RecoveryUI::OnTouchDeviceDetected(int fd) {
+  char name[256];
+  char path[PATH_MAX];
+  char buf[64*MAX_NR_VKEYS];
+
+  memset(name, 0, sizeof(name));
+  if (ioctl(fd, EVIOCGNAME(sizeof(name)), name) < 0) {
+    return;
+  }
+  sprintf(path, "/sys/board_properties/virtualkeys.%s", name);
+  int vkfd = open(path, O_RDONLY);
+  if (vkfd < 0) {
+    LOG(INFO) << "vkeys: could not open " << path;
+    return;
+  }
+  ssize_t len = read(vkfd, buf, sizeof(buf));
+  close(vkfd);
+  if (len <= 0) {
+    LOG(ERROR) << "vkeys: could not read " << path;
+    return;
+  }
+  buf[len] = '\0';
+
+  char* p = buf;
+  char* endp;
+  for (size_t n = 0; n < MAX_NR_VKEYS && p < buf+len && *p == '0'; ++n) {
+    int val[6];
+    int f;
+    for (f = 0; *p && f < 6; ++f) {
+      val[f] = strtol(p, &endp, 0);
+      if (p == endp)
+        break;
+      p = endp+1;
+    }
+    if (f != 6 || val[0] != 0x01)
+      break;
+    virtual_keys_[n].keycode = val[1];
+    virtual_keys_[n].min_ = Point(val[2] - val[4]/2, val[3] - val[5]/2);
+    virtual_keys_[n].max_ = Point(val[2] + val[4]/2, val[3] + val[5]/2);
+  }
 }
 
 void RecoveryUI::OnKeyDetected(int key_code) {
@@ -142,7 +185,8 @@ bool RecoveryUI::Init(const std::string& locale) {
   ev_iterate_available_keys(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
 
   if (touch_screen_allowed_) {
-    ev_iterate_touch_inputs(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+    ev_iterate_touch_inputs(std::bind(&RecoveryUI::OnTouchDeviceDetected, this, std::placeholders::_1),
+                            std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
 
     // Parse /proc/cmdline to determine if it's booting into recovery with a bootreason of
     // "recovery_ui". This specific reason is set by some (wear) bootloaders, to allow an easier way
@@ -178,6 +222,16 @@ void RecoveryUI::OnTouchEvent() {
   } else if (abs(delta.x()) < kTouchLowThreshold && abs(delta.y()) > kTouchHighThreshold) {
     direction = delta.y() < 0 ? SwipeDirection::UP : SwipeDirection::DOWN;
   } else {
+    int n;
+    for (n = 0; virtual_keys_[n].keycode != 0 && n < MAX_NR_VKEYS; ++n) {
+      const vkey_t& vk = virtual_keys_[n];
+      if (touch_start_.x() >= vk.min_.x() && touch_start_.x() < vk.max_.x() &&
+          touch_start_.y() >= vk.min_.y() && touch_start_.y() < vk.max_.y()) {
+        ProcessKey(vk.keycode, 1);  // press key
+        ProcessKey(vk.keycode, 0);  // and release it
+        return;
+      }
+    }
     LOG(DEBUG) << "Ignored " << delta.x() << " " << delta.y()
                << " (low: " << kTouchLowThreshold
                << ", high: " << kTouchHighThreshold << ")";
@@ -203,6 +257,9 @@ void RecoveryUI::OnTouchEvent() {
       break;
 
     case SwipeDirection::LEFT:
+      ProcessKey(KEY_BACK, 1);  // press power key
+      ProcessKey(KEY_BACK, 0);  // and release it
+      break;
     case SwipeDirection::RIGHT:
       ProcessKey(KEY_POWER, 1);  // press power key
       ProcessKey(KEY_POWER, 0);  // and release it
