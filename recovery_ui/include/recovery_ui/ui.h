@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,51 @@
 #include <vector>
 
 static constexpr const char* DEFAULT_LOCALE = "en-US";
+
+/*
+ * Simple representation of a (x,y) coordinate with convenience operators
+ */
+class Point {
+ public:
+  Point() : x_(0), y_(0) {}
+  Point(int x, int y) : x_(x), y_(y) {}
+  int x() const {
+    return x_;
+  }
+  int y() const {
+    return y_;
+  }
+  void x(int x) {
+    x_ = x;
+  }
+  void y(int y) {
+    y_ = y;
+  }
+
+  bool operator==(const Point& rhs) const {
+    return (x() == rhs.x() && y() == rhs.y());
+  }
+  bool operator!=(const Point& rhs) const {
+    return !(*this == rhs);
+  }
+
+  Point operator+(const Point& rhs) const {
+    Point tmp;
+    tmp.x_ = x_ + rhs.x_;
+    tmp.y_ = y_ + rhs.y_;
+    return tmp;
+  }
+  Point operator-(const Point& rhs) const {
+    Point tmp;
+    tmp.x_ = x_ - rhs.x_;
+    tmp.y_ = y_ - rhs.y_;
+    return tmp;
+  }
+
+ private:
+  int x_;
+  int y_;
+};
 
 // Abstract class for controlling the user interface during recovery.
 class RecoveryUI {
@@ -223,7 +269,7 @@ class RecoveryUI {
   const int touch_high_threshold_;
 
   void OnKeyDetected(int key_code);
-  void OnTouchDetected(int dx, int dy);
+  void OnTouchEvent();
   int OnInputEvent(int fd, uint32_t epevents);
   void ProcessKey(int key_code, int updown);
   void TimeKey(int key_code, int count);
@@ -257,10 +303,8 @@ class RecoveryUI {
 
   // Touch event related variables. See the comments in RecoveryUI::OnInputEvent().
   int touch_slot_;
-  int touch_X_;
-  int touch_Y_;
-  int touch_start_X_;
-  int touch_start_Y_;
+  Point touch_pos_;
+  Point touch_start_;
   bool touch_finger_down_;
   bool touch_swiping_;
   bool is_bootreason_recovery_ui_;
