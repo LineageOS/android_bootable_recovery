@@ -23,6 +23,8 @@
 
 #include <string>
 
+#define MAX_NR_VKEYS	8
+
 // Abstract class for controlling the user interface during recovery.
 class RecoveryUI {
  public:
@@ -162,6 +164,14 @@ class RecoveryUI {
   bool has_down_key;
   bool has_touch_screen;
 
+  struct vkey_t {
+    int keycode;
+    int min_x;
+    int min_y;
+    int max_x;
+    int max_y;
+  };
+
   // Touch event related variables. See the comments in RecoveryUI::OnInputEvent().
   int touch_slot_;
   int touch_x_;
@@ -170,6 +180,7 @@ class RecoveryUI {
   int touch_start_y_;
   bool touch_finger_down_;
   bool touch_swiping_;
+  vkey_t virtual_keys_[MAX_NR_VKEYS];
   bool is_bootreason_recovery_ui_;
 
   struct key_timer_t {
@@ -180,6 +191,7 @@ class RecoveryUI {
 
   pthread_t input_thread_;
 
+  void OnTouchDeviceDetected(int fd);
   void OnKeyDetected(int key_code);
   void OnTouchEvent();
   int OnInputEvent(int fd, uint32_t epevents);
