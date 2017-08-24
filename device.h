@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +86,8 @@ class Device {
   static const int kHighlightUp = -2;
   static const int kHighlightDown = -3;
   static const int kInvokeItem = -4;
+  static const int kGoBack = -5;
+  static const int kGoHome = -6;
 
   // Called before and after we do a wipe data/factory reset operation, either via a reboot from the
   // main system with the --wipe_data flag, or when the user boots into recovery image manually and
