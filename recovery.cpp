@@ -424,8 +424,10 @@ static void choose_recovery_file(Device* device) {
     if (chosen_item == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
       break;
     }
-    if (entries[chosen_item] == "Back") break;
-
+    if (chosen_item == Device::kGoHome || chosen_item == Device::kGoBack ||
+        chosen_item == entries.size() - 1) {
+      break;
+    }
     ui->ShowFile(entries[chosen_item]);
   }
 }
@@ -498,6 +500,11 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     if (chosen_item == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
       return Device::KEY_INTERRUPTED;
     }
+    // We are already in the main menu
+    if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome) {
+      continue;
+    }
+
     // Device-specific code may take some action here. It may return one of the core actions
     // handled in the switch statement below.
     Device::BuiltinAction chosen_action =
