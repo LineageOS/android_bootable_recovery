@@ -39,6 +39,7 @@
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 #include <cutils/android_reboot.h>
+#include <cutils/properties.h>
 #include <minui/minui.h>
 
 #include "common.h"
@@ -57,7 +58,7 @@ RecoveryUI::RecoveryUI()
       touch_screen_allowed_(true),
       kTouchLowThreshold(RECOVERY_UI_TOUCH_LOW_THRESHOLD),
       kTouchHighThreshold(RECOVERY_UI_TOUCH_HIGH_THRESHOLD),
-      key_queue_len(0),
+      event_queue_len(0),
       key_last_down(-1),
       key_long_press(false),
       key_down_count(0),
@@ -71,10 +72,16 @@ RecoveryUI::RecoveryUI()
       touch_slot_(0),
       is_bootreason_recovery_ui_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
-  memset(virtual_keys_, 0, sizeof(vkey_t) * MAX_NR_VKEYS);
-  pthread_mutex_init(&key_queue_mutex, nullptr);
-  pthread_cond_init(&key_queue_cond, nullptr);
+  char propval[PROPERTY_VALUE_MAX];
+  property_get("ro.build.version.release", propval, "(unknown)");
+  android_version_ = std::string("Android ") + propval;
+  property_get("ro.lineage.version", propval, "(unknown)");
+  lineage_version_ = std::string("LineageOS ") + propval;
+
+  pthread_mutex_init(&event_queue_mutex, nullptr);
+  pthread_cond_init(&event_queue_cond, nullptr);
   memset(key_pressed, 0, sizeof(key_pressed));
+  memset(virtual_keys_, 0, sizeof(vkey_t) * MAX_NR_VKEYS);
 }
 
 void RecoveryUI::OnTouchDeviceDetected(int fd) {
@@ -232,9 +239,7 @@ void RecoveryUI::OnTouchEvent() {
         return;
       }
     }
-    LOG(DEBUG) << "Ignored " << delta.x() << " " << delta.y()
-               << " (low: " << kTouchLowThreshold
-               << ", high: " << kTouchHighThreshold << ")";
+    EnqueueTouch(touch_pos_);
     return;
   }
 
@@ -394,7 +399,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
   bool long_press = false;
   bool reboot_enabled;
 
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   key_pressed[key_code] = updown;
   if (updown) {
     ++key_down_count;
@@ -415,7 +420,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
     key_last_down = -1;
   }
   reboot_enabled = enable_reboot;
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
 
   if (register_key) {
     switch (CheckKey(key_code, long_press)) {
@@ -452,26 +457,42 @@ void* RecoveryUI::time_key_helper(void* cookie) {
 void RecoveryUI::time_key(int key_code, int count) {
   usleep(750000);  // 750 ms == "long"
   bool long_press = false;
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   if (key_last_down == key_code && key_down_count == count) {
     long_press = key_long_press = true;
   }
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
   if (long_press) KeyLongPress(key_code);
 }
 
 void RecoveryUI::EnqueueKey(int key_code) {
-  pthread_mutex_lock(&key_queue_mutex);
-  const int queue_max = sizeof(key_queue) / sizeof(key_queue[0]);
-  if (key_queue_len < queue_max) {
-    key_queue[key_queue_len++] = key_code;
-    pthread_cond_signal(&key_queue_cond);
+  pthread_mutex_lock(&event_queue_mutex);
+  const int queue_max = sizeof(event_queue) / sizeof(event_queue[0]);
+  if (event_queue_len < queue_max) {
+    InputEvent event;
+    event.type = InputEvent::EVENT_TYPE_KEY;
+    event.key = key_code;
+    event_queue[event_queue_len++] = event;
+    pthread_cond_signal(&event_queue_cond);
   }
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
 }
 
-int RecoveryUI::WaitKey() {
-  pthread_mutex_lock(&key_queue_mutex);
+void RecoveryUI::EnqueueTouch(const Point& pos) {
+  pthread_mutex_lock(&event_queue_mutex);
+  const int queue_max = sizeof(event_queue) / sizeof(event_queue[0]);
+  if (event_queue_len < queue_max) {
+    InputEvent event;
+    event.type = InputEvent::EVENT_TYPE_TOUCH;
+    event.pos = pos;
+    event_queue[event_queue_len++] = event;
+    pthread_cond_signal(&event_queue_cond);
+  }
+  pthread_mutex_unlock(&event_queue_mutex);
+}
+
+RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
+  pthread_mutex_lock(&event_queue_mutex);
 
   // Time out after UI_WAIT_KEY_TIMEOUT_SEC, unless a USB cable is
   // plugged in.
@@ -484,8 +505,19 @@ int RecoveryUI::WaitKey() {
     timeout.tv_sec += UI_WAIT_KEY_TIMEOUT_SEC;
 
     int rc = 0;
-    while (key_queue_len == 0 && rc != ETIMEDOUT) {
-      rc = pthread_cond_timedwait(&key_queue_cond, &key_queue_mutex, &timeout);
+    while (event_queue_len == 0 && rc != ETIMEDOUT) {
+      Print(""); // Force screen update
+      gettimeofday(&now, nullptr);
+      struct timespec event_timeout;
+      event_timeout.tv_sec = now.tv_sec + 1;
+      event_timeout.tv_nsec = now.tv_usec * 1000;
+      rc = pthread_cond_timedwait(&event_queue_cond, &event_queue_mutex, &event_timeout);
+      if (rc == ETIMEDOUT) {
+        gettimeofday(&now, nullptr);
+        if (now.tv_sec <= timeout.tv_sec) {
+          rc = 0;
+        }
+      }
     }
 
     if (screensaver_state_ != ScreensaverState::DISABLED) {
@@ -507,8 +539,8 @@ int RecoveryUI::WaitKey() {
       } else if (screensaver_state_ != ScreensaverState::NORMAL) {
         // Drop the first key if it's changing from OFF to NORMAL.
         if (screensaver_state_ == ScreensaverState::OFF) {
-          if (key_queue_len > 0) {
-            memcpy(&key_queue[0], &key_queue[1], sizeof(int) * --key_queue_len);
+          if (event_queue_len > 0) {
+            memcpy(&event_queue[0], &event_queue[1], sizeof(int) * --event_queue_len);
           }
         }
 
@@ -521,15 +553,16 @@ int RecoveryUI::WaitKey() {
         }
       }
     }
-  } while (IsUsbConnected() && key_queue_len == 0);
+  } while (IsUsbConnected() && event_queue_len == 0);
 
-  int key = -1;
-  if (key_queue_len > 0) {
-    key = key_queue[0];
-    memcpy(&key_queue[0], &key_queue[1], sizeof(int) * --key_queue_len);
+  InputEvent event;
+  event.type = InputEvent::EVENT_TYPE_NONE;
+  if (event_queue_len > 0) {
+    event = event_queue[0];
+    memcpy(&event_queue[0], &event_queue[1], sizeof(event_queue[0]) * --event_queue_len);
   }
-  pthread_mutex_unlock(&key_queue_mutex);
-  return key;
+  pthread_mutex_unlock(&event_queue_mutex);
+  return event;
 }
 
 bool RecoveryUI::IsUsbConnected() {
@@ -549,16 +582,16 @@ bool RecoveryUI::IsUsbConnected() {
 }
 
 bool RecoveryUI::IsKeyPressed(int key) {
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   int pressed = key_pressed[key];
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
   return pressed;
 }
 
 bool RecoveryUI::IsLongPress() {
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   bool result = key_long_press;
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
   return result;
 }
 
@@ -575,15 +608,15 @@ bool RecoveryUI::HasTouchScreen() const {
 }
 
 void RecoveryUI::FlushKeys() {
-  pthread_mutex_lock(&key_queue_mutex);
-  key_queue_len = 0;
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
+  event_queue_len = 0;
+  pthread_mutex_unlock(&event_queue_mutex);
 }
 
 RecoveryUI::KeyAction RecoveryUI::CheckKey(int key, bool is_long_press) {
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   key_long_press = false;
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
 
   // If we have power and volume up keys, that chord is the signal to toggle the text display.
   if (HasThreeButtons() || (HasPowerKey() && HasTouchScreen() && touch_screen_allowed_)) {
@@ -606,9 +639,9 @@ RecoveryUI::KeyAction RecoveryUI::CheckKey(int key, bool is_long_press) {
 
   // Press power seven times in a row to reboot.
   if (key == KEY_POWER) {
-    pthread_mutex_lock(&key_queue_mutex);
+    pthread_mutex_lock(&event_queue_mutex);
     bool reboot_enabled = enable_reboot;
-    pthread_mutex_unlock(&key_queue_mutex);
+    pthread_mutex_unlock(&event_queue_mutex);
 
     if (reboot_enabled) {
       ++consecutive_power_keys;
@@ -628,9 +661,9 @@ void RecoveryUI::KeyLongPress(int) {
 }
 
 void RecoveryUI::SetEnableReboot(bool enabled) {
-  pthread_mutex_lock(&key_queue_mutex);
+  pthread_mutex_lock(&event_queue_mutex);
   enable_reboot = enabled;
-  pthread_mutex_unlock(&key_queue_mutex);
+  pthread_mutex_unlock(&event_queue_mutex);
 }
 
 void RecoveryUI::SetLocale(const std::string& new_locale) {
