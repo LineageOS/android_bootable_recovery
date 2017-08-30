@@ -51,13 +51,16 @@ class StubRecoveryUI : public RecoveryUI {
     va_end(ap);
   }
   void PrintOnScreenOnly(const char* fmt, ...) override {}
-  void ShowFile(const char* filename) override {}
+  int ShowFile(const char* filename) override { return -1; }
 
   // menu display
-  void StartMenu(const char* const* headers, const char* const* items,
+  void StartMenu(const char* const* headers, const menu& menu,
                  int initial_selection) override {}
   int SelectMenu(int sel) override {
     return sel;
+  }
+  int SelectMenu(const Point& point) override {
+    return 0;
   }
   void EndMenu() override {}
 };
