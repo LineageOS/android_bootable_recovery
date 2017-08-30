@@ -153,12 +153,12 @@ void WearRecoveryUI::draw_screen_locked() {
           gr_fill(x, y - 2, gr_fb_width() - x, y + char_height_ + 2);
           // white text of selected item
           SetColor(MENU_SEL_FG);
-          if (menu_[i][0]) {
-            gr_text(gr_sys_font(), x + 4, y, menu_[i], 1);
+          if (!menu_[i].text.empty()) {
+            gr_text(gr_sys_font(), x + 4, y, menu_[i].text.c_str(), 1);
           }
           SetColor(MENU);
-        } else if (menu_[i][0]) {
-          gr_text(gr_sys_font(), x + 4, y, menu_[i], 0);
+        } else if (!menu_[i].text.empty()) {
+          gr_text(gr_sys_font(), x + 4, y, menu_[i].text.c_str(), 0);
         }
         y += char_height_ + 4;
       }
@@ -250,7 +250,7 @@ void WearRecoveryUI::Print(const char* fmt, ...) {
   pthread_mutex_unlock(&updateMutex);
 }
 
-void WearRecoveryUI::StartMenu(const char* const* headers, const char* const* items,
+void WearRecoveryUI::StartMenu(const char* const* headers, const menu& menu,
                                int initial_selection) {
   pthread_mutex_lock(&updateMutex);
   if (text_rows_ > 0 && text_cols_ > 0) {
@@ -261,9 +261,9 @@ void WearRecoveryUI::StartMenu(const char* const* headers, const char* const* it
     // Because WearRecoveryUI supports scrollable menu, it's fine to have
     // more entries than text_rows_. The menu may be truncated otherwise.
     // Bug: 23752519
-    for (; items[i] != nullptr; i++) {
-      strncpy(menu_[i], items[i], text_cols_ - 1);
-      menu_[i][text_cols_ - 1] = '\0';
+    const menu_item* items = menu.items();
+    for (; items[i].text != nullptr; i++) {
+      menu_[i].text = items[i].text;
     }
     menu_items = i;
     show_menu = true;
@@ -298,7 +298,13 @@ int WearRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
-void WearRecoveryUI::ShowFile(FILE* fp) {
+int WearRecoveryUI::SelectMenu(const Point& point) {
+  // XXX: (point.y() - menu_top_) / menu_item_height_
+  int sel = point.y() / char_height_;
+  return SelectMenu(sel);
+}
+
+int WearRecoveryUI::ShowFile(FILE* fp) {
   std::vector<off_t> offsets;
   offsets.push_back(ftello(fp));
   ClearText();
@@ -315,10 +321,14 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
       Redraw();
       while (show_prompt) {
         show_prompt = false;
-        int key = WaitKey();
-        if (key == KEY_POWER || key == KEY_ENTER) {
-          return;
-        } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
+        RecoveryUI::InputEvent evt = WaitInputEvent();
+        if (evt.type != RecoveryUI::InputEvent::EVENT_TYPE_KEY) {
+          show_prompt = true;
+          continue;
+        }
+        if (evt.key == KEY_POWER || evt.key == KEY_ENTER) {
+          return evt.key;
+        } else if (evt.key == KEY_UP || evt.key == KEY_VOLUMEUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
@@ -327,7 +337,7 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
           }
         } else {
           if (feof(fp)) {
-            return;
+            return -1;
           }
           offsets.push_back(ftello(fp));
         }
@@ -347,6 +357,7 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
       }
     }
   }
+  return -1;
 }
 
 void WearRecoveryUI::PutChar(char ch) {
@@ -359,14 +370,15 @@ void WearRecoveryUI::PutChar(char ch) {
   pthread_mutex_unlock(&updateMutex);
 }
 
-void WearRecoveryUI::ShowFile(const char* filename) {
+int WearRecoveryUI::ShowFile(const char* filename) {
   FILE* fp = fopen_path(filename, "re");
   if (fp == nullptr) {
     Print("  Unable to open %s: %s\n", filename, strerror(errno));
-    return;
+    return -1;
   }
-  ShowFile(fp);
+  int key = ShowFile(fp);
   fclose(fp);
+  return key;
 }
 
 void WearRecoveryUI::PrintOnScreenOnly(const char *fmt, ...) {
