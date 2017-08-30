@@ -16,52 +16,134 @@
 
 #include "device.h"
 
-static const char* MENU_ITEMS[] = {
-    "Reboot system now",
-#ifdef DOWNLOAD_MODE
-    "Reboot to download mode",
-#else
-    "Reboot to bootloader",
+#define ARRAY_SIZE(A) (sizeof(A)/sizeof(*(A)))
+
+// *** Main menu ***
+static const menu_type_t MAIN_MENU_TYPE = MT_GRID;
+static const MenuItem MAIN_MENU_ITEMS[] = {
+  MenuItem("Reboot",        "ic_reboot",           "ic_reboot_sel"),
+  MenuItem("Apply update",  "ic_system_update",    "ic_system_update_sel"),
+  MenuItem("Factory reset", "ic_factory_reset",    "ic_factory_reset_sel"),
+  MenuItem("Advanced",      "ic_options_advanced", "ic_options_advanced_sel"),
+};
+static const MenuItemVector main_menu_items_ =
+    MenuItemVector(MAIN_MENU_ITEMS,
+                   MAIN_MENU_ITEMS + ARRAY_SIZE(MAIN_MENU_ITEMS));
+static const Device::BuiltinAction MAIN_MENU_ACTIONS[] = {
+  Device::REBOOT,
+  Device::APPLY_UPDATE,
+  Device::WIPE_MENU,
+  Device::ADVANCED_MENU,
+};
+static const Device::MenuActionVector main_menu_actions_ =
+    Device::MenuActionVector(MAIN_MENU_ACTIONS,
+                             MAIN_MENU_ACTIONS + ARRAY_SIZE(MAIN_MENU_ACTIONS));
+static_assert(ARRAY_SIZE(MAIN_MENU_ITEMS) ==
+              ARRAY_SIZE(MAIN_MENU_ACTIONS),
+              "MAIN_MENU_ITEMS and MAIN_MENU_ACTIONS should have the same length.");
+
+
+// *** Wipe menu ***
+static const menu_type_t WIPE_MENU_TYPE = MT_LIST;
+static const MenuItem WIPE_MENU_ITEMS[] = {
+  MenuItem("Wipe data / factory reset"),
+#ifndef AB_OTA_UPDATER
+  MenuItem("Wipe cache"),
 #endif
-    "Apply update",
-    "Wipe data/factory reset",
-#ifndef AB_OTA_UPDATER
-    "Wipe cache partition",
-#endif  // !AB_OTA_UPDATER
-    "Wipe system partition",
-    "Mount /system",
-    "View recovery logs",
-    "Run graphics test",
-    "Power off",
-    NULL,
+  MenuItem("Wipe system"),
 };
-
-static const Device::BuiltinAction MENU_ACTIONS[] = {
-    Device::REBOOT,
-    Device::REBOOT_BOOTLOADER,
-    Device::APPLY_UPDATE,
-    Device::WIPE_DATA,
+static const MenuItemVector wipe_menu_items_ =
+    MenuItemVector(WIPE_MENU_ITEMS,
+                   WIPE_MENU_ITEMS + ARRAY_SIZE(WIPE_MENU_ITEMS));
+static const Device::BuiltinAction WIPE_MENU_ACTIONS[] = {
+  Device::WIPE_DATA,
 #ifndef AB_OTA_UPDATER
-    Device::WIPE_CACHE,
-#endif  // !AB_OTA_UPDATER
-    Device::WIPE_SYSTEM,
-    Device::MOUNT_SYSTEM,
-    Device::VIEW_RECOVERY_LOGS,
-    Device::RUN_GRAPHICS_TEST,
-    Device::SHUTDOWN,
+  Device::WIPE_CACHE,
+#endif
+  Device::WIPE_SYSTEM,
 };
+static const Device::MenuActionVector wipe_menu_actions_ =
+    Device::MenuActionVector(WIPE_MENU_ACTIONS,
+                             WIPE_MENU_ACTIONS + ARRAY_SIZE(WIPE_MENU_ACTIONS));
+static_assert(ARRAY_SIZE(WIPE_MENU_ITEMS) ==
+              ARRAY_SIZE(WIPE_MENU_ACTIONS),
+              "WIPE_MENU_ITEMS and WIPE_MENU_ACTIONS should have the same length.");
 
-static_assert(sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]) ==
-              sizeof(MENU_ACTIONS) / sizeof(MENU_ACTIONS[0]) + 1,
-              "MENU_ITEMS and MENU_ACTIONS should have the same length, "
-              "except for the extra NULL entry in MENU_ITEMS.");
 
-const char* const* Device::GetMenuItems() {
-  return MENU_ITEMS;
+// *** Advanced menu
+static const menu_type_t ADVANCED_MENU_TYPE = MT_LIST;
+
+static const MenuItem ADVANCED_MENU_ITEMS[] = {
+#ifdef DOWNLOAD_MODE
+  MenuItem("Reboot to download mode"),
+#else
+  MenuItem("Reboot to bootloader"),
+#endif
+  MenuItem("Mount system"),
+  MenuItem("View logs"),
+  MenuItem("Run graphics test"),
+  MenuItem("Power off"),
+};
+static const MenuItemVector advanced_menu_items_ =
+    MenuItemVector(ADVANCED_MENU_ITEMS,
+                   ADVANCED_MENU_ITEMS + ARRAY_SIZE(ADVANCED_MENU_ITEMS));
+
+static const Device::BuiltinAction ADVANCED_MENU_ACTIONS[] = {
+  Device::REBOOT_BOOTLOADER,
+  Device::MOUNT_SYSTEM,
+  Device::VIEW_RECOVERY_LOGS,
+  Device::RUN_GRAPHICS_TEST,
+  Device::SHUTDOWN,
+};
+static const Device::MenuActionVector advanced_menu_actions_ =
+    Device::MenuActionVector(ADVANCED_MENU_ACTIONS,
+                     ADVANCED_MENU_ACTIONS + ARRAY_SIZE(ADVANCED_MENU_ACTIONS));
+
+static_assert(ARRAY_SIZE(ADVANCED_MENU_ITEMS) ==
+              ARRAY_SIZE(ADVANCED_MENU_ACTIONS),
+              "ADVANCED_MENU_ITEMS and ADVANCED_MENU_ACTIONS should have the same length.");
+
+
+Device::Device(RecoveryUI* ui) :
+  ui_(ui)
+{
+  GoHome();
 }
 
 Device::BuiltinAction Device::InvokeMenuItem(int menu_position) {
-  return menu_position < 0 ? NO_ACTION : MENU_ACTIONS[menu_position];
+  if (menu_position < 0) {
+    if (menu_position == Device::kGoBack ||
+        menu_position == Device::kGoHome) {
+      // Assume only two menu levels, so back is equivalent to home.
+      GoHome();
+    }
+    return NO_ACTION;
+  }
+  BuiltinAction action = menu_actions_.at(menu_position);
+  switch (action) {
+  case WIPE_MENU:
+    menu_is_main_ = false;
+    menu_type_ = WIPE_MENU_TYPE;
+    menu_items_ = wipe_menu_items_;
+    menu_actions_ = wipe_menu_actions_;
+    break;
+  case ADVANCED_MENU:
+    menu_is_main_ = false;
+    menu_type_ = ADVANCED_MENU_TYPE;
+    menu_items_ = advanced_menu_items_;
+    menu_actions_ = advanced_menu_actions_;
+    break;
+  default:
+    break; // Fall through
+  }
+  return action;
+}
+
+void Device::GoHome() {
+  menu_is_main_ = true;
+  menu_type_ = MAIN_MENU_TYPE;
+  menu_items_ = main_menu_items_;
+  menu_actions_ = main_menu_actions_;
 }
 
 int Device::HandleMenuKey(int key, bool visible) {

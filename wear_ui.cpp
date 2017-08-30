@@ -137,8 +137,8 @@ void WearRecoveryUI::draw_screen_locked() {
 
       // Show the current menu item number in relation to total number if
       // items don't fit on the screen.
-      if (menu_items > menu_end - menu_start) {
-        sprintf(cur_selection_str, "Current item: %d/%d", menu_sel + 1, menu_items);
+      if ((int)menu_items_.size() > menu_end - menu_start) {
+        sprintf(cur_selection_str, "Current item: %d/%d", menu_sel + 1, (int)menu_items_.size());
         gr_text(gr_sys_font(), x + 4, y, cur_selection_str, 1);
         y += char_height_ + 4;
       }
@@ -147,18 +147,19 @@ void WearRecoveryUI::draw_screen_locked() {
       SetColor(MENU);
 
       for (int i = menu_start; i < menu_end; ++i) {
+        const ScreenMenuItem& item = menu_items_.at(i);
         if (i == menu_sel) {
           // draw the highlight bar
           SetColor(MENU_SEL_BG);
           gr_fill(x, y - 2, gr_fb_width() - x, y + char_height_ + 2);
           // white text of selected item
           SetColor(MENU_SEL_FG);
-          if (menu_[i][0]) {
-            gr_text(gr_sys_font(), x + 4, y, menu_[i].c_str(), 1);
+          if (!item.text().empty()) {
+            gr_text(gr_sys_font(), x + 4, y, item.text().c_str(), 1);
           }
           SetColor(MENU);
-        } else if (menu_[i][0]) {
-          gr_text(gr_sys_font(), x + 4, y, menu_[i].c_str(), 0);
+        } else if (!item.text().empty()) {
+          gr_text(gr_sys_font(), x + 4, y, item.text().c_str(), 0);
         }
         y += char_height_ + 4;
       }
@@ -250,7 +251,10 @@ void WearRecoveryUI::Print(const char* fmt, ...) {
   pthread_mutex_unlock(&updateMutex);
 }
 
-void WearRecoveryUI::StartMenu(const char* const* headers, const char* const* items,
+void WearRecoveryUI::StartMenu(bool is_main,
+                               menu_type_t type,
+                               const char* const* headers,
+                               const MenuItemVector& items,
                                int initial_selection) {
   pthread_mutex_lock(&updateMutex);
   if (text_rows_ > 0 && text_cols_ > 0) {
@@ -261,15 +265,14 @@ void WearRecoveryUI::StartMenu(const char* const* headers, const char* const* it
     // Because WearRecoveryUI supports scrollable menu, it's fine to have
     // more entries than text_rows_. The menu may be truncated otherwise.
     // Bug: 23752519
-    for (size_t i = 0; items[i] != nullptr; i++) {
-      menu_.emplace_back(std::string(items[i], strnlen(items[i], text_cols_ - 1)));
+    for (auto& item : items) {
+      menu_items_.push_back(ScreenMenuItem(item));
     }
-    menu_items = static_cast<int>(menu_.size());
     show_menu = true;
     menu_sel = initial_selection;
     menu_start = 0;
     menu_end = visible_text_rows - 1 - kMenuUnusableRows;
-    if (menu_items <= menu_end) menu_end = menu_items;
+    if ((int)menu_items_.size() <= menu_end) menu_end = (int)menu_items_.size();
     update_screen_locked();
   }
   pthread_mutex_unlock(&updateMutex);
@@ -282,11 +285,11 @@ int WearRecoveryUI::SelectMenu(int sel) {
     old_sel = menu_sel;
     menu_sel = sel;
     if (menu_sel < 0) menu_sel = 0;
-    if (menu_sel >= menu_items) menu_sel = menu_items - 1;
+    if (menu_sel >= (int)menu_items_.size()) menu_sel = (int)menu_items_.size() - 1;
     if (menu_sel < menu_start) {
       menu_start--;
       menu_end--;
-    } else if (menu_sel >= menu_end && menu_sel < menu_items) {
+    } else if (menu_sel >= menu_end && menu_sel < (int)menu_items_.size()) {
       menu_end++;
       menu_start++;
     }
@@ -297,7 +300,11 @@ int WearRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
-void WearRecoveryUI::ShowFile(FILE* fp) {
+int WearRecoveryUI::SelectMenu(const Point& point) {
+  return -1;
+}
+
+int WearRecoveryUI::ShowFile(FILE* fp) {
   std::vector<off_t> offsets;
   offsets.push_back(ftello(fp));
   ClearText();
@@ -314,10 +321,14 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
       Redraw();
       while (show_prompt) {
         show_prompt = false;
-        int key = WaitKey();
-        if (key == KEY_POWER || key == KEY_ENTER) {
-          return;
-        } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
+        RecoveryUI::InputEvent evt = WaitInputEvent();
+        if (evt.type() != RecoveryUI::EVENT_TYPE_KEY) {
+          show_prompt = true;
+          continue;
+        }
+        if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER) {
+          return evt.key();
+        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
@@ -326,7 +337,7 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
           }
         } else {
           if (feof(fp)) {
-            return;
+            return -1;
           }
           offsets.push_back(ftello(fp));
         }
@@ -346,6 +357,7 @@ void WearRecoveryUI::ShowFile(FILE* fp) {
       }
     }
   }
+  return -1;
 }
 
 void WearRecoveryUI::PutChar(char ch) {
@@ -358,14 +370,15 @@ void WearRecoveryUI::PutChar(char ch) {
   pthread_mutex_unlock(&updateMutex);
 }
 
-void WearRecoveryUI::ShowFile(const char* filename) {
+int WearRecoveryUI::ShowFile(const char* filename) {
   FILE* fp = fopen_path(filename, "re");
   if (fp == nullptr) {
     Print("  Unable to open %s: %s\n", filename, strerror(errno));
-    return;
+    return -1;
   }
-  ShowFile(fp);
+  int key = ShowFile(fp);
   fclose(fp);
+  return key;
 }
 
 void WearRecoveryUI::PrintOnScreenOnly(const char *fmt, ...) {
