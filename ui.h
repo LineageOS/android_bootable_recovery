@@ -25,6 +25,38 @@
 
 #define MAX_NR_VKEYS	8
 
+enum menu_type { LIST, GRID };
+
+struct menu_item {
+  menu_item() : text(nullptr), icon_name(nullptr) {}
+  menu_item(const char* t, const char* i = nullptr, const char* s = nullptr) :
+      text(t), icon_name(i), icon_name_sel(s) {}
+  const char* text;
+  const char* icon_name;
+  const char* icon_name_sel;
+};
+
+class menu {
+ public:
+  menu(menu_type type, bool main_menu, const menu_item* items) {
+    set(type, main_menu, items);
+  }
+
+  void set(menu_type type, bool main_menu, const menu_item* items) {
+    type_ = type;
+    main_menu_ = main_menu;
+    items_ = items;
+  }
+  menu_type type() const { return type_; }
+  bool main_menu() const { return main_menu_; }
+  const menu_item* items() const { return items_; }
+
+ private:
+  menu_type type_;
+  bool main_menu_;
+  const menu_item* items_;
+};
+
 /*
  * Simple representation of a (x,y) coordinate with convenience operators
  */
@@ -99,12 +131,21 @@ class RecoveryUI {
   virtual void Print(const char* fmt, ...) __printflike(2, 3) = 0;
   virtual void PrintOnScreenOnly(const char* fmt, ...) __printflike(2, 3) = 0;
 
-  virtual void ShowFile(const char* filename) = 0;
+  virtual int ShowFile(const char* filename) = 0;
 
-  // --- key handling ---
+  // --- event handling ---
+
+  struct InputEvent {
+    //XXX: make this a class?
+    InputEvent() : type(EVENT_TYPE_NONE) {}
+    enum { EVENT_TYPE_NONE, EVENT_TYPE_KEY, EVENT_TYPE_TOUCH } type;
+    //XXX: union?
+    int key;
+    Point pos;
+  };
 
   // Waits for a key and return it. May return -1 after timeout.
-  virtual int WaitKey();
+  virtual InputEvent WaitInputEvent();
 
   virtual bool IsKeyPressed(int key);
   virtual bool IsLongPress();
@@ -143,18 +184,22 @@ class RecoveryUI {
 
   // Display some header text followed by a menu of items, which appears at the top of the screen
   // (in place of any scrolling ui_print() output, if necessary).
-  virtual void StartMenu(const char* const* headers, const char* const* items,
+  virtual void StartMenu(const char* const* headers, const menu& menu,
                          int initial_selection) = 0;
 
   // Sets the menu highlight to the given index, wrapping if necessary. Returns the actual item
   // selected.
   virtual int SelectMenu(int sel) = 0;
+  virtual int SelectMenu(const Point& point) = 0;
 
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
 
  protected:
   void EnqueueKey(int key_code);
+  void EnqueueTouch(const Point& pos);
+
+  std::string version_;
 
   // The locale that's used to show the rendered texts.
   std::string locale_;
@@ -175,14 +220,15 @@ class RecoveryUI {
   const int kTouchHighThreshold;
 
   // Key event input queue
-  pthread_mutex_t key_queue_mutex;
-  pthread_cond_t key_queue_cond;
-  int key_queue[256], key_queue_len;
-  char key_pressed[KEY_MAX + 1];  // under key_queue_mutex
-  int key_last_down;              // under key_queue_mutex
-  bool key_long_press;            // under key_queue_mutex
-  int key_down_count;             // under key_queue_mutex
-  bool enable_reboot;             // under key_queue_mutex
+  pthread_mutex_t event_queue_mutex;
+  pthread_cond_t event_queue_cond;
+  InputEvent event_queue[256];
+  int event_queue_len;
+  char key_pressed[KEY_MAX + 1];  // under event_queue_mutex
+  int key_last_down;              // under event_queue_mutex
+  bool key_long_press;            // under event_queue_mutex
+  int key_down_count;             // under event_queue_mutex
+  bool enable_reboot;             // under event_queue_mutex
   int rel_sum;
 
   int consecutive_power_keys;

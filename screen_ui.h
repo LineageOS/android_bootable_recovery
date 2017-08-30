@@ -24,8 +24,16 @@
 
 #include "ui.h"
 
+#define MAX_MENU_ITEMS 32
+
 // From minui/minui.h.
 struct GRSurface;
+
+struct screen_menu_item {
+  std::string text;
+  GRSurface*  icon;
+  GRSurface*  icon_sel;
+};
 
 // Implementation of RecoveryUI appropriate for devices with a screen
 // (shows an icon + a progress bar, text logging, menu, etc.)
@@ -54,12 +62,13 @@ class ScreenRecoveryUI : public RecoveryUI {
   // printing messages
   void Print(const char* fmt, ...) override __printflike(2, 3);
   void PrintOnScreenOnly(const char* fmt, ...) override __printflike(2, 3);
-  void ShowFile(const char* filename) override;
+  int ShowFile(const char* filename) override;
 
   // menu display
-  void StartMenu(const char* const* headers, const char* const* items,
+  void StartMenu(const char* const* headers, const menu& menu,
                  int initial_selection) override;
   int SelectMenu(int sel) override;
+  int SelectMenu(const Point& point) override;
   void EndMenu() override;
 
   void KeyLongPress(int) override;
@@ -67,6 +76,7 @@ class ScreenRecoveryUI : public RecoveryUI {
   void Redraw();
 
   enum UIElement {
+    STATUSBAR,
     HEADER,
     MENU,
     MENU_SEL_BG,
@@ -94,6 +104,10 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   // The layout to use.
   int layout_;
+
+  GRSurface* logo_image;
+  GRSurface* ic_back;
+  GRSurface* ic_back_sel;
 
   GRSurface* error_icon;
 
@@ -127,8 +141,11 @@ class ScreenRecoveryUI : public RecoveryUI {
   bool show_text;
   bool show_text_ever;  // has show_text ever been true?
 
-  char** menu_;
+  menu_type menu_type_;
+  bool main_menu_;
+  screen_menu_item menu_[MAX_MENU_ITEMS];
   const char* const* menu_headers_;
+  int menu_start_y_;
   bool show_menu;
   int menu_items, menu_sel;
 
@@ -155,6 +172,9 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   virtual void draw_background_locked();
   virtual void draw_foreground_locked();
+  virtual void draw_header_locked(int& y);
+  virtual void draw_text_menu_locked(int& y);
+  virtual void draw_grid_menu_locked(int& y);
   virtual void draw_screen_locked();
   virtual void update_screen_locked();
   virtual void update_progress_locked();
@@ -165,13 +185,14 @@ class ScreenRecoveryUI : public RecoveryUI {
   static void* ProgressThreadStartRoutine(void* data);
   void ProgressThreadLoop();
 
-  virtual void ShowFile(FILE*);
+  virtual int ShowFile(FILE*);
   virtual void PrintV(const char*, bool, va_list);
   void PutChar(char);
   void ClearText();
 
   void LoadAnimation();
   void LoadBitmap(const char* filename, GRSurface** surface);
+  void FreeBitmap(GRSurface* surface);
   void LoadLocalizedBitmap(const char* filename, GRSurface** surface);
 
   int PixelsFromDp(int dp) const;
