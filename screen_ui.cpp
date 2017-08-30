@@ -37,6 +37,8 @@
 #include <android-base/strings.h>
 #include <android-base/stringprintf.h>
 
+#include <healthd/BatteryMonitor.h>
+
 #include "common.h"
 #include "device.h"
 #include "minui/minui.h"
@@ -48,6 +50,43 @@ static double now() {
   struct timeval tv;
   gettimeofday(&tv, nullptr);
   return tv.tv_sec + tv.tv_usec / 1000000.0;
+}
+
+static void get_battery_status(bool& charged, int& capacity) {
+    struct healthd_config healthd_config = {
+            .batteryStatusPath = android::String8(android::String8::kEmptyString),
+            .batteryHealthPath = android::String8(android::String8::kEmptyString),
+            .batteryPresentPath = android::String8(android::String8::kEmptyString),
+            .batteryCapacityPath = android::String8(android::String8::kEmptyString),
+            .batteryVoltagePath = android::String8(android::String8::kEmptyString),
+            .batteryTemperaturePath = android::String8(android::String8::kEmptyString),
+            .batteryTechnologyPath = android::String8(android::String8::kEmptyString),
+            .batteryCurrentNowPath = android::String8(android::String8::kEmptyString),
+            .batteryCurrentAvgPath = android::String8(android::String8::kEmptyString),
+            .batteryChargeCounterPath = android::String8(android::String8::kEmptyString),
+            .batteryFullChargePath = android::String8(android::String8::kEmptyString),
+            .batteryCycleCountPath = android::String8(android::String8::kEmptyString),
+            .energyCounter = NULL,
+            .boot_min_cap = 0,
+            .screen_on = NULL
+    };
+    healthd_board_init(&healthd_config);
+
+    android::BatteryMonitor monitor;
+    monitor.init(&healthd_config);
+
+    int charge_status = monitor.getChargeStatus();
+    // Treat unknown status as charged.
+    charged = (charge_status != android::BATTERY_STATUS_DISCHARGING &&
+               charge_status != android::BATTERY_STATUS_NOT_CHARGING);
+    android::BatteryProperty prop;
+    android::status_t status = monitor.getProperty(android::BATTERY_PROP_CAPACITY, &prop);
+    // If we can't read battery percentage, it may be a device without battery. In this
+    // situation, use 100 as a fake battery percentage.
+    if (status != 0) {
+      prop.valueInt64 = 100;
+    }
+    capacity = (int)prop.valueInt64;
 }
 
 ScreenRecoveryUI::ScreenRecoveryUI()
@@ -69,7 +108,8 @@ ScreenRecoveryUI::ScreenRecoveryUI()
       text_top_(0),
       show_text(false),
       show_text_ever(false),
-      menu_(nullptr),
+      menu_headers_(nullptr),
+      menu_start_y_(0),
       show_menu(false),
       menu_items(0),
       menu_sel(0),
@@ -226,8 +266,12 @@ void ScreenRecoveryUI::draw_foreground_locked() {
   }
 }
 
+/* Lineage teal: #167c80 */
 void ScreenRecoveryUI::SetColor(UIElement e) const {
   switch (e) {
+    case STATUSBAR:
+      gr_color(255, 255, 255, 255);
+      break;
     case INFO:
       gr_color(249, 194, 0, 255);
       break;
@@ -317,6 +361,158 @@ static const char* LONG_PRESS_HELP[] = {
   NULL
 };
 
+/*
+ * Header layout:
+ *   * 1/32: Status bar
+ *   * Header image
+ *   * 1/32: Margin
+ */
+void ScreenRecoveryUI::draw_header_locked(int& y) {
+  int x;
+  int iw, ih, ix, iy;
+
+  // Local time
+  time_t now;
+  struct tm localtm;
+  time(&now);
+  localtime_r(&now, &localtm);
+  char localtm_str[5+1];
+  snprintf(localtm_str, sizeof(localtm_str), "%02d:%02d",
+           localtm.tm_hour, localtm.tm_min);
+
+  // Battery status
+  bool batt_charged;
+  int batt_capacity;
+  get_battery_status(batt_charged, batt_capacity);
+  int batt_capacity_height = char_height_ * batt_capacity / 100;
+  char batt_capacity_str[3+1+1];
+  snprintf(batt_capacity_str, sizeof(batt_capacity_str), "%d%%", batt_capacity);
+
+  SetColor(STATUSBAR);
+
+  // Draw status bar
+  x = gr_fb_width();
+  x -= 5 * char_width_;
+  gr_text(gr_sys_font(), x, y, localtm_str, false);
+
+  x -= char_width_ / 2; // Separator
+
+  x -= 1 * char_width_;
+  gr_fill(x, y, x + char_width_, y + batt_capacity_height);
+
+  x -= char_width_ / 2; // Separator
+
+  x -= 4 * char_width_;
+  gr_text(gr_sys_font(), x, y, batt_capacity_str, false);
+
+  y += gr_fb_height() * 1 / 32; // Margin
+
+  //XXX: back arrow if not main menu
+
+  // Draw header: 4/16 height
+  iw = gr_get_width(header_icon);
+  ih = gr_get_height(header_icon);
+  ix = 0;
+  iy = y;
+  gr_blit(header_icon, 0, 0, iw, ih, ix, iy);
+  y += gr_fb_height() * 4 / 16;
+
+  y += gr_fb_height() * 1 / 32; // Margin
+}
+
+void ScreenRecoveryUI::draw_text_menu_locked(int& y) {
+  static constexpr int kMenuIndent = 4;
+  int x = kMarginWidth + kMenuIndent;
+
+  draw_header_locked(y);
+
+  SetColor(HEADER);
+  // Ignore kMenuIndent, which is not taken into account by text_cols_.
+  y += DrawWrappedTextLines(kMarginWidth, y, menu_headers_);
+
+  SetColor(MENU);
+  y += DrawHorizontalRule(y) + 4;
+  menu_start_y_ = y;
+  for (int i = 0; i < menu_items && y < gr_fb_height(); ++i) {
+    if (i == menu_sel) {
+      // Draw the highlight bar.
+      SetColor(IsLongPress() ? MENU_SEL_BG_ACTIVE : MENU_SEL_BG);
+      DrawHighlightBar(0, y - 2, gr_fb_width(), 3 * char_height_ + 4);
+      // Bold white text for the selected item.
+      SetColor(MENU_SEL_FG);
+      y += char_height_;
+      y += DrawTextLine(x, y, menu_[i].text.c_str(), true);
+      y += char_height_;
+      SetColor(MENU);
+    } else {
+      y += char_height_;
+      y += DrawTextLine(x, y, menu_[i].text.c_str(), false);
+      y += char_height_;
+    }
+  }
+  y += DrawHorizontalRule(y);
+}
+
+/*
+ * Grid layout.
+ *
+ * Grid item:
+ *   Horizontal:
+ *     * 3/9 of screen per item.
+ *     * 1/9 of screen margin around/between items.
+ *   Vertical:
+ *     * 3/16 of screen per item.
+ *     * No margin between items.
+ *
+ * Within a grid item:
+ *   Asher's icons 1/5 of grid both dimensions.
+ *   Current icons 2/5 of grid both dimensions.
+ *   Horizontal:
+ *     * All items centered.
+ *   Vertical:
+ *     * Icon lower aligned in top 2/3.
+ *     * Text upper aligned in low 1/3 plus half line margin.
+ */
+void ScreenRecoveryUI::draw_grid_menu_locked(int& y) {
+  int i;
+  int h_unit = gr_fb_width() / 9;
+  int v_unit = gr_fb_height() / 16;
+
+  int grid_w = h_unit * 3;
+  int grid_h = v_unit * 3;
+
+  draw_header_locked(y);
+
+  menu_start_y_ = y;
+  for (i = 0; i < menu_items && y + grid_h < gr_fb_height(); ++i) {
+    int grid_x = (i % 2) ? h_unit * 5 : h_unit * 1;
+    int grid_y = y;
+    if (menu_[i].icon) {
+      GRSurface* icon = menu_[i].icon;
+      if (i == menu_sel && menu_[i].icon_sel) {
+        icon = menu_[i].icon_sel;
+      }
+      int icon_w = gr_get_width(icon);
+      int icon_h = gr_get_height(icon);
+      int icon_x = grid_x + (grid_w - icon_w) / 2;
+      int icon_y = grid_y + ((grid_h * 2 / 3) - icon_h) / 2;
+      gr_blit(icon, 0, 0, icon_w, icon_h, icon_x, icon_y);
+    }
+    if (!menu_[i].text.empty()) {
+      int text_w = menu_[i].text.size() * char_width_;
+      int text_h = char_height_;
+      int text_x = grid_x + (grid_w - text_w) / 2;
+      int text_y = grid_y + (grid_h * 2 / 3) + (char_height_ / 2);
+      SetColor(i == menu_sel ? MENU_SEL_BG : MENU_SEL_FG);
+      gr_text(gr_sys_font(), text_x, text_y, menu_[i].text.c_str(), false);
+    }
+    if (i % 2) {
+      y += grid_h;
+      grid_y = y;
+    }
+  }
+}
+
 // Redraws everything on the screen. Does not flip pages. Should only be called with updateMutex
 // locked.
 void ScreenRecoveryUI::draw_screen_locked() {
@@ -331,38 +527,14 @@ void ScreenRecoveryUI::draw_screen_locked() {
 
   int y = kMarginHeight;
   if (show_menu) {
-    static constexpr int kMenuIndent = 4;
-    int x = kMarginWidth + kMenuIndent;
-
-    SetColor(INFO);
-    y += DrawTextLine(x, y, "Android Recovery", true);
-    std::string recovery_fingerprint =
-        android::base::GetProperty("ro.bootimage.build.fingerprint", "");
-    for (const auto& chunk : android::base::Split(recovery_fingerprint, ":")) {
-      y += DrawTextLine(x, y, chunk.c_str(), false);
+    switch (menu_type_) {
+    case TEXT:
+      draw_text_menu_locked(y);
+      break;
+    case GRID:
+      draw_grid_menu_locked(y);
+      break;
     }
-    y += DrawTextLines(x, y, HasThreeButtons() ? REGULAR_HELP : LONG_PRESS_HELP);
-
-    SetColor(HEADER);
-    // Ignore kMenuIndent, which is not taken into account by text_cols_.
-    y += DrawWrappedTextLines(kMarginWidth, y, menu_headers_);
-
-    SetColor(MENU);
-    y += DrawHorizontalRule(y) + 4;
-    for (int i = 0; i < menu_items; ++i) {
-      if (i == menu_sel) {
-        // Draw the highlight bar.
-        SetColor(IsLongPress() ? MENU_SEL_BG_ACTIVE : MENU_SEL_BG);
-        DrawHighlightBar(0, y - 2, gr_fb_width(), char_height_ + 4);
-        // Bold white text for the selected item.
-        SetColor(MENU_SEL_FG);
-        y += DrawTextLine(x, y, menu_[i], true);
-        SetColor(MENU);
-      } else {
-        y += DrawTextLine(x, y, menu_[i], false);
-      }
-    }
-    y += DrawHorizontalRule(y);
   }
 
   // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
@@ -458,6 +630,10 @@ void ScreenRecoveryUI::LoadBitmap(const char* filename, GRSurface** surface) {
   }
 }
 
+void ScreenRecoveryUI::FreeBitmap(GRSurface* surface) {
+  res_free_surface(surface);
+}
+
 void ScreenRecoveryUI::LoadLocalizedBitmap(const char* filename, GRSurface** surface) {
   int result = res_create_localized_alpha_surface(filename, locale_.c_str(), surface);
   if (result < 0) {
@@ -508,10 +684,11 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
 
   text_ = Alloc2d(text_rows_, text_cols_ + 1);
   file_viewer_text_ = Alloc2d(text_rows_, text_cols_ + 1);
-  menu_ = Alloc2d(text_rows_, text_cols_ + 1);
 
   text_col_ = text_row_ = 0;
   text_top_ = 1;
+
+  LoadBitmap("icon_header", &header_icon);
 
   LoadBitmap("icon_error", &error_icon);
 
@@ -708,10 +885,14 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
       Redraw();
       while (show_prompt) {
         show_prompt = false;
-        int key = WaitKey();
-        if (key == KEY_POWER || key == KEY_ENTER) {
+        RecoveryUI::InputEvent evt = WaitInputEvent();
+        if (evt.type != RecoveryUI::InputEvent::EVENT_TYPE_KEY) {
+          show_prompt = true;
+          continue;
+        }
+        if (evt.key == KEY_POWER || evt.key == KEY_ENTER) {
           return;
-        } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
+        } else if (evt.key == KEY_UP || evt.key == KEY_VOLUMEUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
@@ -766,21 +947,27 @@ void ScreenRecoveryUI::ShowFile(const char* filename) {
   text_top_ = old_text_top;
 }
 
-void ScreenRecoveryUI::StartMenu(const char* const* headers, const char* const* items,
+void ScreenRecoveryUI::StartMenu(const char* const* headers, const menu& menu,
                                  int initial_selection) {
   pthread_mutex_lock(&updateMutex);
-  if (text_rows_ > 0 && text_cols_ > 0) {
-    menu_headers_ = headers;
-    size_t i = 0;
-    for (; i < text_rows_ && items[i] != nullptr; ++i) {
-      strncpy(menu_[i], items[i], text_cols_ - 1);
-      menu_[i][text_cols_ - 1] = '\0';
+  menu_headers_ = headers;
+  menu_type_ = menu.type;
+  size_t i = 0;
+  for (; i < MAX_MENU_ITEMS && (menu.items[i].text || menu.items[i].icon_name); ++i) {
+    if (menu.items[i].text) {
+      menu_[i].text = menu.items[i].text;
     }
-    menu_items = i;
-    show_menu = true;
-    menu_sel = initial_selection;
-    update_screen_locked();
+    if (menu.items[i].icon_name) {
+      LoadBitmap(menu.items[i].icon_name, &menu_[i].icon);
+    }
+    if (menu.items[i].icon_name_selected) {
+      LoadBitmap(menu.items[i].icon_name_selected, &menu_[i].icon_sel);
+    }
   }
+  menu_items = i;
+  show_menu = true;
+  menu_sel = initial_selection;
+  update_screen_locked();
   pthread_mutex_unlock(&updateMutex);
 }
 
@@ -801,11 +988,48 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
+int ScreenRecoveryUI::SelectMenu(const Point& point) {
+  int sel = -1;
+  pthread_mutex_lock(&updateMutex);
+  if (show_menu && point.y() >= menu_start_y_) {
+    int row = -1, col = -1;
+    switch (menu_type_) {
+    case TEXT:
+      sel = (point.y() - menu_start_y_) / (char_height_ * 3);
+      break;
+    case GRID:
+      row = (point.y() - menu_start_y_) / (gr_fb_height() * 3 / 16);
+      col = (point.x()) / (gr_fb_width() / 9);
+      if ((col % 4) != 0) {
+        sel = row * 2 + ((col - 1) / 4);
+      }
+    }
+    if (sel >= menu_items) {
+      sel = -1;
+    }
+    if (sel != -1 && sel != menu_sel) {
+      menu_sel = sel;
+      update_screen_locked();
+      usleep(50*1000);
+    }
+  }
+  pthread_mutex_unlock(&updateMutex);
+  return sel;
+}
+
 void ScreenRecoveryUI::EndMenu() {
   pthread_mutex_lock(&updateMutex);
   if (show_menu && text_rows_ > 0 && text_cols_ > 0) {
     show_menu = false;
     update_screen_locked();
+  }
+  int i;
+  for (i = 0; i < menu_items; ++i) {
+    menu_[i].text.clear();
+    if (menu_[i].icon) {
+      FreeBitmap(menu_[i].icon);
+      menu_[i].icon = nullptr;
+    }
   }
   pthread_mutex_unlock(&updateMutex);
 }

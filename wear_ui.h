@@ -36,9 +36,10 @@ class WearRecoveryUI : public ScreenRecoveryUI {
   void ShowFile(FILE* fp) override;
 
   // menu display
-  void StartMenu(const char* const* headers, const char* const* items,
+  void StartMenu(const char* const* headers, const menu& menu,
                  int initial_selection) override;
   int SelectMenu(int sel) override;
+  int SelectMenu(const Point& point) override;
 
  protected:
   // progress bar vertical position, it's centered horizontally

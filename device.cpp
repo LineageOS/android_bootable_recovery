@@ -16,48 +16,87 @@
 
 #include "device.h"
 
-static const char* MENU_ITEMS[] = {
-    "Reboot system now",
-    "Reboot to bootloader",
-    "Apply update from ADB",
-    "Apply update from SD card",
-    "Wipe data/factory reset",
-#ifndef AB_OTA_UPDATER
-    "Wipe cache partition",
-#endif  // !AB_OTA_UPDATER
-    "Mount /system",
-    "View recovery logs",
-    "Run graphics test",
-    "Power off",
-    NULL,
+static const menu_type MAIN_MENU_TYPE = GRID;
+
+static const menu_item MAIN_MENU_ITEMS[] = {
+  { "Reboot", "ic_reboot" },
+  { "Apply update", "ic_system_update" },
+  { "Factory reset", "ic_factory_reset" },
+  { "Advanced", "ic_options_advanced" },
+  { nullptr, nullptr }
 };
 
-static const Device::BuiltinAction MENU_ACTIONS[] = {
-    Device::REBOOT,
-    Device::REBOOT_BOOTLOADER,
-    Device::APPLY_ADB_SIDELOAD,
-    Device::APPLY_SDCARD,
-    Device::WIPE_DATA,
-#ifndef AB_OTA_UPDATER
-    Device::WIPE_CACHE,
-#endif  // !AB_OTA_UPDATER
-    Device::MOUNT_SYSTEM,
-    Device::VIEW_RECOVERY_LOGS,
-    Device::RUN_GRAPHICS_TEST,
-    Device::SHUTDOWN,
+static const Device::BuiltinAction MAIN_MENU_ACTIONS[] = {
+  Device::REBOOT,
+  Device::APPLY_UPDATE,
+  Device::WIPE_DATA,
+  Device::ADVANCED_MENU,
 };
 
-static_assert(sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]) ==
-              sizeof(MENU_ACTIONS) / sizeof(MENU_ACTIONS[0]) + 1,
-              "MENU_ITEMS and MENU_ACTIONS should have the same length, "
-              "except for the extra NULL entry in MENU_ITEMS.");
+static_assert(sizeof(MAIN_MENU_ITEMS) / sizeof(MAIN_MENU_ITEMS[0]) ==
+              sizeof(MAIN_MENU_ACTIONS) / sizeof(MAIN_MENU_ACTIONS[0]) + 1,
+              "MAIN_MENU_ITEMS and MAIN_MENU_ACTIONS should have the same length, "
+              "except for the extra NULL entry in MAIN_MENU_ITEMS.");
 
-const char* const* Device::GetMenuItems() {
-  return MENU_ITEMS;
+static const menu_type ADVANCED_MENU_TYPE = LIST;
+
+static const menu_item ADVANCED_MENU_ITEMS[] = {
+  { "Reboot to bootloader", nullptr },
+  { "Mount /system", nullptr },
+#ifndef AB_OTA_UPDATER
+  { "Wipe /cache", nullptr },
+#endif
+  { "View logs", nullptr },
+  { "Run graphics test", nullptr },
+  { "Power off", nullptr },
+  { nullptr, nullptr }
+};
+
+static const Device::BuiltinAction ADVANCED_MENU_ACTIONS[] = {
+  Device::REBOOT_BOOTLOADER,
+  Device::MOUNT_SYSTEM,
+#ifndef AB_OTA_UPDATER
+  Device::WIPE_CACHE,
+#endif
+  Device::VIEW_RECOVERY_LOGS,
+  Device::RUN_GRAPHICS_TEST,
+  Device::SHUTDOWN,
+};
+
+static_assert(sizeof(ADVANCED_MENU_ITEMS) / sizeof(ADVANCED_MENU_ITEMS[0]) ==
+              sizeof(ADVANCED_MENU_ACTIONS) / sizeof(ADVANCED_MENU_ACTIONS[0]) + 1,
+              "ADVANCED_MENU_ITEMS and ADVANCED_MENU_ACTIONS should have the same length, "
+              "except for the extra NULL entry in ADVANCED_MENU_ITEMS.");
+
+Device::Device(RecoveryUI* ui) :
+  ui_(ui)
+{
+  menu_.type = MAIN_MENU_TYPE;
+  menu_.items = MAIN_MENU_ITEMS;
+  menu_actions_ = MAIN_MENU_ACTIONS;
+}
+
+const menu& Device::GetMenu() {
+  return menu_;
 }
 
 Device::BuiltinAction Device::InvokeMenuItem(int menu_position) {
-  return menu_position < 0 ? NO_ACTION : MENU_ACTIONS[menu_position];
+  if (menu_position < 0) {
+    if (menu_position == Device::kGoBack ||
+        menu_position == Device::kGoHome) {
+      menu_.type = MAIN_MENU_TYPE;
+      menu_.items = MAIN_MENU_ITEMS;
+      menu_actions_ = MAIN_MENU_ACTIONS;
+    }
+    return NO_ACTION;
+  }
+  Device::BuiltinAction action = menu_actions_[menu_position];
+  if (action == Device::ADVANCED_MENU) {
+    menu_.type = ADVANCED_MENU_TYPE;
+    menu_.items = ADVANCED_MENU_ITEMS;
+    menu_actions_ = ADVANCED_MENU_ACTIONS;
+  }
+  return action;
 }
 
 int Device::HandleMenuKey(int key, bool visible) {
@@ -77,6 +116,14 @@ int Device::HandleMenuKey(int key, bool visible) {
     case KEY_ENTER:
     case KEY_POWER:
       return kInvokeItem;
+
+    case KEY_BACKSPACE:
+    case KEY_BACK:
+      return kGoBack;
+
+    case KEY_HOME:
+    case KEY_HOMEPAGE:
+      return kGoHome;
 
     default:
       // If you have all of the above buttons, any other buttons
