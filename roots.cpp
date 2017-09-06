@@ -128,17 +128,6 @@ int ensure_path_mounted_at(const char* path, const char* mount_point) {
   if (strcmp(v->fs_type, "ext4") == 0 || strcmp(v->fs_type, "squashfs") == 0 ||
       strcmp(v->fs_type, "vfat") == 0) {
     int result = mount(v->blk_device, mount_point, v->fs_type, v->flags, v->fs_options);
-    if (result == -1 && fs_mgr_is_formattable(v)) {
-      PLOG(ERROR) << "Failed to mount " << mount_point << "; formatting";
-      bool crypt_footer = fs_mgr_is_encryptable(v) && !strcmp(v->key_loc, "footer");
-      if (fs_mgr_do_format(v, crypt_footer) == 0) {
-        result = mount(v->blk_device, mount_point, v->fs_type, v->flags, v->fs_options);
-      } else {
-        PLOG(ERROR) << "Failed to format " << mount_point;
-        return -1;
-      }
-    }
-
     if (result == -1) {
       PLOG(ERROR) << "Failed to mount " << mount_point;
       return -1;
