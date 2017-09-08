@@ -535,6 +535,11 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   return true;
 }
 
+void ScreenRecoveryUI::Stop() {
+  RecoveryUI::Stop();
+  gr_fb_blank(true);
+}
+
 void ScreenRecoveryUI::LoadAnimation() {
   std::unique_ptr<DIR, decltype(&closedir)> dir(opendir("/res/images"), closedir);
   dirent* de;

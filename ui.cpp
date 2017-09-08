@@ -212,6 +212,10 @@ bool RecoveryUI::Init(const std::string& locale) {
   return true;
 }
 
+void RecoveryUI::Stop() {
+  !android::base::WriteStringToFile("0", BRIGHTNESS_FILE);
+}
+
 void RecoveryUI::OnTouchEvent() {
   Point delta = touch_pos_ - touch_start_;
   enum SwipeDirection { UP, DOWN, RIGHT, LEFT } direction;

@@ -35,6 +35,7 @@ class ScreenRecoveryUI : public RecoveryUI {
   ScreenRecoveryUI();
 
   bool Init(const std::string& locale) override;
+  void Stop() override;
 
   // overall recovery state ("background image")
   void SetBackground(Icon icon) override;
