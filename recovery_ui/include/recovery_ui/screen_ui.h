@@ -303,6 +303,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   void PutChar(char);
   void ClearText();
 
+  void Stop() override;
   void LoadAnimation();
   std::unique_ptr<GRSurface> LoadBitmap(const std::string& filename);
   std::unique_ptr<GRSurface> LoadLocalizedBitmap(const std::string& filename);

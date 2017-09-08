@@ -223,6 +223,12 @@ bool RecoveryUI::Init(const std::string& /* locale */) {
   return true;
 }
 
+void RecoveryUI::Stop() {
+  if (!android::base::WriteStringToFile("0", BRIGHTNESS_FILE)) {
+    PLOG(WARNING) << "Failed to write brightness file";
+  }
+}
+
 void RecoveryUI::OnTouchEvent() {
   Point delta = touch_pos_ - touch_start_;
   enum SwipeDirection { UP, DOWN, RIGHT, LEFT } direction;
