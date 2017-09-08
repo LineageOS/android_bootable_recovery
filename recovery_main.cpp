@@ -524,6 +524,7 @@ int main(int argc, char** argv) {
         continue;
       }
     }
+    ui->Stop();
     switch (ret) {
       case Device::SHUTDOWN:
         ui->Print("Shutting down...\n");
