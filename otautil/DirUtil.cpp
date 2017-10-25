@@ -48,6 +48,11 @@ static DirStatus dir_status(const std::string& path) {
 
 int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_filename,
                       const selabel_handle* sehnd) {
+	return mkdir_recursively(input_path, mode, strip_filename, sehnd, NULL);
+}
+
+int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_filename,
+                      const selabel_handle* sehnd, const struct utimbuf *timestamp) {
   // Check for an empty string before we bother making any syscalls.
   if (input_path.empty()) {
     errno = ENOENT;
@@ -102,6 +107,9 @@ int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_fil
           setfscreatecon(nullptr);
         }
         if (err != 0) {
+          return -1;
+        }
+        if (timestamp != NULL && utime(dir_path.c_str(), timestamp)) {
           return -1;
         }
         break;
