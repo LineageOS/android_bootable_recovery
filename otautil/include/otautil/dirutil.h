@@ -19,6 +19,7 @@
 
 #include <limits.h> // PATH_MAX
 #include <sys/stat.h>  // mode_t
+#include <utime.h> // utime/utimbuf
 
 #include <string>
 
@@ -36,6 +37,10 @@ struct selabel_handle;
 // not a directory).
 int mkdir_recursively(const std::string& path, mode_t mode, bool strip_filename,
                       const struct selabel_handle* sehnd);
+
+// As above, but if timestamp is non-NULL, directories will be timestamped accordingly.
+int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_filename,
+                      const selabel_handle* sehnd, const struct utimbuf *timestamp);
 
 // rm -rf <path>
 int dirUnlinkHierarchy(const char *path);
