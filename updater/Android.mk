@@ -48,6 +48,7 @@ updater_common_static_libraries := \
     libcutils \
     libtune2fs \
     libbrotli \
+    libziparchive \
     $(tune2fs_static_libraries)
 
 # libupdater (static library)
