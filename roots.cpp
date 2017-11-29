@@ -420,7 +420,7 @@ int format_volume(const char* volume, const char* directory) {
             result = exec_cmd(e2fsdroid_argv[0], const_cast<char**>(e2fsdroid_argv));
           }
         } else {   /* Has to be f2fs because we checked earlier. */
-            const char* f2fs_argv[] = { "/sbin/mkfs.f2fs",
+            const char* make_f2fs_argv[] = { "/sbin/mkfs.f2fs",
                                         "-d1",
                                         "-f",
                                         "-O",
@@ -433,9 +433,19 @@ int format_volume(const char* volume, const char* directory) {
 
             std::string num_sectors = std::to_string(length / 512);
             if (length > 512) {
-                f2fs_argv[8] = num_sectors.c_str();
+                make_f2fs_argv[8] = num_sectors.c_str();
             }
-            result = exec_cmd(f2fs_argv[0], const_cast<char**>(f2fs_argv));
+            result = exec_cmd(make_f2fs_argv[0], const_cast<char**>(make_f2fs_argv));
+            if (result == 0 && directory != nullptr) {
+                const char* sload_f2fs_argv[] = { "/sbin/sload.f2fs",
+                                                  "-f",
+                                                  directory,
+                                                  "-t",
+                                                  volume,
+                                                  v->blk_device,
+                                                  nullptr };
+                result = exec_cmd(sload_f2fs_argv[0], const_cast<char**>(sload_f2fs_argv));
+            }
         }
         if (result != 0) {
             PLOG(ERROR) << "format_volume: make " << v->fs_type << " failed on " << v->blk_device;
