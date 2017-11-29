@@ -24,8 +24,10 @@ LOCAL_SHARED_LIBRARIES := libbase libcutils libhardware liblog
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/..
 
+ifeq ($(CM_BUILD),)
 ifeq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),true)
     LOCAL_CFLAGS += -DPRODUCT_SUPPORTS_VERITY=1
+endif
 endif
 
 include $(BUILD_EXECUTABLE)
