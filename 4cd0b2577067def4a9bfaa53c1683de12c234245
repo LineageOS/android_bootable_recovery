@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03b040b7_73e34943",
+        "filename": "update_verifier/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3962
+      },
+      "writtenOn": "2017-12-15T03:09:19Z",
+      "side": 1,
+      "message": "Didn\u0027t this change to LINEAGE_BUILD on 15.0/15.1?",
+      "range": {
+        "startLine": 38,
+        "startChar": 8,
+        "endLine": 38,
+        "endChar": 16
+      },
+      "revId": "4cd0b2577067def4a9bfaa53c1683de12c234245",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
