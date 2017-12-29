@@ -483,6 +483,21 @@ unsigned char* ReadImage(const char* filename,
 
       curr->deflate_len = sz - strm.avail_in - pos;
       inflateEnd(&strm);
+
+      // The footer contains the size of the uncompressed data.  Double-check to make sure that it
+      // matches the size of the data we got when we actually did the decompression.
+      size_t footer_index = pos + curr->deflate_len + GZIP_FOOTER_LEN - 4;
+      if (sz - footer_index < 4) {
+        printf("invalid footer position; treating as a normal chunk\n");
+        continue;
+      }
+      size_t footer_size = Read4(img + footer_index);
+      if (footer_size != curr->len) {
+        printf("Warning: footer size %zu != %zu; treating as a normal chunk\n",
+               footer_size, curr->len);
+        continue;
+      }
+
       pos += curr->deflate_len;
       p += curr->deflate_len;
       ++curr;
@@ -498,18 +513,6 @@ unsigned char* ReadImage(const char* filename,
       pos += curr->len;
       p += curr->len;
       ++curr;
-
-      // The footer (that we just skipped over) contains the size of
-      // the uncompressed data.  Double-check to make sure that it
-      // matches the size of the data we got when we actually did
-      // the decompression.
-      size_t footer_size = Read4(p-4);
-      if (footer_size != curr[-2].len) {
-        printf("Error: footer size %zu != decompressed size %zu\n",
-            footer_size, curr[-2].len);
-        free(img);
-        return NULL;
-      }
     } else {
       // Reallocate the list for every chunk; we expect the number of
       // chunks to be small (5 for typical boot and recovery images).
