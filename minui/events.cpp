@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/epoll.h>
+#include <sys/inotify.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -40,7 +41,9 @@ struct fd_info {
   ev_callback cb;
 };
 
+static ev_callback saved_input_cb;
 static int g_epoll_fd;
+static int g_inotify_fd;
 static epoll_event polledevents[MAX_DEVICES + MAX_MISC_FDS];
 static int npolledevents;
 
@@ -54,10 +57,85 @@ static bool test_bit(size_t bit, unsigned long* array) { // NOLINT
     return (array[bit/BITS_PER_LONG] & (1UL << (bit % BITS_PER_LONG))) != 0;
 }
 
+static int inotify_cb(int fd, __unused uint32_t epevents) {
+  struct inotify_event* pevent;
+  char* buf;
+  DIR* dir;
+  size_t event_len;
+  size_t offset;
+
+  if (saved_input_cb == nullptr) return -1;
+
+  // The inotify will put one or several complete events.
+  // Should not read part of one event.
+  int ret = ioctl(fd, FIONREAD, &event_len);
+  if (ret != 0) return -1;
+
+  dir = opendir("/dev/input");
+  if (dir == nullptr) return -1;
+
+  buf = (char*)malloc(event_len);
+  if (buf == nullptr) {
+    closedir(dir);
+    return -1;
+  }
+
+  ret = read(fd, buf, event_len);
+  if (ret != (int)event_len) {
+    free(buf);
+    closedir(dir);
+    return -1;
+  }
+
+  offset = 0;
+  while (offset < event_len) {
+    pevent = (struct inotify_event*)(buf + offset);
+    if (offset + sizeof(inotify_event) + pevent->len > event_len) {
+      // The pevent->len is too large and buffer will over flow.
+      // In general, should not happen, just make more stable.
+      free(buf);
+      closedir(dir);
+      return -1;
+    }
+    offset += sizeof(inotify_event) + pevent->len;
+
+    pevent->name[pevent->len] = '\0';
+    if (strncmp(pevent->name, "event", 5)) continue;
+
+    int dfd = openat(dirfd(dir), pevent->name, O_RDONLY);
+    if (dfd == -1) break;
+
+    // Read the evbits of the input device.
+    unsigned long ev_bits[BITS_TO_LONGS(EV_MAX)];
+    if (ioctl(dfd, EVIOCGBIT(0, sizeof(ev_bits)), ev_bits) == -1) {
+      close(dfd);
+      continue;
+    }
+    // We assume that only EV_KEY, EV_REL, and EV_SW event types are ever needed.
+    if (!test_bit(EV_KEY, ev_bits) && !test_bit(EV_REL, ev_bits) && !test_bit(EV_SW, ev_bits)) {
+      close(dfd);
+      continue;
+    }
+
+    // Only add, we assume the user will not plug out and plug in USB device again and again :)
+    ev_add_fd(dfd, saved_input_cb);
+  }
+
+  free(buf);
+  closedir(dir);
+  return 0;
+}
+
 int ev_init(ev_callback input_cb, bool allow_touch_inputs) {
   g_epoll_fd = epoll_create(MAX_DEVICES + MAX_MISC_FDS);
   if (g_epoll_fd == -1) {
     return -1;
+  }
+
+  g_inotify_fd = inotify_init();
+  if (g_inotify_fd >= 0) {
+    inotify_add_watch(g_inotify_fd, "/dev/input", IN_CREATE);
+    ev_add_fd(g_inotify_fd, inotify_cb);
   }
 
   bool epollctlfail = false;
@@ -117,6 +195,8 @@ int ev_init(ev_callback input_cb, bool allow_touch_inputs) {
     return -1;
   }
 
+  saved_input_cb = input_cb;
+
   return 0;
 }
 
@@ -149,6 +229,7 @@ void ev_exit(void) {
     }
     ev_misc_count = 0;
     ev_dev_count = 0;
+    saved_input_cb = nullptr;
     close(g_epoll_fd);
 }
 
