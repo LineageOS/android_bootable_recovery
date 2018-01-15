@@ -264,6 +264,7 @@ include \
     $(LOCAL_PATH)/minadbd/Android.mk \
     $(LOCAL_PATH)/minui/Android.mk \
     $(LOCAL_PATH)/otafault/Android.mk \
+    $(LOCAL_PATH)/otautil/Android.mk \
     $(LOCAL_PATH)/tests/Android.mk \
     $(LOCAL_PATH)/tools/Android.mk \
     $(LOCAL_PATH)/uncrypt/Android.mk \
