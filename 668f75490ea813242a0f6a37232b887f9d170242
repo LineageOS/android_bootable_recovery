@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ba76ba8_819fee8c",
+        "filename": "updater/blockimg.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1373,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-01-17T02:53:24Z",
+      "side": 1,
+      "message": "Alternately, if you know BLKDISCARD is going to be undefined in the kernel headers, you can ifdef BLKDISCARD this section.",
+      "range": {
+        "startLine": 1373,
+        "startChar": 27,
+        "endLine": 1373,
+        "endChar": 37
+      },
+      "revId": "668f75490ea813242a0f6a37232b887f9d170242",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
