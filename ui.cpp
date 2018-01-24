@@ -46,8 +46,16 @@
 #include "device.h"
 
 static constexpr int UI_WAIT_KEY_TIMEOUT_SEC = 120;
+#ifdef RECOVERY_UI_BRIGHTNESS_FILE
+static constexpr const char* BRIGHTNESS_FILE = RECOVERY_UI_BRIGHTNESS_FILE;
+#else
 static constexpr const char* BRIGHTNESS_FILE = "/sys/class/leds/lcd-backlight/brightness";
+#endif
+#ifdef RECOVERY_UI_MAX_BRIGHTNESS_FILE
+static constexpr const char* MAX_BRIGHTNESS_FILE = RECOVERY_UI_MAX_BRIGHTNESS_FILE;
+#else
 static constexpr const char* MAX_BRIGHTNESS_FILE = "/sys/class/leds/lcd-backlight/max_brightness";
+#endif
 
 RecoveryUI::RecoveryUI()
     : locale_(""),
