@@ -376,7 +376,10 @@ GRSurface* MinuiBackendDrm::Init() {
 GRSurface* MinuiBackendDrm::Flip() {
   int ret = drmModePageFlip(drm_fd, main_monitor_crtc->crtc_id,
                             GRSurfaceDrms[current_buffer]->fb_id, 0, nullptr);
-  if (ret < 0) {
+  // in the EBUSY case, we're trying to flip pages faster than
+  // the display can handle. This isn't an error, and merely
+  // indicates that we need to skip this frame.
+  if (ret < 0 && ret != -EBUSY) {
     printf("drmModePageFlip failed ret=%d\n", ret);
     return nullptr;
   }
