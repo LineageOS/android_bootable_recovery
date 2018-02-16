@@ -73,6 +73,11 @@
 #include "stub_ui.h"
 #include "ui.h"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "fstools";
+}
+
 extern "C" {
 #include "recovery_cmds.h"
 }
