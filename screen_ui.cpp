@@ -232,8 +232,8 @@ void ScreenRecoveryUI::draw_background_locked() {
     if (max_stage != -1) {
       int stage_height = gr_get_height(stageMarkerEmpty);
       int stage_width = gr_get_width(stageMarkerEmpty);
-      int x = (ScreenWidth() - max_stage * gr_get_width(stageMarkerEmpty)) / 2;
-      int y = ScreenHeight() - stage_height - kMarginHeight;
+      int x = kMarginWidth + (ScreenWidth() - max_stage * gr_get_width(stageMarkerEmpty)) / 2;
+      int y = kMarginHeight + ScreenHeight() - stage_height;
       for (int i = 0; i < max_stage; ++i) {
         GRSurface* stage_surface = (i < stage) ? stageMarkerFill : stageMarkerEmpty;
         DrawSurface(stage_surface, 0, 0, stage_width, stage_height, x, y);
@@ -242,8 +242,8 @@ void ScreenRecoveryUI::draw_background_locked() {
     }
 
     GRSurface* text_surface = GetCurrentText();
-    int text_x = (ScreenWidth() - gr_get_width(text_surface)) / 2;
-    int text_y = GetTextBaseline();
+    int text_x = kMarginWidth + (ScreenWidth() - gr_get_width(text_surface)) / 2;
+    int text_y = kMarginHeight + GetTextBaseline();
     gr_color(255, 255, 255, 255);
     DrawTextIcon(text_x, text_y, text_surface);
   }
@@ -258,8 +258,8 @@ void ScreenRecoveryUI::draw_foreground_locked() {
     GRSurface* frame = GetCurrentFrame();
     int frame_width = gr_get_width(frame);
     int frame_height = gr_get_height(frame);
-    int frame_x = (ScreenWidth() - frame_width) / 2;
-    int frame_y = GetAnimationBaseline();
+    int frame_x = kMarginWidth + (ScreenWidth() - frame_width) / 2;
+    int frame_y = kMarginHeight + GetAnimationBaseline();
     DrawSurface(frame, 0, 0, frame_width, frame_height, frame_x, frame_y);
   }
 
@@ -267,8 +267,8 @@ void ScreenRecoveryUI::draw_foreground_locked() {
     int width = gr_get_width(progressBarEmpty);
     int height = gr_get_height(progressBarEmpty);
 
-    int progress_x = (ScreenWidth() - width) / 2;
-    int progress_y = GetProgressBaseline();
+    int progress_x = kMarginWidth + (ScreenWidth() - width) / 2;
+    int progress_y = kMarginHeight + GetProgressBaseline();
 
     // Erase behind the progress bar (in case this was a progress-only update)
     gr_color(0, 0, 0, 255);
