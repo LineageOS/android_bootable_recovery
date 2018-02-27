@@ -617,7 +617,7 @@ Value* SymlinkFn(const char* name, State* state, const std::vector<std::unique_p
   }
 
   std::vector<std::string> srcs;
-  if (!ReadArgs(state, argv, &srcs, 1, argv.size())) {
+  if (!ReadArgs(state, argv, &srcs, 1, argv.size() - 1)) {
     return ErrorAbort(state, kArgsParsingFailure, "%s(): Failed to parse the argument(s)", name);
   }
 
