@@ -152,6 +152,10 @@ else
 LOCAL_CFLAGS += -DRECOVERY_UI_VR_STEREO_OFFSET=0
 endif
 
+ifeq ($(TARGET_RECOVERY_USE_LCD_POWER_BLANK),true)
+LOCAL_CFLAGS += -DUSE_LCD_POWER_BLANK
+endif
+
 LOCAL_C_INCLUDES += \
     system/vold \
     external/e2fsprogs/lib

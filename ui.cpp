@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2018 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +50,9 @@
 static constexpr int UI_WAIT_KEY_TIMEOUT_SEC = 120;
 static constexpr const char* BRIGHTNESS_FILE = "/sys/class/leds/lcd-backlight/brightness";
 static constexpr const char* MAX_BRIGHTNESS_FILE = "/sys/class/leds/lcd-backlight/max_brightness";
+#ifdef USE_LCD_POWER_BLANK
+static constexpr const char* LCD_POWER_FILE = "/sys/class/lcd/panel/panel/device/lcd_power";
+#endif
 
 RecoveryUI::RecoveryUI()
     : locale_(""),
@@ -556,6 +560,9 @@ RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
           if (android::base::WriteStringToFile("0", BRIGHTNESS_FILE)) {
             LOG(INFO) << "Brightness: 0 (off)";
             screensaver_state_ = ScreensaverState::OFF;
+#ifdef USE_LCD_POWER_BLANK
+            android::base::WriteStringToFile("0", LCD_POWER_FILE);
+#endif
           }
         }
       } else if (screensaver_state_ != ScreensaverState::NORMAL) {
@@ -572,6 +579,9 @@ RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
           screensaver_state_ = ScreensaverState::NORMAL;
           LOG(INFO) << "Brightness: " << brightness_normal_value_ << " (" << brightness_normal_
                     << "%)";
+#ifdef USE_LCD_POWER_BLANK
+          android::base::WriteStringToFile("1", LCD_POWER_FILE);
+#endif
         }
       }
     }
