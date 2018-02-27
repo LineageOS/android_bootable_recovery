@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2018 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +32,17 @@
 MinuiBackendFbdev::MinuiBackendFbdev() : gr_draw(nullptr), fb_fd(-1) {}
 
 void MinuiBackendFbdev::Blank(bool blank) {
+  int fd = open("/sys/class/lcd/panel/panel/device/lcd_power", O_WRONLY | O_TRUNC);
+  if (fd > 0 && blank) {
+    write(fd, "0", 1);
+    close(fd);
+  }
   int ret = ioctl(fb_fd, FBIOBLANK, blank ? FB_BLANK_POWERDOWN : FB_BLANK_UNBLANK);
   if (ret < 0) perror("ioctl(): blank");
+  if (fd > 0 && !blank) {
+    write(fd, "1", 1);
+    close(fd);
+  }
 }
 
 void MinuiBackendFbdev::SetDisplayedFramebuffer(unsigned n) {
