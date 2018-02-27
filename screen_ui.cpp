@@ -484,7 +484,7 @@ void ScreenRecoveryUI::draw_header_locked(int& y) {
 
   // Draw back icon if not in main menu
   if (!menu_is_main_) {
-    icon = (menu_sel == Device::kGoBack ? ic_back_sel : ic_back);
+    icon = (menu_sel == -1 ? ic_back_sel : ic_back);
     icon_w = gr_get_width(icon);
     icon_h = gr_get_height(icon);
     icon_x = kMarginWidth + (h_unit / 2) + ((h_unit * 1) - icon_w) / 2;
@@ -1093,23 +1093,26 @@ void ScreenRecoveryUI::StartMenu(bool is_main,
 int ScreenRecoveryUI::SelectMenu(int sel) {
   pthread_mutex_lock(&updateMutex);
   if (show_menu) {
-    int old_sel = menu_sel;
+    int old_menu_sel = menu_sel;
+
+    // Handle wrapping and back item
+    if (sel < 0 && (menu_is_main_ || sel < -1)) {
+      sel = (int)menu_items_.size() - 1;
+    }
+    if (sel >= (int)menu_items_.size()) {
+      sel = (menu_is_main_ ? 0 : -1);
+    }
     menu_sel = sel;
 
-    // Wrap at top and bottom.
-    if (menu_sel < 0) menu_sel = (int)menu_items_.size() - 1;
-    if (menu_sel >= (int)menu_items_.size()) menu_sel = 0;
-
     // Scroll
-    if (menu_sel < menu_show_start) {
-      menu_show_start = menu_sel;
+    if (menu_sel != -1 && sel < menu_show_start) {
+      menu_show_start = sel;
     }
-    if (menu_sel >= menu_show_start + menu_show_count) {
-      menu_show_start = menu_sel - (menu_show_count - 1);
+    if (sel >= menu_show_start + menu_show_count) {
+      menu_show_start = sel - (menu_show_count - 1);
     }
 
-    sel = menu_sel;
-    if (menu_sel != old_sel) update_screen_locked();
+    if (menu_sel != old_menu_sel) update_screen_locked();
   }
   pthread_mutex_unlock(&updateMutex);
   return sel;
