@@ -430,7 +430,6 @@ int format_volume(const char* volume, const char* directory) {
                                << " command for " << v->blk_device;
                     return -1;
                 }
-                snprintf(num_sectors, sizeof(num_sectors), "%zd", length / 512);
                 f2fs_argv[2] = v->blk_device;
                 f2fs_argv[3] = num_sectors;
                 f2fs_argv[4] = nullptr;
