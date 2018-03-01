@@ -101,7 +101,7 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   void KeyLongPress(int) override;
 
-  void Redraw();
+  void Redraw() override;
 
   enum UIElement {
     STATUSBAR,
@@ -205,7 +205,7 @@ class ScreenRecoveryUI : public RecoveryUI {
   virtual bool InitTextParams();
 
   virtual void draw_background_locked();
-  virtual void draw_foreground_locked();
+  virtual void draw_foreground_locked(int& y);
   virtual void draw_statusbar_locked();
   virtual void draw_header_locked(int& y);
   virtual void draw_text_menu_locked(int& y);

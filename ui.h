@@ -135,6 +135,8 @@ class RecoveryUI {
 
   virtual int ShowFile(const char* filename) = 0;
 
+  virtual void Redraw() = 0;
+
   // --- event handling ---
 
   enum event_type_t { EVENT_TYPE_NONE, EVENT_TYPE_KEY, EVENT_TYPE_TOUCH };
