@@ -55,6 +55,7 @@ class StubRecoveryUI : public RecoveryUI {
   int ShowFile(const char* /* filename */) override {
     return -1;
   }
+  void Redraw() override {}
 
   // menu display
   void StartMenu(bool /* is_main */, menu_type_t /* type */, const char* const* /* headers */,

@@ -72,15 +72,15 @@ static const char* SWIPE_HELP[] = {
 // TODO merge drawing routines with screen_ui
 void WearRecoveryUI::draw_screen_locked() {
   char cur_selection_str[50];
+  int y = kMarginHeight;
 
   draw_background_locked();
   if (!show_text) {
-    draw_foreground_locked();
+    draw_foreground_locked(y);
   } else {
     SetColor(TEXT_FILL);
     gr_fill(0, 0, gr_fb_width(), gr_fb_height());
 
-    int y = kMarginHeight;
     int x = kMarginWidth;
     if (show_menu) {
       std::string recovery_fingerprint =

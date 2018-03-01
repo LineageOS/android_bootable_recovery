@@ -160,7 +160,7 @@ GRSurface* ScreenRecoveryUI::GetCurrentFrame() const {
   if (currentIcon == INSTALLING_UPDATE || currentIcon == ERASING) {
     return intro_done ? loopFrames[current_frame] : introFrames[current_frame];
   }
-  return error_icon;
+  return nullptr;
 }
 
 GRSurface* ScreenRecoveryUI::GetCurrentText() const {
@@ -223,80 +223,94 @@ int ScreenRecoveryUI::GetProgressBaseline() const {
   return ScreenHeight() - bottom_gap - gr_get_height(progressBarFill);
 }
 
-// Clear the screen and draw the currently selected background icon (if any).
-// Should only be called with updateMutex locked.
+// Draw the currently selected stage icon(s) (if any).
+// Does not flip pages. Should only be called with updateMutex locked.
 void ScreenRecoveryUI::draw_background_locked() {
-  pagesIdentical = false;
-  gr_color(0, 0, 0, 255);
-  gr_clear();
-  if (currentIcon != NONE) {
+  if (currentIcon != NONE && currentIcon != NO_COMMAND) {
     if (max_stage != -1) {
       int stage_height = gr_get_height(stageMarkerEmpty);
       int stage_width = gr_get_width(stageMarkerEmpty);
-      int x = kMarginWidth + (ScreenWidth() - max_stage * gr_get_width(stageMarkerEmpty)) / 2;
-      int y = kMarginHeight + ScreenHeight() - stage_height;
+      int stage_x = kMarginWidth + (ScreenWidth() - max_stage * gr_get_width(stageMarkerEmpty)) / 2;
+      int stage_y = kMarginHeight;
       for (int i = 0; i < max_stage; ++i) {
         GRSurface* stage_surface = (i < stage) ? stageMarkerFill : stageMarkerEmpty;
-        DrawSurface(stage_surface, 0, 0, stage_width, stage_height, x, y);
-        x += stage_width;
+        DrawSurface(stage_surface, 0, 0, stage_width, stage_height, stage_x, stage_y);
+        stage_x += stage_width;
       }
     }
-
-    GRSurface* text_surface = GetCurrentText();
-    int text_x = kMarginWidth + (ScreenWidth() - gr_get_width(text_surface)) / 2;
-    int text_y = kMarginHeight + GetTextBaseline();
-    gr_color(255, 255, 255, 255);
-    DrawTextIcon(text_x, text_y, text_surface);
   }
 }
 
-// Draws the animation and progress bar (if any) on the screen. Does not flip pages. Should only be
-// called with updateMutex locked.
-void ScreenRecoveryUI::draw_foreground_locked() {
-  if (currentIcon != NONE && currentIcon != NO_COMMAND) {
-    gr_color(0, 0, 0, 255);
-    gr_clear();
-    GRSurface* frame = GetCurrentFrame();
+// Draws either the animation and progress bar or the currently
+// selected icon and text on the screen.
+// Does not flip pages. Should only be called with updateMutex locked.
+void ScreenRecoveryUI::draw_foreground_locked(int& y) {
+  GRSurface* frame = GetCurrentFrame();
+  if (frame) {
+    // Show animation frame and progress bar
     int frame_width = gr_get_width(frame);
     int frame_height = gr_get_height(frame);
     int frame_x = kMarginWidth + (ScreenWidth() - frame_width) / 2;
     int frame_y = kMarginHeight + GetAnimationBaseline();
     DrawSurface(frame, 0, 0, frame_width, frame_height, frame_x, frame_y);
-  }
+    y = frame_y + frame_height;
 
-  if (progressBarType != EMPTY) {
-    int width = gr_get_width(progressBarEmpty);
-    int height = gr_get_height(progressBarEmpty);
+    if (progressBarType != EMPTY) {
+      int width = gr_get_width(progressBarEmpty);
+      int height = gr_get_height(progressBarEmpty);
 
-    int progress_x = kMarginWidth + (ScreenWidth() - width) / 2;
-    int progress_y = kMarginHeight + GetProgressBaseline();
+      int progress_x = kMarginWidth + (ScreenWidth() - width) / 2;
+      int progress_y = kMarginHeight + GetProgressBaseline();
 
-    // Erase behind the progress bar (in case this was a progress-only update)
-    gr_color(0, 0, 0, 255);
-    DrawFill(progress_x, progress_y, width, height);
+      // Erase behind the progress bar (in case this was a progress-only update)
+      gr_color(0, 0, 0, 255);
+      DrawFill(progress_x, progress_y, width, height);
 
-    if (progressBarType == DETERMINATE) {
-      float p = progressScopeStart + progress * progressScopeSize;
-      int pos = static_cast<int>(p * width);
+      if (progressBarType == DETERMINATE) {
+        float p = progressScopeStart + progress * progressScopeSize;
+        int pos = static_cast<int>(p * width);
 
-      if (rtl_locale_) {
-        // Fill the progress bar from right to left.
-        if (pos > 0) {
-          DrawSurface(progressBarFill, width - pos, 0, pos, height, progress_x + width - pos,
-                      progress_y);
-        }
-        if (pos < width - 1) {
-          DrawSurface(progressBarEmpty, 0, 0, width - pos, height, progress_x, progress_y);
-        }
-      } else {
-        // Fill the progress bar from left to right.
-        if (pos > 0) {
-          DrawSurface(progressBarFill, 0, 0, pos, height, progress_x, progress_y);
-        }
-        if (pos < width - 1) {
-          DrawSurface(progressBarEmpty, pos, 0, width - pos, height, progress_x + pos, progress_y);
+        if (rtl_locale_) {
+          // Fill the progress bar from right to left.
+          if (pos > 0) {
+            DrawSurface(progressBarFill, width - pos, 0, pos, height, progress_x + width - pos,
+                        progress_y);
+          }
+          if (pos < width - 1) {
+            DrawSurface(progressBarEmpty, 0, 0, width - pos, height, progress_x, progress_y);
+          }
+        } else {
+          // Fill the progress bar from left to right.
+          if (pos > 0) {
+            DrawSurface(progressBarFill, 0, 0, pos, height, progress_x, progress_y);
+          }
+          if (pos < width - 1) {
+            DrawSurface(progressBarEmpty, pos, 0, width - pos, height, progress_x + pos,
+                        progress_y);
+          }
         }
       }
+      y = progress_y + height;
+    }
+  } else {
+    // Show icon and text
+    if (currentIcon != NONE && currentIcon != NO_COMMAND) {
+      GRSurface* icon_surface = error_icon;
+      int icon_width = gr_get_width(icon_surface);
+      int icon_height = gr_get_height(icon_surface);
+      int icon_x = kMarginWidth + (gr_fb_width() - icon_width) / 2;
+      int icon_y = kMarginHeight + GetAnimationBaseline();
+      gr_blit(icon_surface, 0, 0, icon_width, icon_height, icon_x, icon_y);
+
+      GRSurface* text_surface = GetCurrentText();
+      int text_width = gr_get_width(text_surface);
+      int text_height = gr_get_height(text_surface);
+      int text_x = kMarginWidth + (gr_fb_width() - text_width) / 2;
+      int text_y = kMarginHeight + GetTextBaseline();
+      gr_color(255, 255, 255, 255);
+      gr_texticon(text_x, text_y, text_surface);
+
+      y = text_y + text_height;
     }
   }
 }
@@ -674,12 +688,7 @@ void ScreenRecoveryUI::draw_grid_menu_locked(int& y) {
 // Redraws everything on the screen. Does not flip pages. Should only be called with updateMutex
 // locked.
 void ScreenRecoveryUI::draw_screen_locked() {
-  if (!show_text) {
-    draw_background_locked();
-    draw_foreground_locked();
-    return;
-  }
-
+  pagesIdentical = false;
   gr_color(0, 0, 0, 255);
   gr_clear();
 
@@ -708,16 +717,21 @@ void ScreenRecoveryUI::draw_screen_locked() {
       DrawTextLine(text_x, text_y, lineage_version_.c_str(), false);
     }
   } else {
-    // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
-    // we've displayed the entire text buffer.
-    SetColor(LOG);
-    int row = (text_rows_ - 1) % text_rows_;
-    size_t count = 0;
-    for (int ty = gr_fb_height() - kMarginHeight - char_height_; ty >= y && count < text_rows_;
-         ty -= char_height_, ++count) {
-      DrawTextLine(kMarginWidth, ty, text_[row], false);
-      --row;
-      if (row < 0) row = text_rows_ - 1;
+    draw_background_locked();
+    draw_foreground_locked(y);
+
+    if (show_text) {
+      // Display from the bottom up, until we hit the top of the screen, the
+      // bottom of the foreground, or we've displayed the entire text buffer.
+      SetColor(LOG);
+      int row = (text_rows_ - 1) % text_rows_;
+      size_t count = 0;
+      for (int ty = gr_fb_height() - kMarginHeight - char_height_; ty >= y && count < text_rows_;
+           ty -= char_height_, ++count) {
+        DrawTextLine(kMarginWidth, ty, text_[row], false);
+        --row;
+        if (row < 0) row = text_rows_ - 1;
+      }
     }
   }
 }
@@ -732,7 +746,13 @@ void ScreenRecoveryUI::update_screen_locked() {
 // Updates only the progress bar, if possible, otherwise redraws the screen.
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::update_progress_locked() {
-  draw_foreground_locked();
+  if (!pagesIdentical) {
+    draw_screen_locked();
+    pagesIdentical = true;
+  } else {
+    int y = kMarginHeight;
+    draw_foreground_locked(y);
+  }
   gr_flip();
 }
 
@@ -827,7 +847,6 @@ void ScreenRecoveryUI::SetSystemUpdateText(bool security_update) {
   } else {
     LoadLocalizedBitmap("installing_text", &installing_text);
   }
-  Redraw();
 }
 
 bool ScreenRecoveryUI::InitTextParams() {
@@ -934,7 +953,6 @@ void ScreenRecoveryUI::SetBackground(Icon icon) {
 
   if (icon != currentIcon) {
     currentIcon = icon;
-    update_screen_locked();
   }
 
   pthread_mutex_unlock(&updateMutex);
@@ -944,14 +962,14 @@ void ScreenRecoveryUI::SetProgressType(ProgressType type) {
   pthread_mutex_lock(&updateMutex);
   if (progressBarType != type) {
     progressBarType = type;
+    progressScopeStart = 0;
+    progressScopeSize = 0;
+    progress = 0;
     if (progressBarType != EMPTY) {
+      update_screen_locked();
       pthread_create(&progress_thread_, nullptr, ProgressThreadStartRoutine, this);
     }
   }
-  progressScopeStart = 0;
-  progressScopeSize = 0;
-  progress = 0;
-  update_progress_locked();
   pthread_mutex_unlock(&updateMutex);
 }
 
@@ -1009,7 +1027,6 @@ void ScreenRecoveryUI::PrintV(const char* fmt, bool copy_to_stdout, va_list ap) 
       if (*ptr != '\n') text_[text_row_][text_col_++] = *ptr;
     }
     text_[text_row_][text_col_] = '\0';
-    update_screen_locked();
   }
   pthread_mutex_unlock(&updateMutex);
 }
@@ -1111,6 +1128,9 @@ int ScreenRecoveryUI::ShowFile(const char* filename) {
     return -1;
   }
 
+  Icon oldIcon = currentIcon;
+  currentIcon = NONE;
+
   char** old_text = text_;
   size_t old_text_col = text_col_;
   size_t old_text_row = text_row_;
@@ -1125,6 +1145,7 @@ int ScreenRecoveryUI::ShowFile(const char* filename) {
   text_ = old_text;
   text_col_ = old_text_col;
   text_row_ = old_text_row;
+  currentIcon = oldIcon;
   return key;
 }
 
@@ -1248,7 +1269,6 @@ void ScreenRecoveryUI::ShowText(bool visible) {
   pthread_mutex_lock(&updateMutex);
   show_text = visible;
   if (show_text) show_text_ever = true;
-  update_screen_locked();
   pthread_mutex_unlock(&updateMutex);
 }
 
