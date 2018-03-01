@@ -1163,36 +1163,31 @@ static int choose_recovery_file(Device* device) {
 }
 
 static void run_graphics_test() {
-  // Switch to graphics screen.
-  ui->ShowText(false);
-
-  ui->SetProgressType(RecoveryUI::INDETERMINATE);
-  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
-  sleep(1);
-
   ui->SetBackground(RecoveryUI::ERROR);
+  ui->Redraw();
   sleep(1);
 
-  ui->SetBackground(RecoveryUI::NO_COMMAND);
+  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
+  ui->Redraw();
   sleep(1);
 
   ui->SetBackground(RecoveryUI::ERASING);
+  ui->Redraw();
   sleep(1);
 
-  // Calling SetBackground() after SetStage() to trigger a redraw.
   ui->SetStage(1, 3);
-  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
+  ui->Redraw();
   sleep(1);
   ui->SetStage(2, 3);
-  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
+  ui->Redraw();
   sleep(1);
   ui->SetStage(3, 3);
-  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
+  ui->Redraw();
   sleep(1);
 
   ui->SetStage(-1, -1);
-  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
 
+  ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
   ui->SetProgressType(RecoveryUI::DETERMINATE);
   ui->ShowProgress(1.0, 10.0);
   float fraction = 0.0;
@@ -1201,8 +1196,6 @@ static void run_graphics_test() {
     ui->SetProgress(fraction);
     usleep(100000);
   }
-
-  ui->ShowText(true);
 }
 
 static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) {
@@ -1380,9 +1373,13 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
             }
 
             if (status != INSTALL_SUCCESS) {
+              ui->SetProgressType(RecoveryUI::EMPTY);
               ui->SetBackground(RecoveryUI::ERROR);
               ui->Print("Installation aborted.\n");
+              ui->Redraw();
               copy_logs();
+              ui->FlushKeys();
+              ui->WaitInputEvent();
             } else if (!ui->IsTextVisible()) {
               return Device::NO_ACTION;  // reboot if logs aren't visible
             } else {
@@ -1927,6 +1924,7 @@ int main(int argc, char **argv) {
   if (status == INSTALL_ERROR || status == INSTALL_CORRUPT) {
     ui->SetBackground(RecoveryUI::ERROR);
     if (!ui->IsTextVisible()) {
+      ui->Redraw();
       sleep(5);
     }
   }

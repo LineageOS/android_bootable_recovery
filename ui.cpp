@@ -532,7 +532,6 @@ RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
 
     int rc = 0;
     while (event_queue_len == 0 && rc != ETIMEDOUT) {
-      Print(""); // Force screen update
       struct timespec key_timeout;
       gettimeofday(&now, nullptr);
       key_timeout.tv_sec = now.tv_sec + 1;
@@ -546,6 +545,7 @@ RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
         }
         if (key_timeout.tv_sec <= timeout.tv_sec) {
           rc = 0;
+          ui->Redraw();
         }
       }
     }
