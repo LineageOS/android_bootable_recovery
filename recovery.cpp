@@ -1258,13 +1258,17 @@ refresh:
         static const char* s_headers[] = { "ADB Sideload", nullptr };
         static const MenuItemVector s_items = { MenuItem("Cancel sideload") };
 
-        start_sideload(wipe_cache, TEMPORARY_INSTALL_FILE);
+        sideload_start();
         int item = get_menu_selection(false, MT_LIST, s_headers, s_items,
                                       false, 0, device);
-        if (item != Device::kNoAction) {
-            stop_sideload();
+        if (item == Device::kRefresh) {
+            sideload_wait(false);
+            status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE);
         }
-        status = wait_sideload();
+        else {
+            sideload_wait(true);
+        }
+        sideload_stop();
     }
     else {
         status = apply_from_storage(device, volumes[chosen - 1], wipe_cache);
@@ -1924,8 +1928,10 @@ int main(int argc, char **argv) {
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    start_sideload(&should_wipe_cache, TEMPORARY_INSTALL_FILE);
-    status = wait_sideload();
+    sideload_start();
+    sideload_wait(false);
+    status = sideload_install(&should_wipe_cache, TEMPORARY_INSTALL_FILE);
+    sideload_stop();
     if (status == INSTALL_SUCCESS && should_wipe_cache) {
       if (!wipe_cache(false, device)) {
         status = INSTALL_ERROR;
