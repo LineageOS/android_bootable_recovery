@@ -36,8 +36,6 @@
 #include "install.h"
 #include "ui.h"
 
-static pthread_t sideload_thread;
-
 static void set_usb_driver(bool enabled) {
   // USB configfs doesn't use /s/c/a/a/enable.
   if (android::base::GetBoolProperty("sys.usb.configfs", false)) {
@@ -72,22 +70,12 @@ static void maybe_restart_adbd() {
   }
 }
 
-struct sideload_data {
-    bool*       wipe_cache;
-    const char* install_file;
-    bool        cancel;
-    int         result;
-};
-
-static struct sideload_data sideload_data;
+static pthread_t sideload_thread;
+static pid_t     sideload_adb_pid;
+static bool      sideload_cancelled;
+static bool      sideload_started;
 
 void *adb_sideload_thread(void* v) {
-  pid_t child;
-  if ((child = fork()) == 0) {
-    execl("/sbin/recovery", "recovery", "--adbd", nullptr);
-    _exit(EXIT_FAILURE);
-  }
-
   time_t start_time = time(nullptr);
   time_t now = start_time;
 
@@ -96,17 +84,15 @@ void *adb_sideload_thread(void* v) {
 
   // FUSE_SIDELOAD_HOST_PATHNAME will start to exist once the host connects and starts serving a
   // package. Poll for its appearance. (Note that inotify doesn't work with FUSE.)
-  int result = INSTALL_NONE;
   int status = -1;
   while (now - start_time < ADB_INSTALL_TIMEOUT) {
     // Exit if either:
     //  - The adb child process dies, or
     //  - The ui tells us to cancel
-    if (kill(child, 0) != 0) {
-      result = INSTALL_ERROR;
+    if (kill(sideload_adb_pid, 0) != 0) {
       break;
     }
-    if (sideload_data.cancel) {
+    if (sideload_cancelled) {
       break;
     }
 
@@ -117,7 +103,6 @@ void *adb_sideload_thread(void* v) {
     }
     if (errno != ENOENT && errno != ENOTCONN) {
       ui->Print("\nError %s waiting for package\n\n", strerror(errno));
-      result = INSTALL_ERROR;
       break;
     }
 
@@ -126,20 +111,64 @@ void *adb_sideload_thread(void* v) {
   }
 
   if (status == 0) {
-    // Signal UI thread that we can no longer cancel
+    sideload_started = true;
+    // Signal UI thread that sideload has started
     ui->CancelWaitKey();
-
-    result = install_package(FUSE_SIDELOAD_HOST_PATHNAME,
-                             sideload_data.wipe_cache,
-                             sideload_data.install_file,
-                             false, 0);
-
-    sideload_data.result = result;
   }
 
+  return nullptr;
+}
+
+void sideload_start() {
+  stop_adbd();
+  set_usb_driver(true);
+
+  if ((sideload_adb_pid = fork()) == 0) {
+    execl("/sbin/recovery", "recovery", "--adbd", nullptr);
+    _exit(EXIT_FAILURE);
+  }
+
+  ui->Print("\n\nNow send the package you want to apply\n"
+            "to the device with \"adb sideload <filename>\"...\n");
+
+  sideload_cancelled = false;
+  sideload_started = false;
+
+  pthread_create(&sideload_thread, nullptr, &adb_sideload_thread, nullptr);
+}
+
+void sideload_wait(bool cancel) {
+  if (cancel) {
+    sideload_cancelled = true;
+  }
+  pthread_join(sideload_thread, nullptr);
+}
+
+int sideload_install(bool* wipe_cache, const char* install_file) {
+  int result = INSTALL_ERROR;
+  if (sideload_started) {
+    modified_flash = true;
+
+    set_perf_mode(true);
+
+    result = install_package(FUSE_SIDELOAD_HOST_PATHNAME,
+                             wipe_cache,
+                             install_file,
+                             false, 0);
+
+    set_perf_mode(false);
+  }
+
+  return result;
+}
+
+void sideload_stop() {
   // Ensure adb exits
-  kill(child, SIGTERM);
-  waitpid(child, &status, 0);
+  int status;
+  kill(sideload_adb_pid, SIGTERM);
+  waitpid(sideload_adb_pid, &status, 0);
+
+  sideload_started = false;
 
   if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
     if (WEXITSTATUS(status) == 3) {
@@ -149,40 +178,7 @@ void *adb_sideload_thread(void* v) {
     }
   }
 
-  return nullptr;
-}
-
-void
-start_sideload(bool* wipe_cache, const char* install_file) {
-  modified_flash = true;
-
-  stop_adbd();
-  set_usb_driver(true);
-
-  ui->Print("\n\nNow send the package you want to apply\n"
-            "to the device with \"adb sideload <filename>\"...\n");
-
-  sideload_data.wipe_cache = wipe_cache;
-  sideload_data.install_file = install_file;
-  sideload_data.cancel = false;
-  sideload_data.result = INSTALL_NONE;
-
-  pthread_create(&sideload_thread, nullptr, &adb_sideload_thread, nullptr);
-}
-
-void stop_sideload() {
-  sideload_data.cancel = true;
-}
-
-int wait_sideload() {
-  set_perf_mode(true);
-  pthread_join(sideload_thread, nullptr);
-
   ui->FlushKeys();
 
   maybe_restart_adbd();
-
-  set_perf_mode(false);
-
-  return sideload_data.result;
 }
