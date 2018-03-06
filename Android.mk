@@ -148,6 +148,12 @@ else
 LOCAL_CFLAGS += -DRECOVERY_UI_VR_STEREO_OFFSET=0
 endif
 
+ifneq ($(TARGET_RECOVERY_BACKLIGHT_PATH),)
+LOCAL_CFLAGS += -DBACKLIGHT_PATH=\"$(TARGET_RECOVERY_BACKLIGHT_PATH)\"
+else
+LOCAL_CFLAGS += -DBACKLIGHT_PATH=\"/sys/class/leds/lcd-backlight\"
+endif
+
 LOCAL_C_INCLUDES += \
     system/vold \
 
