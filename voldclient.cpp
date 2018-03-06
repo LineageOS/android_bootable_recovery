@@ -273,6 +273,7 @@ void VoldClient::handleVolumeCreated(const std::string& id, const std::string& t
     }
     VolumeInfo info;
     info.mId = id;
+    info.mLabel = id;
     mVolumes.push_back(info);
     pthread_rwlock_unlock(&mVolumeLock);
 }
