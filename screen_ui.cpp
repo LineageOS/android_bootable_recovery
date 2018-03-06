@@ -515,7 +515,7 @@ void ScreenRecoveryUI::draw_statusbar_locked() {
   // Draw status bar from right to left
 
   // Battery icon
-  x = gr_fb_width();
+  x = gr_fb_width() - RECOVERY_UI_MARGIN_STATUSBAR;
   x -= 1 * char_width_;
   SetColor((batt_capacity < 20) ? HEADER : STATUSBAR);
 
