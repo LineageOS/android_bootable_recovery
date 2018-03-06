@@ -154,6 +154,10 @@ else
 LOCAL_CFLAGS += -DBACKLIGHT_PATH=\"/sys/class/leds/lcd-backlight\"
 endif
 
+ifeq ($(TARGET_BUILD_VARIANT),user)
+LOCAL_CFLAGS += -DRELEASE_BUILD
+endif
+
 LOCAL_C_INCLUDES += \
     system/vold \
 
