@@ -67,9 +67,10 @@ class Device : public VoldWatcher {
     // Advanced menu
     REBOOT_BOOTLOADER = 20,
     MOUNT_SYSTEM = 21,
-    VIEW_RECOVERY_LOGS = 22,
-    RUN_GRAPHICS_TEST = 23,
-    SHUTDOWN = 24,
+    TOGGLE_VERIFY = 22,
+    VIEW_RECOVERY_LOGS = 23,
+    RUN_GRAPHICS_TEST = 24,
+    SHUTDOWN = 25,
   };
 
   typedef std::vector<MenuItem> MenuItemVector;

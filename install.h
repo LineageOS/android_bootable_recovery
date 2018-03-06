@@ -21,12 +21,14 @@
 #include <ziparchive/zip_archive.h>
 
 enum { INSTALL_SUCCESS, INSTALL_ERROR, INSTALL_CORRUPT, INSTALL_NONE, INSTALL_SKIPPED,
-        INSTALL_RETRY };
+        INSTALL_RETRY, INSTALL_UNVERIFIED };
 
 // Installs the given update package. If INSTALL_SUCCESS is returned and *wipe_cache is true on
 // exit, caller should wipe the cache partition.
 int install_package(const std::string& package, bool* wipe_cache, const std::string& install_file,
                     bool needs_mount, int retry_count);
+
+extern bool verify_enable;
 
 // Verify the package by ota keys. Return true if the package is verified successfully,
 // otherwise return false.

@@ -80,6 +80,9 @@ static const MenuItem ADVANCED_MENU_ITEMS[] = {
   MenuItem("Reboot to bootloader"),
 #endif
   MenuItem("Mount system"),
+#ifndef RELEASE_BUILD
+  MenuItem("Toggle signature verify"),
+#endif
   MenuItem("View logs"),
   MenuItem("Run graphics test"),
   MenuItem("Power off"),
@@ -91,6 +94,9 @@ static const MenuItemVector advanced_menu_items_ =
 static const Device::BuiltinAction ADVANCED_MENU_ACTIONS[] = {
   Device::REBOOT_BOOTLOADER,
   Device::MOUNT_SYSTEM,
+#ifndef RELEASE_BUILD
+  Device::TOGGLE_VERIFY,
+#endif
   Device::VIEW_RECOVERY_LOGS,
   Device::RUN_GRAPHICS_TEST,
   Device::SHUTDOWN,

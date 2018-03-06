@@ -60,6 +60,8 @@
 #include "ui.h"
 #include "verifier.h"
 
+bool verify_enable = true;
+
 using namespace std::chrono_literals;
 
 // Default allocation of progress bar segments to operations
@@ -607,7 +609,7 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
   if (!verify_package(map.addr, map.length)) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
     set_perf_mode(false);
-    return INSTALL_CORRUPT;
+    return INSTALL_UNVERIFIED;
   }
 
   // Try to open the package.
@@ -721,6 +723,9 @@ int install_package(const std::string& path, bool* wipe_cache, const std::string
 }
 
 bool verify_package(const unsigned char* package_data, size_t package_size) {
+  if (!verify_enable) {
+    return true;
+  }
   static constexpr const char* PUBLIC_KEYS_FILE = "/res/keys";
   std::vector<Certificate> loadedKeys;
   if (!load_keys(PUBLIC_KEYS_FILE, loadedKeys)) {
