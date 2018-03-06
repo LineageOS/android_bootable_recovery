@@ -438,7 +438,7 @@ void ScreenRecoveryUI::draw_statusbar_locked() {
 
   // Time
   SetColor(STATUSBAR);
-  x = gr_fb_width();
+  x = gr_fb_width() - RECOVERY_UI_MARGIN_STATUSBAR;
   x -= 5 * char_width_;
   gr_text(gr_sys_font(), x, y, localtm_str, false);
 
