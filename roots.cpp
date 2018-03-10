@@ -410,34 +410,21 @@ int format_volume(const char* volume, const char* directory) {
             result = exec_cmd(e2fsdroid_argv[0], const_cast<char**>(e2fsdroid_argv));
           }
         } else {   /* Has to be f2fs because we checked earlier. */
-            char *bytes_reserved = nullptr;
-            char *num_sectors = nullptr;
-            const char* f2fs_argv[6] = {"mkfs.f2fs", "-t1"};
-            if (length < 0) {
-                if (asprintf(&bytes_reserved, "%zd", -length) <= 0) {
-                    LOG(ERROR) << "format_volume: failed to create " << v->fs_type
-                               << " command for " << v->blk_device;
-                    return -1;
-                }
-                f2fs_argv[2] = "-r";
-                f2fs_argv[3] = bytes_reserved;
-                f2fs_argv[4] = v->blk_device;
-                f2fs_argv[5] = nullptr;
-            } else {
-                /* num_sectors can be zero which mean whole device space */
-                if (length >= 512 && asprintf(&num_sectors, "%zd", length / 512) <= 0) {
-                    LOG(ERROR) << "format_volume: failed to create " << v->fs_type
-                               << " command for " << v->blk_device;
-                    return -1;
-                }
-                f2fs_argv[2] = v->blk_device;
-                f2fs_argv[3] = num_sectors;
-                f2fs_argv[4] = nullptr;
+            static constexpr int block_size = 4096;
+            const char* f2fs_argv[] = { "/sbin/mkfs.f2fs",
+                                        "-d1",
+                                        "-f",
+                                        "-O",
+                                        "encrypt",
+                                        "-O",
+                                        "quota",
+                                        v->blk_device,
+                                        nullptr,
+                                        nullptr };
+            if (length != 0) {
+                f2fs_argv[8] = (std::to_string(length / block_size)).c_str();
             }
-            const char *f2fs_path = "/sbin/mkfs.f2fs";
-            result = exec_cmd(f2fs_path, (char* const*)f2fs_argv);
-            free(num_sectors);
-            free(bytes_reserved);
+            result = exec_cmd(f2fs_argv[0], const_cast<char**>(f2fs_argv));
         }
         if (result != 0) {
             PLOG(ERROR) << "format_volume: make " << v->fs_type << " failed on " << v->blk_device;
