@@ -410,17 +410,21 @@ int format_volume(const char* volume, const char* directory) {
             result = exec_cmd(e2fsdroid_argv[0], const_cast<char**>(e2fsdroid_argv));
           }
         } else {   /* Has to be f2fs because we checked earlier. */
-            char *num_sectors = nullptr;
-            if (length >= 512 && asprintf(&num_sectors, "%zd", length / 512) <= 0) {
-                LOG(ERROR) << "format_volume: failed to create " << v->fs_type
-                           << " command for " << v->blk_device;
-                return -1;
+            static constexpr int block_size = 4096;
+            const char* f2fs_argv[] = { "/sbin/mkfs.f2fs",
+                                        "-d1",
+                                        "-f",
+                                        "-O",
+                                        "encrypt",
+                                        "-O",
+                                        "quota",
+                                        v->blk_device,
+                                        nullptr,
+                                        nullptr };
+            if (length != 0) {
+                f2fs_argv[8] = (std::to_string(length / block_size)).c_str();
             }
-            const char *f2fs_path = "/sbin/mkfs.f2fs";
-            const char* const f2fs_argv[] = {"mkfs.f2fs", "-t", "-d1", v->blk_device, num_sectors, nullptr};
-
-            result = exec_cmd(f2fs_path, (char* const*)f2fs_argv);
-            free(num_sectors);
+            result = exec_cmd(f2fs_argv[0], const_cast<char**>(f2fs_argv));
         }
         if (result != 0) {
             PLOG(ERROR) << "format_volume: make " << v->fs_type << " failed on " << v->blk_device;
