@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0daa22df_d74b8fa9",
+        "filename": "roots.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2018-03-10T15:54:12Z",
+      "side": 1,
+      "message": "Why compare the sector count to 512 here?",
+      "revId": "d7542fb81c969bbb7280dd502879593a4b463e3f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
