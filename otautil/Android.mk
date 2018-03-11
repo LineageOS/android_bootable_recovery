@@ -18,7 +18,6 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := \
     SysUtil.cpp \
     DirUtil.cpp \
-    ZipUtil.cpp \
     ThermalUtil.cpp
 
 LOCAL_STATIC_LIBRARIES := \
