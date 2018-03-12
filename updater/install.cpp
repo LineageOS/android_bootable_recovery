@@ -616,13 +616,13 @@ Value* SymlinkFn(const char* name, State* state, const std::vector<std::unique_p
     return nullptr;
   }
 
-  std::vector<std::string> srcs;
-  if (!ReadArgs(state, argv, &srcs, 1, argv.size())) {
+  std::vector<std::string> args;
+  if (!ReadArgs(state, argv, &args)) {
     return ErrorAbort(state, kArgsParsingFailure, "%s(): Failed to parse the argument(s)", name);
   }
 
   size_t bad = 0;
-  for (const auto& src : srcs) {
+  for (const auto& src : args) {
     if (unlink(src.c_str()) == -1 && errno != ENOENT) {
       PLOG(ERROR) << name << ": failed to remove " << src;
       ++bad;
