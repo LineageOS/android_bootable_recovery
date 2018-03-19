@@ -219,6 +219,7 @@ LOCAL_WHOLE_STATIC_LIBRARIES += \
     libext2fs \
     libe2fsck \
     libmke2fs \
+    libresize2fs \
     libtune2fs \
     libsparse
 
@@ -241,7 +242,7 @@ LOCAL_STATIC_LIBRARIES += \
     libz
 
 FILESYSTEM_TOOLS := \
-    e2fsck mke2fs tune2fs fsck.ext4 mkfs.ext4 \
+    e2fsck mke2fs resize2fs tune2fs fsck.ext4 mkfs.ext4 \
     fsck.ntfs mkfs.ntfs mount.ntfs \
     mkfs.f2fs fsck.f2fs \
     sgdisk
