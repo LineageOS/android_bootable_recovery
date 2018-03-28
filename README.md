@@ -1,3 +1,4 @@
+TEST
 The Recovery Image
 ==================
 
