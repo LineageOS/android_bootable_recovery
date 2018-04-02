@@ -420,19 +420,21 @@ int format_volume(const char* volume, const char* directory) {
             result = exec_cmd(e2fsdroid_argv[0], const_cast<char**>(e2fsdroid_argv));
           }
         } else {   /* Has to be f2fs because we checked earlier. */
+            static constexpr int kSectorSize = 4096;
             const char* make_f2fs_argv[] = { "/sbin/mkfs.f2fs",
-                                        "-d1",
-                                        "-f",
-                                        "-O",
-                                        "encrypt",
-                                        "-O",
-                                        "quota",
-                                        v->blk_device,
-                                        nullptr,
-                                        nullptr };
+                                             "-d1",
+                                             "-f",
+                                             "-O",
+                                             "encrypt",
+                                             "-O",
+                                             "quota",
+                                             "-w", std::to_string(kSectorSize).c_str(),
+                                             v->blk_device,
+                                             nullptr,
+                                             nullptr };
 
-            std::string num_sectors = std::to_string(length / 512);
-            if (length > 512) {
+            std::string num_sectors = std::to_string(length / kSectorSize);
+            if (length >= kSectorSize) {
                 make_f2fs_argv[8] = num_sectors.c_str();
             }
             result = exec_cmd(make_f2fs_argv[0], const_cast<char**>(make_f2fs_argv));
