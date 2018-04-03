@@ -126,8 +126,6 @@ static void read_source_target_build(ZipArchiveHandle zip, std::vector<std::stri
   }
 }
 
-#ifdef AB_OTA_UPDATER
-
 // Parses the metadata of the OTA package in |zip| and checks whether we are
 // allowed to accept this A/B package. Downgrading is not allowed unless
 // explicitly enabled in the package and only for incremental packages.
@@ -206,9 +204,9 @@ static int check_newer_ab_build(ZipArchiveHandle zip) {
   return 0;
 }
 
-int update_binary_command(const std::string& package, ZipArchiveHandle zip,
-                          const std::string& binary_path, int /* retry_count */, int status_fd,
-                          std::vector<std::string>* cmd) {
+int update_binary_command_ab(const std::string& package, ZipArchiveHandle zip,
+                             const std::string& binary_path, int /* retry_count */, int status_fd,
+                             std::vector<std::string>* cmd) {
   CHECK(cmd != nullptr);
   int ret = check_newer_ab_build(zip);
   if (ret != 0) {
@@ -251,11 +249,9 @@ int update_binary_command(const std::string& package, ZipArchiveHandle zip,
   return 0;
 }
 
-#else  // !AB_OTA_UPDATER
-
-int update_binary_command(const std::string& package, ZipArchiveHandle zip,
-                          const std::string& binary_path, int retry_count, int status_fd,
-                          std::vector<std::string>* cmd) {
+int update_binary_command_legacy(const std::string& package, ZipArchiveHandle zip,
+                                 const std::string& binary_path, int retry_count, int status_fd,
+                                 std::vector<std::string>* cmd) {
   CHECK(cmd != nullptr);
 
   // On traditional updates we extract the update binary from the package.
@@ -292,7 +288,6 @@ int update_binary_command(const std::string& package, ZipArchiveHandle zip,
   }
   return 0;
 }
-#endif  // !AB_OTA_UPDATER
 
 static void log_max_temperature(int* max_temperature, const std::atomic<bool>& logger_finished) {
   CHECK(max_temperature != nullptr);
@@ -316,17 +311,30 @@ static int try_update_binary(const std::string& package, ZipArchiveHandle zip, b
                              int* max_temperature) {
   read_source_target_build(zip, log_buffer);
 
+  int ret;
   int pipefd[2];
   pipe(pipefd);
 
   std::vector<std::string> args;
-#ifdef AB_OTA_UPDATER
-  int ret = update_binary_command(package, zip, "/sbin/update_engine_sideload", retry_count,
-                                  pipefd[1], &args);
-#else
-  int ret = update_binary_command(package, zip, "/tmp/update-binary", retry_count, pipefd[1],
-                                  &args);
-#endif
+  bool ab_ota = true;
+
+  // A/B updates contain a payload.bin and a text file describing the payload.
+  // We check for this file to see whether the update package has to be flashed using update_engine
+  // or if it's a traditional package with an updater-script.
+  static constexpr const char* AB_OTA_PAYLOAD_PROPERTIES = "payload_properties.txt";
+  ZipString property_name(AB_OTA_PAYLOAD_PROPERTIES);
+  ZipEntry properties_entry;
+  if (FindEntry(zip, property_name, &properties_entry) == 0) {
+    ab_ota = true;
+  }
+
+  if (ab_ota) {
+    ret = update_binary_command_ab(package, zip, "/sbin/update_engine_sideload", retry_count,
+                                   pipefd[1], &args);
+  } else {
+    ret = update_binary_command_legacy(package, zip, "/tmp/update-binary", retry_count, pipefd[1],
+                                       &args);
+  }
   if (ret) {
     close(pipefd[0]);
     close(pipefd[1]);
