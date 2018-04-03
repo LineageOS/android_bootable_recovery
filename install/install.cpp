@@ -80,7 +80,6 @@ bool ReadMetadataFromPackage(ZipArchiveHandle zip, std::map<std::string, std::st
   static constexpr const char* METADATA_PATH = "META-INF/com/android/metadata";
   ZipEntry64 entry;
   if (FindEntry(zip, METADATA_PATH, &entry) != 0) {
-    LOG(ERROR) << "Failed to find " << METADATA_PATH;
     return false;
   }
 
@@ -338,15 +337,11 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
                                      int* max_temperature, RecoveryUI* ui) {
   std::map<std::string, std::string> metadata;
   auto zip = package->GetZipArchiveHandle();
-  if (!ReadMetadataFromPackage(zip, &metadata)) {
-    LOG(ERROR) << "Failed to parse metadata in the zip file";
-    return INSTALL_CORRUPT;
-  }
+  bool has_metadata = ReadMetadataFromPackage(zip, &metadata);
 
-  bool package_is_ab = get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
+  bool package_is_ab = !has_metadata && get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
   bool device_supports_ab = android::base::GetBoolProperty("ro.build.ab_update", false);
-  bool ab_device_supports_nonab =
-      android::base::GetBoolProperty("ro.virtual_ab.allow_non_ab", false);
+  bool ab_device_supports_nonab = true;
   bool device_only_supports_ab = device_supports_ab && !ab_device_supports_nonab;
 
   const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
