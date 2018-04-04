@@ -74,6 +74,8 @@
 #include "ui.h"
 #include "voldclient.h"
 
+#include "VolumeBase.h"
+
 // For e2fsprogs
 extern "C" {
 const char* program_name = "fstools";
@@ -1177,6 +1179,11 @@ refresh:
     items.push_back(MenuItem("Apply from ADB")); // Index 0
 
     for (auto& vol : volumes) {
+        // On devices where /data is encrypted (FDE or FBE), we cannot install from
+        // internal (aka emulated) storage because we do not support decryption.
+        if (vol.mState != (int)android::vold::VolumeBase::State::kMounted) {
+            continue;
+        }
         items.push_back(MenuItem("Choose from " + vol.mLabel));
     }
 
