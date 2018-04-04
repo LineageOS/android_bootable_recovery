@@ -22,6 +22,29 @@
       "revId": "0d30931160761c78673d4ec4ed710e85ac309c0e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34f623a6_9e262b13",
+        "filename": "install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 13897
+      },
+      "writtenOn": "2018-04-04T17:25:27Z",
+      "side": 1,
+      "message": "And maybe you could ifdef this so that ab_ota is never true, even if the zip contains the txt.",
+      "range": {
+        "startLine": 324,
+        "startChar": 0,
+        "endLine": 329,
+        "endChar": 3
+      },
+      "revId": "0d30931160761c78673d4ec4ed710e85ac309c0e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
