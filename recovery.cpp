@@ -1177,6 +1177,11 @@ refresh:
     items.push_back(MenuItem("Apply from ADB")); // Index 0
 
     for (auto& vol : volumes) {
+        // On devices where /data is encrypted (FDE or FBE), we cannot install from
+        // internal (aka emulated) storage because we do not support decryption.
+        if ((vol.mLabel == "emulated") && (ensure_path_mounted("/data") != 0)) {
+            continue;
+        }
         items.push_back(MenuItem("Choose from " + vol.mLabel));
     }
 
