@@ -14,8 +14,35 @@
  * limitations under the License.
  */
 
+/*
+ * DRM based mode setting test program
+ * Copyright 2008 Tungsten Graphics
+ *   Jakob Bornecrantz <jakob@tungstengraphics.com>
+ * Copyright 2008 Intel Corporation
+ *   Jesse Barnes <jesse.barnes@intel.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ */
+
 #include "graphics_drm_qti.h"
 
+#include <errno.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <stdio.h>
@@ -34,6 +61,177 @@
 #include <xf86drmMode.h>
 
 #include "minui/minui.h"
+
+#define find_prop_id(_res, type, Type, obj_id, prop_name, prop_id, index) \
+  do {                                                                    \
+    int j = 0;                                                            \
+    int prop_count = 0;                                                   \
+    struct Type* obj = NULL;                                              \
+    obj = (_res);                                                         \
+    if (!obj || drm[index].monitor_##type->type##_id != (obj_id)) {       \
+      prop_id = 0;                                                        \
+      break;                                                              \
+    }                                                                     \
+    prop_count = (int)obj->props->count_props;                            \
+    for (j = 0; j < prop_count; ++j)                                      \
+      if (!strcmp(obj->props_info[j]->name, (prop_name))) break;          \
+    (prop_id) = (j == prop_count) ? 0 : obj->props_info[j]->prop_id;      \
+  } while (0)
+
+#define add_prop(res, type, Type, id, id_name, id_val, index) \
+  find_prop_id(res, type, Type, id, id_name, prop_id, index); \
+  if (prop_id) drmModeAtomicAddProperty(atomic_req, id, prop_id, id_val);
+
+static int find_plane_prop_id(uint32_t obj_id, const char* prop_name, Plane* plane_res) {
+  int i, j = 0;
+  int prop_count = 0;
+  struct Plane* obj = NULL;
+
+  for (i = 0; i < NUM_PLANES; ++i) {
+    obj = &plane_res[i];
+    if (!obj || obj->plane->plane_id != obj_id) continue;
+    prop_count = (int)obj->props->count_props;
+    for (j = 0; j < prop_count; ++j)
+      if (!strcmp(obj->props_info[j]->name, prop_name)) return obj->props_info[j]->prop_id;
+    break;
+  }
+
+  return 0;
+}
+
+static int atomic_add_prop_to_plane(Plane* plane_res, drmModeAtomicReq* req, uint32_t obj_id,
+                                    const char* prop_name, uint64_t value) {
+  uint32_t prop_id;
+
+  prop_id = find_plane_prop_id(obj_id, prop_name, plane_res);
+  if (prop_id == 0) {
+    printf("Could not find obj_id = %d\n", obj_id);
+    return -EINVAL;
+  }
+
+  if (drmModeAtomicAddProperty(req, obj_id, prop_id, value) < 0) {
+    printf("Could not add prop_id = %d for obj_id %d\n", prop_id, obj_id);
+    return -EINVAL;
+  }
+
+  return 0;
+}
+
+int MinuiBackendDrmQti::AtomicPopulatePlane(int plane, drmModeAtomicReqPtr atomic_req,
+                                            DrmConnector index) {
+  uint32_t src_x, src_y, src_w, src_h;
+  uint32_t crtc_x, crtc_y, crtc_w, crtc_h;
+  int width = drm[index].monitor_crtc->mode.hdisplay;
+  int height = drm[index].monitor_crtc->mode.vdisplay;
+
+  src_y = 0;
+  src_w = width / 2;
+  src_h = height;
+  crtc_y = 0;
+  crtc_w = width / 2;
+  crtc_h = height;
+
+  if (plane == Left) {
+    src_x = 0;
+    crtc_x = 0;
+  } else {
+    src_x = width / 2;
+    crtc_x = width / 2;
+  }
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "FB_ID",
+                               drm[index].GRSurfaceDrms[drm[index].current_buffer]->fb_id))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "SRC_X",
+                               src_x << 16))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "SRC_Y",
+                               src_y << 16))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "SRC_W",
+                               src_w << 16))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "SRC_H",
+                               src_h << 16))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "CRTC_X",
+                               crtc_x))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "CRTC_Y",
+                               crtc_y))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "CRTC_W",
+                               crtc_w))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "CRTC_H",
+                               crtc_h))
+    return -EINVAL;
+
+  if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "CRTC_ID",
+                               drm[index].monitor_crtc->crtc_id))
+    return -EINVAL;
+
+  return 0;
+}
+
+int MinuiBackendDrmQti::TeardownPipeline(drmModeAtomicReqPtr atomic_req, DrmConnector index) {
+  uint32_t prop_id;
+  int i, ret;
+
+  /* During suspend, tear down pipeline */
+  add_prop(&conn_res, connector, Connector, drm[index].monitor_connector->connector_id, "CRTC_ID",
+           0, index);
+  add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "MODE_ID", 0, index);
+  add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "ACTIVE", 0, index);
+
+  for (i = 0; i < NUM_PLANES; i++) {
+    ret =
+        atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[i].plane->plane_id, "CRTC_ID", 0);
+    if (ret < 0) {
+      printf("Failed to tear down plane %d\n", i);
+      return ret;
+    }
+
+    if (drmModeAtomicAddProperty(atomic_req, plane_res[i].plane->plane_id, fb_prop_id, 0) < 0) {
+      printf("Failed to add property for plane_id=%d\n", plane_res[i].plane->plane_id);
+      return -EINVAL;
+    }
+  }
+
+  return 0;
+}
+
+int MinuiBackendDrmQti::SetupPipeline(drmModeAtomicReqPtr atomic_req, DrmConnector index) {
+  uint32_t prop_id;
+  int i, ret;
+
+  for (i = 0; i < NUM_PLANES; i++) {
+    add_prop(&conn_res, connector, Connector, drm[index].monitor_connector->connector_id, "CRTC_ID",
+             drm[index].monitor_crtc->crtc_id, index);
+    add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "MODE_ID",
+             crtc_res.mode_blob_id, index);
+    add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "ACTIVE", 1, index);
+  }
+
+  /* Setup planes */
+  for (i = 0; i < NUM_PLANES; i++) {
+    ret = AtomicPopulatePlane(i, atomic_req, index);
+    if (ret < 0) {
+      printf("Error populating plane_id = %d\n", plane_res[i].plane->plane_id);
+      return ret;
+    }
+  }
+
+  return 0;
+}
 
 GRSurfaceDrmQti::~GRSurfaceDrmQti() {
   if (mmapped_buffer_) {
@@ -143,28 +341,12 @@ std::unique_ptr<GRSurfaceDrmQti> GRSurfaceDrmQti::Create(int drm_fd, int width, 
   return surface;
 }
 
-void MinuiBackendDrmQti::DrmDisableCrtc(int drm_fd, drmModeCrtc* crtc) {
-  if (crtc) {
-    drmModeSetCrtc(drm_fd, crtc->crtc_id,
-                   0,         // fb_id
-                   0, 0,      // x,y
-                   nullptr,   // connectors
-                   0,         // connector_count
-                   nullptr);  // mode
-  }
+int MinuiBackendDrmQti::DrmDisableCrtc(drmModeAtomicReqPtr atomic_req, DrmConnector index) {
+  return TeardownPipeline(atomic_req, index);
 }
 
-bool MinuiBackendDrmQti::DrmEnableCrtc(int drm_fd, drmModeCrtc* crtc,
-                                       const std::unique_ptr<GRSurfaceDrmQti>& surface,
-                                       uint32_t* connector_id) {
-  if (drmModeSetCrtc(drm_fd, crtc->crtc_id, surface->fb_id, 0, 0,  // x,y
-                     connector_id, 1,                              // connector_count
-                     &crtc->mode) != 0) {
-    fprintf(stderr, "Failed to drmModeSetCrtc(%d)\n", *connector_id);
-    return false;
-  }
-
-  return true;
+int MinuiBackendDrmQti::DrmEnableCrtc(drmModeAtomicReqPtr atomic_req, DrmConnector index) {
+  return SetupPipeline(atomic_req, index);
 }
 
 void MinuiBackendDrmQti::Blank(bool blank) {
@@ -191,15 +373,29 @@ void MinuiBackendDrmQti::Blank(bool blank, DrmConnector index) {
     return;
   }
 
-  if (blank) {
-    DrmDisableCrtc(drm_fd, drmInterface->monitor_crtc);
-  } else {
-    DrmEnableCrtc(drm_fd, drmInterface->monitor_crtc,
-                  drmInterface->GRSurfaceDrms[drmInterface->current_buffer],
-                  &drmInterface->monitor_connector->connector_id);
+  int ret = 0;
 
-    active_display = index;
+  if (blank == current_blank_state) return;
+
+  drmModeAtomicReqPtr atomic_req = drmModeAtomicAlloc();
+  if (!atomic_req) {
+    printf("Atomic Alloc failed\n");
+    return;
   }
+
+  if (blank)
+    ret = DrmDisableCrtc(atomic_req, index);
+  else
+    ret = DrmEnableCrtc(atomic_req, index);
+
+  if (!ret) ret = drmModeAtomicCommit(drm_fd, atomic_req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
+
+  if (!ret) {
+    printf("Atomic Commit failed, rc = %d\n", ret);
+    current_blank_state = blank;
+  }
+
+  drmModeAtomicFree(atomic_req);
 }
 
 bool MinuiBackendDrmQti::HasMultipleConnectors() {
@@ -323,14 +519,52 @@ bool MinuiBackendDrmQti::FindAndSetMonitor(int fd, drmModeRes* resources) {
 
 void MinuiBackendDrmQti::DisableNonMainCrtcs(int fd, drmModeRes* resources,
                                              drmModeCrtc* main_crtc) {
+  uint32_t prop_id;
+  drmModeAtomicReqPtr atomic_req = drmModeAtomicAlloc();
+
   for (int i = 0; i < resources->count_connectors; i++) {
     drmModeConnector* connector = drmModeGetConnector(fd, resources->connectors[i]);
     drmModeCrtc* crtc = find_crtc_for_connector(fd, resources, connector);
     if (crtc->crtc_id != main_crtc->crtc_id) {
-      DrmDisableCrtc(fd, crtc);
+      // Switching to atomic commit. Given only crtc, we can only set ACTIVE = 0
+      // to disable any Nonmain CRTCs
+      find_prop_id(&crtc_res, crtc, Crtc, crtc->crtc_id, "ACTIVE", prop_id, i);
+      if (prop_id == 0) return;
+
+      if (drmModeAtomicAddProperty(atomic_req, drm[i].monitor_crtc->crtc_id, prop_id, 0) < 0)
+        return;
     }
     drmModeFreeCrtc(crtc);
   }
+
+  if (!drmModeAtomicCommit(drm_fd, atomic_req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL))
+    printf("Atomic Commit failed in DisableNonMainCrtcs\n");
+
+  drmModeAtomicFree(atomic_req);
+}
+
+void MinuiBackendDrmQti::UpdatePlaneFB(DrmConnector index) {
+  int i;
+
+  /* Set atomic req */
+  drmModeAtomicReqPtr atomic_req = drmModeAtomicAlloc();
+  if (!atomic_req) {
+    printf("Atomic Alloc failed. Could not update fb_id\n");
+    return;
+  }
+
+  /* Add property */
+  for (i = 0; i < NUM_PLANES; i++)
+    drmModeAtomicAddProperty(atomic_req, plane_res[i].plane->plane_id, fb_prop_id,
+                             drm[index].GRSurfaceDrms[drm[index].current_buffer]->fb_id);
+
+  /* Commit changes */
+  int32_t ret;
+  ret = drmModeAtomicCommit(drm_fd, atomic_req, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
+
+  drmModeAtomicFree(atomic_req);
+
+  if (ret) printf("Atomic commit failed ret=%d\n", ret);
 }
 
 GRSurface* MinuiBackendDrmQti::Init() {
@@ -406,68 +640,89 @@ GRSurface* MinuiBackendDrmQti::Init() {
 
   drmModeFreeResources(res);
 
-  // We will likely encounter errors in the backend functions (i.e. Flip) if EnableCrtc fails.
-  if (!DrmEnableCrtc(drm_fd, drm[DRM_MAIN].monitor_crtc, drm[DRM_MAIN].GRSurfaceDrms[1],
-                     &drm[DRM_MAIN].monitor_connector->connector_id)) {
-    return nullptr;
+  /* Get possible plane_ids */
+  drmModePlaneRes* plane_options = drmModeGetPlaneResources(drm_fd);
+  if (!plane_options) return NULL;
+
+  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_ATOMIC, 1);
+
+  /* Set crtc resources */
+  crtc_res.props =
+      drmModeObjectGetProperties(drm_fd, drm[DRM_MAIN].monitor_crtc->crtc_id, DRM_MODE_OBJECT_CRTC);
+  crtc_res.props_info = static_cast<drmModePropertyRes**>(
+      calloc(crtc_res.props->count_props, sizeof(crtc_res.props_info)));
+  if (!crtc_res.props || !crtc_res.props_info)
+    return NULL;
+  else
+    for (int j = 0; j < (int)crtc_res.props->count_props; ++j)
+      crtc_res.props_info[j] = drmModeGetProperty(drm_fd, crtc_res.props->props[j]);
+
+  /* Set connector resources */
+  conn_res.props = drmModeObjectGetProperties(drm_fd, drm[DRM_MAIN].monitor_connector->connector_id,
+                                              DRM_MODE_OBJECT_CONNECTOR);
+  conn_res.props_info = static_cast<drmModePropertyRes**>(
+      calloc(conn_res.props->count_props, sizeof(conn_res.props_info)));
+  if (!conn_res.props || !conn_res.props_info)
+    return NULL;
+  else
+    for (int j = 0; j < (int)conn_res.props->count_props; ++j)
+      conn_res.props_info[j] = drmModeGetProperty(drm_fd, conn_res.props->props[j]);
+
+  /* Set plane resources */
+  for (int i = 0; i < NUM_PLANES; ++i) {
+    plane_res[i].plane = drmModeGetPlane(drm_fd, plane_options->planes[i]);
+    if (!plane_res[i].plane) return NULL;
   }
+
+  for (int i = 0; i < NUM_PLANES; ++i) {
+    struct Plane* obj = &plane_res[i];
+    unsigned int j;
+    obj->props = drmModeObjectGetProperties(drm_fd, obj->plane->plane_id, DRM_MODE_OBJECT_PLANE);
+    if (!obj->props) continue;
+    obj->props_info = static_cast<drmModePropertyRes**>(
+        calloc(obj->props->count_props, sizeof(*obj->props_info)));
+    if (!obj->props_info) continue;
+    for (j = 0; j < obj->props->count_props; ++j)
+      obj->props_info[j] = drmModeGetProperty(drm_fd, obj->props->props[j]);
+  }
+
+  drmModeFreePlaneResources(plane_options);
+  plane_options = NULL;
+
+  /* Setup pipe and blob_id */
+  if (drmModeCreatePropertyBlob(drm_fd, &drm[DRM_MAIN].monitor_crtc->mode, sizeof(drmModeModeInfo),
+                                &crtc_res.mode_blob_id)) {
+    printf("failed to create mode blob\n");
+    return NULL;
+  }
+
+  /* Save fb_prop_id*/
+  uint32_t prop_id;
+  prop_id = find_plane_prop_id(plane_res[0].plane->plane_id, "FB_ID", plane_res);
+  fb_prop_id = prop_id;
+
+  Blank(false);
 
   return drm[DRM_MAIN].GRSurfaceDrms[0].get();
 }
 
-static void page_flip_complete(__unused int fd, __unused unsigned int sequence,
-                               __unused unsigned int tv_sec, __unused unsigned int tv_usec,
-                               void* user_data) {
-  *static_cast<bool*>(user_data) = false;
-}
-
 GRSurface* MinuiBackendDrmQti::Flip() {
-  GRSurface* surface = NULL;
-  DrmInterface* current_drm = &drm[active_display];
-  bool ongoing_flip = true;
+  UpdatePlaneFB(active_display);
 
-  if (!current_drm->monitor_connector) {
-    fprintf(stderr, "Unsupported. active_display = %d\n", active_display);
-    return nullptr;
-  }
-
-  if (drmModePageFlip(drm_fd, current_drm->monitor_crtc->crtc_id,
-                      current_drm->GRSurfaceDrms[current_drm->current_buffer]->fb_id,
-                      DRM_MODE_PAGE_FLIP_EVENT, &ongoing_flip) != 0) {
-    fprintf(stderr, "Failed to drmModePageFlip, active_display=%d", active_display);
-    return nullptr;
-  }
-
-  while (ongoing_flip) {
-    struct pollfd fds = { .fd = drm_fd, .events = POLLIN };
-
-    if (poll(&fds, 1, -1) == -1 || !(fds.revents & POLLIN)) {
-      perror("Failed to poll() on drm fd");
-      break;
-    }
-
-    drmEventContext evctx = { .version = DRM_EVENT_CONTEXT_VERSION,
-                              .page_flip_handler = page_flip_complete };
-
-    if (drmHandleEvent(drm_fd, &evctx) != 0) {
-      perror("Failed to drmHandleEvent");
-      break;
-    }
-  }
-
-  current_drm->current_buffer = 1 - current_drm->current_buffer;
-  surface = current_drm->GRSurfaceDrms[current_drm->current_buffer].get();
-  return surface;
+  drm[active_display].current_buffer = 1 - drm[active_display].current_buffer;
+  return drm[active_display].GRSurfaceDrms[drm[active_display].current_buffer].get();
 }
 
 MinuiBackendDrmQti::~MinuiBackendDrmQti() {
   for (int i = 0; i < DRM_MAX; i++) {
     if (drm[i].monitor_connector) {
-      DrmDisableCrtc(drm_fd, drm[i].monitor_crtc);
       drmModeFreeCrtc(drm[i].monitor_crtc);
       drmModeFreeConnector(drm[i].monitor_connector);
     }
   }
+  Blank(true);
+  drmModeDestroyPropertyBlob(drm_fd, crtc_res.mode_blob_id);
   close(drm_fd);
   drm_fd = -1;
 }
