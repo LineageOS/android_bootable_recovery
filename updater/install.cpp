@@ -361,6 +361,8 @@ Value* FormatFn(const char* name, State* state, const std::vector<std::unique_pt
                                 "encrypt",
                                 "-O",
                                 "quota",
+                                "-w",
+                                "512",
                                 location.c_str(),
                                 (size < 512) ? nullptr : num_sectors.c_str(),
                                 nullptr };
