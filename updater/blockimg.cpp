@@ -60,11 +60,7 @@
 // Set this to 0 to interpret 'erase' transfers to mean do a
 // BLKDISCARD ioctl (the normal behavior).  Set to 1 to interpret
 // erase to mean fill the region with zeroes.
-#ifdef SUPPRESS_EMMC_WIPE
-#define DEBUG_ERASE  1
-#else
 #define DEBUG_ERASE  0
-#endif
 
 static constexpr size_t BLOCKSIZE = 4096;
 static constexpr const char* STASH_DIRECTORY_BASE = "/cache/recovery";
@@ -1373,10 +1369,12 @@ static int PerformCommandErase(CommandParameters& params) {
       // length in bytes
       blocks[1] = (range.second - range.first) * static_cast<uint64_t>(BLOCKSIZE);
 
+#ifndef SUPPRESS_EMMC_WIPE
       if (ioctl(params.fd, BLKDISCARD, &blocks) == -1) {
         PLOG(ERROR) << "BLKDISCARD ioctl failed";
         return -1;
       }
+#endif
     }
   }
 
