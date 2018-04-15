@@ -1497,12 +1497,18 @@ static void copy_userdata_files() {
         if (access(time_off_root, F_OK) != 0) {
             if (access(time_off_1_data, R_OK) == 0) {
                 file_copy(time_off_1_data, time_off_root);
-            }
-            else if (access(time_off_2_data, R_OK) == 0) {
+            } else if (access(time_off_2_data, R_OK) == 0) {
                 file_copy(time_off_2_data, time_off_root);
             }
         }
         ensure_path_unmounted("/data");
+    }
+
+    if (ensure_path_mounted("/persist") == 0) {
+        if (access(time_off_3_data, R_OK) == 0) {
+            file_copy(time_off_3_data, time_off_root);
+        }
+        ensure_path_unmounted("/persist");
     }
 }
 
