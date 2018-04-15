@@ -1504,6 +1504,13 @@ static void copy_userdata_files() {
         }
         ensure_path_unmounted("/data");
     }
+
+    if (ensure_path_mounted("/persist") == 0) {
+        if (access(time_off_3_data, R_OK) == 0) {
+            file_copy(time_off_3_data, time_off_root);
+        }
+        ensure_path_unmounted("/persist");
+    }
 }
 
 static void set_time() {
