@@ -1529,18 +1529,12 @@ static void set_time() {
 }
 
 static void setup_adbd() {
-    bool adb_keys_root_exists = false;
     int tries;
     for (tries = 0; tries < 5; ++tries) {
         if (access(adb_keys_root, F_OK) == 0) {
-            adb_keys_root_exists = true;
             break;
         }
         sleep(1);
-    }
-    if (adb_keys_root_exists) {
-        // Enable secure adbd
-        property_set("ro.adb.secure", "1");
     }
 
     // Trigger (re)start of adb daemon
