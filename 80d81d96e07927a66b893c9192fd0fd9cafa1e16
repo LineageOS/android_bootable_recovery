@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad84d360_1fe1e149",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1512,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2018-04-16T12:29:22Z",
+      "side": 1,
+      "message": "Maybe we should check persist first and skip data check for time",
+      "revId": "80d81d96e07927a66b893c9192fd0fd9cafa1e16",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
