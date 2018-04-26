@@ -1735,14 +1735,7 @@ int main(int argc, char **argv) {
         // to log the update attempt since update_package is non-NULL.
         modified_flash = true;
 
-        if (!is_battery_ok()) {
-            ui->Print("battery capacity is not enough for installing package, needed is %d%%\n",
-                      BATTERY_OK_PERCENTAGE);
-            // Log the error code to last_install when installation skips due to
-            // low battery.
-            log_failure_code(kLowBattery, update_package);
-            status = INSTALL_SKIPPED;
-        } else if (bootreason_in_blacklist()) {
+        if (bootreason_in_blacklist()) {
             // Skip update-on-reboot when bootreason is kernel_panic or similar
             ui->Print("bootreason is in the blacklist; skip OTA installation\n");
             log_failure_code(kBootreasonInBlacklist, update_package);
