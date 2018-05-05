@@ -67,7 +67,7 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/..
 # any subsidiary static libraries required for your registered
 # extension libs.
 
-ifeq ($(TARGET_ARCH),arm64)
+ifeq ($(TARGET_ARCH),arm64, x86_64)
 inc := $(call intermediates-dir-for,PACKAGING,updater_extensions,,,32)/register.inc
 else
 inc := $(call intermediates-dir-for,PACKAGING,updater_extensions)/register.inc
@@ -93,7 +93,7 @@ $(inc) : $(inc_dep_file)
 	$(hide) $(foreach lib,$(libs),echo "  Register_$(lib)();" >> $@;)
 	$(hide) echo "}" >> $@
 
-ifeq ($(TARGET_ARCH),arm64)
+ifeq ($(TARGET_ARCH),arm64, x86_64)
 $(call intermediates-dir-for,EXECUTABLES,updater,,,32)/updater.o : $(inc)
 else
 $(call intermediates-dir-for,EXECUTABLES,updater)/updater.o : $(inc)
