@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b53aed52_1fc8eac8",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1184,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2018-06-15T23:14:24Z",
+      "side": 1,
+      "message": "Probably just need userdata_encrypted check here.",
+      "revId": "2e02d31cbc6a9df20093d8e3f01cb7d625e5f3bd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
