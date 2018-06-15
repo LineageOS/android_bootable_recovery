@@ -136,6 +136,7 @@ static constexpr const char* DEFAULT_LOCALE = "en-US";
 static std::string locale;
 static bool has_cache = false;
 
+static const char* fbe_key_version = "/data/unencrypted/key/version";
 static const char* adb_keys_data = "/data/misc/adb/adb_keys";
 static const char* adb_keys_root = "/adb_keys";
 static const char* time_off_1_data = "/data/time/ats_1";
@@ -147,6 +148,9 @@ bool modified_flash = false;
 std::string stage;
 const char* reason = nullptr;
 struct selabel_handle* sehandle;
+
+bool userdata_mountable = false;
+bool userdata_encrypted = true;
 
 /*
  * The recovery tool communicates with the main system through /cache files.
@@ -1176,6 +1180,11 @@ refresh:
     items.push_back(MenuItem("Apply from ADB")); // Index 0
 
     for (auto& vol : volumes) {
+        if (vol.mLabel == "emulated") {
+            if (!userdata_mountable || userdata_encrypted) {
+                continue;
+            }
+        }
         items.push_back(MenuItem("Choose from " + vol.mLabel));
     }
 
@@ -1488,6 +1497,10 @@ static void log_failure_code(ErrorCode code, const char *update_package) {
 
 static void copy_userdata_files() {
     if (ensure_path_mounted("/data") == 0) {
+        userdata_mountable = true;
+        if (access(fbe_key_version, F_OK) != 0) {
+            userdata_encrypted = false;
+        }
         if (access(adb_keys_root, F_OK) != 0) {
             if (access(adb_keys_data, R_OK) == 0) {
                 file_copy(adb_keys_data, adb_keys_root);
