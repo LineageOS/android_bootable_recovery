@@ -465,6 +465,64 @@ exit:
     return result;
 }
 
+static uint32_t getpixel(GRSurface* surface, int x, int y) {
+    uint32_t* pixels = (uint32_t*)surface->data;
+    return pixels[y * surface->width + x];
+}
+static void putpixel(GRSurface* surface, int x, int y, uint32_t color) {
+    uint32_t* pixels = (uint32_t*)surface->data;
+    pixels[y * surface->width + x] = color;
+}
+
+static float lerp(float s, float e, float t) {
+    return s + (e - s) * t;
+}
+
+static float blerp(float c00, float c10, float c01, float c11, float tx, float ty) {
+    return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
+}
+
+static uint32_t getbyte(uint32_t value, int i) {
+    return (value >> (i*8)) & 0xff;
+}
+
+int res_create_scaled_surface(GRSurface** scaled, GRSurface* original,
+                               float scalex, float scaley) {
+    int new_w = (int)original->width * scalex;
+    int new_h = (int)original->height * scaley;
+    GRSurface* surface = NULL;
+
+    surface = init_display_surface(new_w, new_h);
+    if (surface == NULL) {
+        return -8;
+    }
+
+    int x, y;
+    for (y = 0; y < new_h; ++y) {
+        for (x = 0; x < new_w; ++x) {
+            float gx = x / (float)new_w * (original->width - 1);
+            float gy = y / (float)new_h * (original->height - 1);
+            int gxi = (int)gx;
+            int gyi = (int)gy;
+            uint32_t result = 0;
+            uint32_t c00 = getpixel(original, gxi, gyi);
+            uint32_t c10 = getpixel(original, gxi + 1, gyi);
+            uint32_t c01 = getpixel(original, gxi, gyi + 1);
+            uint32_t c11 = getpixel(original, gxi + 1, gyi + 1);
+            int i;
+            for (i = 0; i < 3; ++i) {
+                result |= (uint8_t)blerp(getbyte(c00, i), getbyte(c10, i),
+                                         getbyte(c01, i), getbyte(c11, i),
+                                         gx - gxi, gy - gyi) << (8*i);
+            }
+            putpixel(surface, x, y, result);
+        }
+    }
+
+    *scaled = surface;
+    return 0;
+}
+
 void res_free_surface(GRSurface* surface) {
     free(surface);
 }
