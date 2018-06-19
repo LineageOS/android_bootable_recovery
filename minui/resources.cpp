@@ -493,6 +493,62 @@ int res_create_localized_alpha_surface(const char* name,
   return 0;
 }
 
+static uint32_t getpixel(GRSurface* surface, int x, int y) {
+  uint32_t* pixels = (uint32_t*)surface->data;
+  return pixels[y * surface->width + x];
+}
+
+static void putpixel(GRSurface* surface, int x, int y, uint32_t color) {
+  uint32_t* pixels = (uint32_t*)surface->data;
+  pixels[y * surface->width + x] = color;
+}
+
+static float lerp(float s, float e, float t) {
+  return s + (e - s) * t;
+}
+
+static float blerp(float c00, float c10, float c01, float c11, float tx, float ty) {
+  return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
+}
+
+static uint8_t getbyte(uint32_t value, int n) {
+  return (value >> (n * 8)) & 0xff;
+}
+
+int res_create_scaled_surface(GRSurface** dst, GRSurface* src, float scalex, float scaley) {
+  int new_w = (int)src->width * scalex;
+  int new_h = (int)src->height * scaley;
+  GRSurface* scaled = init_display_surface(new_w, new_h);
+  if (scaled == NULL) {
+    return -8;  // Same as res_create_display_surface()
+  }
+
+  int x, y;
+  for (y = 0; y < new_h; ++y) {
+    for (x = 0; x < new_w; ++x) {
+      float gx = x / (float)new_w * (src->width - 1);
+      float gy = y / (float)new_h * (src->height - 1);
+      int gxi = (int)gx;
+      int gyi = (int)gy;
+      uint32_t result = 0;
+      uint32_t c00 = getpixel(src, gxi, gyi);
+      uint32_t c10 = getpixel(src, gxi + 1, gyi);
+      uint32_t c01 = getpixel(src, gxi, gyi + 1);
+      uint32_t c11 = getpixel(src, gxi + 1, gyi + 1);
+      int i;
+      for (i = 0; i < 3; ++i) {
+        result |= (uint8_t)blerp(getbyte(c00, i), getbyte(c10, i), getbyte(c01, i), getbyte(c11, i),
+                                 gx - gxi, gy - gyi)
+                  << (8 * i);
+      }
+      putpixel(scaled, x, y, result);
+    }
+  }
+
+  *dst = scaled;
+  return 0;
+}
+
 void res_free_surface(GRSurface* surface) {
   free(surface);
 }
