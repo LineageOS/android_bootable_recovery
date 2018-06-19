@@ -142,6 +142,9 @@ int res_create_alpha_surface(const char* name, GRSurface** pSurface);
 int res_create_localized_alpha_surface(const char* name, const char* locale,
                                        GRSurface** pSurface);
 
+int res_create_scaled_surface(GRSurface** dst, GRSurface* src,
+                              float sx, float sy);
+
 // Return a list of locale strings embedded in |png_name|. Return a empty list in case of failure.
 std::vector<std::string> get_locales_in_png(const std::string& png_name);
 
