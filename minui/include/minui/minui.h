@@ -131,6 +131,9 @@ int res_create_alpha_surface(const char* name, GRSurface** pSurface);
 int res_create_localized_alpha_surface(const char* name, const char* locale,
                                        GRSurface** pSurface);
 
+int res_create_scaled_surface(GRSurface** dst, GRSurface* src,
+                              float sx, float sy);
+
 // Free a surface allocated by any of the res_create_*_surface()
 // functions.
 void res_free_surface(GRSurface* surface);
