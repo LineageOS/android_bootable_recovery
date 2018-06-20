@@ -144,7 +144,7 @@ void sideload_wait(bool cancel) {
   pthread_join(sideload_thread, nullptr);
 }
 
-int sideload_install(bool* wipe_cache, const char* install_file) {
+int sideload_install(bool* wipe_cache, const char* install_file, bool verify) {
   int result = INSTALL_ERROR;
   if (sideload_started) {
     modified_flash = true;
@@ -154,7 +154,7 @@ int sideload_install(bool* wipe_cache, const char* install_file) {
     result = install_package(FUSE_SIDELOAD_HOST_PATHNAME,
                              wipe_cache,
                              install_file,
-                             false, 0);
+                             false, 0, verify);
 
     set_perf_mode(false);
   }
