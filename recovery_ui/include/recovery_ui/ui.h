@@ -28,6 +28,8 @@
 #include <thread>
 #include <vector>
 
+class Device;
+
 static constexpr const char* DEFAULT_LOCALE = "en-US";
 
 /*
@@ -143,6 +145,14 @@ class RecoveryUI {
   RecoveryUI();
 
   virtual ~RecoveryUI();
+
+  void SetDevice(Device* device) {
+    device_ = device;
+  }
+
+  Device* GetDevice() {
+    return device_;
+  }
 
   // Initializes the object; called before anything else. UI texts will be initialized according
   // to the given locale. Returns true on success.
@@ -309,6 +319,8 @@ class RecoveryUI {
     DIMMED,
     OFF,
   };
+
+  Device* device_;
 
   // The sensitivity when detecting a swipe.
   const int touch_low_threshold_;
