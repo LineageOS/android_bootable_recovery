@@ -22,4 +22,6 @@
 // Applies a package via `adb sideload` or `adb rescue`. Returns the install result. When a reboot
 // has been requested, INSTALL_REBOOT will be the return value, with the reboot target set in
 // reboot_action.
-InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action);
+InstallResult ApplyFromAdb(
+    Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action,
+    const std::function<bool(Device*)>& ask_to_continue_unverified = nullptr);

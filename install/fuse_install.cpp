@@ -149,7 +149,7 @@ static bool StartInstallPackageFuse(std::string_view path) {
   return run_fuse_sideload(std::move(fuse_data_provider)) == 0;
 }
 
-InstallResult InstallWithFuseFromPath(std::string_view path, RecoveryUI* ui) {
+InstallResult InstallWithFuseFromPath(std::string_view path, bool verify, RecoveryUI* ui) {
   // We used to use fuse in a thread as opposed to a process. Since accessing
   // through fuse involves going from kernel to userspace to kernel, it leads
   // to deadlock when a page fault occurs. (Bug: 26313124)
@@ -187,7 +187,8 @@ InstallResult InstallWithFuseFromPath(std::string_view path, RecoveryUI* ui) {
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
                                    std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
     result =
-        InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0 /* retry_count */, ui);
+        InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false,
+                       0 /* retry_count */, verify, ui);
     break;
   }
 
@@ -207,7 +208,8 @@ InstallResult InstallWithFuseFromPath(std::string_view path, RecoveryUI* ui) {
   return result;
 }
 
-InstallResult ApplyFromSdcard(Device* device) {
+InstallResult ApplyFromSdcard(Device* device,
+                              const std::function<bool(Device*)>& ask_to_continue_unverified_fn) {
   auto ui = device->GetUI();
   if (ensure_path_mounted(SDCARD_ROOT) != 0) {
     LOG(ERROR) << "\n-- Couldn't mount " << SDCARD_ROOT << ".\n";
@@ -229,7 +231,10 @@ InstallResult ApplyFromSdcard(Device* device) {
   ui->Print("\n-- Install %s ...\n", path.c_str());
   SetSdcardUpdateBootloaderMessage();
 
-  auto result = InstallWithFuseFromPath(path, ui);
+  auto result = InstallWithFuseFromPath(path, true /* verify */, ui);
+  if (result == INSTALL_UNVERIFIED && ask_to_continue_unverified_fn(device)) {
+    result = InstallWithFuseFromPath(path, false /* verify */, ui);
+  }
   ensure_path_unmounted(SDCARD_ROOT);
   return result;
 }
