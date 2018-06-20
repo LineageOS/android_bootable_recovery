@@ -90,7 +90,11 @@ static bool WriteStatusToFd(MinadbdCommandStatus status, int fd) {
 
 // Installs the package from FUSE. Returns the installation result and whether it should continue
 // waiting for new commands.
-static auto AdbInstallPackageHandler(RecoveryUI* ui, InstallResult* result) {
+static auto AdbInstallPackageHandler(
+    Device* device, InstallResult* result,
+    const std::function<bool(Device*)>& ask_to_continue_unverified_fn) {
+  RecoveryUI* ui = device->GetUI();
+
   // How long (in seconds) we wait for the package path to be ready. It doesn't need to be too long
   // because the minadbd service has already issued an install command. FUSE_SIDELOAD_HOST_PATHNAME
   // will start to exist once the host connects and starts serving a package. Poll for its
@@ -115,7 +119,13 @@ static auto AdbInstallPackageHandler(RecoveryUI* ui, InstallResult* result) {
     auto package =
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
                                    std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
-    *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0, ui);
+    *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0,
+                             true /* verify */, ui);
+    if (*result == INSTALL_UNVERIFIED && ask_to_continue_unverified_fn &&
+        ask_to_continue_unverified_fn(device)) {
+        *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0,
+                                 false /* verify */, ui);
+    }
     break;
   }
 
@@ -351,7 +361,8 @@ static void CreateMinadbdServiceAndExecuteCommands(
   signal(SIGPIPE, SIG_DFL);
 }
 
-InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action) {
+InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action,
+                 const std::function<bool(Device*)>& ask_to_continue_unverified_fn) {
   // Save the usb state to restore after the sideload operation.
   std::string usb_state = android::base::GetProperty("sys.usb.state", "none");
   // Clean up state and stop adbd.
@@ -364,7 +375,8 @@ InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinActi
 
   InstallResult install_result = INSTALL_NONE;
   std::map<MinadbdCommand, CommandFunction> command_map{
-    { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, ui, &install_result) },
+    { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, device, &install_result,
+                                          ask_to_continue_unverified_fn) },
     { MinadbdCommand::kRebootAndroid, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootAndroid,
                                                 &install_result, reboot_action) },
     { MinadbdCommand::kRebootBootloader,
