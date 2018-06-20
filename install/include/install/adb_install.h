@@ -21,4 +21,9 @@
 // Applies a package via `adb sideload` or `adb rescue`. Returns the install result (in `enum
 // InstallResult`). When a reboot has been requested, INSTALL_REBOOT will be the return value, with
 // the reboot target set in reboot_action.
-int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action);
+int ApplyFromAdb(bool verify, Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action);
+
+// Wrapper to keep the API consistent between ApplyFromAdb and ApplyFromSdcard
+// If `ask_to_continue_unverified` is non-null, it will ask to allow the installation of an unverified package
+int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action,
+				 const std::function<bool(Device*)>& ask_to_continue_unverified = nullptr);
