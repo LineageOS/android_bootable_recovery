@@ -523,16 +523,16 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
 
 static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
                                              std::vector<std::string>* log_buffer, int retry_count,
-                                             int* max_temperature, RecoveryUI* ui) {
+                                             bool verify, int* max_temperature, RecoveryUI* ui) {
   ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
   // Give verification half the progress bar...
   ui->SetProgressType(RecoveryUI::DETERMINATE);
   ui->ShowProgress(VERIFICATION_PROGRESS_FRACTION, VERIFICATION_PROGRESS_TIME);
 
   // Verify package.
-  if (!verify_package(package, ui)) {
+  if (verify && !verify_package(package, ui)) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
-    return INSTALL_CORRUPT;
+    return INSTALL_UNVERIFIED;
   }
 
   // Verify and install the contents of the package.
@@ -549,7 +549,8 @@ static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
 }
 
 InstallResult InstallPackage(Package* package, const std::string_view package_id,
-                             bool should_wipe_cache, int retry_count, RecoveryUI* ui) {
+                             bool should_wipe_cache, int retry_count, bool verify,
+                             RecoveryUI* ui) {
   auto start = std::chrono::system_clock::now();
 
   int start_temperature = GetMaxValueFromThermalZone();
@@ -571,7 +572,7 @@ InstallResult InstallPackage(Package* package, const std::string_view package_id
   } else {
     bool updater_wipe_cache = false;
     result = VerifyAndInstallPackage(package, &updater_wipe_cache, &log_buffer, retry_count,
-                                     &max_temperature, ui);
+                                     verify, &max_temperature, ui);
     should_wipe_cache = should_wipe_cache || updater_wipe_cache;
   }
 

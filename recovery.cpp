@@ -169,6 +169,19 @@ static bool yes_no(Device* device, const char* question1, const char* question2)
   return (chosen_item == 1);
 }
 
+static std::string get_build_type() {
+  return android::base::GetProperty("ro.build.type", "");
+}
+
+static bool ask_to_continue_unverified_fn(Device* device) {
+  if (get_build_type() == "user") {
+    return false;
+  } else {
+    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "Signature verification failed", "Install anyway?");
+  }
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Format user data?", "This includes internal storage.", "THIS CANNOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Format data" };
@@ -385,6 +398,8 @@ static Device::BuiltinAction PromptAndWait(Device* device, InstallResult status)
         // after installing a package.
         LOG(FATAL) << "Invalid status code of INSTALL_REBOOT";
         break;
+      case INSTALL_UNVERIFIED:
+        break;
     }
     ui->SetProgressType(RecoveryUI::EMPTY);
 
@@ -491,10 +506,11 @@ change_menu:
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_ADB_SIDELOAD) {
-          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
+          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action,
+                                ask_to_continue_unverified_fn);
         } else {
           adb = false;
-          status = ApplyFromSdcard(device);
+          status = ApplyFromSdcard(device, ask_to_continue_unverified_fn);
         }
 
         ui->Print("\nInstall from %s completed with status %d.\n", adb ? "ADB" : "SD card", status);
@@ -797,20 +813,20 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
         status = INSTALL_ERROR;
       } else if (install_with_fuse || should_use_fuse) {
         LOG(INFO) << "Installing package " << update_package << " with fuse";
-        status = InstallWithFuseFromPath(update_package, ui);
+        status = InstallWithFuseFromPath(update_package, true /* verify */, ui);
       } else if (auto memory_package = Package::CreateMemoryPackage(
                      update_package,
                      std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
                  memory_package != nullptr) {
         status = InstallPackage(memory_package.get(), update_package, should_wipe_cache,
-                                retry_count, ui);
+                                retry_count, true /* verify */, ui);
       } else {
         // We may fail to memory map the package on 32 bit builds for packages with 2GiB+ size.
         // In such cases, we will try to install the package with fuse. This is not the default
         // installation method because it introduces a layer of indirection from the kernel space.
         LOG(WARNING) << "Failed to memory map package " << update_package
                      << "; falling back to install with fuse";
-        status = InstallWithFuseFromPath(update_package, ui);
+        status = InstallWithFuseFromPath(update_package, true /* verify */, ui);
       }
       if (status != INSTALL_SUCCESS) {
         ui->Print("Installation aborted.\n");
@@ -871,7 +887,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action);
+    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action,
+                          !sideload_auto_reboot ? ask_to_continue_unverified_fn : nullptr);
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
     if (sideload_auto_reboot) {
       status = INSTALL_REBOOT;
