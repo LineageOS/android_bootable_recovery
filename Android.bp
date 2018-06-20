@@ -97,6 +97,12 @@ cc_library_static {
     shared_libs: [
         "librecovery_ui",
     ],
+
+    product_variables: {
+        debuggable: {
+            cflags: ["-DDEBUG_BUILD"],
+        },
+    },
 }
 
 cc_binary {
