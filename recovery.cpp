@@ -177,6 +177,15 @@ static bool yes_no(Device* device, const char* question1, const char* question2)
   return (chosen_item == 1);
 }
 
+static bool ask_to_continue_unverified_fn(Device* device) {
+  if (get_build_type() == "user") {
+    return false;
+  } else {
+    ui->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "Signature verification failed", "Install anyway?");
+  }
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Wipe all user data?", "  THIS CAN NOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Factory data reset" };
@@ -574,10 +583,11 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_ADB_SIDELOAD) {
-          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
+          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action,
+                                ask_to_continue_unverified_fn);
         } else {
           adb = false;
-          status = ApplyFromSdcard(device, ui);
+          status = ApplyFromSdcard(device, ui, ask_to_continue_unverified_fn);
         }
 
         ui->Print("\nInstall from %s completed with status %d.\n", adb ? "ADB" : "SD card", status);
@@ -900,7 +910,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
         set_retry_bootloader_message(retry_count + 1, args);
       }
 
-      status = install_package(update_package, should_wipe_cache, true, retry_count, ui);
+      status = install_package(update_package, should_wipe_cache, true, retry_count,
+                               true /* verify */, ui);
       if (status != INSTALL_SUCCESS) {
         ui->Print("Installation aborted.\n");
 
@@ -965,7 +976,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action);
+    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action,
+                          !sideload_auto_reboot ? ask_to_continue_unverified_fn : nullptr);
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
     if (sideload_auto_reboot) {
       status = INSTALL_REBOOT;
