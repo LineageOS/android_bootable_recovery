@@ -572,7 +572,7 @@ bool verify_package_compatibility(ZipArchiveHandle package_zip) {
 
 static int really_install_package(std::string path, bool* wipe_cache, bool needs_mount,
                                   std::vector<std::string>* log_buffer, int retry_count,
-                                  int* max_temperature) {
+                                  bool verify, int* max_temperature) {
   ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
   ui->Print("Finding update package...\n");
   // Give verification half the progress bar...
@@ -617,10 +617,10 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
 
   // Verify package.
   set_perf_mode(true);
-  if (!verify_package(map.addr, map.length)) {
+  if (verify && !verify_package(map.addr, map.length)) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
     set_perf_mode(false);
-    return INSTALL_CORRUPT;
+    return INSTALL_UNVERIFIED;
   }
 
   // Try to open the package.
@@ -658,7 +658,7 @@ static int really_install_package(std::string path, bool* wipe_cache, bool needs
 }
 
 int install_package(const std::string& path, bool* wipe_cache, const std::string& install_file,
-                    bool needs_mount, int retry_count) {
+                    bool needs_mount, int retry_count, bool verify) {
   CHECK(!path.empty());
   CHECK(!install_file.empty());
   CHECK(wipe_cache != nullptr);
@@ -676,7 +676,7 @@ int install_package(const std::string& path, bool* wipe_cache, const std::string
     result = INSTALL_ERROR;
   } else {
     result = really_install_package(path, wipe_cache, needs_mount, &log_buffer, retry_count,
-                                    &max_temperature);
+                                    verify, &max_temperature);
   }
 
   // Measure the time spent to apply OTA update in seconds.
