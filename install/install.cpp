@@ -573,7 +573,7 @@ bool verify_package_compatibility(ZipArchiveHandle package_zip) {
 
 static int really_install_package(const std::string& path, bool* wipe_cache, bool needs_mount,
                                   std::vector<std::string>* log_buffer, int retry_count,
-                                  int* max_temperature, RecoveryUI* ui) {
+                                  bool verify, int* max_temperature, RecoveryUI* ui) {
   ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
   ui->Print("Finding update package...\n");
   // Give verification half the progress bar...
@@ -600,9 +600,9 @@ static int really_install_package(const std::string& path, bool* wipe_cache, boo
   }
 
   // Verify package.
-  if (!verify_package(package.get(), ui)) {
+  if (verify && !verify_package(package.get(), ui)) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
-    return INSTALL_CORRUPT;
+    return INSTALL_UNVERIFIED;
   }
 
   // Try to open the package.
@@ -633,7 +633,7 @@ static int really_install_package(const std::string& path, bool* wipe_cache, boo
 }
 
 int install_package(const std::string& path, bool should_wipe_cache, bool needs_mount,
-                    int retry_count, RecoveryUI* ui) {
+                    int retry_count, bool verify, RecoveryUI* ui) {
   CHECK(!path.empty());
 
   auto start = std::chrono::system_clock::now();
@@ -649,7 +649,7 @@ int install_package(const std::string& path, bool should_wipe_cache, bool needs_
   } else {
     bool updater_wipe_cache = false;
     result = really_install_package(path, &updater_wipe_cache, needs_mount, &log_buffer,
-                                    retry_count, &max_temperature, ui);
+                                    retry_count, verify, &max_temperature, ui);
     should_wipe_cache = should_wipe_cache || updater_wipe_cache;
   }
 

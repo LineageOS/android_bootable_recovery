@@ -36,6 +36,7 @@ enum InstallResult {
   INSTALL_RETRY,
   INSTALL_KEY_INTERRUPTED,
   INSTALL_REBOOT,
+  INSTALL_UNVERIFIED,
 };
 
 enum class OtaType {
@@ -48,7 +49,7 @@ enum class OtaType {
 // successful installation if |should_wipe_cache| is true or an updater command asks to wipe the
 // cache.
 int install_package(const std::string& package, bool should_wipe_cache, bool needs_mount,
-                    int retry_count, RecoveryUI* ui);
+                    int retry_count, bool verify, RecoveryUI* ui);
 
 // Verifies the package by ota keys. Returns true if the package is verified successfully,
 // otherwise returns false.
