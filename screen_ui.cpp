@@ -883,7 +883,22 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   // Set up the locale info.
   SetLocale(locale);
 
-  LoadBitmap("logo_image", &logo_image);
+  // Load logo and scale it if necessary
+  // Note 2/45 is our standard margin on each side so the maximum image
+  // width is 41/45 of the screen width.
+  GRSurface* image;
+  LoadBitmap("logo_image", &image);
+  if ((int)gr_get_width(image) > gr_fb_width() * 41 / 45) {
+      float scale = (float)gr_fb_width() / (float)gr_get_width(image) *
+                    (41.0f / 45.0f);
+      GRSurface* scaled_image;
+      res_create_scaled_surface(&scaled_image, image, scale, scale);
+      logo_image = scaled_image;
+      res_free_surface(image);
+  } else {
+      logo_image = image;
+  }
+
   LoadBitmap("ic_back", &ic_back);
   LoadBitmap("ic_back_sel", &ic_back_sel);
 
