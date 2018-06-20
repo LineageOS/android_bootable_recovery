@@ -77,7 +77,7 @@ static bool IsDeviceUnlocked() {
   return "orange" == android::base::GetProperty("ro.boot.verifiedbootstate", "");
 }
 
-static std::string get_build_type() {
+std::string get_build_type() {
   return android::base::GetProperty("ro.build.type", "");
 }
 
