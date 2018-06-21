@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "964095cf_e80e574e",
+        "filename": "minui/resources.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-06-21T04:22:28Z",
+      "side": 1,
+      "message": "nit: newline after",
+      "range": {
+        "startLine": 471,
+        "startChar": 0,
+        "endLine": 471,
+        "endChar": 1
+      },
+      "revId": "43f48321f7a09e325b7a3276177bfa5fb779f0bc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c49741f_18e2b353",
+        "filename": "minui/resources.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-06-21T04:22:28Z",
+      "side": 1,
+      "message": "assuming this is not uint8_t to avoid casting til the end?",
+      "range": {
+        "startLine": 485,
+        "startChar": 7,
+        "endLine": 485,
+        "endChar": 15
+      },
+      "revId": "43f48321f7a09e325b7a3276177bfa5fb779f0bc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9abd110_69aa1293",
+        "filename": "minui/resources.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-06-21T04:22:28Z",
+      "side": 1,
+      "message": "could just squish these lines together",
+      "range": {
+        "startLine": 493,
+        "startChar": 24,
+        "endLine": 495,
+        "endChar": 13
+      },
+      "revId": "43f48321f7a09e325b7a3276177bfa5fb779f0bc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "20632665_afb69afe",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-06-21T04:22:28Z",
+      "side": 1,
+      "message": "Assuming this is due to 45 - (2 * 2) ?",
+      "range": {
+        "startLine": 820,
+        "startChar": 20,
+        "endLine": 820,
+        "endChar": 35
+      },
+      "revId": "43f48321f7a09e325b7a3276177bfa5fb779f0bc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9c5c467_05b02d17",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 826,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2018-06-21T04:22:28Z",
+      "side": 1,
+      "message": "nit: goes up with the other } ?",
+      "revId": "43f48321f7a09e325b7a3276177bfa5fb779f0bc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
