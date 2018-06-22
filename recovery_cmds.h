@@ -31,27 +31,6 @@ int mksh_main(int argc, char **argv);
 int vdc_main(int argc, char **argv);
 int awk_main(int argc, char **argv);
 
-/* Filesystem tools */
-int e2fsck_main(int argc, char **argv);
-int mke2fs_main(int argc, char **argv);
-int resize2fs_main(int argc, char **argv);
-int tune2fs_main(int argc, char **argv);
-
-#ifdef WITH_EXFAT
-int fsck_exfat_main(int argc, char **argv);
-int mkfs_exfat_main(int argc, char **argv);
-#endif
-
-int fsck_ntfs3g_main(int argc, char **argv);
-int mkfs_ntfs3g_main(int argc, char **argv);
-int mount_ntfs3g_main(int argc, char **argv);
-
-int mkfs_f2fs_main(int argc, char **argv);
-int fsck_f2fs_main(int argc, char **argv);
-int fibmap_main(int argc, char **argv);
-
-int sgdisk_main(int argc, char **argv);
-
 struct recovery_cmd {
     const char *name;
     int (*main_func)(int argc, char **argv);
@@ -67,24 +46,6 @@ static const struct recovery_cmd recovery_cmds[] = {
     { "sh",             mksh_main },
     { "vdc",            vdc_main },
     { "awk",            awk_main },
-
-    /* Filesystem tools */
-    { "e2fsck",         e2fsck_main },
-    { "mke2fs",         mke2fs_main },
-    { "resize2fs",      resize2fs_main },
-    { "tune2fs",        tune2fs_main },
-    { "fsck.ext4",      e2fsck_main },
-    { "mkfs.ext4",      mke2fs_main },
-#ifdef WITH_EXFAT
-    { "fsck.exfat",     fsck_exfat_main },
-    { "mkfs.exfat",     mkfs_exfat_main },
-#endif
-    { "fsck.ntfs",      fsck_ntfs3g_main },
-    { "mkfs.ntfs",      mkfs_ntfs3g_main },
-    { "mount.ntfs",     mount_ntfs3g_main },
-    { "mkfs.f2fs",      mkfs_f2fs_main },
-    { "fsck.f2fs",      fsck_f2fs_main },
-    { "sgdisk",         sgdisk_main },
 
     { NULL, NULL },
 };
