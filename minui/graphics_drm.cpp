@@ -374,13 +374,33 @@ GRSurface* MinuiBackendDrm::Init() {
   return GRSurfaceDrms[0];
 }
 
+static bool flip_pending = false;
+
+static void drm_page_flip_event(int, unsigned int, unsigned int,
+    unsigned int, void *)
+{
+  flip_pending = false;
+}
+
 GRSurface* MinuiBackendDrm::Flip() {
-  int ret = drmModePageFlip(drm_fd, main_monitor_crtc->crtc_id,
-                            GRSurfaceDrms[current_buffer]->fb_id, 0, nullptr);
+  drmEventContext ev;
+  int ret;
+
+  memset(&ev, 0, sizeof(ev));
+  ev.version = 2;
+  ev.page_flip_handler = drm_page_flip_event;
+
+  while (flip_pending) {
+    drmHandleEvent(drm_fd, &ev);
+  }
+
+  ret = drmModePageFlip(drm_fd, main_monitor_crtc->crtc_id,
+                            GRSurfaceDrms[current_buffer]->fb_id, DRM_MODE_PAGE_FLIP_EVENT, nullptr);
   if (ret < 0) {
     printf("drmModePageFlip failed ret=%d\n", ret);
     return nullptr;
   }
+  flip_pending = true;
   current_buffer = 1 - current_buffer;
   return GRSurfaceDrms[current_buffer];
 }
