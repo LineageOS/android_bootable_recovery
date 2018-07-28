@@ -1616,6 +1616,7 @@ static void setup_adbd() {
   }
 
   // Trigger (re)start of adb daemon
+  property_set("sys.usb.config", "adb");
   property_set("lineage.service.adb.root", "1");
 }
 
