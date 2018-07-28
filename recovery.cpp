@@ -1694,8 +1694,8 @@ static void setup_adbd() {
     sleep(1);
   }
 
-  // Trigger (re)start of adb daemon
-  property_set("lineage.service.adb.root", "1");
+  // Trigger start of adb daemon
+  property_set("sys.usb.config", "adb");
 }
 
 int main(int argc, char **argv) {
