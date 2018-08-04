@@ -45,8 +45,8 @@ static int append_sod(const char* opt_hash)
         int fd = open(part->vol->blk_device, O_RDONLY);
         part->size = part->used = lseek64(fd, 0, SEEK_END);
         close(fd);
-        p += sprintf(p, "fs.%s.size=%llu\n", part->name, part->size);
-        p += sprintf(p, "fs.%s.used=%llu\n", part->name, part->used);
+        p += sprintf(p, "fs.%s.size=%lu\n", part->name, part->size);
+        p += sprintf(p, "fs.%s.used=%lu\n", part->name, part->used);
     }
 
     int rc = tar_append_file_contents(tar, "SOD", 0600,
@@ -61,7 +61,7 @@ static int append_eod(const char* opt_hash)
     char* p = eodbuf;
     int n;
 
-    p += sprintf(p, "hash.datalen=%u\n", hash_datalen);
+    p += sprintf(p, "hash.datalen=%zu\n", hash_datalen);
 
     unsigned char digest[HASH_MAX_LENGTH];
     char hexdigest[HASH_MAX_STRING_LENGTH];
