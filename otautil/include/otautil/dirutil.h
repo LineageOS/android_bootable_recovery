@@ -17,6 +17,7 @@
 #ifndef OTAUTIL_DIRUTIL_H_
 #define OTAUTIL_DIRUTIL_H_
 
+#include <limits.h> // PATH_MAX
 #include <sys/stat.h>  // mode_t
 
 #include <string>
@@ -35,5 +36,8 @@ struct selabel_handle;
 // not a directory).
 int mkdir_recursively(const std::string& path, mode_t mode, bool strip_filename,
                       const struct selabel_handle* sehnd);
+
+// rm -rf <path>
+int dirUnlinkHierarchy(const char *path);
 
 #endif  // OTAUTIL_DIRUTIL_H_
