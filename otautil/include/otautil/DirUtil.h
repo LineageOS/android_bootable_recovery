@@ -36,4 +36,7 @@ struct selabel_handle;
 int mkdir_recursively(const std::string& path, mode_t mode, bool strip_filename,
                       const struct selabel_handle* sehnd);
 
+// rm -rf <path>
+int dirUnlinkHierarchy(const char *path);
+
 #endif  // OTAUTIL_DIRUTIL_H_
