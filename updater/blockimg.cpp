@@ -208,7 +208,7 @@ static bool discard_blocks(int fd, off64_t offset, uint64_t size) {
   }
 
   uint64_t args[2] = { static_cast<uint64_t>(offset), size };
-  if (ioctl(fd, BLKDISCARD, &args) == -1) {
+  if (ioctl(fd, BLKDISCARD, &args) == -1 && errno != ENOTSUP) {
     PLOG(ERROR) << "BLKDISCARD ioctl failed";
     return false;
   }
@@ -1499,7 +1499,7 @@ static int PerformCommandErase(CommandParameters& params) {
       // length in bytes
       blocks[1] = (range.second - range.first) * static_cast<uint64_t>(BLOCKSIZE);
 
-      if (ioctl(params.fd, BLKDISCARD, &blocks) == -1) {
+      if (ioctl(params.fd, BLKDISCARD, &blocks) == -1 && errno != ENOTSUP) {
         PLOG(ERROR) << "BLKDISCARD ioctl failed";
         return -1;
       }
