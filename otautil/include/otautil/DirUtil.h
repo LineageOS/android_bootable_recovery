@@ -17,6 +17,7 @@
 #ifndef OTAUTIL_DIRUTIL_H_
 #define OTAUTIL_DIRUTIL_H_
 
+#include <limits.h> // PATH_MAX
 #include <sys/stat.h>  // mode_t
 #include <utime.h> // utime/utimbuf
 
