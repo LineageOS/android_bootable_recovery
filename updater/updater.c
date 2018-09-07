@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
     // Extract the script from the package.
 
     char* package_data = argv[3];
-    ZipArchive za;
+    ZipArchive za = {};
     int err;
     err = mzOpenZipArchive(package_data, &za);
     if (err != 0) {

@@ -439,7 +439,7 @@ really_install_package(const char *path)
 
     /* Try to open the package.
      */
-    ZipArchive zip;
+    ZipArchive zip = {};
     err = mzOpenZipArchive(path, &zip);
     if (err != 0) {
         LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
