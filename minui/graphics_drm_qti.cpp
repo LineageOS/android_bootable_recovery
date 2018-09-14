@@ -642,7 +642,8 @@ GRSurface* MinuiBackendDrmQti::Init() {
 
   /* Get possible plane_ids */
   drmModePlaneRes* plane_options = drmModeGetPlaneResources(drm_fd);
-  if (!plane_options) return NULL;
+  if (!plane_options || !plane_options->planes || (plane_options->count_planes < NUM_PLANES))
+    return NULL;
 
   drmSetClientCap(drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
   drmSetClientCap(drm_fd, DRM_CLIENT_CAP_ATOMIC, 1);
@@ -650,9 +651,11 @@ GRSurface* MinuiBackendDrmQti::Init() {
   /* Set crtc resources */
   crtc_res.props =
       drmModeObjectGetProperties(drm_fd, drm[DRM_MAIN].monitor_crtc->crtc_id, DRM_MODE_OBJECT_CRTC);
+  if (!crtc_res.props) return NULL;
+
   crtc_res.props_info = static_cast<drmModePropertyRes**>(
       calloc(crtc_res.props->count_props, sizeof(crtc_res.props_info)));
-  if (!crtc_res.props || !crtc_res.props_info)
+  if (!crtc_res.props_info)
     return NULL;
   else
     for (int j = 0; j < (int)crtc_res.props->count_props; ++j)
@@ -661,9 +664,11 @@ GRSurface* MinuiBackendDrmQti::Init() {
   /* Set connector resources */
   conn_res.props = drmModeObjectGetProperties(drm_fd, drm[DRM_MAIN].monitor_connector->connector_id,
                                               DRM_MODE_OBJECT_CONNECTOR);
+  if (!conn_res.props) return NULL;
+
   conn_res.props_info = static_cast<drmModePropertyRes**>(
       calloc(conn_res.props->count_props, sizeof(conn_res.props_info)));
-  if (!conn_res.props || !conn_res.props_info)
+  if (!conn_res.props_info)
     return NULL;
   else
     for (int j = 0; j < (int)conn_res.props->count_props; ++j)
