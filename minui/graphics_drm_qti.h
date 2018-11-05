@@ -109,4 +109,5 @@ class MinuiBackendDrmQti : public MinuiBackend {
   struct Crtc crtc_res;
   struct Connector conn_res;
   struct Plane plane_res[NUM_PLANES];
+  uint32_t number_of_lms;
 };
