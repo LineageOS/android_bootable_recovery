@@ -1524,7 +1524,7 @@ setup_adbd() {
     ensure_path_unmounted("/data");
 
     // Trigger (re)start of adb daemon
-    property_set("service.adb.root", "1");
+    property_set("cm.service.adb.root", "1");
 }
 
 static RecoveryUI* gCurrentUI = NULL;

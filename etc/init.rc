@@ -151,4 +151,4 @@ on property:sys.storage.ums_enabled=1
 on property:sys.storage.ums_enabled=0
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/functions adb
-    write /sys/class/android_usb/android0/enable ${service.adb.root}
+    write /sys/class/android_usb/android0/enable ${cm.service.adb.root}
