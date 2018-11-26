@@ -518,7 +518,7 @@ int main(int argc, char** argv) {
   // Set up adb_keys and enable root before starting ADB.
   if (IsRoDebuggable() && !fastboot) {
     copy_userdata_files();
-    android::base::SetProperty("service.adb.root", "1");
+    android::base::SetProperty("lineage.service.adb.root", "1");
   }
 
   while (true) {
