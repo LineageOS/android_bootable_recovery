@@ -1575,7 +1575,7 @@ static void setup_adbd() {
     }
 
     // Trigger (re)start of adb daemon
-    property_set("service.adb.root", "1");
+    property_set("lineage.service.adb.root", "1");
 }
 
 int main(int argc, char **argv) {
