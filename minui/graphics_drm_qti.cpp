@@ -691,13 +691,13 @@ GRSurface* MinuiBackendDrmQti::Init() {
 
   drmModeFreeResources(res);
 
+  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_ATOMIC, 1);
+
   /* Get possible plane_ids */
   drmModePlaneRes* plane_options = drmModeGetPlaneResources(drm_fd);
   if (!plane_options || !plane_options->planes || (plane_options->count_planes < number_of_lms))
     return NULL;
-
-  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
-  drmSetClientCap(drm_fd, DRM_CLIENT_CAP_ATOMIC, 1);
 
   /* Set crtc resources */
   crtc_res.props =
