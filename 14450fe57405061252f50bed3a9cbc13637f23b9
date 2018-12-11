@@ -22,6 +22,53 @@
       "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71b84edd_0f13e912",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2018-12-11T19:45:03Z",
+      "side": 1,
+      "message": "\"/mnt/vendor/persist/time/ats_1\" as well for PIE qcom devices",
+      "parentUuid": "a0a57133_b178d946",
+      "range": {
+        "startLine": 142,
+        "startChar": 38,
+        "endLine": 142,
+        "endChar": 54
+      },
+      "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2441f891_a63ccc59",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2018-12-11T19:45:03Z",
+      "side": 1,
+      "message": "lineage.service.adb.root",
+      "range": {
+        "startLine": 1491,
+        "startChar": 18,
+        "endLine": 1491,
+        "endChar": 34
+      },
+      "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
