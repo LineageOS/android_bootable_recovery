@@ -49,6 +49,75 @@
     },
     {
       "key": {
+        "uuid": "c803ced7_22ce9225",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1433,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2018-12-11T19:54:32Z",
+      "side": 1,
+      "message": "if (ensure_path_mounted(\"/data\") !\u003d 0) {\n    LOG(ERROR) \u003c\u003c \"Can\u0027t mount \" \u003c\u003c path;\n    return;\n  }\n\nLet\u0027s try to improve a bit this code",
+      "range": {
+        "startLine": 1433,
+        "startChar": 0,
+        "endLine": 1433,
+        "endChar": 44
+      },
+      "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cae84fe_01ff465b",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1459,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2018-12-11T19:54:32Z",
+      "side": 1,
+      "message": "if (now.tv_sec \u003e TV_MIN) {\n    return;\n}",
+      "range": {
+        "startLine": 1459,
+        "startChar": 4,
+        "endLine": 1459,
+        "endChar": 31
+      },
+      "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2927a4c1_2245a8e8",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1461,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2018-12-11T19:54:32Z",
+      "side": 1,
+      "message": "if (!fp) {\n    return;\n}",
+      "range": {
+        "startLine": 1461,
+        "startChar": 7,
+        "endLine": 1461,
+        "endChar": 17
+      },
+      "revId": "14450fe57405061252f50bed3a9cbc13637f23b9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2441f891_a63ccc59",
         "filename": "recovery.cpp",
         "patchSetId": 2
