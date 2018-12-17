@@ -23,8 +23,6 @@
 static constexpr const char* FUSE_SIDELOAD_HOST_MOUNTPOINT = "/sideload";
 static constexpr const char* FUSE_SIDELOAD_HOST_FILENAME = "package.zip";
 static constexpr const char* FUSE_SIDELOAD_HOST_PATHNAME = "/sideload/package.zip";
-static constexpr const char* FUSE_SIDELOAD_HOST_EXIT_FLAG = "exit";
-static constexpr const char* FUSE_SIDELOAD_HOST_EXIT_PATHNAME = "/sideload/exit";
 
 struct provider_vtab {
   // read a block
