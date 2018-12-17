@@ -562,6 +562,10 @@ int RecoveryUI::WaitKey() {
   return key;
 }
 
+void RecoveryUI::CancelWaitKey() {
+  EnqueueKey(KEY_AGAIN);
+}
+
 void RecoveryUI::InterruptKey() {
   {
     std::lock_guard<std::mutex> lg(key_queue_mutex);
