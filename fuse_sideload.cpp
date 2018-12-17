@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,10 +67,8 @@
 #include <openssl/sha.h>
 
 static constexpr uint64_t PACKAGE_FILE_ID = FUSE_ROOT_ID + 1;
-static constexpr uint64_t EXIT_FLAG_ID = FUSE_ROOT_ID + 2;
 
 static constexpr int NO_STATUS = 1;
-static constexpr int NO_STATUS_EXIT = 2;
 
 using SHA256Digest = std::array<uint8_t, SHA256_DIGEST_LENGTH>;
 
@@ -171,14 +170,12 @@ static int handle_getattr(void* /* data */, const fuse_data* fd, const fuse_in_h
     fill_attr(&(out.attr), fd, hdr->nodeid, 4096, S_IFDIR | 0555);
   } else if (hdr->nodeid == PACKAGE_FILE_ID) {
     fill_attr(&(out.attr), fd, PACKAGE_FILE_ID, fd->file_size, S_IFREG | 0444);
-  } else if (hdr->nodeid == EXIT_FLAG_ID) {
-    fill_attr(&(out.attr), fd, EXIT_FLAG_ID, 0, S_IFREG | 0);
   } else {
     return -ENOENT;
   }
 
   fuse_reply(fd, hdr->unique, &out, sizeof(out));
-  return (hdr->nodeid == EXIT_FLAG_ID) ? NO_STATUS_EXIT : NO_STATUS;
+  return NO_STATUS;
 }
 
 static int handle_lookup(void* data, const fuse_data* fd, const fuse_in_header* hdr) {
@@ -193,20 +190,15 @@ static int handle_lookup(void* data, const fuse_data* fd, const fuse_in_header* 
     out.nodeid = PACKAGE_FILE_ID;
     out.generation = PACKAGE_FILE_ID;
     fill_attr(&(out.attr), fd, PACKAGE_FILE_ID, fd->file_size, S_IFREG | 0444);
-  } else if (filename == FUSE_SIDELOAD_HOST_EXIT_FLAG) {
-    out.nodeid = EXIT_FLAG_ID;
-    out.generation = EXIT_FLAG_ID;
-    fill_attr(&(out.attr), fd, EXIT_FLAG_ID, 0, S_IFREG | 0);
   } else {
     return -ENOENT;
   }
 
   fuse_reply(fd, hdr->unique, &out, sizeof(out));
-  return (out.nodeid == EXIT_FLAG_ID) ? NO_STATUS_EXIT : NO_STATUS;
+  return NO_STATUS;
 }
 
 static int handle_open(void* /* data */, const fuse_data* fd, const fuse_in_header* hdr) {
-  if (hdr->nodeid == EXIT_FLAG_ID) return -EPERM;
   if (hdr->nodeid != PACKAGE_FILE_ID) return -ENOENT;
 
   fuse_open_out out = {};
@@ -340,6 +332,11 @@ static int handle_read(void* data, fuse_data* fd, const fuse_in_header* hdr) {
   return NO_STATUS;
 }
 
+static volatile int terminated = 0;
+static void sig_term(int) {
+  terminated = 1;
+}
+
 int run_fuse_sideload(const provider_vtab& vtab, uint64_t file_size, uint32_t block_size,
                       const char* mount_point) {
   // If something's already mounted on our mountpoint, try to remove it. (Mostly in case of a
@@ -388,6 +385,8 @@ int run_fuse_sideload(const provider_vtab& vtab, uint64_t file_size, uint32_t bl
     goto done;
   }
 
+  signal(SIGTERM, sig_term);
+
   fd.ffd.reset(open("/dev/fuse", O_RDWR));
   if (!fd.ffd) {
     perror("open /dev/fuse");
@@ -409,7 +408,17 @@ int run_fuse_sideload(const provider_vtab& vtab, uint64_t file_size, uint32_t bl
   }
 
   uint8_t request_buffer[sizeof(fuse_in_header) + PATH_MAX * 8];
-  for (;;) {
+  while (!terminated) {
+    fd_set fds;
+    struct timeval tv;
+    FD_ZERO(&fds);
+    FD_SET(fd.ffd, &fds);
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    int rc = select(fd.ffd + 1, &fds, nullptr, nullptr, &tv);
+    if (rc <= 0) {
+      continue;
+    }
     ssize_t len = TEMP_FAILURE_RETRY(read(fd.ffd, request_buffer, sizeof(request_buffer)));
     if (len == -1) {
       perror("read request");
@@ -462,11 +471,6 @@ int run_fuse_sideload(const provider_vtab& vtab, uint64_t file_size, uint32_t bl
       default:
         fprintf(stderr, "unknown fuse request opcode %d\n", hdr->opcode);
         break;
-    }
-
-    if (result == NO_STATUS_EXIT) {
-      result = 0;
-      break;
     }
 
     if (result != NO_STATUS) {

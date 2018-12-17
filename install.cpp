@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <setjmp.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -310,6 +311,11 @@ static void log_max_temperature(int* max_temperature, const std::atomic<bool>& l
          finish_log_temperature.wait_for(lck, 20s) == std::cv_status::timeout) {
     *max_temperature = std::max(*max_temperature, GetMaxValueFromThermalZone());
   }
+}
+
+static jmp_buf jb;
+static void sig_bus(int) {
+  longjmp(jb, 1);
 }
 
 // If the package contains an update binary, extract it and run it.
@@ -732,10 +738,21 @@ bool verify_package(const unsigned char* package_data, size_t package_size) {
   // Verify package.
   ui->Print("Verifying update package...\n");
   auto t0 = std::chrono::system_clock::now();
-  int err = verify_file(package_data, package_size, loadedKeys,
-                        std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
-  std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
-  ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
+  int err;
+  // Because we mmap() the update file which is backed by FUSE, we get
+  // SIGBUS when the host aborts the transfer.  We handle this by using
+  // setjmp/longjmp.
+  signal(SIGBUS, sig_bus);
+  if (setjmp(jb) == 0) {
+    err = verify_file(package_data, package_size, loadedKeys,
+                      std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
+    std::chrono::duration<double> duration = std::chrono::system_clock::now() - t0;
+    ui->Print("Update package verification took %.1f s (result %d).\n", duration.count(), err);
+  } else {
+    err = VERIFY_FAILURE;
+  }
+  signal(SIGBUS, SIG_DFL);
+
   if (err != VERIFY_SUCCESS) {
     LOG(ERROR) << "Signature verification failed";
     LOG(ERROR) << "error: " << kZipVerificationFailure;
