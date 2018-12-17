@@ -1237,6 +1237,9 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
           break;
         case Device::kNoAction:
           break;
+        case Device::kRefresh:
+          chosen_item = Device::kRefresh;
+          break;
         case Device::kGoBack:
           chosen_item = Device::kGoBack;
           break;
@@ -1247,7 +1250,9 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
     } else if (!menu_only) {
       chosen_item = action;
     }
-    if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome) {
+
+    if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome ||
+        chosen_item == Device::kRefresh) {
       break;
     }
   }
