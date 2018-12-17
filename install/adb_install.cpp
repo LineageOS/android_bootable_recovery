@@ -49,6 +49,8 @@
 #include "recovery_ui/device.h"
 #include "recovery_ui/ui.h"
 
+struct SideloadData sideload_data;
+
 // A CommandFunction returns a pair of (result, should_continue), which indicates the command
 // execution result and whether it should proceed to the next iteration. The execution result will
 // always be sent to the minadbd side.
@@ -312,6 +314,7 @@ static void CreateMinadbdServiceAndExecuteCommands(
     return;
   }
 
+  sideload_data.minadbd_pid = child;
   std::thread listener_thread(ListenAndExecuteMinadbdCommands, ui, child,
                               std::move(recovery_socket), std::ref(command_map));
   if (listener_thread.joinable()) {
@@ -386,5 +389,6 @@ int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot
     }
   }
 
+  sideload_data.result = install_result;
   return install_result;
 }

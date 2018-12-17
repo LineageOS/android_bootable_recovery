@@ -74,9 +74,32 @@ static constexpr const char* CACHE_ROOT = "/cache";
 // into target_files.zip. Assert the version defined in code and in Android.mk are consistent.
 static_assert(kRecoveryApiVersion == RECOVERY_API_VERSION, "Mismatching recovery API versions.");
 
-static bool save_current_log = false;
+static bool save_current_log = true;
 std::string stage;
 const char* reason = nullptr;
+
+/* This thread is where the sideload is run. */
+static std::thread sideload_thread;
+
+void StartSideloadThread(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action) {
+  sideload_thread = std::thread{ApplyFromAdb, device, rescue_mode, reboot_action};
+}
+
+void StopSideload() {
+  LOG(INFO) << "Killing child pid " << sideload_data.minadbd_pid;
+  kill(sideload_data.minadbd_pid, SIGKILL);
+}
+
+int WaitSideload() {
+  sideload_thread.join();
+
+  ui->FlushKeys();
+
+  // Destroy the thread
+  sideload_thread = std::thread{};
+
+  return sideload_data.result;
+}
 
 /*
  * The recovery tool communicates with the main system through /cache files.
@@ -559,7 +582,15 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_ADB_SIDELOAD) {
-          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
+          std::vector<std::string> headers{"ADB Sideload"};
+          std::vector<std::string> entries{"Cancel sideload"};
+          StartSideloadThread(device, false /* rescue_mode */, &reboot_action);
+          size_t item = ui->ShowMenu(headers, entries, 0, true,
+              std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+          if (item == 0) {
+            StopSideload();
+          }
+          status = WaitSideload();
         } else {
           adb = false;
           status = ApplyFromSdcard(device, ui);
@@ -952,7 +983,15 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action);
+    std::vector<std::string> headers{"ADB Sideload"};
+    std::vector<std::string> entries{"Cancel sideload"};
+    StartSideloadThread(device, false /* rescue_mode */, &next_action);
+    size_t item = ui->ShowMenu(headers, entries, 0, true,
+        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+    if (item == 0) {
+      StopSideload();
+    }
+    status = WaitSideload();
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
     if (sideload_auto_reboot) {
       status = INSTALL_REBOOT;

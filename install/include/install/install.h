@@ -44,6 +44,14 @@ enum class OtaType {
   BRICK,
 };
 
+struct SideloadData {
+	int result;
+	bool cancel;
+	pid_t minadbd_pid;
+};
+
+extern struct SideloadData sideload_data;
+
 // Installs the given update package. This function should also wipe the cache partition after a
 // successful installation if |should_wipe_cache| is true or an updater command asks to wipe the
 // cache.
