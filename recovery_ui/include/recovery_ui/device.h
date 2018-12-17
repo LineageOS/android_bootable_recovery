@@ -38,6 +38,8 @@ class Device {
   static constexpr const int kInvokeItem = -4;
   static constexpr const int kGoBack = -5;
   static constexpr const int kGoHome = -6;
+  static constexpr const int kRefresh = -7;
+  static constexpr const int kDoSideload = -8;
 
   // ENTER vs REBOOT: The latter will trigger a reboot that goes through bootloader, which allows
   // using a new bootloader / recovery image if applicable. For example, REBOOT_RESCUE goes from
