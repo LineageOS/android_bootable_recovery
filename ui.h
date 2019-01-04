@@ -187,6 +187,11 @@ class RecoveryUI {
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
 
+  // Notify of volume state change
+  void onVolumeChanged() {
+    volumes_changed_ = 1;
+  }
+
  protected:
   void EnqueueKey(int key_code);
 
@@ -226,6 +231,8 @@ class RecoveryUI {
   void ProcessKey(int key_code, int updown);
 
   bool IsUsbConnected();
+
+  bool VolumesChanged();
 
   static void* time_key_helper(void* cookie);
   void time_key(int key_code, int count);
@@ -267,6 +274,8 @@ class RecoveryUI {
   bool is_bootreason_recovery_ui_;
 
   pthread_t input_thread_;
+
+  bool volumes_changed_;
 
   ScreensaverState screensaver_state_;
 

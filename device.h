@@ -57,9 +57,9 @@ class Device {
   enum BuiltinAction {
     NO_ACTION = 0,
     REBOOT = 1,
-    APPLY_SDCARD = 2,
+    APPLY_UPDATE = 2,
     // APPLY_CACHE was 3.
-    APPLY_ADB_SIDELOAD = 4,
+    // APPLY_ADB_SIDELOAD was 4.
     WIPE_DATA = 5,
     WIPE_CACHE = 6,
     REBOOT_BOOTLOADER = 7,
@@ -88,6 +88,7 @@ class Device {
   static const int kInvokeItem = -4;
   static const int kGoBack = -5;
   static const int kGoHome = -6;
+  static const int kRefresh = -7;
 
   // Called before and after we do a wipe data/factory reset operation, either via a reboot from the
   // main system with the --wipe_data flag, or when the user boots into recovery image manually and
@@ -100,6 +101,10 @@ class Device {
 
   virtual bool PostWipeData() {
     return true;
+  }
+
+  virtual void handleVolumeChanged() {
+    ui_->onVolumeChanged();
   }
 
  private:

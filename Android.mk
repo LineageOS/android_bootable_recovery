@@ -64,6 +64,7 @@ LOCAL_STATIC_LIBRARIES := \
     libcrypto \
     libbase \
     libziparchive \
+    libvolume_manager \
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -80,6 +81,7 @@ LOCAL_SRC_FILES := \
     rotate_logs.cpp \
     screen_ui.cpp \
     ui.cpp \
+    volclient.cpp \
     vr_ui.cpp \
     wear_ui.cpp \
 
@@ -166,6 +168,7 @@ LOCAL_STATIC_LIBRARIES += \
     libsparse \
     libreboot \
     libziparchive \
+    libvolume_manager \
     libminipigz_static \
     libzopfli_static \
     libminizip_static \

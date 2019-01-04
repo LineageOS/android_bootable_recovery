@@ -18,6 +18,7 @@
 #include "roots.h"
 
 #include <ctype.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -37,6 +38,7 @@
 #include <android-base/stringprintf.h>
 #include <android-base/unique_fd.h>
 #include <cryptfs.h>
+#include <cutils/fs.h>
 #include <ext4_utils/wipe.h>
 #include <fs_mgr.h>
 
@@ -55,6 +57,14 @@ static void write_fstab_entry(const Volume* v, FILE* file) {
     fprintf(file, "%s ", v->fs_type);
     fprintf(file, "%s 0 0\n", v->fs_options ? v->fs_options : "defaults");
   }
+}
+
+int get_num_volumes() {
+  return fstab->num_entries;
+}
+
+Volume* get_device_volumes() {
+  return fstab->recs;
 }
 
 void load_volume_table() {
@@ -120,6 +130,17 @@ static Volume* volume_for_path(const char* path) {
   return nullptr;
 }
 
+Volume* volume_for_label(const char* label) {
+  int i;
+  for (i = 0; i < get_num_volumes(); i++) {
+    Volume* v = get_device_volumes() + i;
+    if (v->label && !strcmp(v->label, label)) {
+      return v;
+    }
+  }
+  return nullptr;
+}
+
 // Mount the volume specified by path at the given mount_point.
 int ensure_path_mounted_at(const char* path, const char* mount_point) {
   Volume* v = volume_for_path(path);
@@ -141,13 +162,15 @@ int ensure_path_mounted_at(const char* path, const char* mount_point) {
     mount_point = v->mount_point;
   }
 
-  const MountedVolume* mv = find_mounted_volume_by_mount_point(mount_point);
-  if (mv != nullptr) {
-    // Volume is already mounted.
-    return 0;
+  if (!fs_mgr_is_voldmanaged(v)) {
+    const MountedVolume* mv = find_mounted_volume_by_mount_point(mount_point);
+    if (mv) {
+      // volume is already mounted
+      return 0;
+    }
   }
 
-  mkdir(mount_point, 0755);  // in case it doesn't already exist
+  fs_mkdirs(mount_point, 0755);  // in case it doesn't already exist
 
   if (strcmp(v->fs_type, "ext4") == 0 || strcmp(v->fs_type, "squashfs") == 0 ||
       strcmp(v->fs_type, "vfat") == 0) {
@@ -163,15 +186,42 @@ int ensure_path_mounted_at(const char* path, const char* mount_point) {
   return -1;
 }
 
+int ensure_volume_mounted(Volume* v) {
+  if (v == nullptr) {
+    LOG(ERROR) << "cannot mount unknown volume";
+    return -1;
+  }
+  return ensure_path_mounted_at(v->mount_point, nullptr);
+}
+
 int ensure_path_mounted(const char* path) {
   // Mount at the default mount point.
   return ensure_path_mounted_at(path, nullptr);
 }
 
-int ensure_path_unmounted(const char* path) {
-  const Volume* v = volume_for_path(path);
+int ensure_path_unmounted(const char* path, bool detach /* = false */) {
+  const Volume* v;
+  if (memcmp(path, "/storage/", 9) == 0) {
+    char label[PATH_MAX];
+    const char* p = path + 9;
+    const char* q = strchr(p, '/');
+    memset(label, 0, sizeof(label));
+    if (q) {
+      memcpy(label, p, q - p);
+    } else {
+      strcpy(label, p);
+    }
+    v = volume_for_label(label);
+  } else {
+    v = volume_for_path(path);
+  }
+
+  return ensure_volume_unmounted(v, detach);
+}
+
+int ensure_volume_unmounted(const Volume* v, bool detach /* = false */) {
   if (v == nullptr) {
-    LOG(ERROR) << "unknown volume for path [" << path << "]";
+    LOG(ERROR) << "cannot unmount unknown volume";
     return -1;
   }
   if (strcmp(v->fs_type, "ramdisk") == 0) {
@@ -190,7 +240,7 @@ int ensure_path_unmounted(const char* path) {
     return 0;
   }
 
-  return unmount_mounted_volume(mv);
+  return (detach ? unmount_mounted_volume_detach(mv) : unmount_mounted_volume(mv));
 }
 
 static int exec_cmd(const std::vector<std::string>& args) {
@@ -291,6 +341,11 @@ int format_volume(const char* volume, const char* directory) {
                  << v->blk_device;
       return -1;
     }
+  }
+
+  if (fs_mgr_is_voldmanaged(v)) {
+    LOG(ERROR) << "can't format vold volume \"" << volume << "\"";
+    return -1;
   }
 
   if (strcmp(v->fs_type, "ext4") == 0) {
@@ -398,7 +453,12 @@ int setup_install_mounts() {
         return -1;
       }
     } else {
-      if (ensure_path_unmounted(v->mount_point) != 0) {
+      // datam must be unmounted with the detach flag to ensure that FUSE works.
+      bool detach = false;
+      if (strcmp(v->mount_point, "/data") == 0) {
+        detach = true;
+      }
+      if (ensure_volume_unmounted(v, detach) != 0) {
         LOG(ERROR) << "Failed to unmount " << v->mount_point;
         return -1;
       }

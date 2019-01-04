@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
  * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,31 @@
  * limitations under the License.
  */
 
-#ifndef MOUNTS_H_
-#define MOUNTS_H_
+#ifndef _NETLINKMANAGER_H
+#define _NETLINKMANAGER_H
 
-struct MountedVolume;
+#include <sysutils/NetlinkListener.h>
+#include <sysutils/SocketListener.h>
 
-bool scan_mounted_volumes();
+class NetlinkHandler;
 
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
+class NetlinkManager {
+  private:
+    static NetlinkManager* sInstance;
 
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+  private:
+    NetlinkHandler* mHandler;
+    int mSock;
 
+  public:
+    virtual ~NetlinkManager();
+
+    bool start();
+    void stop();
+
+    static NetlinkManager* Instance();
+
+  private:
+    NetlinkManager();
+};
 #endif

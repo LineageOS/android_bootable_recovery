@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
  * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +14,20 @@
  * limitations under the License.
  */
 
-#ifndef MOUNTS_H_
-#define MOUNTS_H_
+#ifndef _RECOVERY_VOLCLIENT_H
+#define _RECOVERY_VOLCLIENT_H
 
-struct MountedVolume;
+#include <volume_manager/VolumeManager.h>
+#include "device.h"
 
-bool scan_mounted_volumes();
+class VolumeClient : public VolumeWatcher {
+ public:
+  VolumeClient(Device* device) : mDevice(device) {}
+  virtual ~VolumeClient(void) {}
+  virtual void handleEvent(int code, const std::vector<std::string>& argv);
 
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
-
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+ private:
+  Device* mDevice;
+};
 
 #endif

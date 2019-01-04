@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,26 @@
  * limitations under the License.
  */
 
-#ifndef MOUNTS_H_
-#define MOUNTS_H_
+#ifndef VOLMGR_EXT4_H
+#define VOLMGR_EXT4_H
 
-struct MountedVolume;
+#include <utils/Errors.h>
 
-bool scan_mounted_volumes();
+#include <string>
 
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
+namespace android {
+namespace volmgr {
+namespace ext4 {
 
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+bool IsSupported();
+
+status_t Check(const std::string& source, const std::string& target, bool trusted);
+status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
+               bool executable, const std::string& opts = "", bool trusted = false,
+               bool portable = false);
+
+}  // namespace ext4
+}  // namespace volmgr
+}  // namespace android
 
 #endif

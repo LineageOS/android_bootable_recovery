@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@ Volume* volume_for_mount_point(const std::string& mount_point);
 
 // Make sure that the volume 'path' is on is mounted.  Returns 0 on
 // success (volume is mounted).
+int ensure_volume_mounted(Volume* v);
 int ensure_path_mounted(const char* path);
 
 // Similar to ensure_path_mounted, but allows one to specify the mount_point.
@@ -36,7 +38,8 @@ int ensure_path_mounted_at(const char* path, const char* mount_point);
 
 // Make sure that the volume 'path' is on is unmounted.  Returns 0 on
 // success (volume is unmounted);
-int ensure_path_unmounted(const char* path);
+int ensure_volume_unmounted(const Volume* v, bool detach = false);
+int ensure_path_unmounted(const char* path, bool detach = false);
 
 // Reformat the given volume (must be the mount point only, eg
 // "/cache"), no paths permitted.  Attempts to unmount the volume if
@@ -52,5 +55,9 @@ int format_volume(const char* volume, const char* directory);
 // Ensure that all and only the volumes that packages expect to find
 // mounted (/tmp and /cache) are mounted.  Returns 0 on success.
 int setup_install_mounts();
+
+int get_num_volumes();
+
+#define MAX_NUM_MANAGED_VOLUMES 10
 
 #endif  // RECOVERY_ROOTS_H_

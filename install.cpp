@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -561,7 +562,7 @@ bool verify_package_compatibility(ZipArchiveHandle package_zip) {
   return false;
 }
 
-static int really_install_package(const std::string& path, bool* wipe_cache, bool needs_mount,
+static int really_install_package(std::string path, bool* wipe_cache, bool needs_mount,
                                   std::vector<std::string>* log_buffer, int retry_count,
                                   int* max_temperature) {
   ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
@@ -569,6 +570,22 @@ static int really_install_package(const std::string& path, bool* wipe_cache, boo
   // Give verification half the progress bar...
   ui->SetProgressType(RecoveryUI::DETERMINATE);
   ui->ShowProgress(VERIFICATION_PROGRESS_FRACTION, VERIFICATION_PROGRESS_TIME);
+
+  // Resolve symlink in case legacy /sdcard path is used
+  // Requires: symlink uses absolute path
+  if (path.size() > 1) {
+    size_t root_pos = path.find('/', 1);
+    if (root_pos != std::string::npos) {
+      char link_path[PATH_MAX];
+      ssize_t link_len;
+      memset(link_path, 0, sizeof(link_path));
+      link_len = readlink(path.substr(0, root_pos).c_str(), link_path, sizeof(link_path) - 1);
+      if (link_len > 0) {
+        path = link_path + path.substr(root_pos);
+      }
+    }
+  }
+
   LOG(INFO) << "Update location: " << path;
 
   // Map the update package into memory.
