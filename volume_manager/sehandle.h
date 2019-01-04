@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef MOUNTS_H_
-#define MOUNTS_H_
+#ifndef _SEHANDLE_H
+#define _SEHANDLE_H
 
-struct MountedVolume;
+#include <selinux/android.h>
 
-bool scan_mounted_volumes();
-
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
-
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+extern struct selabel_handle *sehandle;
 
 #endif
