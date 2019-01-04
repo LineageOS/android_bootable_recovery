@@ -32,7 +32,7 @@ typedef std::pair<std::string, Device::BuiltinAction> menu_action_t;
 static std::vector<std::string> g_main_header{};
 static std::vector<menu_action_t> g_main_actions{
   { "Reboot system now", Device::REBOOT },
-  { "Apply update", Device::MENU_UPDATE },
+  { "Apply update", Device::APPLY_UPDATE },
   { "Factory reset", Device::MENU_WIPE },
   { "Advanced", Device::MENU_ADVANCED },
 };
@@ -56,12 +56,6 @@ static std::vector<menu_action_t> g_wipe_actions{
   { "Format data/factory reset", Device::WIPE_DATA },
   { "Format cache partition", Device::WIPE_CACHE },
   { "Format system partition", Device::WIPE_SYSTEM },
-};
-
-static std::vector<std::string> g_update_header{ "Apply update" };
-static std::vector<menu_action_t> g_update_actions{
-  { "Apply from ADB", Device::APPLY_ADB_SIDELOAD },
-  { "Choose from internal storage", Device::APPLY_SDCARD },
 };
 
 static std::vector<menu_action_t>* current_menu_ = &g_main_actions;
@@ -91,7 +85,6 @@ static void RemoveMenuItemForAction(std::vector<menu_action_t>& menu, Device::Bu
 }
 
 void Device::RemoveMenuItemForAction(Device::BuiltinAction action) {
-  ::RemoveMenuItemForAction(g_update_actions, action);
   ::RemoveMenuItemForAction(g_wipe_actions, action);
   ::RemoveMenuItemForAction(g_advanced_actions, action);
 }
@@ -101,11 +94,9 @@ const std::vector<std::string>& Device::GetMenuItems() {
 }
 
 const std::vector<std::string>& Device::GetMenuHeaders() {
-  if (current_menu_ == &g_update_actions)
-      return g_update_header;
-  else if (current_menu_ == &g_wipe_actions)
+  if (current_menu_ == &g_wipe_actions)
       return g_wipe_header;
-  else if (current_menu_ == &g_advanced_actions)
+  if (current_menu_ == &g_advanced_actions)
       return g_advanced_header;
   return g_main_header;
 }
@@ -115,9 +106,6 @@ Device::BuiltinAction Device::InvokeMenuItem(size_t menu_position) {
 
   if (action > MENU_BASE) {
     switch (action) {
-      case Device::BuiltinAction::MENU_UPDATE:
-        current_menu_ = &g_update_actions;
-        break;
       case Device::BuiltinAction::MENU_WIPE:
         current_menu_ = &g_wipe_actions;
         break;
@@ -170,6 +158,9 @@ int Device::HandleMenuKey(int key, bool visible) {
 
     case KEY_AGAIN:
       return kDoSideload;
+
+    case KEY_REFRESH:
+      return kRefresh;
 
     default:
       // If you have all of the above buttons, any other buttons
