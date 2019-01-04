@@ -19,8 +19,7 @@
 static const char* MENU_ITEMS[] = {
   "Reboot system now",
   "Reboot to bootloader",
-  "Apply update from ADB",
-  "Apply update from SD card",
+  "Apply update",
   "Wipe data/factory reset",
 #ifndef AB_OTA_UPDATER
   "Wipe cache partition",
@@ -36,8 +35,7 @@ static const char* MENU_ITEMS[] = {
 static const Device::BuiltinAction MENU_ACTIONS[] = {
   Device::REBOOT,
   Device::REBOOT_BOOTLOADER,
-  Device::APPLY_ADB_SIDELOAD,
-  Device::APPLY_SDCARD,
+  Device::APPLY_UPDATE,
   Device::WIPE_DATA,
 #ifndef AB_OTA_UPDATER
   Device::WIPE_CACHE,
@@ -93,6 +91,9 @@ int Device::HandleMenuKey(int key, bool visible) {
     case KEY_BACKSPACE:
     case KEY_BACK:
       return kGoBack;
+
+    case KEY_REFRESH:
+      return kRefresh;
 
     default:
       // If you have all of the above buttons, any other buttons

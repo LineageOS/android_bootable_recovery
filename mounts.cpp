@@ -80,3 +80,15 @@ int unmount_mounted_volume(MountedVolume* volume) {
   }
   return result;
 }
+
+int unmount_mounted_volume_detach(MountedVolume* volume) {
+  // Intentionally pass the empty string to umount if the caller tries to unmount a volume they
+  // already unmounted using this function.
+  std::string mount_point = volume->mount_point;
+  volume->mount_point.clear();
+  int result = umount2(mount_point.c_str(), MNT_DETACH);
+  if (result == -1) {
+    PLOG(WARNING) << "Failed to umount " << mount_point;
+  }
+  return result;
+}
