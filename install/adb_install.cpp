@@ -336,7 +336,8 @@ static void CreateMinadbdServiceAndExecuteCommands(
     std::vector<std::string> entries{ "Cancel" };
     size_t chosen_item = ui->ShowMenu(
         headers, entries, 0, true,
-        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2),
+        true /* refreshable */);
 
     if (chosen_item != Device::kRefresh) {
       // Kill minadbd if 'cancel' was selected, to abort sideload.

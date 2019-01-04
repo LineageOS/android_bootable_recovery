@@ -38,7 +38,9 @@
 #include "install/install.h"
 #include "otautil/roots.h"
 
-static constexpr const char* SDCARD_ROOT = "/data/media/0";
+using android::volmgr::VolumeInfo;
+using android::volmgr::VolumeManager;
+
 // How long (in seconds) we wait for the fuse-provided package file to
 // appear, before timing out.
 static constexpr int SDCARD_INSTALL_TIMEOUT = 10;
@@ -55,8 +57,6 @@ static void SetSdcardUpdateBootloaderMessage() {
 
 // Returns the selected filename, or an empty string.
 static std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI* ui) {
-  ensure_path_mounted(path);
-
   std::unique_ptr<DIR, decltype(&closedir)> d(opendir(path.c_str()), closedir);
   if (!d) {
     PLOG(ERROR) << "error opening " << path;
@@ -129,27 +129,22 @@ static bool StartSdcardFuse(const std::string& path) {
     return false;
   }
 
-  // The installation process expects to find the sdcard unmounted. Unmount it with MNT_DETACH so
-  // that our open file continues to work but new references see it as unmounted.
-  umount2("/data", MNT_DETACH);
-
   return run_fuse_sideload(std::move(file_data_reader)) == 0;
 }
 
-int ApplyFromSdcard(Device* device, RecoveryUI* ui) {
-  if (ensure_path_mounted(SDCARD_ROOT) != 0) {
-    LOG(ERROR) << "\n-- Couldn't mount " << SDCARD_ROOT << ".\n";
+int ApplyFromStorage(Device* device, VolumeInfo& vi, RecoveryUI* ui) {
+  if (!VolumeManager::Instance()->volumeMount(vi.mId)) {
     return INSTALL_ERROR;
   }
 
-  std::string path = BrowseDirectory(SDCARD_ROOT, device, ui);
+  std::string path = BrowseDirectory(vi.mPath, device, ui);
   if (path == "@") {
     return INSTALL_NONE;
   }
+
   if (path.empty()) {
-    LOG(ERROR) << "\n-- No package file selected.\n";
-    ensure_path_unmounted(SDCARD_ROOT);
-    return INSTALL_ERROR;
+    VolumeManager::Instance()->volumeUnmount(vi.mId);
+    return INSTALL_NONE;
   }
 
   ui->Print("\n-- Install %s ...\n", path.c_str());
@@ -217,6 +212,6 @@ int ApplyFromSdcard(Device* device, RecoveryUI* ui) {
     LOG(ERROR) << "Error exit from the fuse process: " << WEXITSTATUS(status);
   }
 
-  ensure_path_unmounted(SDCARD_ROOT);
+  VolumeManager::Instance()->volumeUnmount(vi.mId);
   return result;
 }
