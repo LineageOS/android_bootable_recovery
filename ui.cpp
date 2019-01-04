@@ -41,6 +41,8 @@
 #include <cutils/android_reboot.h>
 #include <minui/minui.h>
 
+#include <volume_manager/VolumeManager.h>
+
 #include "common.h"
 #include "roots.h"
 #include "device.h"
@@ -74,6 +76,7 @@ RecoveryUI::RecoveryUI()
       has_touch_screen(false),
       touch_slot_(0),
       is_bootreason_recovery_ui_(false),
+      volumes_changed_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
   pthread_mutex_init(&key_queue_mutex, nullptr);
   pthread_cond_init(&key_queue_cond, nullptr);
@@ -433,6 +436,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
 
       case RecoveryUI::REBOOT:
         if (reboot_enabled) {
+          android::volmgr::VolumeManager::Instance()->unmountAll();
           reboot("reboot,");
           while (true) {
             pause();
@@ -490,7 +494,20 @@ int RecoveryUI::WaitKey() {
 
     int rc = 0;
     while (key_queue_len == 0 && rc != ETIMEDOUT) {
-      rc = pthread_cond_timedwait(&key_queue_cond, &key_queue_mutex, &timeout);
+      struct timespec key_timeout;
+      gettimeofday(&now, nullptr);
+      key_timeout.tv_sec = now.tv_sec + 1;
+      key_timeout.tv_nsec = now.tv_usec * 1000;
+      rc = pthread_cond_timedwait(&key_queue_cond, &key_queue_mutex, &key_timeout);
+      if (rc == ETIMEDOUT) {
+        if (VolumesChanged()) {
+          pthread_mutex_unlock(&key_queue_mutex);
+          return KEY_REFRESH;
+        }
+        if (key_timeout.tv_sec <= timeout.tv_sec) {
+          rc = 0;
+        }
+      }
     }
 
     if (screensaver_state_ != ScreensaverState::DISABLED) {
@@ -636,4 +653,10 @@ void RecoveryUI::SetEnableReboot(bool enabled) {
   pthread_mutex_lock(&key_queue_mutex);
   enable_reboot = enabled;
   pthread_mutex_unlock(&key_queue_mutex);
+}
+
+bool RecoveryUI::VolumesChanged() {
+    bool ret = volumes_changed_;
+    volumes_changed_ = false;
+    return ret;
 }
