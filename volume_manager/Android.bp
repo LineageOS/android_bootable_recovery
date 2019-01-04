@@ -1,0 +1,60 @@
+//
+// Copyright (C) 2019 The LineageOS Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+cc_library_shared {
+    name: "libvolume_manager",
+    recovery_available: true,
+    srcs: [
+        "Disk.cpp",
+        "DiskPartition.cpp",
+        "EmulatedVolume.cpp",
+        "NetlinkHandler.cpp",
+        "NetlinkManager.cpp",
+        "Process.cpp",
+        "PublicVolume.cpp",
+        "Utils.cpp",
+        "VolumeBase.cpp",
+        "VolumeManager.cpp",
+        "fs/Exfat.cpp",
+        "fs/Ext4.cpp",
+        "fs/F2fs.cpp",
+        "fs/Ntfs.cpp",
+        "fs/Vfat.cpp",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
+    ],
+    include_dirs: [
+        "external/gptfdisk",
+    ],
+    shared_libs: [
+        "libbase",
+        "libcutils",
+        "libdiskconfig",
+        "liblog",
+        "libselinux",
+        "libsgdisk",
+        "libsysutils",
+    ],
+    static_libs: [
+        "libfs_mgr",
+        "libfstab",
+        "libext2_blkid",
+        "libext2_uuid",
+    ],
+    export_include_dirs: ["include"],
+}
