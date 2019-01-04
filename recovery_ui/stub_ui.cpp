@@ -23,7 +23,8 @@
 size_t StubRecoveryUI::ShowMenu(const std::vector<std::string>& /* headers */,
                                 const std::vector<std::string>& /* items */,
                                 size_t /* initial_selection */, bool /* menu_only */,
-                                const std::function<int(int, bool)>& /*key_handler*/) {
+                                const std::function<int(int, bool)>& /*key_handler*/,
+                                bool /* refreshable */) {
   while (true) {
     // Exit the loop in the case of interruption or time out.
     InputEvent evt = WaitInputEvent();
