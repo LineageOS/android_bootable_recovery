@@ -74,6 +74,7 @@ cc_defaults {
         "librecovery_fastboot",
         "libminui",
         "libotautil",
+        "libvolume_manager",
 
         // external dependencies
         "libhealthhalutils",
@@ -110,15 +111,13 @@ cc_binary {
 
     srcs: [
         "recovery_main.cpp",
-    ],
-
-    shared_libs: [
-        "librecovery_ui",
+        "volclient.cpp",
     ],
 
     static_libs: [
         "libc++fs",
         "librecovery",
+        "librecovery_ui",
         "librecovery_ui_default",
     ],
 

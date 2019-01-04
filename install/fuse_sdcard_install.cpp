@@ -21,7 +21,6 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -38,10 +37,8 @@
 #include "install/install.h"
 #include "otautil/roots.h"
 
-static constexpr const char* SDCARD_ROOT = "/data/media/0";
-// How long (in seconds) we wait for the fuse-provided package file to
-// appear, before timing out.
-static constexpr int SDCARD_INSTALL_TIMEOUT = 10;
+using android::volmgr::VolumeInfo;
+using android::volmgr::VolumeManager;
 
 // Set the BCB to reboot back into recovery (it won't resume the install from
 // sdcard though).
@@ -55,8 +52,6 @@ static void SetSdcardUpdateBootloaderMessage() {
 
 // Returns the selected filename, or an empty string.
 static std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI* ui) {
-  ensure_path_mounted(path);
-
   std::unique_ptr<DIR, decltype(&closedir)> d(opendir(path.c_str()), closedir);
   if (!d) {
     PLOG(ERROR) << "error opening " << path;
@@ -104,6 +99,9 @@ static std::string BrowseDirectory(const std::string& path, Device* device, Reco
       // Go up but continue browsing (if the caller is browse_directory).
       return "";
     }
+    if (chosen_item == Device::kRefresh) {
+      return "@refresh";
+    }
 
     const std::string& item = entries[chosen_item];
 
@@ -122,101 +120,106 @@ static std::string BrowseDirectory(const std::string& path, Device* device, Reco
   // Unreachable.
 }
 
-static bool StartSdcardFuse(const std::string& path) {
-  auto file_data_reader = std::make_unique<FuseFileDataProvider>(path, 65536);
+struct token {
+  pthread_t th;
+  const char* path;
+  int result;
+};
 
-  if (!file_data_reader->Valid()) {
-    return false;
+static void* run_sdcard_fuse(void* cookie) {
+  token* t = reinterpret_cast<token*>(cookie);
+
+  struct stat sb;
+  if (stat(t->path, &sb) < 0) {
+    fprintf(stderr, "failed to stat %s: %s\n", t->path, strerror(errno));
+    t->result = -1;
+    return nullptr;
   }
 
-  // The installation process expects to find the sdcard unmounted. Unmount it with MNT_DETACH so
-  // that our open file continues to work but new references see it as unmounted.
-  umount2("/data", MNT_DETACH);
+  auto file_data_reader = std::make_unique<FuseFileDataProvider>(t->path, 65536);
+  if (file_data_reader->Valid()) {
+    fprintf(stderr, "failed to open %s: %s\n", t->path, strerror(errno));
+    t->result = -1;
+    return nullptr;
+  }
 
-  return run_fuse_sideload(std::move(file_data_reader)) == 0;
+  t->result = run_fuse_sideload(std::move(file_data_reader));
+  return nullptr;
 }
 
-int ApplyFromSdcard(Device* device, RecoveryUI* ui) {
-  if (ensure_path_mounted(SDCARD_ROOT) != 0) {
-    LOG(ERROR) << "\n-- Couldn't mount " << SDCARD_ROOT << ".\n";
-    return INSTALL_ERROR;
-  }
+// How long (in seconds) we wait for the fuse-provided package file to
+// appear, before timing out.
+#define SDCARD_INSTALL_TIMEOUT 10
 
-  std::string path = BrowseDirectory(SDCARD_ROOT, device, ui);
-  if (path == "@") {
-    return INSTALL_NONE;
-  }
-  if (path.empty()) {
-    LOG(ERROR) << "\n-- No package file selected.\n";
-    ensure_path_unmounted(SDCARD_ROOT);
-    return INSTALL_ERROR;
-  }
+static void* StartSdcardFuse(const std::string& path) {
+  token* t = new token;
 
-  ui->Print("\n-- Install %s ...\n", path.c_str());
-  SetSdcardUpdateBootloaderMessage();
+  t->path = path.c_str();
+  pthread_create(&(t->th), NULL, run_sdcard_fuse, t);
 
-  // We used to use fuse in a thread as opposed to a process. Since accessing
-  // through fuse involves going from kernel to userspace to kernel, it leads
-  // to deadlock when a page fault occurs. (Bug: 26313124)
-  pid_t child;
-  if ((child = fork()) == 0) {
-    bool status = StartSdcardFuse(path);
-
-    _exit(status ? EXIT_SUCCESS : EXIT_FAILURE);
-  }
-
-  // FUSE_SIDELOAD_HOST_PATHNAME will start to exist once the fuse in child
-  // process is ready.
-  int result = INSTALL_ERROR;
-  int status;
-  bool waited = false;
-  for (int i = 0; i < SDCARD_INSTALL_TIMEOUT; ++i) {
-    if (waitpid(child, &status, WNOHANG) == -1) {
-      result = INSTALL_ERROR;
-      waited = true;
-      break;
-    }
-
-    struct stat sb;
-    if (stat(FUSE_SIDELOAD_HOST_PATHNAME, &sb) == -1) {
+  struct stat st;
+  int i;
+  for (i = 0; i < SDCARD_INSTALL_TIMEOUT; ++i) {
+    if (stat(FUSE_SIDELOAD_HOST_PATHNAME, &st) != 0) {
       if (errno == ENOENT && i < SDCARD_INSTALL_TIMEOUT - 1) {
         sleep(1);
         continue;
       } else {
-        LOG(ERROR) << "Timed out waiting for the fuse-provided package.";
-        result = INSTALL_ERROR;
-        kill(child, SIGKILL);
-        break;
+        return nullptr;
       }
     }
+  }
 
-    result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/,
-                             true /* verify */, false /* allow_ab_downgrade */, ui);
-    if (result == INSTALL_UNVERIFIED && ask_to_continue_unverified(device)) {
-      result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/,
-                               false /* verify */, false /* allow_ab_downgrade */, ui);
+  return t;
+}
+
+static void FinishSdcardFuse(void* cookie) {
+  if (cookie == NULL) return;
+  token* t = reinterpret_cast<token*>(cookie);
+
+  // Calling stat() on this magic filename signals the fuse
+  // filesystem to shut down.
+  struct stat st;
+  stat(FUSE_SIDELOAD_HOST_EXIT_PATHNAME, &st);
+
+  pthread_join(t->th, nullptr);
+  delete t;
+}
+
+int ApplyFromStorage(Device* device, VolumeInfo& vi, RecoveryUI* ui) {
+  int status;
+
+  if(!VolumeManager::Instance()->volumeMount(vi.mId)) {
+    return INSTALL_ERROR;
+  }
+
+  std::string path;
+  do {
+    path = BrowseDirectory(vi.mPath, device, ui);
+    if (path == "@") {
+      return INSTALL_NONE;
     }
-    if (result == INSTALL_DOWNGRADE && ask_to_continue_downgrade(device)) {
-      result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/,
-                               false /* verify */, true /* allow_ab_downgrade */, ui);
-    }
+  } while(path == "@refresh");
 
-    break;
+  if (path.empty()) {
+    LOG(ERROR) << "\n-- No package file selected.\n";
+    VolumeManager::Instance()->volumeUnmount(vi.mId);
+    return INSTALL_NONE;
   }
 
-  if (!waited) {
-    // Calling stat() on this magic filename signals the fuse
-    // filesystem to shut down.
-    struct stat sb;
-    stat(FUSE_SIDELOAD_HOST_EXIT_PATHNAME, &sb);
-
-    waitpid(child, &status, 0);
+  ui->Print("\n-- Install %s ...\n", path.c_str());
+  SetSdcardUpdateBootloaderMessage();
+  void* token = StartSdcardFuse(path);
+  if (!token) {
+    LOG(ERROR) << "Failed to start FUSE for sdcard install";
+    return INSTALL_ERROR;
   }
 
-  if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-    LOG(ERROR) << "Error exit from the fuse process: " << WEXITSTATUS(status);
-  }
+  VolumeManager::Instance()->volumeUnmount(vi.mId, true);
 
-  ensure_path_unmounted(SDCARD_ROOT);
-  return result;
+  status = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/, false, true, ui);
+  //TODO: prompt for unverified and downgrade
+
+  FinishSdcardFuse(token);
+  return status;
 }

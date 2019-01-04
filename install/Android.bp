@@ -73,6 +73,10 @@ cc_library_static {
         "librecovery_ui",
     ],
 
+    static_libs: [
+        "libvolume_manager",
+    ],
+
     export_include_dirs: [
         "include",
     ],
