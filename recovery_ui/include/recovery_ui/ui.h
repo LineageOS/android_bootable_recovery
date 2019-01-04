@@ -277,6 +277,11 @@ class RecoveryUI {
     return key_interrupted_;
   }
 
+  // Notify of volume state change
+  void onVolumeChanged() {
+    volumes_changed_ = 1;
+  }
+
  protected:
   void EnqueueKey(int key_code);
   void EnqueueTouch(const Point& pos);
@@ -317,6 +322,8 @@ class RecoveryUI {
   void TimeKey(int key_code, int count);
 
   bool IsUsbConnected();
+
+  bool VolumesChanged();
 
   bool InitScreensaver();
   void SetScreensaverState(ScreensaverState state);
@@ -367,6 +374,8 @@ class RecoveryUI {
 
   std::thread input_thread_;
   std::atomic<bool> input_thread_stopped_{ false };
+
+  bool volumes_changed_;
 
   ScreensaverState screensaver_state_;
 
