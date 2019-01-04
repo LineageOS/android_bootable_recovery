@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-#pragma once
+#ifndef _RECOVERY_VOLCLIENT_H
+#define _RECOVERY_VOLCLIENT_H
 
-#include "recovery_ui/device.h"
-#include "recovery_ui/ui.h"
 #include <volume_manager/VolumeManager.h>
+#include "recovery_ui/device.h"
 
-using android::volmgr::VolumeInfo;
+class VolumeClient : public VolumeWatcher {
+ public:
+  VolumeClient(Device* device) : mDevice(device) {}
+  virtual ~VolumeClient(void) {}
+  virtual void handleEvent(int code, const std::vector<std::string>& argv);
 
-int ApplyFromStorage(Device* device, VolumeInfo& vi, RecoveryUI* ui);
+ private:
+  Device* mDevice;
+};
+
+#endif
