@@ -106,6 +106,7 @@ cc_defaults {
         "liblog",
         "libprotobuf-cpp-lite",
         "libziparchive",
+        "libvolume_manager",
     ],
 
     static_libs: [
@@ -160,6 +161,7 @@ cc_binary {
 
     srcs: [
         "recovery_main.cpp",
+        "volclient.cpp",
     ],
 
     shared_libs: [

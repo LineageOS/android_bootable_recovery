@@ -313,7 +313,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // menu display
   size_t ShowMenu(const std::vector<std::string>& headers, const std::vector<std::string>& items,
                   size_t initial_selection, bool menu_only,
-                  const std::function<int(int, bool)>& key_handler) override;
+                  const std::function<int(int, bool)>& key_handler, bool refreshable) override;
   void SetTitle(const std::vector<std::string>& lines) override;
 
   void KeyLongPress(int) override;
@@ -379,7 +379,8 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   // Takes the ownership of |menu| and displays it.
   virtual size_t ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
-                          const std::function<int(int, bool)>& key_handler);
+                          const std::function<int(int, bool)>& key_handler,
+                          bool refreshable = false);
 
   // Sets the menu highlight to the given index, wrapping if necessary. Returns the actual item
   // selected.
