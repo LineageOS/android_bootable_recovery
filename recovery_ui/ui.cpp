@@ -37,6 +37,7 @@
 #include <android-base/parseint.h>
 #include <android-base/properties.h>
 #include <android-base/strings.h>
+#include <volume_manager/VolumeManager.h>
 
 #include "minui/minui.h"
 #include "otautil/sysutil.h"
@@ -78,6 +79,7 @@ RecoveryUI::RecoveryUI()
       has_touch_screen(false),
       touch_slot_(0),
       is_bootreason_recovery_ui_(false),
+      volumes_changed_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
   memset(key_pressed, 0, sizeof(key_pressed));
 }
@@ -431,6 +433,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
 
       case RecoveryUI::REBOOT:
         if (reboot_enabled) {
+          android::volmgr::VolumeManager::Instance()->unmountAll();
           reboot("reboot,");
           while (true) {
             pause();
@@ -650,4 +653,10 @@ void RecoveryUI::KeyLongPress(int) {}
 void RecoveryUI::SetEnableReboot(bool enabled) {
   std::lock_guard<std::mutex> lg(key_queue_mutex);
   enable_reboot = enabled;
+}
+
+bool RecoveryUI::VolumesChanged() {
+  bool ret = volumes_changed_;
+  volumes_changed_ = false;
+  return ret;
 }

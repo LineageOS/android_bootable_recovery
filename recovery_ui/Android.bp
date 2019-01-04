@@ -33,6 +33,7 @@ cc_library {
     static_libs: [
         "libminui",
         "libotautil",
+        "libvolume_manager",
     ],
 
     shared_libs: [

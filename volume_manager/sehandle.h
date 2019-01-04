@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-#pragma once
+#ifndef _SEHANDLE_H
+#define _SEHANDLE_H
 
-struct MountedVolume;
+#include <selinux/android.h>
 
-bool scan_mounted_volumes();
+extern struct selabel_handle* sehandle;
 
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
-
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+#endif

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +76,18 @@ int unmount_mounted_volume(MountedVolume* volume) {
   std::string mount_point = volume->mount_point;
   volume->mount_point.clear();
   int result = umount(mount_point.c_str());
+  if (result == -1) {
+    PLOG(WARNING) << "Failed to umount " << mount_point;
+  }
+  return result;
+}
+
+int unmount_mounted_volume_detach(MountedVolume* volume) {
+  // Intentionally pass the empty string to umount if the caller tries to unmount a volume they
+  // already unmounted using this function.
+  std::string mount_point = volume->mount_point;
+  volume->mount_point.clear();
+  int result = umount2(mount_point.c_str(), MNT_DETACH);
   if (result == -1) {
     PLOG(WARNING) << "Failed to umount " << mount_point;
   }
