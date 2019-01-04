@@ -36,6 +36,7 @@
 #include <android-base/parseint.h>
 #include <android-base/properties.h>
 #include <android-base/strings.h>
+#include <volume_manager/VolumeManager.h>
 
 #include "minui/minui.h"
 #include "otautil/sysutil.h"
@@ -477,6 +478,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
 
       case RecoveryUI::REBOOT:
         if (reboot_enabled) {
+          android::volmgr::VolumeManager::Instance()->unmountAll();
           Reboot("userrequested,recovery,ui");
         }
         break;
