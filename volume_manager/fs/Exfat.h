@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-#ifndef MOUNTS_H_
-#define MOUNTS_H_
+#ifndef VOLMGR_EXFAT_H
+#define VOLMGR_EXFAT_H
 
-struct MountedVolume;
+#include <utils/Errors.h>
 
-bool scan_mounted_volumes();
+#include <string>
 
-MountedVolume* find_mounted_volume_by_mount_point(const char* mount_point);
+namespace android {
+namespace volmgr {
+namespace exfat {
 
-int unmount_mounted_volume(MountedVolume* volume);
-int unmount_mounted_volume_detach(MountedVolume* volume);
+bool IsSupported();
+
+status_t Check(const std::string& source);
+status_t Mount(const std::string& source, const std::string& target,
+        int ownerUid, int ownerGid, int permMask);
+
+}  // namespace exfat
+}  // namespace volmgr
+}  // namespace android
 
 #endif
