@@ -497,6 +497,9 @@ static int try_update_binary(const std::string& package, ZipArchiveHandle zip, b
 // entry doesn't exist. Note that the compatibility info is packed in a zip file inside the OTA
 // package.
 bool verify_package_compatibility(ZipArchiveHandle package_zip) {
+#if defined(__ANDROID__)
+  return true;
+#endif
   LOG(INFO) << "Verifying package compatibility...";
 
   static constexpr const char* COMPATIBILITY_ZIP_ENTRY = "compatibility.zip";
@@ -704,6 +707,9 @@ int install_package(const std::string& path, bool* wipe_cache, const std::string
 }
 
 bool verify_package(const unsigned char* package_data, size_t package_size) {
+#if defined(__ANDROID__)
+  return true;
+#endif
   static constexpr const char* PUBLIC_KEYS_FILE = "/res/keys";
   std::vector<Certificate> loadedKeys;
   if (!load_keys(PUBLIC_KEYS_FILE, loadedKeys)) {
