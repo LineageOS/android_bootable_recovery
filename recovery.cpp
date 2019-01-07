@@ -83,6 +83,10 @@ struct recovery_cmd {
 static const struct recovery_cmd recovery_cmds[] = {
   { "reboot",         reboot_main },
   { "poweroff",       reboot_main },
+  { "gunzip",         pigz_main },
+  { "gzip",           pigz_main },
+  { "unzip",          miniunz_main },
+  { "zip",            minizip_main },
   { "sh",             mksh_main },
   { nullptr, nullptr },
 };
