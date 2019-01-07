@@ -196,6 +196,37 @@ LOCAL_STATIC_LIBRARIES += \
     libselinux \
     libz
 
+# Libraries for FS tools
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libext2fs \
+    libe2fsck \
+    libmke2fs \
+    libtune2fs \
+    libsparse
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libf2fs \
+    libf2fs_fsck \
+    libf2fs_mkfs
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libsgdisk_static
+
+LOCAL_STATIC_LIBRARIES += \
+    libext2_blkid \
+    libext2_uuid \
+    libext2_profile \
+    libext2_quota \
+    libext2_com_err \
+    libext2_e2p \
+    libc++_static \
+    libz
+
+FILESYSTEM_TOOLS := \
+    e2fsck mke2fs tune2fs fsck.ext4 mkfs.ext4 \
+    mkfs.f2fs fsck.f2fs \
+    sgdisk
+
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
 
 ifeq ($(AB_OTA_UPDATER),true)
@@ -226,7 +257,8 @@ RECOVERY_TOOLS := \
     gunzip \
     gzip \
     unzip \
-    zip
+    zip \
+    $(FILESYSTEM_TOOLS)
 LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf ${LOCAL_MODULE} $(LOCAL_MODULE_PATH)/$(t);)
 
 include $(BUILD_EXECUTABLE)

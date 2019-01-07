@@ -66,6 +66,11 @@
 #include "tune2fs.h"
 #include "updater/updater.h"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "fstools";
+}
+
 // Send over the buffer to recovery though the command pipe.
 static void uiPrint(State* state, const std::string& buffer) {
   UpdaterInfo* ui = static_cast<UpdaterInfo*>(state->cookie);

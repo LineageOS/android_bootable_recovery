@@ -73,6 +73,11 @@
 #include "stub_ui.h"
 #include "ui.h"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "fstools";
+}
+
 #include "recovery_cmds.h"
 
 struct recovery_cmd {
@@ -88,6 +93,17 @@ static const struct recovery_cmd recovery_cmds[] = {
   { "unzip",          miniunz_main },
   { "zip",            minizip_main },
   { "sh",             mksh_main },
+
+  /* Filesystem tools */
+  { "e2fsck",         e2fsck_main },
+  { "mke2fs",         mke2fs_main },
+  { "tune2fs",        tune2fs_main },
+  { "fsck.ext4",      e2fsck_main },
+  { "mkfs.ext4",      mke2fs_main },
+  { "mkfs.f2fs",      mkfs_f2fs_main },
+  { "fsck.f2fs",      fsck_f2fs_main },
+  { "sgdisk",         sgdisk_main },
+
   { nullptr, nullptr },
 };
 
