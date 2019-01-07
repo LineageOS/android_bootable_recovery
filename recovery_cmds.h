@@ -30,6 +30,7 @@ int poweroff_main(int argc, char** argv);
 int start_main(int argc, char** argv);
 int stop_main(int argc, char** argv);
 int mksh_main(int argc, char** argv);
+int awk_main(int argc, char** argv);
 
 /* Filesystem tools */
 int e2fsdroid_main(int argc, char** argv);

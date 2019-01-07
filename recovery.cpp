@@ -96,6 +96,7 @@ static const struct recovery_cmd recovery_cmds[] = {
   { "unzip", miniunz_main },
   { "zip", minizip_main },
   { "sh", mksh_main },
+  { "awk", awk_main },
 
   /* Filesystem tools */
   { "e2fsdroid", e2fsdroid_main },
