@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+int pigz_main(int argc, char **argv);
+int miniunz_main(int argc, char **argv);
+int minizip_main(int argc, char **argv);
 int reboot_main(int argc, char **argv);
 int poweroff_main(int argc, char **argv);
 int start_main(int argc, char **argv);
