@@ -198,6 +198,9 @@ LOCAL_STATIC_LIBRARIES += \
     libselinux \
     libz
 
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libawk_main
+
 # Libraries for FS tools
 LOCAL_WHOLE_STATIC_LIBRARIES += \
     libext2fs \
@@ -265,6 +268,7 @@ RECOVERY_TOOLS := \
     gzip \
     unzip \
     zip \
+    awk \
     $(FILESYSTEM_TOOLS)
 LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf ${LOCAL_MODULE} $(LOCAL_MODULE_PATH)/$(t);)
 
