@@ -28,6 +28,14 @@ cc_defaults {
         "libfstab",
     ],
     export_include_dirs: ["include"],
+
+    product_variables: {
+        lineage: {
+            bootloader_message_offset : {
+                cflags: ["-DBOARD_RECOVERY_BLDRMSG_OFFSET=%d"],
+            },
+        },
+    },
 }
 
 cc_library {
