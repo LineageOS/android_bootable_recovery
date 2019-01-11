@@ -29,6 +29,16 @@
 #include <android-base/unique_fd.h>
 #include <fs_mgr.h>
 
+// Spaces used by misc partition are as below:
+// 0   - 2K     For bootloader_message
+// 2K  - 16K    Used by Vendor's bootloader (the 2K - 4K range may be optionally used
+//              as bootloader_message_ab struct)
+// 16K - 64K    Used by uncrypt and recovery to store wipe_package for A/B devices
+// Note that these offsets are admitted by bootloader,recovery and uncrypt, so they
+// are not configurable without changing all of them.
+static const size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = BOARD_RECOVERY_BLDRMSG_OFFSET;
+static const size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024 + BOOTLOADER_MESSAGE_OFFSET_IN_MISC;
+
 static std::string get_misc_blk_device(std::string* err) {
   std::unique_ptr<fstab, decltype(&fs_mgr_free_fstab)> fstab(fs_mgr_read_fstab_default(),
                                                              fs_mgr_free_fstab);
