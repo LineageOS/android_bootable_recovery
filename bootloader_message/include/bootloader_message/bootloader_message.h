@@ -29,11 +29,11 @@
 // 32K - 64K    System space, used for miscellanious AOSP features. See below.
 // Note that these offsets are admitted by bootloader,recovery and uncrypt, so they
 // are not configurable without changing all of them.
-constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = 0;
-constexpr size_t VENDOR_SPACE_OFFSET_IN_MISC = 2 * 1024;
-constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024;
-constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024;
-constexpr size_t SYSTEM_SPACE_SIZE_IN_MISC = 32 * 1024;
+constexpr size_t BOOTLOADER_MESSAGE_OFFSET_IN_MISC = BOARD_RECOVERY_BLDRMSG_OFFSET;
+constexpr size_t VENDOR_SPACE_OFFSET_IN_MISC = 2 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+constexpr size_t WIPE_PACKAGE_OFFSET_IN_MISC = 16 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+constexpr size_t SYSTEM_SPACE_OFFSET_IN_MISC = 32 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
+constexpr size_t SYSTEM_SPACE_SIZE_IN_MISC = 32 * 1024 + BOARD_RECOVERY_BLDRMSG_OFFSET;
 
 /* Bootloader Message (2-KiB)
  *
