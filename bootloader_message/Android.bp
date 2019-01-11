@@ -25,6 +25,7 @@ package {
 
 cc_defaults {
     name: "libbootloader_message_defaults",
+    defaults: ["bootloader_message_offset_defaults"],
     srcs: ["bootloader_message.cpp"],
     cflags: [
         "-Wall",
