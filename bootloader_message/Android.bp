@@ -29,7 +29,14 @@ cc_defaults {
     cflags: [
         "-Wall",
         "-Werror",
-    ],
+    ] + select(soong_config_variable("lineage_recovery", "bootloader_message_offset"), {
+        any @ flag_val: ["-DBOARD_RECOVERY_BLDRMSG_OFFSET=" + flag_val],
+        default: ["-DBOARD_RECOVERY_BLDRMSG_OFFSET=0"],
+    }),
+    export_cflags: select(soong_config_variable("lineage_recovery", "bootloader_message_offset"), {
+        any @ flag_val: ["-DBOARD_RECOVERY_BLDRMSG_OFFSET=" + flag_val],
+        default: ["-DBOARD_RECOVERY_BLDRMSG_OFFSET=0"],
+    }),
     shared_libs: [
         "libbase",
     ],
