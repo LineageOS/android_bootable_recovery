@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f13f338e_e3013617",
+        "filename": "bu.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-01-13T08:44:04Z",
+      "side": 1,
+      "message": "I think you can remove xcomp support",
+      "revId": "9eaadaf7542120abc54c076120256adc97cc86a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
