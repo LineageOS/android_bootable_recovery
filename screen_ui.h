@@ -25,14 +25,41 @@
 
 #include "ui.h"
 
+#define MAX_MENU_ITEMS 32
+
 // From minui/minui.h.
 struct GRSurface;
+
+class ScreenMenuItem {
+ public:
+  ScreenMenuItem() : icon_(nullptr), icon_sel_(nullptr) {}
+  explicit ScreenMenuItem(const MenuItem& mi) :
+    text_(mi.text()),
+    icon_name_(mi.icon_name()),
+    icon_(nullptr),
+    icon_name_sel_(mi.icon_name_sel()),
+    icon_sel_(nullptr) {}
+  ~ScreenMenuItem();
+
+  const std::string& text() const { return text_; }
+  GRSurface* icon();
+  GRSurface* icon_sel();
+
+ private:
+  std::string text_;
+  std::string icon_name_;
+  GRSurface*  icon_;
+  std::string icon_name_sel_;
+  GRSurface*  icon_sel_;
+};
+typedef std::vector<ScreenMenuItem> ScreenMenuItemVector;
 
 // Implementation of RecoveryUI appropriate for devices with a screen
 // (shows an icon + a progress bar, text logging, menu, etc.)
 class ScreenRecoveryUI : public RecoveryUI {
  public:
   enum UIElement {
+    STATUSBAR,
     HEADER,
     MENU,
     MENU_SEL_BG,
@@ -67,13 +94,22 @@ class ScreenRecoveryUI : public RecoveryUI {
   // printing messages
   void Print(const char* fmt, ...) override __printflike(2, 3);
   void PrintOnScreenOnly(const char* fmt, ...) override __printflike(2, 3);
-  void ShowFile(const char* filename) override;
+  int ShowFile(const char* filename) override;
 
   // menu display
-  void StartMenu(const char* const* headers, const char* const* items,
+  void StartMenu(bool is_main,
+                 menu_type_t type,
+                 const char* const* headers,
+                 const MenuItemVector& items,
                  int initial_selection) override;
   int SelectMenu(int sel) override;
+  int SelectMenu(const Point& point) override;
   void EndMenu() override;
+
+  bool MenuShowing() const { return show_menu; }
+  bool MenuScrollable() const { return (menu_type_ == MT_LIST); }
+  int MenuItemStart() const { return menu_start_y_; }
+  int MenuItemHeight() const { return (3 * menu_char_height_); }
 
   void KeyLongPress(int) override;
 
@@ -101,6 +137,10 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   virtual void draw_background_locked();
   virtual void draw_foreground_locked();
+  virtual void draw_statusbar_locked();
+  virtual void draw_header_locked(int& y);
+  virtual void draw_text_menu_locked(int& y);
+  virtual void draw_grid_menu_locked(int& y);
   virtual void draw_screen_locked();
   virtual void update_screen_locked();
   virtual void update_progress_locked();
@@ -111,13 +151,14 @@ class ScreenRecoveryUI : public RecoveryUI {
   static void* ProgressThreadStartRoutine(void* data);
   void ProgressThreadLoop();
 
-  virtual void ShowFile(FILE*);
+  virtual int ShowFile(FILE*);
   virtual void PrintV(const char*, bool, va_list);
   void PutChar(char);
   void ClearText();
 
   void LoadAnimation();
   void LoadBitmap(const char* filename, GRSurface** surface);
+  void FreeBitmap(GRSurface* surface);
   void LoadLocalizedBitmap(const char* filename, GRSurface** surface);
 
   int PixelsFromDp(int dp) const;
@@ -153,6 +194,10 @@ class ScreenRecoveryUI : public RecoveryUI {
   // The layout to use.
   int layout_;
 
+  GRSurface* logo_image;
+  GRSurface* ic_back;
+  GRSurface* ic_back_sel;
+
   GRSurface* error_icon;
 
   GRSurface* erasing_text;
@@ -186,9 +231,15 @@ class ScreenRecoveryUI : public RecoveryUI {
   bool show_text_ever;  // has show_text ever been true?
 
   std::vector<std::string> menu_;
+  bool menu_is_main_;
+  menu_type_t menu_type_;
   const char* const* menu_headers_;
+  ScreenMenuItemVector menu_items_;
+  int menu_start_y_;
   bool show_menu;
-  int menu_items, menu_sel;
+  int menu_show_start;
+  int menu_show_count;
+  int menu_sel;
 
   // An alternate text screen, swapped with 'text_' when we're viewing a log file.
   char** file_viewer_text_;
@@ -206,6 +257,9 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   int char_width_;
   int char_height_;
+
+  int menu_char_width_;
+  int menu_char_height_;
 
   // The locale that's used to show the rendered texts.
   std::string locale_;
