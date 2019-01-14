@@ -22,6 +22,30 @@
       "revId": "b85dd564d44535269ca58ca18db30b4568889342",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e07eb386_600fb117",
+        "filename": "volume_manager/VolumeManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2019-01-14T17:31:06Z",
+      "side": 1,
+      "message": "crosshatch provides its own librecovery_ui that subclasses the Device class.  I see two possible solutions here: either add libvolume_manager to the static_libraries declaration for all devices that do this, or move the volume manager stuff out of device.h.  The latter seems the most prudent.  I\u0027ll look into it.",
+      "parentUuid": "8887b66c_34cfe860",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 41
+      },
+      "revId": "b85dd564d44535269ca58ca18db30b4568889342",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
