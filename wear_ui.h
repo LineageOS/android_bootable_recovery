@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +27,10 @@ class WearRecoveryUI : public ScreenRecoveryUI {
   void SetStage(int current, int max) override;
 
   // menu display
-  void StartMenu(const char* const* headers, const char* const* items,
-                 int initial_selection) override;
+  void StartMenu(bool is_main, menu_type_t type, const char* const* headers,
+                 const MenuItemVector& items, int initial_selection) override;
   int SelectMenu(int sel) override;
+  int SelectMenu(const Point& point) override;
 
  protected:
   // progress bar vertical position, it's centered horizontally

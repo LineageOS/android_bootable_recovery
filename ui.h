@@ -25,6 +25,32 @@
 #include <string>
 #include <vector>
 
+enum menu_type_t { MT_NONE, MT_LIST, MT_GRID };
+
+class MenuItem {
+ public:
+  MenuItem() {}
+  explicit MenuItem(const std::string& text, const std::string& icon_name = "",
+                    const std::string& icon_name_sel = "")
+      : text_(text), icon_name_(icon_name), icon_name_sel_(icon_name_sel) {}
+
+  const std::string& text() const {
+    return text_;
+  }
+  const std::string& icon_name() const {
+    return icon_name_;
+  }
+  const std::string& icon_name_sel() const {
+    return icon_name_sel_;
+  }
+
+ private:
+  std::string text_;
+  std::string icon_name_;
+  std::string icon_name_sel_;
+};
+typedef std::vector<MenuItem> MenuItemVector;
+
 /*
  * Simple representation of a (x,y) coordinate with convenience operators
  */
@@ -136,12 +162,39 @@ class RecoveryUI {
   virtual void Print(const char* fmt, ...) __printflike(2, 3) = 0;
   virtual void PrintOnScreenOnly(const char* fmt, ...) __printflike(2, 3) = 0;
 
-  virtual void ShowFile(const char* filename) = 0;
+  virtual int ShowFile(const char* filename) = 0;
 
-  // --- key handling ---
+  // --- event handling ---
+
+  enum event_type_t { EVENT_TYPE_NONE, EVENT_TYPE_KEY, EVENT_TYPE_TOUCH };
+  class InputEvent {
+   public:
+    InputEvent() : type_(EVENT_TYPE_NONE), evt_({ 0 }) {}
+    explicit InputEvent(int key) : type_(EVENT_TYPE_KEY), evt_({ key }) {}
+    explicit InputEvent(const Point& pos) : type_(EVENT_TYPE_TOUCH), evt_({ 0 }) {
+      evt_.pos = pos;
+    }
+
+    event_type_t type() const {
+      return type_;
+    }
+    int key() const {
+      return evt_.key;
+    }
+    const Point& pos() const {
+      return evt_.pos;
+    }
+
+   private:
+    event_type_t type_;
+    union {
+      int key;
+      Point pos;
+    } evt_;
+  };
 
   // Waits for a key and return it. May return -1 after timeout.
-  virtual int WaitKey();
+  virtual InputEvent WaitInputEvent();
 
   // Cancel a WaitKey()
   virtual void CancelWaitKey();
@@ -182,12 +235,13 @@ class RecoveryUI {
 
   // Display some header text followed by a menu of items, which appears at the top of the screen
   // (in place of any scrolling ui_print() output, if necessary).
-  virtual void StartMenu(const char* const* headers, const char* const* items,
-                         int initial_selection) = 0;
+  virtual void StartMenu(bool is_main, menu_type_t type, const char* const* headers,
+                         const MenuItemVector& items, int initial_selection) = 0;
 
   // Sets the menu highlight to the given index, wrapping if necessary. Returns the actual item
   // selected.
   virtual int SelectMenu(int sel) = 0;
+  virtual int SelectMenu(const Point& point) = 0;
 
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
@@ -197,8 +251,17 @@ class RecoveryUI {
     volumes_changed_ = 1;
   }
 
+  virtual bool MenuShowing() const = 0;
+  virtual bool MenuScrollable() const = 0;
+  virtual int MenuItemStart() const = 0;
+  virtual int MenuItemHeight() const = 0;
+
  protected:
   void EnqueueKey(int key_code);
+  void EnqueueTouch(const Point& pos);
+
+  std::string android_version_;
+  std::string lineage_version_;
 
   // The normal and dimmed brightness percentages (default: 50 and 25, which means 50% and 25% of
   // the max_brightness). Because the absolute values may vary across devices. These two values can
@@ -231,7 +294,9 @@ class RecoveryUI {
 
   void OnTouchDeviceDetected(int fd);
   void OnKeyDetected(int key_code);
-  void OnTouchEvent();
+  void OnTouchPress();
+  void OnTouchTrack();
+  void OnTouchRelease();
   int OnInputEvent(int fd, uint32_t epevents);
   void ProcessKey(int key_code, int updown);
 
@@ -245,14 +310,15 @@ class RecoveryUI {
   bool InitScreensaver();
 
   // Key event input queue
-  pthread_mutex_t key_queue_mutex;
-  pthread_cond_t key_queue_cond;
-  int key_queue[256], key_queue_len;
-  char key_pressed[KEY_MAX + 1];  // under key_queue_mutex
-  int key_last_down;              // under key_queue_mutex
-  bool key_long_press;            // under key_queue_mutex
-  int key_down_count;             // under key_queue_mutex
-  bool enable_reboot;             // under key_queue_mutex
+  pthread_mutex_t event_queue_mutex;
+  pthread_cond_t event_queue_cond;
+  InputEvent event_queue[256];
+  int event_queue_len;
+  char key_pressed[KEY_MAX + 1];  // under event_queue_mutex
+  int key_last_down;              // under event_queue_mutex
+  bool key_long_press;            // under event_queue_mutex
+  int key_down_count;             // under event_queue_mutex
+  bool enable_reboot;             // under event_queue_mutex
   int rel_sum;
 
   int consecutive_power_keys;
@@ -264,6 +330,10 @@ class RecoveryUI {
   bool has_touch_screen;
 
   struct vkey_t {
+    bool inside(const Point& p) const {
+      return (p.x() >= min_.x() && p.x() < max_.x() && p.y() >= min_.y() && p.y() < max_.y());
+    }
+
     int keycode;
     Point min_;
     Point max_;
@@ -271,10 +341,13 @@ class RecoveryUI {
 
   // Touch event related variables. See the comments in RecoveryUI::OnInputEvent().
   int touch_slot_;
+  bool touch_finger_down_;
+  bool touch_saw_x_;
+  bool touch_saw_y_;
+  bool touch_reported_;
   Point touch_pos_;
   Point touch_start_;
-  bool touch_finger_down_;
-  bool touch_swiping_;
+  Point touch_track_;
   std::vector<vkey_t> virtual_keys_;
   bool is_bootreason_recovery_ui_;
 

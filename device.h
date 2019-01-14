@@ -22,7 +22,7 @@
 
 class Device {
  public:
-  explicit Device(RecoveryUI* ui) : ui_(ui) {}
+  explicit Device(RecoveryUI* ui);
   virtual ~Device() {}
 
   // Called to obtain the UI object that should be used to display the recovery user interface for
@@ -56,24 +56,38 @@ class Device {
 
   enum BuiltinAction {
     NO_ACTION = 0,
+    // Main menu
     REBOOT = 1,
     APPLY_UPDATE = 2,
-    // APPLY_CACHE was 3.
-    // APPLY_ADB_SIDELOAD was 4.
-    WIPE_DATA = 5,
-    WIPE_CACHE = 6,
-    WIPE_SYSTEM = 7,
-    REBOOT_BOOTLOADER = 8,
-    SHUTDOWN = 9,
-    VIEW_RECOVERY_LOGS = 10,
-    MOUNT_SYSTEM = 11,
-    RUN_GRAPHICS_TEST = 12,
-    RUN_LOCALE_TEST = 13,
+    WIPE_MENU = 3,
+    ADVANCED_MENU = 4,
+    // Wipe menu
+    WIPE_DATA = 10,
+    WIPE_CACHE = 11,
+    WIPE_SYSTEM = 12,
+    // Advanced menu
+    REBOOT_BOOTLOADER = 20,
+    MOUNT_SYSTEM = 21,
+    VIEW_RECOVERY_LOGS = 22,
+    RUN_GRAPHICS_TEST = 23,
+    RUN_LOCALE_TEST = 24,
+    SHUTDOWN = 25,
   };
 
-  // Return the list of menu items (an array of strings, NULL-terminated). The menu_position passed
-  // to InvokeMenuItem will correspond to the indexes into this array.
-  virtual const char* const* GetMenuItems();
+  typedef std::vector<MenuItem> MenuItemVector;
+  typedef std::vector<BuiltinAction> MenuActionVector;
+
+  // Return the menu properties. The menu_position passed to InvokeMenuItem
+  // will correspond to the indexes in the associated vectors.
+  virtual bool IsMainMenu() const {
+    return menu_is_main_;
+  }
+  virtual menu_type_t GetMenuType() const {
+    return menu_type_;
+  }
+  virtual const MenuItemVector& GetMenuItems() const {
+    return menu_items_;
+  }
 
   // Perform a recovery action selected from the menu. 'menu_position' will be the item number of
   // the selected menu item, or a non-negative number returned from HandleMenuKey(). The menu will
@@ -82,6 +96,8 @@ class Device {
   // corresponding enum value. If it is an action specific to your device, you actually perform it
   // here and return NO_ACTION.
   virtual BuiltinAction InvokeMenuItem(int menu_position);
+
+  virtual void GoHome();
 
   static const int kNoAction = -1;
   static const int kHighlightUp = -2;
@@ -110,6 +126,11 @@ class Device {
 
  private:
   RecoveryUI* ui_;
+
+  bool menu_is_main_;
+  menu_type_t menu_type_;
+  MenuItemVector menu_items_;
+  MenuActionVector menu_actions_;
 };
 
 // The device-specific library must define this function (or the default one will be used, if there

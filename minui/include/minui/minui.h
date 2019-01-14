@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +65,7 @@ void gr_fill(int x1, int y1, int x2, int y2);
 void gr_texticon(int x, int y, GRSurface* icon);
 
 const GRFont* gr_sys_font();
+const GRFont* gr_menu_font();
 int gr_init_font(const char* name, GRFont** dest);
 void gr_text(const GRFont* font, int x, int y, const char* s, bool bold);
 int gr_measure(const GRFont* font, const char* s);

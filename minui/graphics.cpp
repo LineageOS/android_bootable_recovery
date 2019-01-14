@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2019 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +31,7 @@
 #include "minui/minui.h"
 
 static GRFont* gr_font = NULL;
+static GRFont* gr_font_menu = NULL;
 static MinuiBackend* gr_backend = nullptr;
 
 static int overscan_percent = OVERSCAN_PERCENT;
@@ -49,6 +51,10 @@ static bool outside(int x, int y) {
 
 const GRFont* gr_sys_font() {
   return gr_font;
+}
+
+const GRFont* gr_menu_font() {
+  return gr_font_menu;
 }
 
 int gr_measure(const GRFont* font, const char* s) {
@@ -316,6 +322,11 @@ int gr_init_font(const char* name, GRFont** dest) {
 static void gr_init_font(void) {
   int res = gr_init_font("font", &gr_font);
   if (res == 0) {
+    res = gr_init_font("font_menu", &gr_font_menu);
+    if (res != 0) {
+      printf("failed to read menu font\n");
+      gr_font_menu = gr_font;
+    }
     return;
   }
 
