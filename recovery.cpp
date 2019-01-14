@@ -725,18 +725,22 @@ static bool erase_volume(const char* volume) {
 // return a positive number beyond the given range. Caller sets 'menu_only' to true to ensure only
 // a menu item gets selected. 'initial_selection' controls the initial cursor location. Returns the
 // (non-negative) chosen item number, or -1 if timed out waiting for input.
-int get_menu_selection(const char* const* headers, const char* const* items, bool menu_only,
+int get_menu_selection(bool menu_is_main,
+                       menu_type_t menu_type,
+                       const char* const* headers,
+                       const MenuItemVector& menu_items,
+                       bool menu_only,
                        int initial_selection, Device* device) {
   // Throw away keys pressed previously, so user doesn't accidentally trigger menu items.
   ui->FlushKeys();
 
-  ui->StartMenu(headers, items, initial_selection);
+  ui->StartMenu(menu_is_main, menu_type, headers, menu_items, initial_selection);
 
   int selected = initial_selection;
   int chosen_item = -1;
   while (chosen_item < 0) {
-    int key = ui->WaitKey();
-    if (key == -1) {  // WaitKey() timed out.
+    RecoveryUI::InputEvent evt = ui->WaitInputEvent();
+    if (evt.type() == RecoveryUI::EVENT_TYPE_NONE) {  // WaitKey() timed out.
       if (ui->WasTextEverVisible()) {
         continue;
       } else {
@@ -746,8 +750,21 @@ int get_menu_selection(const char* const* headers, const char* const* items, boo
       }
     }
 
-    bool visible = ui->IsTextVisible();
-    int action = device->HandleMenuKey(key, visible);
+    int action = Device::kNoAction;
+    if (evt.type() == RecoveryUI::EVENT_TYPE_TOUCH) {
+      int touch_sel = ui->SelectMenu(evt.pos());
+      if (touch_sel < 0) {
+        action = touch_sel;
+      }
+      else {
+        action = Device::kInvokeItem;
+        selected = touch_sel;
+      }
+    }
+    else {
+      bool visible = ui->IsTextVisible();
+      action = device->HandleMenuKey(evt.key(), visible);
+    }
 
     if (action < 0) {
       switch (action) {
@@ -759,6 +776,9 @@ int get_menu_selection(const char* const* headers, const char* const* items, boo
           break;
         case Device::kInvokeItem:
           chosen_item = selected;
+          if (chosen_item < 0) {
+              chosen_item = Device::kGoBack;
+          }
           break;
         case Device::kNoAction:
           break;
@@ -783,6 +803,9 @@ int get_menu_selection(const char* const* headers, const char* const* items, boo
   }
 
   ui->EndMenu();
+  if (chosen_item == Device::kGoHome) {
+    device->GoHome();
+  }
   return chosen_item;
 }
 
@@ -816,17 +839,17 @@ static std::string browse_directory(const std::string& path, Device* device) {
   // Append dirs to the zips list.
   zips.insert(zips.end(), dirs.begin(), dirs.end());
 
-  const char* entries[zips.size() + 1];
-  entries[zips.size()] = nullptr;
+  MenuItemVector items;
   for (size_t i = 0; i < zips.size(); i++) {
-    entries[i] = zips[i].c_str();
+    items.push_back(MenuItem(zips[i]));
   }
 
   const char* headers[] = { "Choose a package to install:", path.c_str(), nullptr };
 
   int chosen_item = 0;
   while (true) {
-    chosen_item = get_menu_selection(headers, entries, true, chosen_item, device);
+    chosen_item = get_menu_selection(false, MT_LIST, headers, items,
+                                     true, chosen_item, device);
     if (chosen_item == Device::kGoHome) {
       return "@";
     }
@@ -857,10 +880,14 @@ static std::string browse_directory(const std::string& path, Device* device) {
 
 static bool yes_no(Device* device, const char* question1, const char* question2) {
     const char* headers[] = { question1, question2, NULL };
-    const char* items[] = { " No", " Yes", NULL };
+    const MenuItemVector items = {
+      MenuItem(" No"),
+      MenuItem(" Yes"),
+    };
     int chosen_item;
     do {
-        chosen_item = get_menu_selection(headers, items, true, 0, device);
+        chosen_item = get_menu_selection(false, MT_LIST, headers, items,
+                                         true, 0, device);
     }
     while (chosen_item == Device::kRefresh);
     return (chosen_item == 1);
@@ -901,13 +928,14 @@ static bool prompt_and_wipe_data(Device* device) {
     "stored on this device.",
     nullptr
   };
-  const char* const items[] = {
-    "Try again",
-    "Factory data reset",
-    NULL
+  const MenuItemVector items = {
+    MenuItem("Try again"),
+    MenuItem("Factory data reset"),
   };
+
   for (;;) {
-    int chosen_item = get_menu_selection(headers, items, true, 0, device);
+    int chosen_item = get_menu_selection(false, MT_LIST, headers, items,
+                                         true, 0, device);
     if (chosen_item != 1) {
       return true;  // Just reboot, no wipe; not a failure, user asked for it
     }
@@ -1079,8 +1107,11 @@ static bool wipe_ab_device(size_t wipe_package_size) {
     return true;
 }
 
-static void choose_recovery_file(Device* device) {
+static int choose_recovery_file(Device* device) {
   std::vector<std::string> entries;
+  if (access(TEMPORARY_LOG_FILE, R_OK) != -1) {
+    entries.push_back(TEMPORARY_LOG_FILE);
+  }
   if (has_cache) {
     for (int i = 0; i < KEEP_LOG_COUNT; i++) {
       auto add_to_entries = [&](const char* filename) {
@@ -1100,34 +1131,34 @@ static void choose_recovery_file(Device* device) {
       // Add LAST_KMSG_FILE + LAST_KMSG_FILE.x
       add_to_entries(LAST_KMSG_FILE);
     }
-  } else {
-    // If cache partition is not found, view /tmp/recovery.log instead.
-    if (access(TEMPORARY_LOG_FILE, R_OK) == -1) {
-      return;
-    } else {
-      entries.push_back(TEMPORARY_LOG_FILE);
-    }
+  }
+  if (entries.empty()) {
+    // Should never happen
+    return Device::kNoAction;
   }
 
-  entries.push_back("Back");
-
-  std::vector<const char*> menu_entries(entries.size());
-  std::transform(entries.cbegin(), entries.cend(), menu_entries.begin(),
-                 [](const std::string& entry) { return entry.c_str(); });
-  menu_entries.push_back(nullptr);
+  MenuItemVector items(entries.size());
+  std::transform(entries.cbegin(), entries.cend(), items.begin(),
+                 [](const std::string& entry) { return MenuItem(entry.c_str()); });
 
   const char* headers[] = { "Select file to view", nullptr };
 
   int chosen_item = 0;
   while (true) {
-    chosen_item = get_menu_selection(headers, menu_entries.data(), true, chosen_item, device);
+    chosen_item = get_menu_selection(false, MT_LIST, headers, items,
+                                     true, chosen_item, device);
     if (chosen_item == Device::kGoHome ||
-            chosen_item == Device::kGoBack || chosen_item == 0) {
+            chosen_item == Device::kGoBack) {
         break;
     }
 
-    ui->ShowFile(entries[chosen_item].c_str());
+    int key = ui->ShowFile(entries[chosen_item].c_str());
+    if (key == KEY_HOME || key == KEY_HOMEPAGE) {
+        chosen_item = Device::kGoHome;
+        break;
+    }
   }
+  return chosen_item;
 }
 
 static void run_graphics_test() {
@@ -1216,44 +1247,38 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
 
 static int
 show_apply_update_menu(Device* device, bool* wipe_cache) {
+    MenuItemVector items;
     static const char* headers[] = { "Apply update", nullptr };
-    char* menu_items[MAX_NUM_MANAGED_VOLUMES + 1 + 1];
-
-    const int item_sideload = 0;
-    int n, i;
 
 refresh:
-    menu_items[item_sideload] = strdup("Apply from ADB");
+    items.clear();
+    items.push_back(MenuItem("Apply from ADB")); // Index 0
 
     std::vector<VolumeInfo> volumes;
     VolumeManager::Instance()->getVolumeInfo(volumes);
 
-    n = item_sideload + 1;
-    for (auto& vitr : volumes) {
-        menu_items[n] = (char*)malloc(256);
-        sprintf(menu_items[n], "Choose from %s", vitr.mLabel.c_str());
-        ++n;
+    for (auto& vol : volumes) {
+        items.push_back(MenuItem("Choose from " + vol.mLabel));
     }
-    menu_items[n] = nullptr;
 
     int status = INSTALL_ERROR;
 
-    int chosen = get_menu_selection(headers, menu_items, 0, 0, device);
-    for (i = 0; i < n; ++i) {
-        free(menu_items[i]);
-    }
+    int chosen = get_menu_selection(false, MT_LIST, headers, items,
+                                    false, 0, device);
     if (chosen == Device::kRefresh) {
         goto refresh;
     }
-    if (chosen == Device::kGoBack) {
+    if (chosen == Device::kGoBack ||
+        chosen == Device::kGoHome) {
         return INSTALL_NONE;
     }
-    if (chosen == item_sideload) {
-        static const char* headers[] = { "ADB Sideload", nullptr };
-        static const char* list[] = { "Cancel sideload", nullptr };
+    if (chosen == 0) {
+        static const char* s_headers[] = { "ADB Sideload", nullptr };
+        static const MenuItemVector s_items = { MenuItem("Cancel sideload") };
 
         start_sideload(wipe_cache, TEMPORARY_INSTALL_FILE);
-        int item = get_menu_selection(headers, list, 0, 0, device);
+        int item = get_menu_selection(false, MT_LIST, s_headers, s_items,
+                                      false, 0, device);
         if (item != Device::kNoAction) {
             stop_sideload();
         }
@@ -1284,11 +1309,17 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     }
     ui->SetProgressType(RecoveryUI::EMPTY);
 
-    int chosen_item = get_menu_selection(nullptr, device->GetMenuItems(), false, 0, device);
-    // We are already in the main menu
+    int chosen_item = get_menu_selection(device->IsMainMenu(),
+                                         device->GetMenuType(),
+                                         nullptr,
+                                         device->GetMenuItems(),
+                                         false, 0, device);
     if (chosen_item == Device::kGoBack ||
-        chosen_item == Device::kGoHome ||
-        chosen_item == Device::kRefresh) {
+        chosen_item == Device::kGoHome) {
+      device->GoHome();
+      continue;
+    }
+    if (chosen_item == Device::kRefresh) {
       continue;
     }
 
@@ -1300,6 +1331,8 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     bool should_wipe_cache = false;
     switch (chosen_action) {
       case Device::NO_ACTION:
+      case Device::WIPE_MENU:
+      case Device::ADVANCED_MENU:
         break;
 
       case Device::REBOOT:
@@ -1338,13 +1371,13 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
         {
           status = show_apply_update_menu(device, &should_wipe_cache);
 
-          if (status == INSTALL_SUCCESS && should_wipe_cache) {
-            if (!wipe_cache(false, device)) {
-              status = INSTALL_ERROR;
+          if (status != INSTALL_NONE) {
+            if (status == INSTALL_SUCCESS && should_wipe_cache) {
+              if (!wipe_cache(false, device)) {
+                status = INSTALL_ERROR;
+              }
             }
-          }
 
-          if (status > 0 && status != INSTALL_NONE) {
             if (status != INSTALL_SUCCESS) {
               ui->SetBackground(RecoveryUI::ERROR);
               ui->Print("Installation aborted.\n");
@@ -1360,6 +1393,9 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
 
       case Device::VIEW_RECOVERY_LOGS:
         choose_recovery_file(device);
+        if (chosen_item == Device::kGoHome) {
+          device->GoHome();
+        }
         break;
 
       case Device::RUN_GRAPHICS_TEST:
