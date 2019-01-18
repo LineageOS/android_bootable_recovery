@@ -87,11 +87,7 @@ LOCAL_MODULE := recovery
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
-LOCAL_REQUIRED_MODULES := e2fsdroid_static mke2fs_static mke2fs.conf
-
-ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
-LOCAL_REQUIRED_MODULES += sload.f2fs mkfs.f2fs
-endif
+LOCAL_REQUIRED_MODULES := mke2fs.conf
 
 LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
 LOCAL_CFLAGS += -Wall -Werror
@@ -194,6 +190,59 @@ LOCAL_STATIC_LIBRARIES += \
     libselinux \
     libz
 
+# Libraries for FS tools
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libext2fs \
+    libe2fsck \
+    libmke2fs \
+    libsparse
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libe2fsdroid
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libf2fs \
+    libf2fs_fsck \
+    libf2fs_mkfs
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libfsck_msdos
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libexfat \
+    libexfat_mkfs \
+    libexfat_fsck
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libfuse-lite \
+    libntfs-3g \
+    libntfs_utils \
+    libntfs_fsck \
+    libntfs_mkfs \
+    libntfs_mount
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libsgdisk_static
+
+LOCAL_STATIC_LIBRARIES += \
+    libext2_blkid \
+    libext2_uuid \
+    libext2_profile \
+    libext2_quota \
+    libext2_com_err \
+    libext2_e2p \
+    libc++_static \
+    libz
+
+FILESYSTEM_TOOLS := \
+    e2fsdroid e2fsdroid_static \
+    e2fsck mke2fs mke2fs_static fsck.ext4 mkfs.ext4 \
+    mkfs.f2fs fsck.f2fs sload.f2fs \
+    fsck_msdos \
+    fsck.exfat mkfs.exfat \
+    fsck.ntfs mkfs.ntfs mount.ntfs \
+    sgdisk
+
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
 
 ifeq ($(AB_OTA_UPDATER),true)
@@ -223,7 +272,8 @@ RECOVERY_TOOLS := \
     gunzip \
     gzip \
     unzip \
-    zip
+    zip \
+    $(FILESYSTEM_TOOLS)
 LOCAL_POST_INSTALL_CMD := $(hide) $(foreach t,$(RECOVERY_TOOLS),ln -sf ${LOCAL_MODULE} $(LOCAL_MODULE_PATH)/$(t);)
 
 include $(BUILD_EXECUTABLE)
