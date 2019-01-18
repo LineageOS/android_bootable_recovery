@@ -74,6 +74,11 @@
 #include "stub_ui.h"
 #include "ui.h"
 
+// For e2fsprogs
+extern "C" {
+const char* program_name = "fstools";
+}
+
 #include "recovery_cmds.h"
 
 struct recovery_cmd {
@@ -89,6 +94,32 @@ static const struct recovery_cmd recovery_cmds[] = {
   { "unzip", miniunz_main },
   { "zip", minizip_main },
   { "sh", mksh_main },
+
+  /* Filesystem tools */
+  { "e2fsdroid", e2fsdroid_main },
+  { "e2fsdroid_static", e2fsdroid_main },
+  { "sload.f2fs", fsck_f2fs_main },
+
+  { "mke2fs", mke2fs_main },
+  { "mke2fs_static", mke2fs_main },
+  { "e2fsck", e2fsck_main },
+  { "fsck.ext4", e2fsck_main },
+  { "mkfs.ext4", mke2fs_main },
+
+  { "mkfs.f2fs", mkfs_f2fs_main },
+  { "fsck.f2fs", fsck_f2fs_main },
+
+  { "fsck_msdos", fsck_msdos_main },
+
+  { "mkfs.exfat", mkfs_exfat_main },
+  { "fsck.exfat", fsck_exfat_main },
+
+  { "fsck.ntfs", fsck_ntfs_main },
+  { "mkfs.ntfs", mkfs_ntfs_main },
+  { "mount.ntfs", mount_ntfs_main },
+
+  { "sgdisk", sgdisk_main },
+
   { nullptr, nullptr },
 };
 

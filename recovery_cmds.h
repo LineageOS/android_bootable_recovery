@@ -31,6 +31,26 @@ int start_main(int argc, char** argv);
 int stop_main(int argc, char** argv);
 int mksh_main(int argc, char** argv);
 
+/* Filesystem tools */
+int e2fsdroid_main(int argc, char** argv);
+
+int mke2fs_main(int argc, char** argv);
+int e2fsck_main(int argc, char** argv);
+
+int mkfs_f2fs_main(int argc, char** argv);
+int fsck_f2fs_main(int argc, char** argv);
+
+int fsck_msdos_main(int argc, char** argv);
+
+int mkfs_exfat_main(int argc, char** argv);
+int fsck_exfat_main(int argc, char** argv);
+
+int mkfs_ntfs_main(int argc, char** argv);
+int fsck_ntfs_main(int argc, char** argv);
+int mount_ntfs_main(int argc, char** argv);
+
+int sgdisk_main(int argc, char** argv);
+
 #ifdef __cplusplus
 }
 #endif
