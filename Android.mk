@@ -195,6 +195,8 @@ LOCAL_WHOLE_STATIC_LIBRARIES += \
     libext2fs \
     libe2fsck \
     libmke2fs \
+    libresize2fs \
+    libtune2fs \
     libsparse
 
 LOCAL_WHOLE_STATIC_LIBRARIES += \
@@ -237,6 +239,7 @@ LOCAL_STATIC_LIBRARIES += \
 FILESYSTEM_TOOLS := \
     e2fsdroid e2fsdroid_static \
     e2fsck mke2fs mke2fs_static fsck.ext4 mkfs.ext4 \
+    resize2fs tune2fs \
     mkfs.f2fs fsck.f2fs sload.f2fs \
     fsck_msdos \
     fsck.exfat mkfs.exfat \
