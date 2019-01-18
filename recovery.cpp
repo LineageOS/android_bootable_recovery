@@ -105,6 +105,8 @@ static const struct recovery_cmd recovery_cmds[] = {
   { "e2fsck", e2fsck_main },
   { "fsck.ext4", e2fsck_main },
   { "mkfs.ext4", mke2fs_main },
+  { "resize2fs", resize2fs_main },
+  { "tune2fs", tune2fs_main },
 
   { "mkfs.f2fs", mkfs_f2fs_main },
   { "fsck.f2fs", fsck_f2fs_main },

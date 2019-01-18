@@ -36,6 +36,8 @@ int e2fsdroid_main(int argc, char** argv);
 
 int mke2fs_main(int argc, char** argv);
 int e2fsck_main(int argc, char** argv);
+int resize2fs_main(int argc, char** argv);
+int tune2fs_main(int argc, char** argv);
 
 int mkfs_f2fs_main(int argc, char** argv);
 int fsck_f2fs_main(int argc, char** argv);
