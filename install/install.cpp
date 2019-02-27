@@ -198,7 +198,21 @@ int CheckPackageMetadata(const std::map<std::string, std::string>& metadata, Ota
 
   auto device = android::base::GetProperty("ro.product.device", "");
   auto pkg_device = get_value(metadata, "pre-device");
-  if (pkg_device != device || pkg_device.empty()) {
+
+    std::vector<std::string> assertResults = android::base::Split(pkg_device, ",");
+
+    bool deviceExists = false;
+
+    for(const std::string& deviceAssert : assertResults)
+    {
+        std::string assertName = android::base::Trim(deviceAssert);
+        if (assertName == device && !assertName.empty()) {
+            deviceExists = true;
+            break;
+        }
+    }
+
+    if (!deviceExists) {
     LOG(ERROR) << "Package is for product " << pkg_device << " but expected " << device;
     return INSTALL_ERROR;
   }
