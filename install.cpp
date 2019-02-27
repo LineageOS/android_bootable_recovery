@@ -143,9 +143,18 @@ static int check_newer_ab_build(ZipArchiveHandle zip) {
     }
   }
 
+  // We allow the package to carry multiple product names split by ",";
+  // e.g. pre-device=device1,device2,device3 ... We will fail the
+  // verification if the device's name doesn't match any of these carried names.
   std::string value = android::base::GetProperty("ro.product.device", "");
   const std::string& pkg_device = metadata["pre-device"];
-  if (pkg_device != value || pkg_device.empty()) {
+  bool product_name_match = false;
+  for (const std::string& name : android::base::Split(pkg_device, ",")) {
+    if (value == android::base::Trim(name)) {
+      product_name_match = true;
+    }
+  }
+  if (!product_name_match) {
     LOG(ERROR) << "Package is for product " << pkg_device << " but expected " << value;
     return INSTALL_ERROR;
   }
