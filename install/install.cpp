@@ -187,11 +187,24 @@ static int CheckAbSpecificMetadata(const std::map<std::string, std::string>& met
 
 int CheckPackageMetadata(const std::map<std::string, std::string>& metadata, OtaType ota_type,
                          bool allow_ab_downgrade) {
-  auto device = android::base::GetProperty("ro.product.device", "");
+
+  // We allow the package to carry multiple product names split by ",";
+  // e.g. ro.product.device=device1,device2,device3 ... We will fail the
+  // verification if the device's name doesn't match any of these carried names.
+
   auto pkg_device = get_value(metadata, "pre-device");
-  if (pkg_device != device || pkg_device.empty()) {
-    LOG(ERROR) << "Package is for product " << pkg_device << " but expected " << device;
-    return INSTALL_ERROR;
+  if (!pkg_device.empty()) {
+    auto device = android::base::GetProperty("ro.product.device", "");
+    bool product_name_match = false;
+    for (const auto& name : android::base::Split(pkg_device, ",")) {
+      if (device == android::base::Trim(name)) {
+        product_name_match = true;
+      }
+    }
+    if (!product_name_match) {
+      LOG(ERROR) << "Package is for product " << pkg_device;
+      return INSTALL_ERROR;
+    }
   }
 
   // We allow the package to not have any serialno; and we also allow it to carry multiple serial
