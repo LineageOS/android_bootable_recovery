@@ -343,8 +343,8 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount)
     if (err != VERIFY_SUCCESS) {
         LOGE("signature verification failed\n");
         sysReleaseMap(&map);
-        ret = INSTALL_CORRUPT;
-        goto out;
+        set_perf_mode(false);
+        return INSTALL_CORRUPT;
     }
 
     /* Try to open the package.
@@ -354,8 +354,8 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount)
     if (err != 0) {
         LOGE("Can't open %s\n(%s)\n", path, err != -1 ? strerror(err) : "bad");
         sysReleaseMap(&map);
-        ret = INSTALL_CORRUPT;
-        goto out;
+        set_perf_mode(false);
+        return INSTALL_CORRUPT;
     }
 
     /* Verify and install the contents of the package.
@@ -379,7 +379,6 @@ really_install_package(const char *path, bool* wipe_cache, bool needs_mount)
     }
 #endif /* USE_MDTP */
 
-out:
     set_perf_mode(false);
     return ret;
 }
