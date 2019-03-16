@@ -512,6 +512,9 @@ void RecoveryUI::EnqueueTouch(const Point& pos) {
 RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
   pthread_mutex_lock(&event_queue_mutex);
 
+  android::base::WriteStringToFile("0", BRIGHTNESS_FILE);
+  android::base::WriteStringToFile(std::to_string(brightness_normal_value_), BRIGHTNESS_FILE);
+
   // Time out after UI_WAIT_KEY_TIMEOUT_SEC, unless a USB cable is
   // plugged in.
   do {
