@@ -319,6 +319,8 @@ ScreenRecoveryUI::ScreenRecoveryUI(bool scrollable_menu)
       animation_fps_(
           android::base::GetIntProperty("ro.recovery.ui.animation_fps", kDefaultAnimationFps)),
       density_(static_cast<float>(android::base::GetIntProperty("ro.sf.lcd_density", 160)) / 160.f),
+      blank_unblank_on_init_(
+          android::base::GetBoolProperty("ro.recovery.ui.blank_unblank_on_init", false)),
       current_icon_(NONE),
       current_frame_(0),
       intro_done_(false),
@@ -916,6 +918,11 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
 
   if (!InitTextParams()) {
     return false;
+  }
+
+  if (blank_unblank_on_init_) {
+    gr_fb_blank(true);
+    gr_fb_blank(false);
   }
 
   // Are we portrait or landscape?

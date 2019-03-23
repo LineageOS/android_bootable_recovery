@@ -262,6 +262,9 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // The scale factor from dp to pixels. 1.0 for mdpi, 4.0 for xxxhdpi.
   const float density_;
 
+  // Whether we should blank and unblank screen on init to workaround device specific issues
+  bool blank_unblank_on_init_;
+
   virtual bool InitTextParams();
 
   virtual bool LoadWipeDataMenuText();
