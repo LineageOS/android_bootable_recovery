@@ -996,6 +996,11 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
     gr_fb_blank(false);
   }
 
+  if (blank_unblank_on_init_) {
+    gr_fb_blank(true);
+    gr_fb_blank(false);
+  }
+
   // Are we portrait or landscape?
   layout_ = (gr_fb_width() > gr_fb_height()) ? LANDSCAPE : PORTRAIT;
   // Are we the large variant of our base layout?
