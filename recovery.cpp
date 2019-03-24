@@ -1338,6 +1338,7 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
       case Device::REBOOT:
       case Device::SHUTDOWN:
       case Device::REBOOT_BOOTLOADER:
+      case Device::REBOOT_RECOVERY:
         return chosen_action;
 
       case Device::WIPE_DATA:
@@ -1983,6 +1984,10 @@ int main(int argc, char **argv) {
 #endif
       break;
 
+    case Device::REBOOT_RECOVERY:
+      ui->Print("Rebooting to recovery...\n");
+      android::base::SetProperty(ANDROID_RB_PROPERTY, "reboot,recovery");
+      break;
     default:
       ui->Print("Rebooting...\n");
       reboot("reboot,");

@@ -72,6 +72,7 @@ static const MenuItem ADVANCED_MENU_ITEMS[] = {
 #else
   MenuItem("Reboot to bootloader"),
 #endif
+  MenuItem("Reboot to recovery"),
   MenuItem("Mount system"),
   MenuItem("View logs"),
   MenuItem("Run graphics test"),
@@ -83,6 +84,7 @@ static const MenuItemVector advanced_menu_items_ =
 
 static const Device::BuiltinAction ADVANCED_MENU_ACTIONS[] = {
   Device::REBOOT_BOOTLOADER,
+  Device::REBOOT_RECOVERY,
   Device::MOUNT_SYSTEM,
   Device::VIEW_RECOVERY_LOGS,
   Device::RUN_GRAPHICS_TEST,
