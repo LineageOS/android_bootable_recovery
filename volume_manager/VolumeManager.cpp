@@ -20,6 +20,7 @@
 #include <dirent.h>
 #include <fs_mgr.h>
 #include <sys/sysmacros.h>
+#include <blkid/blkid.h>
 
 #define LOG_TAG "VolumeManager"
 
@@ -131,7 +132,10 @@ process_config(VolumeManager *vm, fstab_rec** data_recp)
         }
         else {
             if (!*data_recp && !strcmp(fstab->recs[i].mount_point, "/data")) {
-                *data_recp = &fstab->recs[i];
+                char* detected_fs_type = blkid_get_tag_value(nullptr, "TYPE",
+                                                             fstab->recs[i].blk_device);
+                if(!strcmp(detected_fs_type, fstab->recs[i].fs_type))
+                    *data_recp = &fstab->recs[i];
             }
         }
     }
