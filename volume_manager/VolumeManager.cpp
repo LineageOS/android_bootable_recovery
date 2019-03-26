@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <blkid/blkid.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <fs_mgr.h>
@@ -122,7 +123,9 @@ static int process_config(VolumeManager* vm, fstab_rec** data_recp) {
                                                             fstype, mntopts));
         } else {
             if (!*data_recp && !strcmp(fstab->recs[i].mount_point, "/data")) {
-                *data_recp = &fstab->recs[i];
+                char* detected_fs_type =
+                    blkid_get_tag_value(nullptr, "TYPE", fstab->recs[i].blk_device);
+                if (!strcmp(detected_fs_type, fstab->recs[i].fs_type)) *data_recp = &fstab->recs[i];
             }
         }
     }
