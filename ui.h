@@ -245,6 +245,12 @@ class RecoveryUI {
   virtual int SelectMenu(int sel) = 0;
   virtual int SelectMenu(const Point& point) = 0;
 
+  // Scroll the view by increasing or lowering the first shown item
+  // If updown < 0, scroll up by |updown| items. If updown > 0, scroll down by |updown| items
+  // Returns the selected item, since scrolling past a selected item will change the selection to
+  // the closest on screen item
+  virtual int ScrollMenu(int updown) = 0;
+
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
 

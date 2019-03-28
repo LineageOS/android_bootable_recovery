@@ -104,6 +104,7 @@ class ScreenRecoveryUI : public RecoveryUI {
                  const MenuItemVector& items, int initial_selection) override;
   int SelectMenu(int sel) override;
   int SelectMenu(const Point& point) override;
+  int ScrollMenu(int updown) override;
   void EndMenu() override;
 
   bool MenuShowing() const {

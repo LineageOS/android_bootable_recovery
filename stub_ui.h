@@ -66,6 +66,9 @@ class StubRecoveryUI : public RecoveryUI {
   int SelectMenu(const Point& /* point */) override {
     return 0;
   }
+  int ScrollMenu(int /* updown */) override {
+    return 0;
+  }
   void EndMenu() override {}
 
   bool MenuShowing() const {
