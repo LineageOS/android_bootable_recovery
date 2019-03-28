@@ -779,6 +779,12 @@ int get_menu_selection(bool menu_is_main,
         case Device::kHighlightDown:
           selected = ui->SelectMenu(++selected);
           break;
+        case Device::kScrollUp:
+          selected = ui->ScrollMenu(-1);
+          break;
+        case Device::kScrollDown:
+          selected = ui->ScrollMenu(1);
+          break;
         case Device::kInvokeItem:
           chosen_item = selected;
           if (chosen_item < 0) {

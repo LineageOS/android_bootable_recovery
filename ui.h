@@ -233,6 +233,8 @@ class RecoveryUI {
   // selected.
   virtual int SelectMenu(int sel) = 0;
   virtual int SelectMenu(const Point& point) = 0;
+  
+  virtual int ScrollMenu(int updown) = 0;
 
   // Ends menu mode, resetting the text overlay so that ui_print() statements will be displayed.
   virtual void EndMenu() = 0;
