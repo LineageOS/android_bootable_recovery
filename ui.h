@@ -356,6 +356,7 @@ class RecoveryUI {
   Point touch_pos_;
   Point touch_start_;
   Point touch_track_;
+  bool has_swiped_;
   std::vector<vkey_t> virtual_keys_;
   bool is_bootreason_recovery_ui_;
 
