@@ -1181,10 +1181,8 @@ void ScreenRecoveryUI::StartMenu(bool is_main,
   }
   show_menu = true;
   menu_sel = initial_selection;
+  menu_show_start = 0;
   draw_screen_locked();
-  if (menu_sel < menu_show_start) {
-    menu_show_start = menu_sel;
-  }
   if (menu_sel >= menu_show_start + menu_show_count) {
     menu_show_start = menu_sel - (menu_show_count - 1);
   }
