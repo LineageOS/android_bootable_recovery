@@ -246,7 +246,7 @@ void RecoveryUI::OnTouchTrack() {
     if (MenuShowing() && MenuScrollable()) {
       while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
         int dy = touch_pos_.y() - touch_track_.y();
-        int key = (dy < 0) ? KEY_VOLUMEUP : KEY_VOLUMEDOWN;
+        int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP; // natural scrolling
         ProcessKey(key, 1); // press key
         ProcessKey(key, 0); // and release it
         int sgn = (dy > 0) - (dy < 0);
@@ -341,7 +341,7 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       rel_sum += ev.value;
       if (rel_sum > 3) {
         ProcessKey(KEY_DOWN, 1);  // press down key
-        ProcessKey(KEY_DOWN, 0);  // and release it
+        ProcessKey(KEY_DOWN, 0);  // and release iSelectMenut
         rel_sum = 0;
       } else if (rel_sum < -3) {
         ProcessKey(KEY_UP, 1);  // press up key
