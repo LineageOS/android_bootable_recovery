@@ -100,6 +100,8 @@ class Device {
   static const int kGoBack = -5;
   static const int kGoHome = -6;
   static const int kRefresh = -7;
+  static const int kScrollUp = -8;
+  static const int kScrollDown = -9;
 
   // Called before and after we do a wipe data/factory reset operation, either via a reboot from the
   // main system with the --wipe_data flag, or when the user boots into recovery image manually and
