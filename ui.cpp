@@ -80,6 +80,7 @@ RecoveryUI::RecoveryUI()
       touch_saw_x_(false),
       touch_saw_y_(false),
       touch_reported_(false),
+      has_swiped_(false),
       is_bootreason_recovery_ui_(false),
       volumes_changed_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
@@ -242,15 +243,23 @@ void RecoveryUI::OnTouchPress() {
 }
 
 void RecoveryUI::OnTouchTrack() {
+  // Arbitrary swipe threshold to ignore the following release.
+  // Use MenuItemHeight as a quick way to get a density sensitive value
+  static const int kSwipeThresh = MenuItemHeight() / 30;
+
   if (touch_pos_.y() <= gr_fb_height()) {
     if (MenuShowing() && MenuScrollable()) {
-      while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
-        int dy = touch_pos_.y() - touch_track_.y();
+      int dy = touch_pos_.y() - touch_track_.y();
+      if (abs(dy) > kSwipeThresh) {
+        has_swiped_ = true;
+      }
+      if (abs(dy) >= MenuItemHeight()) {
         int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP; // natural scrolling
         ProcessKey(key, 1); // press key
         ProcessKey(key, 0); // and release it
         int sgn = (dy > 0) - (dy < 0);
         touch_track_.y(touch_track_.y() + sgn * MenuItemHeight());
+        has_swiped_ = true;
       }
     }
   }
@@ -275,7 +284,8 @@ void RecoveryUI::OnTouchRelease() {
   }
 
   // If we tracked a vertical swipe, ignore the release
-  if (touch_track_ != touch_start_) {
+  if (has_swiped_) {
+    has_swiped_ = false;
     return;
   }
 
