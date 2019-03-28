@@ -80,6 +80,7 @@ RecoveryUI::RecoveryUI()
       touch_saw_x_(false),
       touch_saw_y_(false),
       touch_reported_(false),
+      has_swiped_(false),
       is_bootreason_recovery_ui_(false),
       volumes_changed_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
@@ -251,6 +252,7 @@ void RecoveryUI::OnTouchTrack() {
         ProcessKey(key, 0); // and release it
         int sgn = (dy > 0) - (dy < 0);
         touch_track_.y(touch_track_.y() + sgn * MenuItemHeight());
+        has_swiped_ = true;
       }
     }
   }
@@ -275,9 +277,11 @@ void RecoveryUI::OnTouchRelease() {
   }
 
   // If we tracked a vertical swipe, ignore the release
-  if (touch_track_ != touch_start_) {
+  if (has_swiped_) {
+    has_swiped_ = false;
     return;
   }
+  has_swiped_ = false;
 
   // Check for horizontal swipe
   Point delta = touch_pos_ - touch_start_;
