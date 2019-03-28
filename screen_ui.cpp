@@ -1228,7 +1228,7 @@ int ScreenRecoveryUI::SelectMenu(const Point& point) {
       int row = -1, col = -1;
       switch (menu_type_) {
         case MT_LIST:
-          sel = (point.y() - menu_start_y_) / (menu_char_height_ * 3);
+          sel = (point.y() - menu_start_y_) / (menu_char_height_ * 3) + menu_show_start;
           break;
         case MT_GRID:
           row = (point.y() - menu_start_y_) / (gr_fb_height() * 3 / 16);
