@@ -1264,6 +1264,28 @@ int ScreenRecoveryUI::SelectMenu(const Point& point) {
   return sel;
 }
 
+int ScreenRecoveryUI::ScrollMenu(int updown) {
+  pthread_mutex_lock(&updateMutex);
+  if ((updown > 0 && menu_show_start + menu_show_count < (int)menu_items_.size()) ||
+      (updown < 0 && menu_show_start > 0)) {
+    menu_show_start += updown;
+  
+    /* We can receive a kInvokeItem event from a different source than touch,
+       like from Power button. For this reason, selection should not get out of
+       the screen. Constrain it to the first or last visible item of the list */
+    if (menu_sel < menu_show_start) {
+      menu_sel = menu_show_start;
+    }
+    else if(menu_sel >= menu_show_start + menu_show_count) {
+      menu_sel = menu_show_start + menu_show_count - 1;
+    }
+
+    update_screen_locked();
+  }
+  pthread_mutex_unlock(&updateMutex);
+  return menu_sel;
+}
+
 void ScreenRecoveryUI::EndMenu() {
   pthread_mutex_lock(&updateMutex);
   if (show_menu && text_rows_ > 0 && text_cols_ > 0) {

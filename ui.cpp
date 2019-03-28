@@ -246,7 +246,7 @@ void RecoveryUI::OnTouchTrack() {
     if (MenuShowing() && MenuScrollable()) {
       while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
         int dy = touch_pos_.y() - touch_track_.y();
-        int key = (dy < 0) ? KEY_VOLUMEUP : KEY_VOLUMEDOWN;
+        int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP; // natural scrolling
         ProcessKey(key, 1); // press key
         ProcessKey(key, 0); // and release it
         int sgn = (dy > 0) - (dy < 0);
