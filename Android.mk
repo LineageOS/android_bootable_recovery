@@ -299,6 +299,7 @@ endif
 
 LOCAL_REQUIRED_MODULES += \
     toybox_static \
+    toolbox_static \
     recovery_mkshrc \
     bu_recovery
 
