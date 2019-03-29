@@ -1220,7 +1220,7 @@ static void run_graphics_test() {
   }
 }
 
-static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) {
+static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache, const std::string& subdir) {
     modified_flash = true;
 
     int status;
@@ -1232,7 +1232,7 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
 
     std::string path;
     do {
-        path = browse_directory(vi.mPath, device);
+        path = browse_directory(vi.mPath + subdir, device);
         if (path == "@") {
             return INSTALL_NONE;
         }
@@ -1323,7 +1323,10 @@ refresh:
         sideload_stop();
     }
     else {
-        status = apply_from_storage(device, volumes[chosen - 1], wipe_cache);
+        // Apply from storage
+        VolumeInfo& vol = volumes[chosen - 1];
+        const std::string& subdir = (vol.mLabel == "emulated") ? std::string("/0") : std::string();
+        status = apply_from_storage(device, volumes[chosen - 1], wipe_cache, subdir);
     }
 
     return status;
