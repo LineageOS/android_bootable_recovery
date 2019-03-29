@@ -40,7 +40,7 @@ using android::base::StringPrintf;
 namespace android {
 namespace volmgr {
 
-static const std::string kStagingPath = "/mnt/staging/emulated";
+static const std::string kStagingPath = "/mnt/staging/emulated/0";
 
 EmulatedVolume::EmulatedVolume(fstab_rec* rec, const std::string& subdir)
     : VolumeBase(Type::kEmulated),
@@ -51,18 +51,16 @@ EmulatedVolume::EmulatedVolume(fstab_rec* rec, const std::string& subdir)
       mFsOptions(rec->fs_options) {
     setId("emulated");
     setPartLabel("emulated");
-    setPath("/storage/emulated");
+    setPath("/storage/emulated/0");
 }
 
 EmulatedVolume::~EmulatedVolume() {}
 
 status_t EmulatedVolume::doMount() {
-    if (fs_prepare_dir(kStagingPath.c_str(), 0700, AID_ROOT, AID_ROOT)) {
-        PLOG(ERROR) << getId() << " failed to create mount points";
+    if (createMountPointRecursive(kStagingPath, 0700, AID_ROOT, AID_ROOT)) {
         return -errno;
     }
-    if (fs_prepare_dir(getPath().c_str(), 0700, AID_ROOT, AID_ROOT)) {
-        PLOG(ERROR) << getId() << " failed to create mount points";
+    if (createMountPointRecursive(getPath(), 0700, AID_ROOT, AID_ROOT)) {
         return -errno;
     }
 
@@ -90,6 +88,23 @@ status_t EmulatedVolume::doUnmount(bool detach /* = false */) {
     rmdir(kStagingPath.c_str());
 
     return OK;
+}
+
+int EmulatedVolume::createMountPointRecursive(const std::string& path, mode_t mode, uid_t uid,
+                                              gid_t gid) {
+    auto pos = path.find("/", 1);
+    while (pos != std::string::npos) {
+        std::string tmp = path.substr(0, pos);
+        mkdir(tmp.c_str(), mode);
+        pos = path.find("/", pos + 1);
+    }
+
+    if (fs_prepare_dir(path.c_str(), mode, uid, gid)) {
+        PLOG(ERROR) << getId() << " failed to create mount point " << path.c_str();
+        return -1;
+    }
+
+    return 0;
 }
 
 }  // namespace volmgr

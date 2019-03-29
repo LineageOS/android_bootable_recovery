@@ -46,6 +46,7 @@ class EmulatedVolume : public VolumeBase {
   protected:
     status_t doMount() override;
     status_t doUnmount(bool detach = false) override;
+    int createMountPointRecursive(const std::string&, mode_t, uid_t, gid_t);
 
   private:
     std::string mSubdir;
