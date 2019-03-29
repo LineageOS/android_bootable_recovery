@@ -1641,6 +1641,9 @@ int main(int argc, char **argv) {
   // log to stdout (which is redirected to recovery.log) as we used to do.
   android::base::InitLogging(argv, &UiLogger);
 
+  // Set SELinux to Permissive status
+  security_setenforce(0);
+
   // Take last pmsg contents and rewrite it to the current pmsg session.
   static const char filter[] = "recovery/";
   // Do we need to rotate?
