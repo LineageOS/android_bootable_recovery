@@ -50,7 +50,7 @@ EmulatedVolume::EmulatedVolume(fstab_rec* rec, const std::string& subdir) :
         mFsOptions(rec->fs_options) {
     setId("emulated");
     setPartLabel("emulated");
-    setPath("/storage/emulated");
+    setPath("/storage/emulated/0");
 }
 
 EmulatedVolume::~EmulatedVolume() {
