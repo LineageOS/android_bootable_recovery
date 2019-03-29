@@ -75,8 +75,10 @@ static const MenuItem ADVANCED_MENU_ITEMS[] = {
   MenuItem("Reboot to recovery"),
   MenuItem("Mount system"),
   MenuItem("View logs"),
+#ifdef SHOW_TESTS
   MenuItem("Run graphics test"),
   MenuItem("Run locale test"),
+#endif
   MenuItem("Power off"),
 };
 static const MenuItemVector advanced_menu_items_ =
@@ -87,8 +89,10 @@ static const Device::BuiltinAction ADVANCED_MENU_ACTIONS[] = {
   Device::REBOOT_RECOVERY,
   Device::MOUNT_SYSTEM,
   Device::VIEW_RECOVERY_LOGS,
+#ifdef SHOW_TESTS
   Device::RUN_GRAPHICS_TEST,
   Device::RUN_LOCALE_TEST,
+#endif
   Device::SHUTDOWN,
 };
 static const Device::MenuActionVector advanced_menu_actions_ = Device::MenuActionVector(
