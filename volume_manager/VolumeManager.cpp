@@ -195,7 +195,7 @@ VolumeManager::start(VolumeWatcher* watcher)
     }
 
     if (data_rec) {
-        mInternalEmulated = new EmulatedVolume(data_rec, "media");
+        mInternalEmulated = new EmulatedVolume(data_rec, "media/0");
         mInternalEmulated->create();
     }
 
