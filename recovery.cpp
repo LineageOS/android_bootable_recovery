@@ -735,7 +735,8 @@ int get_menu_selection(bool menu_is_main,
                        const char* const* headers,
                        const MenuItemVector& menu_items,
                        bool menu_only,
-                       int initial_selection, Device* device) {
+                       int initial_selection, Device* device,
+                       bool refreshable = false) {
   // Throw away keys pressed previously, so user doesn't accidentally trigger menu items.
   ui->FlushKeys();
 
@@ -800,7 +801,9 @@ int get_menu_selection(bool menu_is_main,
           chosen_item = Device::kGoHome;
           break;
         case Device::kRefresh:
-          chosen_item = Device::kRefresh;
+          if (refreshable) {
+            chosen_item = Device::kRefresh;
+          }
           break;
       }
     } else if (!menu_only) {
@@ -869,7 +872,7 @@ static std::string browse_directory(const std::string& path, Device* device) {
       return "";
     }
     if (chosen_item == Device::kRefresh) {
-      return "@refresh";
+      continue;
     }
 
     const std::string& item = zips[chosen_item];
@@ -1225,6 +1228,7 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
     if (!VolumeManager::Instance()->volumeMount(vi.mId)) {
         return INSTALL_ERROR;
     }
+    ui->VolumesChanged();
 
     std::string path;
     do {
@@ -1289,7 +1293,7 @@ refresh:
     int status = INSTALL_ERROR;
 
     int chosen = get_menu_selection(false, MT_LIST, headers, items,
-                                    false, 0, device);
+                                    false, 0, device, true/*refreshable*/);
     if (chosen == Device::kRefresh) {
         goto refresh;
     }
@@ -1303,7 +1307,7 @@ refresh:
 
         sideload_start();
         int item = get_menu_selection(false, MT_LIST, s_headers, s_items,
-                                      false, 0, device);
+                                      false, 0, device, true/*refreshable*/);
         if (item == Device::kRefresh) {
             sideload_wait(false);
             status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, true);
