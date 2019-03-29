@@ -258,6 +258,7 @@ class RecoveryUI {
   void onVolumeChanged() {
     volumes_changed_ = 1;
   }
+  bool VolumesChanged();
 
   virtual bool MenuShowing() const = 0;
   virtual bool MenuScrollable() const = 0;
@@ -309,8 +310,6 @@ class RecoveryUI {
   void ProcessKey(int key_code, int updown);
 
   bool IsUsbConnected();
-
-  bool VolumesChanged();
 
   static void* time_key_helper(void* cookie);
   void time_key(int key_code, int count);
