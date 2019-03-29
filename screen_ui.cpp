@@ -591,6 +591,8 @@ void ScreenRecoveryUI::draw_header_locked(int& y) {
 void ScreenRecoveryUI::draw_text_menu_locked(int& y) {
   static constexpr int kMenuIndent = 4;
   int x = kMarginWidth + kMenuIndent;
+  // An item should not be displayed if it's shown height would be less than 75% of its true height
+  static const int kMinItemHeight = MenuItemHeight() * 3 / 4;
 
   draw_statusbar_locked();
   draw_header_locked(y);
@@ -606,7 +608,7 @@ void ScreenRecoveryUI::draw_text_menu_locked(int& y) {
 
   menu_start_y_ = y;
   int i;
-  for (i = menu_show_start; i < (int)menu_items_.size() && y < gr_fb_height(); ++i) {
+  for (i = menu_show_start; i < (int)menu_items_.size() && y + kMinItemHeight < gr_fb_height(); ++i) {
     const ScreenMenuItem& item = menu_items_.at(i);
     if (i == menu_sel) {
       SetColor(MENU_SEL_FG);
