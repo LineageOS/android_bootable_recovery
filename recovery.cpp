@@ -1679,6 +1679,11 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+#ifndef RELEASE_BUILD
+  // Set SELinux to permissive
+  security_setenforce(0);
+#endif
+
   // Clear umask for packages that copy files out to /tmp and then over
   // to /system without properly setting all permissions (eg. gapps).
   umask(0);
