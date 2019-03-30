@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fda446c_57c57d96",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2019-03-30T18:13:01Z",
+      "side": 1,
+      "message": "Use 2 space indentation here and below",
+      "revId": "7445ea5283c59a8d0d5e28b66a75bfe55d000bef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c557750_9cc20fd6",
+        "filename": "screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1386,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2019-03-30T18:13:01Z",
+      "side": 1,
+      "message": "Use 2 space indentation",
+      "revId": "7445ea5283c59a8d0d5e28b66a75bfe55d000bef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
