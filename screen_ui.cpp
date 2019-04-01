@@ -134,6 +134,7 @@ ScreenRecoveryUI::ScreenRecoveryUI()
       text_(nullptr),
       text_col_(0),
       text_row_(0),
+      previous_row_ended(false),
       show_text(false),
       show_text_ever(false),
       menu_is_main_(true),
@@ -883,7 +884,8 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   text_ = Alloc2d(text_rows_, text_cols_ + 1);
   file_viewer_text_ = Alloc2d(text_rows_, text_cols_ + 1);
 
-  text_col_ = text_row_ = 0;
+  text_row_ = text_rows_ - 1; // Printed text grows bottom up
+  text_col_ = 0;
 
   // Set up the locale info.
   SetLocale(locale);
@@ -1030,7 +1032,19 @@ void ScreenRecoveryUI::SetStage(int current, int max) {
   pthread_mutex_unlock(&updateMutex);
 }
 
-void ScreenRecoveryUI::PrintV(const char* fmt, bool copy_to_stdout, va_list ap) {
+void ScreenRecoveryUI::NewLine(){
+  // Shift the rows array up
+  char* p = text_[0];
+  for(size_t i = 0; i < text_rows_ - 1; i++){
+    text_[i] = text_[i+1];
+  }
+  text_[text_rows_ - 1] = p;
+  memset(text_[text_rows_ - 1], 0, text_cols_ + 1);
+
+  text_col_ = 0;
+}
+
+void ScreenRecoveryUI::PrintV(const char* fmt, bool copy_to_stdout, va_list ap, bool update_screen/* = true*/) {
   std::string str;
   android::base::StringAppendV(&str, fmt, ap);
 
@@ -1040,15 +1054,29 @@ void ScreenRecoveryUI::PrintV(const char* fmt, bool copy_to_stdout, va_list ap) 
 
   pthread_mutex_lock(&updateMutex);
   if (text_rows_ > 0 && text_cols_ > 0) {
-    for (const char* ptr = str.c_str(); *ptr != '\0'; ++ptr) {
-      if (*ptr == '\n' || text_col_ >= text_cols_) {
-        text_[text_row_][text_col_] = '\0';
-        text_col_ = 0;
-        text_row_ = (text_row_ + 1) % text_rows_;
-      }
-      if (*ptr != '\n') text_[text_row_][text_col_++] = *ptr;
+    if(previous_row_ended){
+      NewLine();
     }
-    text_[text_row_][text_col_] = '\0';
+    previous_row_ended = false;
+
+    size_t row = text_rows_ - 1;
+    for (const char* ptr = str.c_str(); *ptr != '\0'; ++ptr) {
+      if (*ptr == '\n' && *(ptr + 1) == '\0') {
+        // Scroll on the next print
+        text_[row][text_col_] = '\0';
+        previous_row_ended = true;
+      } else if ((*ptr == '\n' && *(ptr + 1) != '\0' ) || text_col_ >= text_cols_) {
+        // We need to keep printing, scroll now
+        text_[row][text_col_] = '\0';
+        NewLine();
+      }
+      if (*ptr != '\n') text_[row][text_col_++] = *ptr;
+    }
+    text_[row][text_col_] = '\0';
+
+    if (show_text && update_screen) {
+      update_screen_locked();
+    }
   }
   pthread_mutex_unlock(&updateMutex);
 }
@@ -1057,6 +1085,13 @@ void ScreenRecoveryUI::Print(const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   PrintV(fmt, true, ap);
+  va_end(ap);
+}
+
+void ScreenRecoveryUI::FastPrint(const char* fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  PrintV(fmt, true, ap, false);
   va_end(ap);
 }
 
