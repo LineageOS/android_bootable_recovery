@@ -50,6 +50,12 @@ class StubRecoveryUI : public RecoveryUI {
     vprintf(fmt, ap);
     va_end(ap);
   }
+  void FastPrint(const char* fmt, ...) override {
+    va_list ap;
+    va_start(ap, fmt);
+    vprintf(fmt, ap);
+    va_end(ap);
+  };
   void PrintOnScreenOnly(const char* /* fmt */, ...) override {}
   int ShowFile(const char* /* filename */) override { return -1; }
   void Redraw() override {}

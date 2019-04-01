@@ -148,6 +148,7 @@ class RecoveryUI {
   // Writes a message to the on-screen log (shown if the user has toggled on the text display).
   // Print() will also dump the message to stdout / log file, while PrintOnScreenOnly() not.
   virtual void Print(const char* fmt, ...) __printflike(2, 3) = 0;
+  virtual void FastPrint(const char* fmt, ...) __printflike(2,3) = 0;
   virtual void PrintOnScreenOnly(const char* fmt, ...) __printflike(2, 3) = 0;
 
   virtual int ShowFile(const char* filename) = 0;
