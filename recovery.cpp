@@ -1240,7 +1240,7 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
     while (path == "@refresh");
 
     if (path.empty()) {
-        ui->Print("\n-- No package file selected.\n");
+        ui->FastPrint("\n-- No package file selected.\n");
         VolumeManager::Instance()->volumeUnmount(vi.mId);
         return INSTALL_NONE;
     }

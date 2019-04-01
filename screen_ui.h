@@ -93,6 +93,7 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   // printing messages
   void Print(const char* fmt, ...) override __printflike(2, 3);
+  void FastPrint(const char* fmt, ...) override __printflike(2, 3);
   void PrintOnScreenOnly(const char* fmt, ...) override __printflike(2, 3);
   int ShowFile(const char* filename) override;
 
@@ -153,7 +154,8 @@ class ScreenRecoveryUI : public RecoveryUI {
   void ProgressThreadLoop();
 
   virtual int ShowFile(FILE*);
-  virtual void PrintV(const char*, bool, va_list);
+  virtual void PrintV(const char*, bool, va_list, bool = true);
+  void NewLine();
   void PutChar(char);
   void ClearText();
 
@@ -228,6 +230,7 @@ class ScreenRecoveryUI : public RecoveryUI {
   char** text_;
   size_t text_col_, text_row_;
 
+  bool previous_row_ended;
   bool show_text;
   bool show_text_ever;  // has show_text ever been true?
 
