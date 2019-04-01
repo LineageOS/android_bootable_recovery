@@ -90,6 +90,7 @@ class ScreenRecoveryUI : public RecoveryUI {
   void ShowText(bool visible) override;
   bool IsTextVisible() override;
   bool WasTextEverVisible() override;
+  void UpdateScreenOnPrint(bool update) override { update_screen_on_print = update; }
 
   // printing messages
   void Print(const char* fmt, ...) override __printflike(2, 3);
@@ -154,6 +155,7 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   virtual int ShowFile(FILE*);
   virtual void PrintV(const char*, bool, va_list);
+  void NewLine();
   void PutChar(char);
   void ClearText();
 
@@ -230,6 +232,8 @@ class ScreenRecoveryUI : public RecoveryUI {
 
   bool show_text;
   bool show_text_ever;  // has show_text ever been true?
+  bool previous_row_ended;
+  bool update_screen_on_print;
 
   std::vector<std::string> menu_;
   bool menu_is_main_;
