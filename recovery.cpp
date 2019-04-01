@@ -1240,12 +1240,14 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
 
   VolumeManager::Instance()->volumeUnmount(vi.mId, true);
 
+  ui->UpdateScreenOnPrint(true);
   status = install_package(FUSE_SIDELOAD_HOST_PATHNAME, wipe_cache, TEMPORARY_INSTALL_FILE, false,
                            0 /*retry_count*/, true /*verify*/);
   if (status == INSTALL_UNVERIFIED && ask_to_continue_unverified_install(device)) {
     status = install_package(FUSE_SIDELOAD_HOST_PATHNAME, wipe_cache, TEMPORARY_INSTALL_FILE, false,
                              0 /*retry_count*/, false /*verify*/);
   }
+  ui->UpdateScreenOnPrint(false);
 
   finish_sdcard_fuse(token);
   return status;
@@ -1290,10 +1292,12 @@ refresh:
                                   true /*refreshable*/);
     if (item == Device::kRefresh) {
       sideload_wait(false);
+      ui->UpdateScreenOnPrint(true);
       status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, true);
       if (status == INSTALL_UNVERIFIED && ask_to_continue_unverified_install(device)) {
         status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, false);
       }
+      ui->UpdateScreenOnPrint(false);
     } else {
       sideload_wait(true);
       status = INSTALL_NONE;

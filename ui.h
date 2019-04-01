@@ -157,6 +157,8 @@ class RecoveryUI {
 
   virtual bool WasTextEverVisible() = 0;
 
+  virtual void UpdateScreenOnPrint(bool update) = 0;
+
   // Writes a message to the on-screen log (shown if the user has toggled on the text display).
   // Print() will also dump the message to stdout / log file, while PrintOnScreenOnly() not.
   virtual void Print(const char* fmt, ...) __printflike(2, 3) = 0;
