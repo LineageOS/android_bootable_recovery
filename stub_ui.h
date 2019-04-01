@@ -43,6 +43,7 @@ class StubRecoveryUI : public RecoveryUI {
   bool WasTextEverVisible() override {
     return false;
   }
+  void UpdateScreenOnPrint(bool /* update */) override{};
 
   // printing messages
   void Print(const char* fmt, ...) override {
