@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#include "device.h"
-#include "screen_ui.h"
+#pragma once
 
-Device* make_device() {
-  return new Device(new ScreenRecoveryUI);
-}
+#include <recovery_ui/ui.h>
+
+int apply_from_adb(bool* wipe_cache, RecoveryUI* ui);

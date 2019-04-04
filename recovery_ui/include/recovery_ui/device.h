@@ -68,7 +68,7 @@ class Device {
 
   // Called when recovery starts up (after the UI has been obtained and initialized and after the
   // arguments have been parsed, but before anything else).
-  virtual void StartRecovery() {};
+  virtual void StartRecovery() {}
 
   // Called from the main thread when recovery is at the main menu and waiting for input, and a key
   // is pressed. (Note that "at" the main menu does not necessarily mean the menu is visible;
@@ -93,8 +93,8 @@ class Device {
 
   // Performs a recovery action selected from the menu. 'menu_position' will be the index of the
   // selected menu item, or a non-negative value returned from HandleMenuKey(). The menu will be
-  // hidden when this is called; implementations can call ui_print() to print information to the
-  // screen. If the menu position is one of the builtin actions, you can just return the
+  // hidden when this is called; implementations can call GetUI()->Print() to print information to
+  // the screen. If the menu position is one of the builtin actions, you can just return the
   // corresponding enum value. If it is an action specific to your device, you actually perform it
   // here and return NO_ACTION.
   virtual BuiltinAction InvokeMenuItem(size_t menu_position);
