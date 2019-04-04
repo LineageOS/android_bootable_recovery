@@ -34,6 +34,24 @@
       "revId": "5c7236de10520bf0d8875de6bdd3c327244a855a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce2fe41d_e1955c6b",
+        "filename": "volume_manager/VolumeManager.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-04-04T21:18:36Z",
+      "side": 1,
+      "message": "Yep, it moved it to the same line because it\u0027s not wrapped in curly brackets",
+      "parentUuid": "baa5d7b1_723d5aae",
+      "revId": "5c7236de10520bf0d8875de6bdd3c327244a855a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
