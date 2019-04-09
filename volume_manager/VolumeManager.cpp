@@ -125,7 +125,7 @@ static int process_config(VolumeManager* vm, fstab_rec** data_recp) {
             if (!*data_recp && !strcmp(fstab->recs[i].mount_point, "/data")) {
                 char* detected_fs_type =
                     blkid_get_tag_value(nullptr, "TYPE", fstab->recs[i].blk_device);
-                if (!strcmp(detected_fs_type, fstab->recs[i].fs_type)) {
+                if (!detected_fs_type || !strcmp(detected_fs_type, fstab->recs[i].fs_type)) {
                     *data_recp = &fstab->recs[i];
                 }
             }
