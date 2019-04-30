@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,14 @@
 
 #pragma once
 
-#include <recovery_ui/device.h>
+#include <string>
+#include <vector>
 
-// Applies a package via `adb sideload` or `adb rescue`. Returns the install result (in `enum
-// InstallResult`). When a reboot has been requested, INSTALL_REBOOT will be the return value, with
-// the reboot target set in reboot_action.
-int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action);
+#include "install/package.h"
+#include "recovery_ui/device.h"
+
+// Wipes the current A/B device, with a secure wipe of all the partitions in RECOVERY_WIPE.
+bool WipeAbDevice(Device* device, size_t wipe_package_size);
+
+// Reads the "recovery.wipe" entry in the zip archive returns a list of partitions to wipe.
+std::vector<std::string> GetWipePartitionList(Package* wipe_package);
