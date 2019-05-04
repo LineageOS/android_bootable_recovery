@@ -164,7 +164,11 @@ bool write_bootloader_message(const bootloader_message& boot, std::string* err) 
 
 bool clear_bootloader_message(std::string* err) {
   bootloader_message boot = {};
-  return write_bootloader_message(boot, err);
+  std::string misc_blk_device = get_misc_blk_device(err);
+  if (misc_blk_device.empty()) {
+    return false;
+  }
+  return write_misc_partition(&boot, sizeof(boot), misc_blk_device, 0 /* offset */, err);
 }
 
 bool write_bootloader_message(const std::vector<std::string>& options, std::string* err) {
