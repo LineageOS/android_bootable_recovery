@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "53acafc2_06fb9750",
+        "filename": "Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2019-05-12T15:31:47Z",
+      "side": 1,
+      "message": "Just a minor thing, but I don\u0027t see what is being forced. Perhaps name this something like TARGET_RECOVERY_UI_BLANK_UNBLANK_ON_START?",
+      "revId": "8eb03b4c007f6da0aa537d2a5104e3a2b1510ca9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
