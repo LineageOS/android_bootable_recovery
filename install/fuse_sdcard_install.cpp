@@ -191,10 +191,10 @@ int ApplyFromSdcard(Device* device, RecoveryUI* ui,
       }
     }
 
-    result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/,
+    result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, true, 0 /*retry_count*/,
                              true /* verify */, ui);
     if (result == INSTALL_UNVERIFIED && ask_to_continue_unverified_fn(device)) {
-      result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0 /*retry_count*/,
+      result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, true, 0 /*retry_count*/,
                                false /* verify */, ui);
     }
     break;
