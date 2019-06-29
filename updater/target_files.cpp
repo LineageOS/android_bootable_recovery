@@ -132,6 +132,11 @@ bool TargetFile::ReadEntryToString(const std::string_view name, std::string* con
     return false;
   }
 
+  if (entry.uncompressed_length == 0) {
+    content->clear();
+    return true;
+  }
+
   content->resize(entry.uncompressed_length);
   if (auto extract_err = ExtractToMemory(
           handle_, &entry, reinterpret_cast<uint8_t*>(&content->at(0)), entry.uncompressed_length);
@@ -193,10 +198,10 @@ bool TargetFile::GetBuildProps(std::map<std::string, std::string, std::less<>>* 
     "SYSTEM/build.prop",
     "VENDOR/build.prop",
     "PRODUCT/build.prop",
-    "PRODUCT_SERVICES/build.prop",
+    "SYSTEM_EXT/build.prop",
     "SYSTEM/vendor/build.prop",
     "SYSTEM/product/build.prop",
-    "SYSTEM/product_services/build.prop",
+    "SYSTEM/ext/build.prop",
     "ODM/build.prop",  // legacy
     "ODM/etc/build.prop",
     "VENDOR/odm/build.prop",  // legacy
