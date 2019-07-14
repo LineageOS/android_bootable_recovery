@@ -293,8 +293,8 @@ status_t Disk::readPartitions() {
 
     // Parse partition table
     sgdisk_partition_table ptbl;
-    std::vector<sgdisk_partition> partitions;
-    int res = sgdisk_read(mDevPath.c_str(), ptbl, partitions);
+    std::vector<sgdisk_partition*>* partitions = new std::vector<sgdisk_partition*>;
+    int res = sgdisk_read(mDevPath.c_str(), ptbl, *partitions);
     if (res != 0) {
         LOG(WARNING) << "sgdisk failed to scan " << mDevPath;
         VolumeManager::Instance()->notifyEvent(ResponseCode::DiskScanned);
@@ -314,16 +314,16 @@ status_t Disk::readPartitions() {
             table = Table::kUnknown;
     }
 
-    foundParts = partitions.size() > 0;
-    for (const auto& part : partitions) {
-        if (part.num <= 0 || part.num > maxMinors) {
-            LOG(WARNING) << mId << " is ignoring partition " << part.num
+    foundParts = partitions->size() > 0;
+    for (const sgdisk_partition* part : *partitions) {
+        if (part->num <= 0 || part->num > maxMinors) {
+            LOG(WARNING) << mId << " is ignoring partition " << part->num
                          << " beyond max supported devices";
             continue;
         }
-        dev_t partDevice = makedev(major(mDevice), minor(mDevice) + part.num);
+        dev_t partDevice = makedev(major(mDevice), minor(mDevice) + part->num);
         if (table == Table::kMbr) {
-            switch (strtol(part.type.c_str(), nullptr, 16)) {
+            switch (strtol(part->type.c_str(), nullptr, 16)) {
                 case 0x06:  // FAT16
                 case 0x07:  // NTFS/exFAT
                 case 0x0b:  // W95 FAT32 (LBA)
@@ -334,8 +334,8 @@ status_t Disk::readPartitions() {
                     break;
             }
         } else if (table == Table::kGpt) {
-            if (!strcasecmp(part.guid.c_str(), kGptBasicData) ||
-                !strcasecmp(part.guid.c_str(), kGptLinuxFilesystem)) {
+            if (!strcasecmp(part->guid.c_str(), kGptBasicData) ||
+                !strcasecmp(part->guid.c_str(), kGptLinuxFilesystem)) {
                 createPublicVolume(partDevice);
             }
         }
