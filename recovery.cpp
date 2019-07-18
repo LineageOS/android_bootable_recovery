@@ -898,6 +898,7 @@ static bool yes_no(Device* device, const char* question1, const char* question2)
 
 static bool ask_to_continue_unverified_install(Device* device) {
 #ifdef RELEASE_BUILD
+  (void) device; // silence unused parameter warning
   return false;
 #else
   ui->SetProgressType(RecoveryUI::EMPTY);
