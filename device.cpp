@@ -150,12 +150,16 @@ int Device::HandleMenuKey(int key, bool visible) {
     case KEY_DOWN:
     case KEY_VOLUMEDOWN:
     case KEY_MENU:
+    case BTN_X:
+    case BTN_DPAD_DOWN:
       return kHighlightDown;
 
     case KEY_LEFTSHIFT:
     case KEY_UP:
     case KEY_VOLUMEUP:
     case KEY_SEARCH:
+    case BTN_Y:
+    case BTN_DPAD_UP:
       return kHighlightUp;
 
     case KEY_SCROLLUP:
@@ -167,6 +171,8 @@ int Device::HandleMenuKey(int key, bool visible) {
     case KEY_POWER:
     case BTN_MOUSE:
     case KEY_SEND:
+    case BTN_A:
+    case BTN_START:
       return kInvokeItem;
 
     case KEY_HOME:

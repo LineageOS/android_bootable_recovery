@@ -417,12 +417,15 @@ void ScreenRecoveryUI::CheckBackgroundTextImages(const std::string& saved_locale
     if (evt.type() != RecoveryUI::EVENT_TYPE_KEY) {
       break;
     }
-    if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER) {
+    if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER || evt.key() == BTN_A ||
+        evt.key() == BTN_START) {
       break;
-    } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
+    } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP || evt.key() == BTN_Y ||
+               evt.key() == BTN_DPAD_UP) {
       selected = (selected == 0) ? locales_entries.size() - 1 : selected - 1;
       SelectAndShowBackgroundText(locales_entries, selected);
-    } else if (evt.key() == KEY_DOWN || evt.key() == KEY_VOLUMEDOWN) {
+    } else if (evt.key() == KEY_DOWN || evt.key() == KEY_VOLUMEDOWN || evt.key() == BTN_X ||
+               evt.key() == BTN_DPAD_DOWN) {
       selected = (selected == locales_entries.size() - 1) ? 0 : selected + 1;
       SelectAndShowBackgroundText(locales_entries, selected);
     }
@@ -1141,9 +1144,11 @@ int ScreenRecoveryUI::ShowFile(FILE* fp) {
           continue;
         }
         if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER || evt.key() == KEY_BACKSPACE ||
-            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE) {
+            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE ||
+            evt.key() == BTN_A || evt.key() == BTN_START) {
           return evt.key();
-        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
+        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP || evt.key() == BTN_Y ||
+                   evt.key() == BTN_DPAD_UP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {

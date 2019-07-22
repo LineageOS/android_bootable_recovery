@@ -141,9 +141,11 @@ void RecoveryUI::OnTouchDeviceDetected(int fd) {
 void RecoveryUI::OnKeyDetected(int key_code) {
   if (key_code == KEY_POWER) {
     has_power_key = true;
-  } else if (key_code == KEY_DOWN || key_code == KEY_VOLUMEDOWN) {
+  } else if (key_code == KEY_DOWN || key_code == KEY_VOLUMEDOWN || key_code == BTN_X ||
+             key_code == BTN_DPAD_DOWN) {
     has_down_key = true;
-  } else if (key_code == KEY_UP || key_code == KEY_VOLUMEUP) {
+  } else if (key_code == KEY_UP || key_code == KEY_VOLUMEUP || key_code == BTN_Y ||
+             key_code == BTN_DPAD_UP) {
     has_up_key = true;
   } else if (key_code == ABS_MT_POSITION_X || key_code == ABS_MT_POSITION_Y) {
     has_touch_screen = true;
@@ -667,7 +669,8 @@ RecoveryUI::KeyAction RecoveryUI::CheckKey(int key, bool is_long_press) {
 
   // If we have power and volume up keys, that chord is the signal to toggle the text display.
   if (HasThreeButtons() || (HasPowerKey() && HasTouchScreen() && touch_screen_allowed_)) {
-    if ((key == KEY_VOLUMEUP || key == KEY_UP) && IsKeyPressed(KEY_POWER)) {
+    if ((key == KEY_VOLUMEUP || key == KEY_UP || key == BTN_Y || key == BTN_DPAD_UP) &&
+        (IsKeyPressed(KEY_POWER) || IsKeyPressed(BTN_A) || IsKeyPressed(BTN_START))) {
       return TOGGLE;
     }
   } else {
