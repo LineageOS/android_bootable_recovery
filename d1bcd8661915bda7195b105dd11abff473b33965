@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d61d8b6_afce5750",
+        "filename": "volume_manager/Disk.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2019-07-23T19:43:41Z",
+      "side": 1,
+      "message": "Partitions are never deleted, nor are the elements.",
+      "revId": "d1bcd8661915bda7195b105dd11abff473b33965",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
