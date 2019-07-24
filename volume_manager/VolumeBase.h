@@ -82,6 +82,7 @@ class VolumeBase {
     int getMountFlags() const { return mMountFlags; }
     State getState() const { return mState; }
     const std::string& getPath() const { return mPath; }
+    bool isMountable() const { return mMountable; }
 
     status_t setDiskId(const std::string& diskId);
     status_t setPartGuid(const std::string& partGuid);
@@ -126,6 +127,9 @@ class VolumeBase {
     std::string mPath;
     /* Flag indicating that volume should emit no events */
     bool mSilent;
+
+    bool mMountable;
+    virtual bool detectMountable();
 
     void setState(State state);
 
