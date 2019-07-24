@@ -32,6 +32,7 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 using android::base::StringPrintf;
 
@@ -39,6 +40,7 @@ namespace android {
 namespace volmgr {
 
 static const std::string kStagingPath = "/mnt/staging/emulated";
+static const std::string kFbeKeyVersion = kStagingPath + "/unencrypted/key/version";
 
 EmulatedVolume::EmulatedVolume(FstabEntry* rec, const std::string& subdir)
     : VolumeBase(Type::kEmulated),
@@ -88,6 +90,16 @@ status_t EmulatedVolume::doUnmount(bool detach /* = false */) {
     rmdir(kStagingPath.c_str());
 
     return OK;
+}
+
+bool EmulatedVolume::detectMountable() {
+    bool mountable = false;
+    if (doMount() == OK) {
+        // Check if FBE encrypted
+        mountable = access(kFbeKeyVersion.c_str(), F_OK) != 0;
+        doUnmount();
+    }
+    return mountable;
 }
 
 }  // namespace volmgr
