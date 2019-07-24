@@ -35,7 +35,7 @@ namespace android {
 namespace volmgr {
 
 VolumeBase::VolumeBase(Type type)
-    : mType(type), mMountFlags(0), mCreated(false), mState(State::kUnmounted), mSilent(false) {}
+    : mType(type), mMountFlags(0), mCreated(false), mState(State::kUnmounted), mSilent(false), mMountable(false) {}
 
 VolumeBase::~VolumeBase() {
     CHECK(!mCreated);
@@ -131,6 +131,12 @@ status_t VolumeBase::create() {
         }
     }
     setState(State::kUnmounted);
+
+    if (doMount() == OK) {
+        mMountable = true;
+        doUnmount();
+    }
+
     return res;
 }
 

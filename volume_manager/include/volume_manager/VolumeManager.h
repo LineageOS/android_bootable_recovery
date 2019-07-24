@@ -48,6 +48,7 @@ class VolumeInfo {
     std::string mId;
     std::string mLabel;
     std::string mPath;
+    bool        mMountable;
 };
 
 class VolumeManager {
