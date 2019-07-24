@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "999dfdbd_b57a2604",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1268,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-24T10:43:37Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 1268,
+        "startChar": 50,
+        "endLine": 1268,
+        "endChar": 51
+      },
+      "revId": "83a0f83d1fd860c067cf48243692bd3212ea271c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
