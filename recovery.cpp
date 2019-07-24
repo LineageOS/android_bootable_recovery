@@ -1264,13 +1264,15 @@ refresh:
   std::vector<VolumeInfo> volumes;
   VolumeManager::Instance()->getVolumeInfo(volumes);
 
-  for (auto& vol : volumes) {
-    if (vol.mLabel == "emulated") {
+  for (auto it = volumes.begin(); it < volumes.end();) {
+    if (it->mLabel == "emulated") {
       if (!userdata_mountable || userdata_encrypted) {
+        it = volumes.erase(it);
         continue;
       }
     }
-    items.push_back(MenuItem("Choose from " + vol.mLabel));
+    items.push_back(MenuItem("Choose from " + it->mLabel));
+    it++;
   }
 
   int status = INSTALL_ERROR;
