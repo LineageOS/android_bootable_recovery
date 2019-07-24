@@ -213,8 +213,13 @@ static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* re
     items.clear();
     items.push_back("Apply from ADB");
     VolumeManager::Instance()->getVolumeInfo(volumes);
-    for (auto& vitr : volumes) {
-      items.push_back("Choose from " + vitr.mLabel);
+    for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
+      if (!vol->mMountable) {
+        vol = volumes.erase(vol);
+        continue;
+      }
+      items.push_back("Choose from " + vol->mLabel);
+      ++vol;
     }
 
     int chosen = ui->ShowMenu(
