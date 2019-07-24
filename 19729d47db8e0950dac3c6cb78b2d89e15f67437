@@ -45,6 +45,54 @@
       "revId": "19729d47db8e0950dac3c6cb78b2d89e15f67437",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10c3685f_c83e2bdd",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1268,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-24T14:25:14Z",
+      "side": 1,
+      "message": "The last item is stub apparently, skipped for now",
+      "parentUuid": "6b67ff8c_0147e5b8",
+      "range": {
+        "startLine": 1268,
+        "startChar": 34,
+        "endLine": 1268,
+        "endChar": 35
+      },
+      "revId": "19729d47db8e0950dac3c6cb78b2d89e15f67437",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53927c8b_1fa97577",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1268,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-24T14:25:14Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "44569871_70542224",
+      "range": {
+        "startLine": 1268,
+        "startChar": 7,
+        "endLine": 1268,
+        "endChar": 10
+      },
+      "revId": "19729d47db8e0950dac3c6cb78b2d89e15f67437",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
