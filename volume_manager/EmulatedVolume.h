@@ -55,6 +55,8 @@ class EmulatedVolume : public VolumeBase {
     unsigned long mFlags;
     std::string mFsOptions;
 
+    bool detectMountable() override;
+
     DISALLOW_COPY_AND_ASSIGN(EmulatedVolume);
 };
 

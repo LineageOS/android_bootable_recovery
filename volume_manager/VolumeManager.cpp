@@ -136,7 +136,7 @@ static int process_config(VolumeManager* vm, FstabEntry* data_recp) {
 }
 
 VolumeInfo::VolumeInfo(const VolumeBase* vol)
-    : mId(vol->getId()), mLabel(vol->getPartLabel()), mPath(vol->getPath()) {
+    : mId(vol->getId()), mLabel(vol->getPartLabel()), mPath(vol->getPath()), mMountable(vol->isMountable()) {
     // Empty
 }
 
