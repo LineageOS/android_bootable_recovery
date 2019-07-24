@@ -117,6 +117,30 @@
       "revId": "19729d47db8e0950dac3c6cb78b2d89e15f67437",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25e20d88_b836c12d",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1268,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-24T16:48:31Z",
+      "side": 1,
+      "message": "Seems like !\u003d",
+      "parentUuid": "09801f3f_56c5cfc3",
+      "range": {
+        "startLine": 1268,
+        "startChar": 34,
+        "endLine": 1268,
+        "endChar": 35
+      },
+      "revId": "19729d47db8e0950dac3c6cb78b2d89e15f67437",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
