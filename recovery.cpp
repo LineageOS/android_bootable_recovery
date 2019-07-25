@@ -927,6 +927,11 @@ static bool wipe_data(Device* device) {
     if (success) {
       success &= device->PostWipeData();
     }
+
+    if (success) {
+      userdata_encrypted = false;
+      userdata_mountable = false;
+    }
     ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
     return success;
 }
@@ -1265,14 +1270,15 @@ refresh:
   VolumeManager::Instance()->getVolumeInfo(volumes);
 
   for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
+    if (!vol->mMountable) {
+      vol = volumes.erase(vol);
+      continue;
+    }
     if (vol->mLabel == "emulated") {
       if (!userdata_mountable || userdata_encrypted) {
         vol = volumes.erase(vol);
         continue;
       }
-    } else if (!vol->mMountable) {
-      vol = volumes.erase(vol);
-      continue;
     }
 
     items.push_back(MenuItem("Choose from " + vol->mLabel));
