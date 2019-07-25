@@ -927,6 +927,16 @@ static bool wipe_data(Device* device) {
     if (success) {
       success &= device->PostWipeData();
     }
+
+    if (success) {
+      userdata_encrypted = false;
+      // At this point user data is theoretically mountable,
+      // but we're using vold to mount emulated storage
+      // and it requires /data/media/0 folder to exist,
+      // something that only Android should handle.
+      userdata_mountable = false;
+    }
+
     ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
     return success;
 }
@@ -1265,14 +1275,15 @@ refresh:
   VolumeManager::Instance()->getVolumeInfo(volumes);
 
   for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
+    if (!vol->mMountable) {
+      vol = volumes.erase(vol);
+      continue;
+    }
     if (vol->mLabel == "emulated") {
       if (!userdata_mountable || userdata_encrypted) {
         vol = volumes.erase(vol);
         continue;
       }
-    } else if (!vol->mMountable) {
-      vol = volumes.erase(vol);
-      continue;
     }
 
     items.push_back(MenuItem("Choose from " + vol->mLabel));
