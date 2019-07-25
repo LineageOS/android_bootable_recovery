@@ -927,6 +927,11 @@ static bool wipe_data(Device* device) {
     if (success) {
       success &= device->PostWipeData();
     }
+
+    if (success) {
+      userdata_encrypted = false;
+      userdata_mountable = false;
+    }
     ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
     return success;
 }
@@ -1266,7 +1271,7 @@ refresh:
 
   for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
     if (vol->mLabel == "emulated") {
-      if (!userdata_mountable || userdata_encrypted) {
+      if (!userdata_mountable || userdata_encrypted || !vol->mMountable) {
         vol = volumes.erase(vol);
         continue;
       }
