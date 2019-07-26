@@ -88,6 +88,13 @@ status_t Mount(const std::string& source, const std::string& target,
     return res;
 }
 
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back("/sbin/mkfs.f2fs");
+    args.push_back(source);
+    return ForkExecvp(args);
+}
+
 }  // namespace f2fs
 }  // namespace volmgr
 }  // namespace android

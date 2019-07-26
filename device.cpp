@@ -48,6 +48,7 @@ static const MenuItem WIPE_MENU_ITEMS[] = {
   MenuItem("Wipe cache"),
 #endif
   MenuItem("Wipe system"),
+  MenuItem("Format sdcard"),
 };
 static const MenuItemVector wipe_menu_items_ =
     MenuItemVector(WIPE_MENU_ITEMS, WIPE_MENU_ITEMS + ARRAY_SIZE(WIPE_MENU_ITEMS));
@@ -57,6 +58,7 @@ static const Device::BuiltinAction WIPE_MENU_ACTIONS[] = {
   Device::WIPE_CACHE,
 #endif
   Device::WIPE_SYSTEM,
+  Device::FORMAT_SDCARD,
 };
 static const Device::MenuActionVector wipe_menu_actions_ =
     Device::MenuActionVector(WIPE_MENU_ACTIONS, WIPE_MENU_ACTIONS + ARRAY_SIZE(WIPE_MENU_ACTIONS));

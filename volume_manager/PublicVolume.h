@@ -49,6 +49,7 @@ class PublicVolume : public VolumeBase {
     status_t doDestroy() override;
     status_t doMount() override;
     status_t doUnmount(bool detach = false) override;
+    status_t doFormat(const std::string& fsType) override;
 
     status_t readMetadata();
 

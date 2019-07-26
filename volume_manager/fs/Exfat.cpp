@@ -71,6 +71,13 @@ status_t Mount(const std::string& source, const std::string& target, int ownerUi
     return -1;
 }
 
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back("/sbin/mkfs.exfat");
+    args.push_back(source);
+    return ForkExecvp(args);
+}
+
 }  // namespace exfat
 }  // namespace volmgr
 }  // namespace android
