@@ -1263,6 +1263,14 @@ static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) 
   return status;
 }
 
+void EraseVolumeEntry(std::vector<VolumeInfo>& volumes,
+                      std::function<bool(const VolumeInfo& vol)> filter) {
+  auto it = std::remove_if(volumes.begin(), volumes.end(), filter);
+  if (it != volumes.end()) {
+    volumes.erase(it, volumes.end());
+  }
+}
+
 static int show_apply_update_menu(Device* device, bool* wipe_cache) {
   MenuItemVector items;
   static const char* headers[] = { "Apply update", nullptr };
@@ -1274,20 +1282,14 @@ refresh:
   std::vector<VolumeInfo> volumes;
   VolumeManager::Instance()->getVolumeInfo(volumes);
 
-  for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
-    if (!vol->mMountable) {
-      vol = volumes.erase(vol);
-      continue;
-    }
-    if (vol->mLabel == "emulated") {
-      if (!userdata_mountable || userdata_encrypted) {
-        vol = volumes.erase(vol);
-        continue;
-      }
-    }
+  EraseVolumeEntry(volumes, [](const auto& entry) { return !entry.mMountable; });
 
-    items.push_back(MenuItem("Choose from " + vol->mLabel));
-    ++vol;
+  EraseVolumeEntry(volumes, [&](const auto& entry) {
+    return (!userdata_mountable || userdata_encrypted) && entry.mLabel == "emulated";
+  });
+
+  for (const auto &entry : volumes) {
+    items.push_back(MenuItem("Choose from " + entry.mLabel));
   }
 
   int status = INSTALL_ERROR;
