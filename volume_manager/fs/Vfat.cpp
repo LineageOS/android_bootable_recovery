@@ -160,6 +160,14 @@ status_t Mount(const std::string& source, const std::string& target, bool ro, bo
     return rc;
 }
 
+status_t Format(const std::string& source)
+{
+    std::vector<std::string> args;
+    args.push_back("/sbin/mkfs.vfat");
+    args.push_back(source);
+    return ForkExecvp(args);
+}
+
 }  // namespace vfat
 }  // namespace volmgr
 }  // namespace android

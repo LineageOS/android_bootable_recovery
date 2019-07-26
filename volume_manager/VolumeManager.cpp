@@ -262,6 +262,16 @@ bool VolumeManager::volumeUnmount(const std::string& id, bool detach /* = false 
     return (res == OK);
 }
 
+bool VolumeManager::volumeFormat(const std::string& id, const std::string& fsType) {
+    std::lock_guard<std::mutex> lock(mLock);
+    auto vol = findVolume(id);
+    if (!vol) {
+        return false;
+    }
+    status_t res = vol->format(fsType);
+    return (res == OK);
+}
+
 void VolumeManager::addDiskSource(DiskSource* source) {
     std::lock_guard<std::mutex> lock(mLock);
 

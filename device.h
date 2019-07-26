@@ -65,6 +65,8 @@ class Device {
     WIPE_DATA = 10,
     WIPE_CACHE = 11,
     WIPE_SYSTEM = 12,
+    FORMAT_DATA = 13,
+    FORMAT_SDCARD = 14,
     // Advanced menu
     REBOOT_BOOTLOADER = 20,
     REBOOT_RECOVERY = 21,
