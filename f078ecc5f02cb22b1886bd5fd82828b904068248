@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c4797e7_6d63bef4",
+        "filename": "device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-26T21:19:55Z",
+      "side": 1,
+      "message": "I would prefer to keep only this option",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 40
+      },
+      "revId": "f078ecc5f02cb22b1886bd5fd82828b904068248",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfe974d7_34246e7a",
+        "filename": "device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-07-26T21:19:55Z",
+      "side": 1,
+      "message": "Remove",
+      "revId": "f078ecc5f02cb22b1886bd5fd82828b904068248",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
