@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc839199_7b42c81c",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2019-07-26T21:39:14Z",
+      "side": 1,
+      "message": "Why move this block?",
+      "revId": "6687a237f3c3a2493077596c49e803e364ae7d7c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
