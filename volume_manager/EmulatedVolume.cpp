@@ -19,6 +19,11 @@
 #include <volume_manager/VolumeManager.h>
 #include "ResponseCode.h"
 #include "Utils.h"
+#include "fs/Exfat.h"
+#include "fs/Ext4.h"
+#include "fs/F2fs.h"
+#include "fs/Ntfs.h"
+#include "fs/Vfat.h"
 
 #include <android-base/logging.h>
 #include <android-base/stringprintf.h>
@@ -88,6 +93,28 @@ status_t EmulatedVolume::doUnmount(bool detach /* = false */) {
     rmdir(kStagingPath.c_str());
 
     return OK;
+}
+
+status_t EmulatedVolume::doFormat(const std::string& fsType) {
+    int ret = 0;
+
+    if (fsType == "exfat") {
+      ret = exfat::Format(mDevPath);
+    }
+    else if (fsType == "vfat") {
+      ret = vfat::Format(mDevPath);
+    }
+    else if (fsType == "ext4") {
+      ret = ext4::Format(mDevPath);
+    }
+    else if (fsType == "f2fs") {
+      ret = f2fs::Format(mDevPath);
+    }
+    else if (fsType == "ntfs") {
+      ret = ntfs::Format(mDevPath);
+    }
+
+    return ret;
 }
 
 int EmulatedVolume::createMountPointRecursive(const std::string& path, mode_t mode, uid_t uid,

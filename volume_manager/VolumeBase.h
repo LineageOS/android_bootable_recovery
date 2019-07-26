@@ -66,6 +66,7 @@ class VolumeBase {
     enum class State {
         kUnmounted = 0,
         kChecking,
+        kFormatting,
         kMounted,
         kMountedReadOnly,
         kEjecting,
@@ -94,6 +95,7 @@ class VolumeBase {
     status_t destroy();
     status_t mount();
     status_t unmount(bool detach = false);
+    status_t format(const std::string& fsType);
 
   protected:
     explicit VolumeBase(Type type);
@@ -102,6 +104,7 @@ class VolumeBase {
     virtual status_t doDestroy();
     virtual status_t doMount() = 0;
     virtual status_t doUnmount(bool detach = false) = 0;
+    virtual status_t doFormat(const std::string& fsType) = 0;
 
     status_t setId(const std::string& id);
     status_t setPath(const std::string& path);
