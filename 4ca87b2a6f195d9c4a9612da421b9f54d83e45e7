@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66b88742_1f79501c",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2019-07-26T15:13:29Z",
+      "side": 1,
+      "message": "rename to it?",
+      "range": {
+        "startLine": 1258,
+        "startChar": 7,
+        "endLine": 1258,
+        "endChar": 11
+      },
+      "revId": "4ca87b2a6f195d9c4a9612da421b9f54d83e45e7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "693087e7_0a11c944",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1275,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2019-07-26T15:13:29Z",
+      "side": 1,
+      "message": "you don\u0027t need to capture anything here.",
+      "range": {
+        "startLine": 1275,
+        "startChar": 29,
+        "endLine": 1275,
+        "endChar": 30
+      },
+      "revId": "4ca87b2a6f195d9c4a9612da421b9f54d83e45e7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c53ced8a_58e7b720",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2019-07-26T15:13:29Z",
+      "side": 1,
+      "message": "capture this instead?",
+      "range": {
+        "startLine": 1277,
+        "startChar": 29,
+        "endLine": 1277,
+        "endChar": 30
+      },
+      "revId": "4ca87b2a6f195d9c4a9612da421b9f54d83e45e7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41a5d007_9a136c6b",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2019-07-26T15:13:29Z",
+      "side": 1,
+      "message": "`return (!userdata_mountable || userdata_encrypted) \u0026\u0026 entry.mLabel \u003d\u003d \"emulated\";`?",
+      "range": {
+        "startLine": 1278,
+        "startChar": 27,
+        "endLine": 1278,
+        "endChar": 85
+      },
+      "revId": "4ca87b2a6f195d9c4a9612da421b9f54d83e45e7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
