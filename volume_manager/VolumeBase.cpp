@@ -191,5 +191,13 @@ status_t VolumeBase::unmount(bool detach /* = false */) {
     return res;
 }
 
+status_t VolumeBase::format(const std::string& fsType) {
+    setState(State::kFormatting);
+
+    status_t res = doFormat(fsType);
+    setState(State::kUnmounted);
+    return res;
+}
+
 }  // namespace volmgr
 }  // namespace android
