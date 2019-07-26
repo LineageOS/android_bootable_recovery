@@ -76,6 +76,13 @@ status_t Mount(const std::string& source, const std::string& target, bool ro, bo
     return ForkExecvp(cmd);
 }
 
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back("/sbin/mkfs.ntfs");
+    args.push_back(source);
+    return ForkExecvp(args);
+}
+
 }  // namespace ntfs
 }  // namespace volmgr
 }  // namespace android
