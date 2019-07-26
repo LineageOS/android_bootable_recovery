@@ -39,6 +39,7 @@ namespace volmgr {
 namespace exfat {
 
 static const char* kFsckPath = "/sbin/fsck.exfat";
+static const char* kMkfsPath = "/sbin/mkfs.exfat";
 
 bool IsSupported() {
     return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("exfat");
@@ -69,6 +70,13 @@ status_t Mount(const std::string& source, const std::string& target, int ownerUi
     }
 
     return -1;
+}
+
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back(kMkfsPath);
+    args.push_back(source);
+    return ForkExecvp(args);
 }
 
 }  // namespace exfat

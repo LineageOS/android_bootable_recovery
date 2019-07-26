@@ -147,5 +147,31 @@ status_t PublicVolume::doUnmount(bool detach /* = false */) {
     return OK;
 }
 
+status_t PublicVolume::doFormat(const std::string& fsType) {
+    int ret = 0;
+
+    if (fsType == "exfat") {
+        ret = exfat::Format(mDevPath);
+    }
+    else if (fsType == "ext4") {
+        ret = ext4::Format(mDevPath);
+    }
+    else if (fsType == "f2fs") {
+        ret = f2fs::Format(mDevPath);
+    }
+    else if (fsType == "ntfs") {
+        ret = ntfs::Format(mDevPath);
+    }
+    else if (fsType == "vfat") {
+        ret = vfat::Format(mDevPath);
+    }
+
+    if (ret == OK) {
+        mFsType = fsType;
+    }
+
+    return ret;
+}
+
 }  // namespace volmgr
 }  // namespace android

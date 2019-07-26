@@ -44,6 +44,7 @@ int mkfs_f2fs_main(int argc, char** argv);
 int fsck_f2fs_main(int argc, char** argv);
 
 int fsck_msdos_main(int argc, char** argv);
+int newfs_msdos_main(int argc, char** argv);
 
 int mkfs_exfat_main(int argc, char** argv);
 int fsck_exfat_main(int argc, char** argv);
