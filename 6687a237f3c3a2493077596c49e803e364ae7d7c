@@ -16,6 +16,24 @@
       "revId": "6687a237f3c3a2493077596c49e803e364ae7d7c",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "096b5c7d_47e070f1",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-26T21:54:29Z",
+      "side": 1,
+      "message": "Look at patchset 1 to look at what actually changes\nLatest patchset is just rewritten to avoid duplication",
+      "parentUuid": "dc839199_7b42c81c",
+      "revId": "6687a237f3c3a2493077596c49e803e364ae7d7c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
