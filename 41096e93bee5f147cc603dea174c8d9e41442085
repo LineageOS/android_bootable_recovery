@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e5363903_ef498e70",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 933,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-26T14:18:58Z",
+      "side": 1,
+      "message": "volmgr\u0027s doMount() fails because media/0 does not exist.\nSetting mountable\u003dfalse is the whole point of this patch",
+      "parentUuid": "b2225b3c_b59f6afd",
+      "range": {
+        "startLine": 933,
+        "startChar": 27,
+        "endLine": 933,
+        "endChar": 32
+      },
+      "revId": "41096e93bee5f147cc603dea174c8d9e41442085",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "29c10aec_43282818",
         "filename": "recovery.cpp",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-07-26T14:13:14Z",
       "side": 1,
       "message": "if (!vol-\u003emMountable) {\n      vol \u003d volumes.erase(vol);\n      continue;\n    }\n    if (vol-\u003emLabel \u003d\u003d \"emulated\") {\n      if (!userdata_mountable || userdata_encrypted) {\n        vol \u003d volumes.erase(vol);\n        continue;\n      }\n    }",
+      "range": {
+        "startLine": 1273,
+        "startChar": 0,
+        "endLine": 1281,
+        "endChar": 5
+      },
+      "revId": "41096e93bee5f147cc603dea174c8d9e41442085",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72088d42_5340e93b",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1281,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-26T14:18:58Z",
+      "side": 1,
+      "message": "That would call `vol \u003d volumes.erase(vol)` twice for emulated",
+      "parentUuid": "29c10aec_43282818",
       "range": {
         "startLine": 1273,
         "startChar": 0,
