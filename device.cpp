@@ -105,7 +105,7 @@ Device::Device(RecoveryUI* ui) : ui_(ui) {
   GoHome();
 }
 
-Device::BuiltinAction Device::InvokeMenuItem(int menu_position) {
+Device::BuiltinAction Device::InvokeMenuItem(int menu_position, bool show_sdcard) {
   if (menu_position < 0) {
     if (menu_position == Device::kGoBack || menu_position == Device::kGoHome) {
       // Assume only two menu levels, so back is equivalent to home.
@@ -120,6 +120,10 @@ Device::BuiltinAction Device::InvokeMenuItem(int menu_position) {
       menu_type_ = WIPE_MENU_TYPE;
       menu_items_ = wipe_menu_items_;
       menu_actions_ = wipe_menu_actions_;
+      if (show_sdcard) {
+        menu_items_.push_back(MenuItem("Format sdcard"));
+        menu_actions_.push_back(Device::FORMAT_SDCARD);
+      }
       break;
     case ADVANCED_MENU:
       menu_is_main_ = false;

@@ -65,6 +65,7 @@ class Device {
     WIPE_DATA = 10,
     WIPE_CACHE = 11,
     WIPE_SYSTEM = 12,
+    FORMAT_SDCARD = 13,
     // Advanced menu
     REBOOT_BOOTLOADER = 20,
     REBOOT_RECOVERY = 21,
@@ -96,7 +97,7 @@ class Device {
   // screen. If the menu position is one of the builtin actions, you can just return the
   // corresponding enum value. If it is an action specific to your device, you actually perform it
   // here and return NO_ACTION.
-  virtual BuiltinAction InvokeMenuItem(int menu_position);
+  virtual BuiltinAction InvokeMenuItem(int menu_position, bool show_sdcard);
 
   virtual void GoHome();
 

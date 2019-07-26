@@ -32,6 +32,7 @@ status_t Check(const std::string& source, const std::string& target, bool truste
 status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
                bool executable, const std::string& opts = "", bool trusted = false,
                bool portable = false);
+status_t Format(const std::string& source);
 
 }  // namespace ext4
 }  // namespace volmgr

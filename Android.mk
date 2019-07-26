@@ -245,6 +245,9 @@ LOCAL_WHOLE_STATIC_LIBRARIES += \
     libexfat_fsck
 
 LOCAL_WHOLE_STATIC_LIBRARIES += \
+    libnewfs_msdos
+
+LOCAL_WHOLE_STATIC_LIBRARIES += \
     libfuse-lite \
     libntfs-3g \
     libntfs_utils \
@@ -273,6 +276,7 @@ FILESYSTEM_TOOLS := \
     fsck_msdos \
     fsck.exfat mkfs.exfat \
     fsck.ntfs mkfs.ntfs mount.ntfs \
+    newfs_msdos \
     sgdisk
 
 LOCAL_HAL_STATIC_LIBRARIES := libhealthd
