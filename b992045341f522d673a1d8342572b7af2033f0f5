@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "daf4ba7a_d79636c4",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-26T23:43:08Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 992,
+        "startChar": 0,
+        "endLine": 1004,
+        "endChar": 1
+      },
+      "revId": "b992045341f522d673a1d8342572b7af2033f0f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1aca3d4_06e0883b",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1016,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-26T23:43:08Z",
+      "side": 1,
+      "message": "I was thinking maybe this whole VolumeInfo thing can go, and we directly expose VolumeBase instances?\nWhat was the reason you chose to implement a VolumeInfo class in the first place?",
+      "range": {
+        "startLine": 1012,
+        "startChar": 0,
+        "endLine": 1016,
+        "endChar": 63
+      },
+      "revId": "b992045341f522d673a1d8342572b7af2033f0f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
