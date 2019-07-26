@@ -34,6 +34,7 @@ namespace ntfs {
 
 static const char* kFsckPath = "/sbin/fsck.ntfs";
 static const char* kMountPath = "/sbin/mount.ntfs";
+static const char* kMkfsPath = "/sbin/mkfs.ntfs";
 
 bool IsSupported() {
     return access(kFsckPath, X_OK) == 0 && access(kMountPath, X_OK) == 0 &&
@@ -74,6 +75,13 @@ status_t Mount(const std::string& source, const std::string& target, bool ro, bo
     cmd.push_back(c_target);
 
     return ForkExecvp(cmd);
+}
+
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back(kMkfsPath);
+    args.push_back(source);
+    return ForkExecvp(args);
 }
 
 }  // namespace ntfs

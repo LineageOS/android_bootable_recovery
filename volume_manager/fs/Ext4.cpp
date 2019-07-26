@@ -53,6 +53,7 @@ namespace volmgr {
 namespace ext4 {
 
 static const char* kFsckPath = "/sbin/e2fsck";
+static const char* kMkfsPath = "/sbin/mkfs.ext4";
 
 bool IsSupported() {
     return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("ext4");
@@ -158,6 +159,13 @@ status_t Mount(const std::string& source, const std::string& target, bool ro, bo
     }
 
     return rc;
+}
+
+status_t Format(const std::string& source) {
+    std::vector<std::string> args;
+    args.push_back(kMkfsPath);
+    args.push_back(source);
+    return ForkExecvp(args);
 }
 
 }  // namespace ext4

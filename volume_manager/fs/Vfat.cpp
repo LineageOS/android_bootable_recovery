@@ -53,6 +53,7 @@ namespace volmgr {
 namespace vfat {
 
 static const char* kFsckPath = "/sbin/fsck_msdos";
+static const char* kMkfsPath = "/sbin/newfs_msdos";
 
 bool IsSupported() {
     return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("vfat");
@@ -158,6 +159,15 @@ status_t Mount(const std::string& source, const std::string& target, bool ro, bo
     }
 
     return rc;
+}
+
+status_t Format(const std::string& source)
+{
+    std::vector<std::string> args;
+    SLOGI("vfat::Format: formatting %s", source.c_str());
+    args.push_back(kMkfsPath);
+    args.push_back(source);
+    return ForkExecvp(args);
 }
 
 }  // namespace vfat

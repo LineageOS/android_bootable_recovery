@@ -115,6 +115,7 @@ static const struct recovery_cmd recovery_cmds[] = {
   { "fsck.f2fs", fsck_f2fs_main },
 
   { "fsck_msdos", fsck_msdos_main },
+  { "newfs_msdos", newfs_msdos_main },
 
   { "mkfs.exfat", mkfs_exfat_main },
   { "fsck.exfat", fsck_exfat_main },
@@ -999,6 +1000,39 @@ static bool wipe_system() {
   return success;
 }
 
+static bool ask_to_format_sdcard(Device* device) {
+  return yes_no(device, "Format sdcard?", "  THIS CAN NOT BE UNDONE!");
+}
+
+static bool sdcard_is_present() {
+  std::vector<VolumeInfo> volumes;
+  VolumeManager::Instance()->getVolumeInfo(volumes);
+  for (const auto& vol : volumes) {
+    if (vol.mLabel.substr(0, 6) == "sdcard") {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Return true on success.
+static bool format_sdcard() {
+  ui->Print("\n-- Formatting sdcard...\n");
+  std::vector<VolumeInfo> volumes;
+  VolumeManager::Instance()->getVolumeInfo(volumes);
+  bool success = false;
+  for (const auto& vol : volumes) {
+    if (vol.mLabel.substr(0, 6) == "sdcard") {
+      success = VolumeManager::Instance()->volumeFormat(vol.mId, "vfat");
+    }
+  }
+
+  modified_flash = true;
+
+  ui->Print("Sdcard format %s.\n", success ? "complete" : "failed");
+  return success;
+}
+
 // Secure-wipe a given partition. It uses BLKSECDISCARD, if supported. Otherwise, it goes with
 // BLKDISCARD (if device supports BLKDISCARDZEROES) or BLKZEROOUT.
 static bool secure_wipe_partition(const std::string& partition) {
@@ -1345,8 +1379,13 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     }
     ui->SetProgressType(RecoveryUI::EMPTY);
 
+    Device::MenuItemVector items = device->GetMenuItems();
+    if (sdcard_is_present()) {
+        items.push_back(MenuItem("Format sdcard"));
+    }
+
     int chosen_item = get_menu_selection(device->IsMainMenu(), device->GetMenuType(), nullptr,
-                                         device->GetMenuItems(), false, 0, device);
+                                         items, false, 0, device);
     if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome) {
       device->GoHome();
       continue;
@@ -1396,6 +1435,17 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
           }
         } else {
           wipe_system();
+          return Device::NO_ACTION;
+        }
+        break;
+
+      case Device::FORMAT_SDCARD:
+        if (ui->IsTextVisible()) {
+          if (ask_to_format_sdcard(device)) {
+            format_sdcard();
+          }
+        } else {
+          format_sdcard();
           return Device::NO_ACTION;
         }
         break;
