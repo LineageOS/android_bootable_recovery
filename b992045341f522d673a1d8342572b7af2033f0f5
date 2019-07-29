@@ -45,6 +45,30 @@
       "revId": "b992045341f522d673a1d8342572b7af2033f0f5",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de023c79_609401dd",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 1016,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2019-07-29T15:15:10Z",
+      "side": 1,
+      "message": "Because that is how vold works.  It uses a socket for communication so the underlying classes are not accessible to clients.  I guess we could change if there is a compelling reason.  But I don\u0027t really see one right now.",
+      "parentUuid": "b1aca3d4_06e0883b",
+      "range": {
+        "startLine": 1012,
+        "startChar": 0,
+        "endLine": 1016,
+        "endChar": 63
+      },
+      "revId": "b992045341f522d673a1d8342572b7af2033f0f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
