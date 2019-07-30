@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f0edc65_c1509b7f",
+        "filename": "recovery.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1023,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-30T20:23:59Z",
+      "side": 1,
+      "message": "bool success \u003d true;",
+      "revId": "53cab5b3809396691db4fb2294133251d92c9247",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18d07f62_d8e80ea3",
+        "filename": "recovery.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-07-30T20:23:59Z",
+      "side": 1,
+      "message": "success \u0026\u003d ...\nBecause this can happen multiple times if there is more than 1 partitions",
+      "revId": "53cab5b3809396691db4fb2294133251d92c9247",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
