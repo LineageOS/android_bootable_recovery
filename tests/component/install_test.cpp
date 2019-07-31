@@ -238,7 +238,7 @@ static void VerifyAbUpdateBinaryCommand(const std::string& serialno, bool succes
   std::string binary_path = "/sbin/update_engine_sideload";
   std::vector<std::string> cmd;
   if (success) {
-    ASSERT_EQ(0, update_binary_command(package, zip, binary_path, 0, status_fd, &cmd));
+    ASSERT_EQ(0, update_binary_command_ab(package, zip, binary_path, 0, status_fd, &cmd));
     ASSERT_EQ(5U, cmd.size());
     ASSERT_EQ(binary_path, cmd[0]);
     ASSERT_EQ("--payload=file://" + package, cmd[1]);
@@ -246,7 +246,8 @@ static void VerifyAbUpdateBinaryCommand(const std::string& serialno, bool succes
     ASSERT_EQ("--headers=" + properties, cmd[3]);
     ASSERT_EQ("--status_fd=" + std::to_string(status_fd), cmd[4]);
   } else {
-    ASSERT_EQ(INSTALL_ERROR, update_binary_command(package, zip, binary_path, 0, status_fd, &cmd));
+    ASSERT_EQ(INSTALL_ERROR,
+              update_binary_command_ab(package, zip, binary_path, 0, status_fd, &cmd));
   }
   CloseArchive(zip);
 }
@@ -273,7 +274,7 @@ TEST(InstallTest, update_binary_command_smoke) {
   TemporaryDir td;
   std::string binary_path = std::string(td.path) + "/update_binary";
   std::vector<std::string> cmd;
-  ASSERT_EQ(0, update_binary_command(package, zip, binary_path, 0, status_fd, &cmd));
+  ASSERT_EQ(0, update_binary_command_legacy(package, zip, binary_path, 0, status_fd, &cmd));
   ASSERT_EQ(4U, cmd.size());
   ASSERT_EQ(binary_path, cmd[0]);
   ASSERT_EQ("3", cmd[1]);  // RECOVERY_API_VERSION
@@ -285,7 +286,7 @@ TEST(InstallTest, update_binary_command_smoke) {
 
   // With non-zero retry count. update_binary will be removed automatically.
   cmd.clear();
-  ASSERT_EQ(0, update_binary_command(package, zip, binary_path, 2, status_fd, &cmd));
+  ASSERT_EQ(0, update_binary_command_legacy(package, zip, binary_path, 2, status_fd, &cmd));
   ASSERT_EQ(5U, cmd.size());
   ASSERT_EQ(binary_path, cmd[0]);
   ASSERT_EQ("3", cmd[1]);  // RECOVERY_API_VERSION
@@ -330,7 +331,8 @@ TEST(InstallTest, update_binary_command_invalid) {
   std::string package = "/path/to/update.zip";
   std::string binary_path = "/sbin/update_engine_sideload";
   std::vector<std::string> cmd;
-  ASSERT_EQ(INSTALL_CORRUPT, update_binary_command(package, zip, binary_path, 0, status_fd, &cmd));
+  ASSERT_EQ(INSTALL_CORRUPT,
+            update_binary_command_ab(package, zip, binary_path, 0, status_fd, &cmd));
   CloseArchive(zip);
 #else
   TemporaryFile temp_file;
@@ -350,7 +352,8 @@ TEST(InstallTest, update_binary_command_invalid) {
   TemporaryDir td;
   std::string binary_path = std::string(td.path) + "/update_binary";
   std::vector<std::string> cmd;
-  ASSERT_EQ(INSTALL_CORRUPT, update_binary_command(package, zip, binary_path, 0, status_fd, &cmd));
+  ASSERT_EQ(INSTALL_CORRUPT,
+            update_binary_command_legacy(package, zip, binary_path, 0, status_fd, &cmd));
   CloseArchive(zip);
 #endif  // AB_OTA_UPDATER
 }

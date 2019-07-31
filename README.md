@@ -4,6 +4,8 @@ The Recovery Image
 Quick turn-around testing
 -------------------------
 
+    # Take off -nodeps the first time you (or after removing $OUT).
+    breakfast <device-codename>
     mm -j && m ramdisk-nodeps && m recoveryimage-nodeps
 
     # To boot into the new recovery image

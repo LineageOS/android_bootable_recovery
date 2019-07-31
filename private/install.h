@@ -23,9 +23,20 @@
 
 #include <ziparchive/zip_archive.h>
 
+// Use this for devices that have AB system partitions.
 // Extract the update binary from the open zip archive |zip| located at |package| to |binary_path|.
 // Store the command line that should be called into |cmd|. The |status_fd| is the file descriptor
 // the child process should use to report back the progress of the update.
-int update_binary_command(const std::string& package, ZipArchiveHandle zip,
-                          const std::string& binary_path, int retry_count, int status_fd,
-                          std::vector<std::string>* cmd);
+// |retry_count| is not used.
+int update_binary_command_ab(const std::string& package, ZipArchiveHandle zip,
+                             const std::string& binary_path, int /* retry_count */, int status_fd,
+                             std::vector<std::string>* cmd);
+
+// Use this for devices that have a single system partition.
+// Extract the update binary from the open zip archive |zip| located at |package| to |binary_path|.
+// Store the command line that should be called into |cmd|. The |status_fd| is the file descriptor
+// the child process should use to report back the progress of the update. The
+// |retry_count| is the number of times it will try again after failure.
+int update_binary_command_legacy(const std::string& package, ZipArchiveHandle zip,
+                                 const std::string& binary_path, int retry_count, int status_fd,
+                                 std::vector<std::string>* cmd);

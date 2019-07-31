@@ -88,10 +88,6 @@ TEST(SideloadTest, run_fuse_sideload) {
   ASSERT_TRUE(android::base::ReadFileToString(package, &content_via_fuse));
   ASSERT_EQ(content, content_via_fuse);
 
-  std::string exit_flag = std::string(mount_point.path) + "/" + FUSE_SIDELOAD_HOST_EXIT_FLAG;
-  struct stat sb;
-  ASSERT_EQ(0, stat(exit_flag.c_str(), &sb));
-
   waitpid(pid, &status, 0);
   ASSERT_EQ(0, WEXITSTATUS(status));
   ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
