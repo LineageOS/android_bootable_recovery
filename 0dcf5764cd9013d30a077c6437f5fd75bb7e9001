@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "513006a6_87b0c889",
+        "filename": "ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2019-08-06T18:21:38Z",
+      "side": 1,
+      "message": "Why ERROR and why all caps message?",
+      "revId": "0dcf5764cd9013d30a077c6437f5fd75bb7e9001",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
