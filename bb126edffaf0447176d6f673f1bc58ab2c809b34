@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5edaa1cb_6bcae64d",
+        "filename": "ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-06T18:08:49Z",
+      "side": 1,
+      "message": "could be removed",
+      "revId": "bb126edffaf0447176d6f673f1bc58ab2c809b34",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef200a5e_75082e17",
+        "filename": "ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-06T18:08:49Z",
+      "side": 1,
+      "message": "maybe use a static bool here",
+      "revId": "bb126edffaf0447176d6f673f1bc58ab2c809b34",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df2967cb_01057418",
+        "filename": "ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-06T18:08:49Z",
+      "side": 1,
+      "message": "only the call to the function needed",
+      "revId": "bb126edffaf0447176d6f673f1bc58ab2c809b34",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31f24dde_1069601a",
+        "filename": "ui.h",
+        "patchSetId": 3
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-06T18:08:49Z",
+      "side": 1,
+      "message": "not needed",
+      "revId": "bb126edffaf0447176d6f673f1bc58ab2c809b34",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
