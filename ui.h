@@ -305,6 +305,7 @@ class RecoveryUI {
 
   void OnTouchDeviceDetected(int fd);
   void OnKeyDetected(int key_code);
+  void CalibrateTouch(int fd);
   void OnTouchPress();
   void OnTouchTrack();
   void OnTouchRelease();
@@ -357,6 +358,8 @@ class RecoveryUI {
   Point touch_pos_;
   Point touch_start_;
   Point touch_track_;
+  Point touch_max_;
+  Point touch_min_;
   bool has_swiped_;
   std::vector<vkey_t> virtual_keys_;
   bool is_bootreason_recovery_ui_;
