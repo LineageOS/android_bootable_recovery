@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "694492aa_7e650e06",
+        "filename": "ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-06T18:22:26Z",
+      "side": 1,
+      "message": "if (calibrated) return\navoid nesting if possible",
+      "revId": "0dcf5764cd9013d30a077c6437f5fd75bb7e9001",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "513006a6_87b0c889",
         "filename": "ui.cpp",
         "patchSetId": 4
