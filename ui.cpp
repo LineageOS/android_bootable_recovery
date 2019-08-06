@@ -76,6 +76,7 @@ RecoveryUI::RecoveryUI()
       has_up_key(false),
       has_down_key(false),
       has_touch_screen(false),
+      needs_touch_calibration_(true),
       touch_slot_(0),
       touch_finger_down_(false),
       touch_saw_x_(false),
@@ -238,6 +239,20 @@ void RecoveryUI::Stop() {
   }
 }
 
+void RecoveryUI::CalibrateTouch(int fd) {
+    struct input_absinfo info;
+    memset(&info, 0, sizeof(info));
+    if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_X), &info) == 0) {
+        touch_min_.x(info.minimum);
+        touch_max_.x(info.maximum);
+    }
+    memset(&info, 0, sizeof(info));
+    if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_Y), &info) == 0) {
+        touch_min_.y(info.minimum);
+        touch_max_.y(info.maximum);
+    }
+}
+
 void RecoveryUI::OnTouchPress() {
   touch_start_ = touch_track_ = touch_pos_;
 }
@@ -323,6 +338,10 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
   // ABS_MT_TRACKING_ID being -1.
   //
   // Touch input events will only be available if touch_screen_allowed_ is set.
+  if (needs_touch_calibration_) {
+    CalibrateTouch(fd);
+    needs_touch_calibration_ = false;
+  }
 
   if (ev.type == EV_SYN) {
     if (touch_screen_allowed_ && ev.code == SYN_REPORT) {
@@ -374,7 +393,7 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       case ABS_MT_POSITION_X:
         touch_finger_down_ = true;
         touch_saw_x_ = true;
-        touch_pos_.x(ev.value);
+        touch_pos_.x(ev.value * gr_fb_width() / (touch_max_.x() - touch_min_.x()));
         if (touch_reported_ && touch_saw_y_) {
           OnTouchTrack();
           touch_saw_x_ = touch_saw_y_ = false;
@@ -384,7 +403,7 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       case ABS_MT_POSITION_Y:
         touch_finger_down_ = true;
         touch_saw_y_ = true;
-        touch_pos_.y(ev.value);
+        touch_pos_.y(ev.value * gr_fb_height() / (touch_max_.y() - touch_min_.y()));
         if (touch_reported_ && touch_saw_x_) {
           OnTouchTrack();
           touch_saw_x_ = touch_saw_y_ = false;
