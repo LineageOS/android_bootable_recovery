@@ -16,6 +16,24 @@
       "revId": "297398a003577546731616efd119ef58580d7eaa",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba8d4ed2_a7046257",
+        "filename": "ui.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-08-06T17:44:58Z",
+      "side": 1,
+      "message": "Yeah it does, i don\u0027t think it would be necessarely bad.\nAs i hinted in slack, placing it in OnTouchDeviceDetected() would make it detect the wrong max values (not sure why).\nDo you wanna wrap it in a boolean, or do you see better alternatives?",
+      "parentUuid": "faf656ac_1b93960b",
+      "revId": "297398a003577546731616efd119ef58580d7eaa",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
