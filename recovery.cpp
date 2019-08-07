@@ -1217,6 +1217,32 @@ static void run_graphics_test() {
   }
 }
 
+static int apply_from_sideload(Device* device, bool* wipe_cache) {
+  static const char* s_headers[] = { "ADB Sideload", nullptr };
+  static const MenuItemVector s_items = { MenuItem("Cancel sideload") };
+
+  int status = INSTALL_ERROR;
+
+  sideload_start();
+  int item = get_menu_selection(false, MT_LIST, s_headers, s_items, false, 0, device,
+                                true /*refreshable*/);
+  if (item == Device::kRefresh) {
+    sideload_wait(false);
+    ui->UpdateScreenOnPrint(true);
+    status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, true);
+    if (status == INSTALL_UNVERIFIED && ask_to_continue_unverified_install(device)) {
+      status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, false);
+    }
+    ui->UpdateScreenOnPrint(false);
+  } else {
+    sideload_wait(true);
+    status = INSTALL_NONE;
+  }
+  sideload_stop();
+
+  return status;
+}
+
 static int apply_from_storage(Device* device, VolumeInfo& vi, bool* wipe_cache) {
   modified_flash = true;
 
@@ -1302,25 +1328,7 @@ refresh:
     return INSTALL_NONE;
   }
   if (chosen == 0) {
-    static const char* s_headers[] = { "ADB Sideload", nullptr };
-    static const MenuItemVector s_items = { MenuItem("Cancel sideload") };
-
-    sideload_start();
-    int item = get_menu_selection(false, MT_LIST, s_headers, s_items, false, 0, device,
-                                  true /*refreshable*/);
-    if (item == Device::kRefresh) {
-      sideload_wait(false);
-      ui->UpdateScreenOnPrint(true);
-      status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, true);
-      if (status == INSTALL_UNVERIFIED && ask_to_continue_unverified_install(device)) {
-        status = sideload_install(wipe_cache, TEMPORARY_INSTALL_FILE, false);
-      }
-      ui->UpdateScreenOnPrint(false);
-    } else {
-      sideload_wait(true);
-      status = INSTALL_NONE;
-    }
-    sideload_stop();
+    status = apply_from_sideload(device, wipe_cache);
   } else {
     status = apply_from_storage(device, volumes[chosen - 1], wipe_cache);
   }
@@ -1950,15 +1958,7 @@ int main(int argc, char **argv) {
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    sideload_start();
-    sideload_wait(false);
-    ui->UpdateScreenOnPrint(true);
-    status = sideload_install(&should_wipe_cache, TEMPORARY_INSTALL_FILE, true);
-    if (status == INSTALL_UNVERIFIED && ask_to_continue_unverified_install(device)) {
-      status = sideload_install(&should_wipe_cache, TEMPORARY_INSTALL_FILE, false);
-    }
-    ui->UpdateScreenOnPrint(false);
-    sideload_stop();
+    status = apply_from_sideload(device, &should_wipe_cache);
     if (status == INSTALL_SUCCESS && should_wipe_cache) {
       if (!wipe_cache(false, device)) {
         status = INSTALL_ERROR;
