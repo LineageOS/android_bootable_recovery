@@ -177,6 +177,7 @@ static const char *CONVERT_FBE_DIR = "/tmp/convert_fbe";
 static const char *CONVERT_FBE_FILE = "/tmp/convert_fbe/convert_fbe";
 static const char *CACHE_ROOT = "/cache";
 static const char *DATA_ROOT = "/data";
+static const char *SYSTEM_ROOT = "/system";
 static const char* METADATA_ROOT = "/metadata";
 static const char *TEMPORARY_LOG_FILE = "/tmp/recovery.log";
 static const char *TEMPORARY_INSTALL_FILE = "/tmp/last_install";
@@ -631,6 +632,9 @@ struct saved_log_file {
 static bool erase_volume(const char* volume) {
   bool is_cache = (strcmp(volume, CACHE_ROOT) == 0);
   bool is_data = (strcmp(volume, DATA_ROOT) == 0);
+  bool is_system = (strcmp(volume, SYSTEM_ROOT) == 0);
+  bool is_system_as_root =
+    is_system && android::base::GetBoolProperty("ro.build.system_root_image", false);
 
   std::vector<saved_log_file> log_files;
 
@@ -677,7 +681,11 @@ static bool erase_volume(const char* volume) {
   ui->SetBackground(RecoveryUI::ERASING);
   ui->SetProgressType(RecoveryUI::INDETERMINATE);
 
-  ensure_path_unmounted(volume);
+  if (is_system_as_root) {
+    ensure_path_unmounted("/system_root");
+  } else {
+    ensure_path_unmounted(volume);
+  }
 
   int result;
 
@@ -697,6 +705,8 @@ static bool erase_volume(const char* volume) {
     result = format_volume(volume, CONVERT_FBE_DIR);
     remove(CONVERT_FBE_FILE);
     rmdir(CONVERT_FBE_DIR);
+  } else if (is_system_as_root) {
+    result = format_volume("/");
   } else {
     result = format_volume(volume);
   }
