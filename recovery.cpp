@@ -993,9 +993,14 @@ static bool ask_to_wipe_system(Device* device) {
 // Return true on success.
 static bool wipe_system() {
   modified_flash = true;
+  bool success = false;
 
   ui->Print("\n-- Wiping system...\n");
-  bool success = erase_volume("/system");
+  if (android::base::GetBoolProperty("ro.build.system_root_image", false)) {
+    success = erase_volume("/system_root");
+  } else {
+    success = erase_volume("/system");
+  }
   ui->Print("System wipe %s.\n", success ? "complete" : "failed");
   return success;
 }
