@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc6b9283_a3f21aec",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-08-24T10:38:53Z",
+      "side": 1,
+      "message": "This is still messed up\nensure_path_unmounted uses fstab and walks the path until it has a match ( /system_root -\u003e / ) and then tries to unmount /\nI have to find a way to forcelly umount path without messing too much with the code",
+      "range": {
+        "startLine": 685,
+        "startChar": 0,
+        "endLine": 685,
+        "endChar": 42
+      },
+      "revId": "9d237c6ca56b58ddc23dcd41e97853efe84aa5f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
