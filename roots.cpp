@@ -232,6 +232,17 @@ int ensure_path_mounted(const char* path) {
   return ensure_path_mounted_at(path, nullptr);
 }
 
+// Unmount the volume specified by the given mount_point.
+int ensure_path_unmounted_at(const char* mount_point) {
+  int result = umount(mount_point);
+  if (result == -1) {
+    PLOG(ERROR) << "Failed to unmount " << mount_point;
+    return -1;
+  }
+
+  return 0;
+}
+
 int ensure_path_unmounted(const char* path, bool detach /* = false */) {
   const Volume* v;
   if (memcmp(path, "/storage/", 9) == 0) {

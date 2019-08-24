@@ -41,6 +41,9 @@ int ensure_path_mounted_at(const char* path, const char* mount_point);
 int ensure_volume_unmounted(const Volume* v, bool detach = false);
 int ensure_path_unmounted(const char* path, bool detach = false);
 
+// Similar to ensure_path_mounted, but uses the mount_point.
+int ensure_path_unmounted_at(const char* mount_point);
+
 // Reformat the given volume (must be the mount point only, eg
 // "/cache"), no paths permitted.  Attempts to unmount the volume if
 // it is mounted.
