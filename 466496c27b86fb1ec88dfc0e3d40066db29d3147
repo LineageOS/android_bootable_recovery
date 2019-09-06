@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39a289e9_3be335bd",
+        "filename": "etc/init.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-09-06T11:49:36Z",
+      "side": 1,
+      "message": "I don\u0027t know why we have this as an empty folder in root\nIf we find what generates it we could just not create it in the first place",
+      "revId": "466496c27b86fb1ec88dfc0e3d40066db29d3147",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
