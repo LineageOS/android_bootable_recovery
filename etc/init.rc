@@ -19,6 +19,8 @@ on init
 
     symlink /system/bin /bin
     symlink /system/etc /etc
+    rmdir /sbin
+    symlink /system/bin /sbin
 
     mount cgroup none /acct cpuacct
     mkdir /acct/uid
