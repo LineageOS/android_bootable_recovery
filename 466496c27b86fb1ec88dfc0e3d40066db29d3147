@@ -16,6 +16,24 @@
       "revId": "466496c27b86fb1ec88dfc0e3d40066db29d3147",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5358291_5e78d426",
+        "filename": "etc/init.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2019-09-06T11:56:54Z",
+      "side": 1,
+      "message": "Is removing the dir needed? Or it\u0027s not empty?\nIf it\u0027s empty it should still work",
+      "parentUuid": "39a289e9_3be335bd",
+      "revId": "466496c27b86fb1ec88dfc0e3d40066db29d3147",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
