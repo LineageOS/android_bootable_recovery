@@ -67,7 +67,7 @@ endif
 # copies them into /data/misc/recovery. Then, for both A/B and non-A/B devices, recovery-persist
 # parses the last_install file and reports the embedded update metrics. Also, the last_install file
 # will be deteleted after the report.
-LOCAL_REQUIRED_MODULES += recovery-persist
+# LOCAL_REQUIRED_MODULES += recovery-persist
 ifeq ($(BOARD_CACHEIMAGE_PARTITION_SIZE),)
 LOCAL_REQUIRED_MODULES += recovery-refresh
 endif
