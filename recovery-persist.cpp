@@ -40,6 +40,7 @@
 
 #include <android-base/file.h>
 #include <android-base/logging.h>
+#include <android-base/properties.h>
 #include <metricslogger/metrics_logger.h>
 #include <private/android_logger.h> /* private pmsg functions */
 
@@ -127,6 +128,9 @@ static void report_metrics_from_last_install(const std::string& file_name) {
 }
 
 int main(int argc, char **argv) {
+    if (!android::base::GetBoolProperty("persist.sys.recovery_update", false)) {
+        return 0;
+    }
 
     /* Is /cache a mount?, we have been delivered where we are not wanted */
     /*
