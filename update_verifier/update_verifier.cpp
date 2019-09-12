@@ -310,7 +310,7 @@ int update_verifier(int argc, char** argv) {
   sp<IBootControl> module = IBootControl::getService();
   if (module == nullptr) {
     LOG(ERROR) << "Error getting bootctrl module.";
-    return reboot_device();
+    return 0;
   }
 
   uint32_t current_slot = module->getCurrentSlot();
