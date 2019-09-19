@@ -38,12 +38,14 @@ cc_library_static {
         "paths.cpp",
         "rangeset.cpp",
         "sysutil.cpp",
+        "ziputil.cpp",
     ],
 
     shared_libs: [
         "libbase",
         "libcutils",
         "libselinux",
+        "libziparchive",
     ],
 
     export_include_dirs: [

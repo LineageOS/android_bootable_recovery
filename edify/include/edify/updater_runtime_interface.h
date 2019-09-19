@@ -20,6 +20,8 @@
 #include <string_view>
 #include <vector>
 
+struct selabel_handle;
+
 // This class serves as the base to updater runtime. It wraps the runtime dependent functions; and
 // updates on device and host simulations can have different implementations. e.g. block devices
 // during host simulation merely a temporary file. With this class, the caller side in registered
@@ -74,4 +76,8 @@ class UpdaterRuntimeInterface {
 
   // On devices supports A/B, add current slot suffix to arg. Otherwise, return |arg| as is.
   virtual std::string AddSlotSuffix(const std::string_view arg) const = 0;
+
+  virtual struct selabel_handle* sehandle() const {
+    return nullptr;
+  }
 };
