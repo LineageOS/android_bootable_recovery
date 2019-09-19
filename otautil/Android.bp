@@ -45,6 +45,7 @@ cc_library_static {
                 "parse_install_logs.cpp",
                 "roots.cpp",
                 "sysutil.cpp",
+                "ziputil.cpp",
                 "thermalutil.cpp",
             ],
 
@@ -61,6 +62,7 @@ cc_library_static {
                 "libext4_utils",
                 "libfs_mgr",
                 "libselinux",
+                "libziparchive",
             ],
         },
     },
