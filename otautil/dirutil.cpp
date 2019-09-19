@@ -48,6 +48,11 @@ static DirStatus dir_status(const std::string& path) {
 
 int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_filename,
                       const selabel_handle* sehnd) {
+  return mkdir_recursively(input_path, mode, strip_filename, sehnd, NULL);
+}
+
+int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_filename,
+                      const selabel_handle* sehnd, const struct utimbuf* timestamp) {
   // Check for an empty string before we bother making any syscalls.
   if (input_path.empty()) {
     errno = ENOENT;
@@ -104,6 +109,9 @@ int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_fil
         if (err != 0) {
           return -1;
         }
+        if (timestamp != NULL && utime(dir_path.c_str(), timestamp)) {
+          return -1;
+        }
         break;
       }
       default:
@@ -113,4 +121,58 @@ int mkdir_recursively(const std::string& input_path, mode_t mode, bool strip_fil
     prev_end = next_end;
   }
   return 0;
+}
+
+int dirUnlinkHierarchy(const char* path) {
+  struct stat st;
+  DIR* dir;
+  struct dirent* de;
+  int fail = 0;
+
+  /* is it a file or directory? */
+  if (lstat(path, &st) < 0) {
+    return -1;
+  }
+
+  /* a file, so unlink it */
+  if (!S_ISDIR(st.st_mode)) {
+    return unlink(path);
+  }
+
+  /* a directory, so open handle */
+  dir = opendir(path);
+  if (dir == NULL) {
+    return -1;
+  }
+
+  /* recurse over components */
+  errno = 0;
+  while ((de = readdir(dir)) != NULL) {
+    // TODO: don't blow the stack
+    char dn[PATH_MAX];
+    if (!strcmp(de->d_name, "..") || !strcmp(de->d_name, ".")) {
+      continue;
+    }
+    snprintf(dn, sizeof(dn), "%s/%s", path, de->d_name);
+    if (dirUnlinkHierarchy(dn) < 0) {
+      fail = 1;
+      break;
+    }
+    errno = 0;
+  }
+  /* in case readdir or unlink_recursive failed */
+  if (fail || errno < 0) {
+    int save = errno;
+    closedir(dir);
+    errno = save;
+    return -1;
+  }
+
+  /* close directory handle */
+  if (closedir(dir) < 0) {
+    return -1;
+  }
+
+  /* delete target directory */
+  return rmdir(path);
 }
