@@ -51,6 +51,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/sbin)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libinstall.recovery_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/system/lib64/libinstall.so)
 
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libbrotli.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libbz.so)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
