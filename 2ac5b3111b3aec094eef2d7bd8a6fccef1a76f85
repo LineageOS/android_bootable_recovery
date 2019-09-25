@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bab27570_daeb8236",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2019-09-25T23:23:26Z",
+      "side": 1,
+      "message": "Tab",
+      "revId": "2ac5b3111b3aec094eef2d7bd8a6fccef1a76f85",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
