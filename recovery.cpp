@@ -548,6 +548,16 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
         break;
       }
 
+      case Device::WIPE_SYSTEM: {
+        save_current_log = true;
+        std::function<bool()> confirm_func = [&device]() {
+          return yes_no(device, "Wipe system?", "  THIS CAN NOT BE UNDONE!");
+        };
+        WipeSystem(ui, ui->IsTextVisible() ? confirm_func : nullptr);
+        if (!ui->IsTextVisible()) return Device::NO_ACTION;
+        break;
+      }
+
       case Device::APPLY_ADB_SIDELOAD:
       case Device::APPLY_SDCARD:
       case Device::ENTER_RESCUE: {

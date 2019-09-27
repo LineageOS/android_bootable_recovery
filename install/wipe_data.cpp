@@ -125,3 +125,14 @@ bool WipeData(Device* device, bool convert_fbe) {
   ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
   return success;
 }
+
+bool WipeSystem(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
+  if (confirm_func && !confirm_func()) {
+    return false;
+  }
+
+  ui->Print("\n-- Wiping system...\n");
+  bool success = EraseVolume(get_system_root().c_str(), ui, false);
+  ui->Print("System wipe %s.\n", success ? "complete" : "failed");
+  return success;
+}
