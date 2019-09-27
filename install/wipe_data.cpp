@@ -121,3 +121,20 @@ bool WipeData(Device* device, bool convert_fbe) {
   ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
   return success;
 }
+
+bool WipeSystem(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
+  bool has_system = volume_for_mount_point("/system") != nullptr;
+  if (!has_system) {
+    ui->Print("No /system partition found.\n");
+    return false;
+  }
+
+  if (confirm_func && !confirm_func()) {
+    return false;
+  }
+
+  ui->Print("\n-- Wiping system...\n");
+  bool success = EraseVolume("/system", ui, false);
+  ui->Print("System wipe %s.\n", success ? "complete" : "failed");
+  return success;
+}
