@@ -425,6 +425,11 @@ int main(int argc, char** argv) {
     device->RemoveMenuItemForAction(Device::ENTER_FASTBOOT);
   }
 
+  if (get_build_type() != "eng") {
+    device->RemoveMenuItemForAction(Device::RUN_GRAPHICS_TEST);
+    device->RemoveMenuItemForAction(Device::RUN_LOCALE_TEST);
+  }
+
   if (!is_ro_debuggable()) {
     device->RemoveMenuItemForAction(Device::ENTER_RESCUE);
   }
