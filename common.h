@@ -36,3 +36,5 @@ extern std::string stage;
 extern const char* reason;
 
 bool is_ro_debuggable();
+
+std::string get_build_type();

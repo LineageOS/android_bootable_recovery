@@ -128,6 +128,10 @@ bool is_ro_debuggable() {
     return android::base::GetBoolProperty("ro.debuggable", false);
 }
 
+std::string get_build_type() {
+  return android::base::GetProperty("ro.build.type", "");
+}
+
 // Clear the recovery command and prepare to boot a (hopefully working) system,
 // copy our log file to cache as well (for the system to read). This function is
 // idempotent: call it as many times as you like.
