@@ -24,6 +24,7 @@
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/stringprintf.h>
+#include <fs_mgr/roots.h>
 
 #include "bootloader_message/bootloader_message.h"
 #include "install/snapshot_utils.h"
@@ -115,5 +116,16 @@ bool WipeData(Device* device) {
     success &= device->PostWipeData();
   }
   ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
+  return success;
+}
+
+bool WipeSystem(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
+  if (confirm_func && !confirm_func()) {
+    return false;
+  }
+
+  ui->Print("\n-- Wiping system...\n");
+  bool success = EraseVolume(android::fs_mgr::GetSystemRoot().c_str(), ui);
+  ui->Print("System wipe %s.\n", success ? "complete" : "failed");
   return success;
 }
