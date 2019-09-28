@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d33ff265_931d7f42",
+        "filename": "recovery_ui/ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-09-28T15:23:33Z",
+      "side": 1,
+      "message": "what happened here",
+      "range": {
+        "startLine": 258,
+        "startChar": 8,
+        "endLine": 258,
+        "endChar": 30
+      },
+      "revId": "096ce80f877cb252f108c32a7d6cf908d477c0b6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
