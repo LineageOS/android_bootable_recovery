@@ -331,7 +331,9 @@ static int try_update_binary(const std::string& package, ZipArchiveHandle zip, b
   std::map<std::string, std::string> metadata;
   if (!ReadMetadataFromPackage(zip, &metadata)) {
     LOG(ERROR) << "Failed to parse metadata in the zip file";
+#ifndef DEBUG_BUILD
     return INSTALL_CORRUPT;
+#endif
   }
 
   bool is_ab = android::base::GetBoolProperty("ro.build.ab_update", false);
@@ -339,7 +341,9 @@ static int try_update_binary(const std::string& package, ZipArchiveHandle zip, b
   if (int check_status = is_ab ? CheckPackageMetadata(metadata, OtaType::AB) : 0;
       check_status != 0) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kUpdateBinaryCommandFailure));
+#ifndef DEBUG_BUILD
     return check_status;
+#endif
   }
 
   ReadSourceTargetBuild(metadata, log_buffer);

@@ -80,4 +80,10 @@ cc_library_static {
     export_shared_lib_headers: [
         "librecovery_ui",
     ],
+
+    product_variables: {
+        debuggable: {
+            cflags: ["-DDEBUG_BUILD"],
+        },
+    },
 }
