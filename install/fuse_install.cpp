@@ -39,7 +39,7 @@
 #include "install/install.h"
 #include "recovery_utils/roots.h"
 
-static constexpr const char* SDCARD_ROOT = "/sdcard";
+static constexpr const char* SDCARD_ROOT = "/data/media/0";
 // How long (in seconds) we wait for the fuse-provided package file to
 // appear, before timing out.
 static constexpr int SDCARD_INSTALL_TIMEOUT = 10;
@@ -143,7 +143,7 @@ static bool StartInstallPackageFuse(std::string_view path) {
   if (android::base::StartsWith(path, SDCARD_ROOT)) {
     // The installation process expects to find the sdcard unmounted. Unmount it with MNT_DETACH so
     // that our open file continues to work but new references see it as unmounted.
-    umount2(SDCARD_ROOT, MNT_DETACH);
+    umount2("/data", MNT_DETACH);
   }
 
   return run_fuse_sideload(std::move(fuse_data_provider)) == 0;
