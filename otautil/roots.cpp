@@ -311,7 +311,7 @@ int setup_install_mounts() {
         return -1;
       }
     } else {
-      if (ensure_path_unmounted(entry.mount_point) != 0) {
+      if (ensure_path_unmounted(entry.mount_point) != 0 && entry.mount_point != "/data") {
         LOG(ERROR) << "Failed to unmount " << entry.mount_point;
         return -1;
       }
