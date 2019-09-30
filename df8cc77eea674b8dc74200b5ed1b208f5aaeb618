@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34ab6439_26bd72da",
+        "filename": "recovery.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-09-30T19:13:34Z",
+      "side": 1,
+      "message": "Should we do this at runtime using ro.build.type instead? Recovery already provides\n`std::string get_build_type()`",
+      "revId": "df8cc77eea674b8dc74200b5ed1b208f5aaeb618",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
