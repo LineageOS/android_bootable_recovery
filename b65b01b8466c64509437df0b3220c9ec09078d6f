@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "561091e6_d6507a76",
+        "filename": "install/install.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-09-30T12:26:13Z",
+      "side": 1,
+      "message": "we could skip this and just rely on metadata",
+      "range": {
+        "startLine": 335,
+        "startChar": 8,
+        "endLine": 335,
+        "endChar": 67
+      },
+      "revId": "b65b01b8466c64509437df0b3220c9ec09078d6f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
