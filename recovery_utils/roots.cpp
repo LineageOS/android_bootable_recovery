@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/mount.h>
 
 #include <iostream>
 #include <string>
@@ -87,6 +88,27 @@ int ensure_path_mounted(const std::string& path) {
 
 int ensure_path_unmounted(const std::string& path) {
   return android::fs_mgr::EnsurePathUnmounted(&fstab, path) ? 0 : -1;
+}
+
+int ensure_volume_unmounted(const std::string& blk_device) {
+  android::fs_mgr::Fstab mounted_fstab;
+  if (!android::fs_mgr::ReadFstabFromFile("/proc/mounts", &mounted_fstab)) {
+    LOG(ERROR) << "Failed to read /proc/mounts";
+    return -1;
+  }
+
+  /* find any entries with the volume */
+  for (auto& entry : mounted_fstab) {
+    if (entry.blk_device == blk_device) {
+      int result = umount(entry.mount_point.c_str());
+      if (result == -1) {
+        LOG(ERROR) << "Failed to unmount " << blk_device << " from " << entry.mount_point << ": "
+                   << errno;
+        return -1;
+      }
+    }
+  }
+  return 0;
 }
 
 static int exec_cmd(const std::vector<std::string>& args) {
