@@ -39,6 +39,10 @@ int ensure_path_mounted_at(const std::string& path, const std::string& mount_poi
 // success (volume is unmounted);
 int ensure_path_unmounted(const std::string& path);
 
+// Make sure that the volume at 'blk_device' is unmounted.
+// Returns 0 on success.
+int ensure_volume_unmounted(const std::string& blk_device);
+
 // Reformat the given volume (must be the mount point only, eg
 // "/cache"), no paths permitted.  Attempts to unmount the volume if
 // it is mounted.
