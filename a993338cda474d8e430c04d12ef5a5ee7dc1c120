@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50f89535_95c0ce1f",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-10-01T18:37:12Z",
+      "side": 1,
+      "message": "nit: too long line",
+      "revId": "a993338cda474d8e430c04d12ef5a5ee7dc1c120",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
