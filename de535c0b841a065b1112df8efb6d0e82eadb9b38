@@ -22,6 +22,30 @@
       "revId": "de535c0b841a065b1112df8efb6d0e82eadb9b38",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "923828f1_1006ad19",
+        "filename": "install/install.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2019-10-25T00:57:14Z",
+      "side": 1,
+      "message": "go with nothing, there\u0027s no point.",
+      "parentUuid": "5f308231_50b8aa68",
+      "range": {
+        "startLine": 79,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 13
+      },
+      "revId": "de535c0b841a065b1112df8efb6d0e82eadb9b38",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
