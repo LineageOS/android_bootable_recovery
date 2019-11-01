@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cda0efda_ea692d44",
+        "filename": "recovery_main.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2019-11-01T23:00:46Z",
+      "side": 1,
+      "message": "This is using our custom prop which I\u0027m not sure why we need to.\nBut also it did not seem to break when picking `Revert \"Make adb use a custom prop for adb root\"` ?",
+      "range": {
+        "startLine": 502,
+        "startChar": 32,
+        "endLine": 502,
+        "endChar": 56
+      },
+      "revId": "f3f9adc6638be7061eea0b32ae3124f1b444a8c5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
