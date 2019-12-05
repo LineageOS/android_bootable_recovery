@@ -272,6 +272,7 @@ class RecoveryUI {
   void EnqueueTouch(const Point& pos);
 
   std::string android_version_;
+  std::string boot_slot_;
   std::string lineage_version_;
 
   // The normal and dimmed brightness percentages (default: 50 and 25, which means 50% and 25% of

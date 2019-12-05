@@ -715,12 +715,24 @@ void ScreenRecoveryUI::draw_screen_locked() {
     // Draw version info
     if (menu_is_main_) {
       int text_x, text_y;
-      text_x = kMarginWidth + (gr_fb_width() - (android_version_.size() * char_width_)) / 2;
-      text_y = gr_fb_height() - 2 * (char_height_ + 4);
       SetColor(MENU);
-      DrawTextLine(text_x, text_y, android_version_.c_str(), false);
-      text_x = kMarginWidth + (gr_fb_width() - (lineage_version_.size() * char_width_)) / 2;
-      text_y = gr_fb_height() - 1 * (char_height_ + 4);
+      text_y = gr_fb_height() - 2 * (char_height_ + 4);
+      if (boot_slot_.empty()) {
+        text_x = kMarginWidth + gr_fb_width() * 1 / 2 -
+                 (android_version_.size() * char_width_) / 2;
+        DrawTextLine(text_x, text_y, android_version_.c_str(), false);
+      }
+      else {
+          text_x = kMarginWidth + gr_fb_width() * 1 / 4 -
+                   (android_version_.size() * char_width_) / 2;
+          DrawTextLine(text_x, text_y, android_version_.c_str(), false);
+          text_x = kMarginWidth + gr_fb_width() * 3 / 4 -
+                   (boot_slot_.size() * char_width_) / 2;
+          DrawTextLine(text_x, text_y, boot_slot_.c_str(), false);
+      }
+      text_y += char_height_ + 4;
+      text_x = kMarginWidth + gr_fb_width() * 1 / 2 -
+               (lineage_version_.size() * char_width_) / 2;
       DrawTextLine(text_x, text_y, lineage_version_.c_str(), false);
     }
   } else {
