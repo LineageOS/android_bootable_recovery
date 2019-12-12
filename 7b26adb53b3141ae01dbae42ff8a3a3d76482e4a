@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41b7871f_815fc78f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3671
+      },
+      "writtenOn": "2019-12-12T14:30:38Z",
+      "side": 1,
+      "message": "https://android.googlesource.com/platform/system/core/+/65b8d749f71d7962831e87600dd6137566c3c281 probably a better reference link?",
+      "range": {
+        "startLine": 13,
+        "startChar": 23,
+        "endLine": 13,
+        "endChar": 115
+      },
+      "revId": "7b26adb53b3141ae01dbae42ff8a3a3d76482e4a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
