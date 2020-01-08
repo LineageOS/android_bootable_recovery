@@ -22,6 +22,30 @@
       "revId": "ca5f136e73d4bea0d27fa4d20e5ab791c664f53f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "868893cc_998c9bd2",
+        "filename": "recovery_main.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2020-01-08T12:45:19Z",
+      "side": 0,
+      "message": "my plan is to push both changes and ask in #recovery for review or something.",
+      "parentUuid": "b0dc84dd_5a1083a6",
+      "range": {
+        "startLine": 505,
+        "startChar": 0,
+        "endLine": 505,
+        "endChar": 15
+      },
+      "revId": "ca5f136e73d4bea0d27fa4d20e5ab791c664f53f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
