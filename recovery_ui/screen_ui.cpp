@@ -929,11 +929,6 @@ std::string ScreenRecoveryUI::GetLocale() const {
   return locale_;
 }
 
-void ScreenRecoveryUI::Stop() {
-  RecoveryUI::Stop();
-  gr_fb_blank(true);
-}
-
 void ScreenRecoveryUI::LoadAnimation() {
   std::unique_ptr<DIR, decltype(&closedir)> dir(opendir(Paths::Get().resource_dir().c_str()),
                                                 closedir);
