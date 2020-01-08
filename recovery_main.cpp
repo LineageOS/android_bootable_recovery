@@ -502,26 +502,29 @@ int main(int argc, char** argv) {
         continue;
       }
     }
-    ui->Stop();
     switch (ret) {
       case Device::SHUTDOWN:
         ui->Print("Shutting down...\n");
+        ui->Stop();
         // TODO: Move all the reboots to reboot(), which should conditionally set quiescent flag.
         android::base::SetProperty(ANDROID_RB_PROPERTY, "shutdown,");
         break;
 
       case Device::REBOOT_BOOTLOADER:
         ui->Print("Rebooting to bootloader...\n");
+        ui->Stop();
         android::base::SetProperty(ANDROID_RB_PROPERTY, "reboot,bootloader");
         break;
 
       case Device::REBOOT_FASTBOOT:
         ui->Print("Rebooting to recovery/fastboot...\n");
+        ui->Stop();
         android::base::SetProperty(ANDROID_RB_PROPERTY, "reboot,fastboot");
         break;
 
       case Device::REBOOT_RECOVERY:
         ui->Print("Rebooting to recovery...\n");
+        ui->Stop();
         reboot("reboot,recovery");
         break;
 
@@ -537,6 +540,7 @@ int main(int argc, char** argv) {
           continue;
         }
         ui->Print("Rebooting to recovery/rescue...\n");
+        ui->Stop();
         reboot("reboot,recovery");
         break;
       }
@@ -558,6 +562,7 @@ int main(int argc, char** argv) {
 
       default:
         ui->Print("Rebooting...\n");
+        ui->Stop();
         reboot("reboot,");
         break;
     }
