@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca9e8740_81efc4fb",
+        "filename": "updater/install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 3917
+      },
+      "writtenOn": "2020-02-18T07:17:10Z",
+      "side": 1,
+      "message": "same here, i think this must be freed",
+      "revId": "da07e891c600cd9658f56ef90ff886fcecedde8c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
