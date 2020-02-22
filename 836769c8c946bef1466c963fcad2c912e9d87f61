@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b982b24_55ad10b5",
+        "filename": "updater/install.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-02-22T13:36:57Z",
+      "side": 1,
+      "message": "Move include here",
+      "revId": "836769c8c946bef1466c963fcad2c912e9d87f61",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
