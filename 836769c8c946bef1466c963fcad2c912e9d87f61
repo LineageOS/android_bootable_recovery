@@ -16,6 +16,24 @@
       "revId": "836769c8c946bef1466c963fcad2c912e9d87f61",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8409d405_85692f2e",
+        "filename": "updater/install.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-02-23T09:51:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b982b24_55ad10b5",
+      "revId": "836769c8c946bef1466c963fcad2c912e9d87f61",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
