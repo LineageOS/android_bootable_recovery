@@ -384,8 +384,7 @@ int main(int argc, char** argv) {
         std::string option = OPTIONS[option_index].name;
         if (option == "locale") {
           locale = optarg;
-        } else if (option == "fastboot" &&
-                   android::base::GetBoolProperty("ro.boot.dynamic_partitions", false)) {
+        } else if (option == "fastboot") {
           fastboot = true;
         }
         break;
@@ -444,10 +443,6 @@ int main(int argc, char** argv) {
 
   if (!has_cache) {
     device->RemoveMenuItemForAction(Device::WIPE_CACHE);
-  }
-
-  if (!android::base::GetBoolProperty("ro.boot.dynamic_partitions", false)) {
-    device->RemoveMenuItemForAction(Device::ENTER_FASTBOOT);
   }
 
   if (get_build_type() != "eng") {
