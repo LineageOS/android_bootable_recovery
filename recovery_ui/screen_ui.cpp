@@ -949,7 +949,8 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   no_command_text_ = LoadLocalizedBitmap("no_command_text");
   error_text_ = LoadLocalizedBitmap("error_text");
 
-  if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false)) {
+  if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
+      android::base::GetBoolProperty("ro.fastbootd.available", false)) {
     fastbootd_logo_ = LoadBitmap("fastbootd");
   }
 
