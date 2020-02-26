@@ -405,7 +405,8 @@ int main(int argc, char** argv) {
         } else if (option == "reason") {
           reason = optarg;
         } else if (option == "fastboot" &&
-                   android::base::GetBoolProperty("ro.boot.dynamic_partitions", false)) {
+                   (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
+                    android::base::GetBoolProperty("ro.fastbootd.available", false))) {
           fastboot = true;
         }
         break;
@@ -469,7 +470,8 @@ int main(int argc, char** argv) {
     device->RemoveMenuItemForAction(Device::WIPE_CACHE);
   }
 
-  if (!android::base::GetBoolProperty("ro.boot.dynamic_partitions", false)) {
+  if (!android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
+      !android::base::GetBoolProperty("ro.fastbootd.available", false)) {
     device->RemoveMenuItemForAction(Device::ENTER_FASTBOOT);
   }
 
