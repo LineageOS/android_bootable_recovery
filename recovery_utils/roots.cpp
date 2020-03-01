@@ -34,6 +34,7 @@
 #include <android-base/properties.h>
 #include <android-base/stringprintf.h>
 #include <android-base/unique_fd.h>
+#include <blkid/blkid.h>
 #include <ext4_utils/ext4_utils.h>
 #include <ext4_utils/wipe.h>
 #include <fs_mgr.h>
@@ -59,16 +60,29 @@ static Fstab fstab;
 
 constexpr const char* CACHE_ROOT = "/cache";
 
+FstabEntry* fstab_entry_for_mount_point_detect_fs(const std::string& path) {
+  FstabEntry* found = android::fs_mgr::GetEntryForMountPoint(&fstab, path);
+  if (found == nullptr) {
+    return nullptr;
+  }
+
+  if (char* detected_fs_type = blkid_get_tag_value(nullptr, "TYPE", found->blk_device.c_str())) {
+    for (auto& entry : fstab) {
+      if (entry.mount_point == path && entry.fs_type == detected_fs_type) {
+        found = &entry;
+        break;
+      }
+    }
+    free(detected_fs_type);
+  }
+
+  return found;
+}
+
 void load_volume_table() {
   if (!ReadDefaultFstab(&fstab)) {
     LOG(ERROR) << "Failed to read default fstab";
     return;
-  }
-
-  // Create a boring /etc/fstab so tools like Busybox work
-  FILE* file = fopen("/etc/fstab", "w");
-  if (!file) {
-    LOG(ERROR) << "Unable to create /etc/fstab";
   }
 
   fstab.emplace_back(FstabEntry{
@@ -78,20 +92,34 @@ void load_volume_table() {
       .length = 0,
   });
 
+  Fstab fake_fstab;
   std::cout << "recovery filesystem table" << std::endl << "=========================" << std::endl;
   for (size_t i = 0; i < fstab.size(); ++i) {
     const auto& entry = fstab[i];
     std::cout << "  " << i << " " << entry.mount_point << " "
               << " " << entry.fs_type << " " << entry.blk_device << " " << entry.length
               << std::endl;
-    if (file) {
-      write_fstab_entry(entry, file);
+
+    if (std::find_if(fake_fstab.begin(), fake_fstab.end(), [entry](const FstabEntry& e) {
+          return entry.mount_point == e.mount_point;
+        }) == fake_fstab.end()) {
+      FstabEntry* entry_detectfs = fstab_entry_for_mount_point_detect_fs(entry.mount_point);
+      if (entry_detectfs == &entry) {
+        fake_fstab.emplace_back(entry);
+      }
     }
   }
   std::cout << std::endl;
 
+  // Create a boring /etc/fstab so tools like Busybox work
+  FILE* file = fopen("/etc/fstab", "w");
   if (file) {
+    for (auto& entry : fake_fstab) {
+      write_fstab_entry(entry, file);
+    }
     fclose(file);
+  } else {
+    LOG(ERROR) << "Unable to create /etc/fstab";
   }
 }
 
