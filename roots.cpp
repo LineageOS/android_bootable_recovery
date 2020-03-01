@@ -72,6 +72,9 @@ Volume* get_device_volumes() {
   return fstab->recs;
 }
 
+// We need this declared for load_volume_table().
+Volume* get_entry_for_mount_point_detect_fs(const std::string&);
+
 void load_volume_table() {
   fstab = fs_mgr_read_fstab_default();
   if (!fstab) {
@@ -87,24 +90,31 @@ void load_volume_table() {
     return;
   }
 
-  // Create a boring /etc/fstab so tools like Busybox work
-  FILE* file = fopen("/etc/fstab", "w");
-  if (!file) {
-    LOG(ERROR) << "Unable to create /etc/fstab";
-  }
-
+  struct fstab* fake_fstab = static_cast<struct fstab *>(calloc(1, sizeof(struct fstab)));
   printf("recovery filesystem table\n");
   printf("=========================\n");
   for (int i = 0; i < fstab->num_entries; ++i) {
     const Volume* v = &fstab->recs[i];
     printf("  %d %s %s %s %lld\n", i, v->mount_point, v->fs_type, v->blk_device, v->length);
-    if (file) {
-      write_fstab_entry(v, file);
+    if (fs_mgr_get_entry_for_mount_point(fake_fstab, v->mount_point) == NULL) {
+      const Volume* v_detectfs = get_entry_for_mount_point_detect_fs(v->mount_point);
+      if (!strcmp(v->fs_type, v_detectfs->fs_type)) {
+        fs_mgr_add_entry(fake_fstab, v->mount_point, v->fs_type, v->blk_device);
+      }
     }
   }
   printf("\n");
+
+  // Create a boring /etc/fstab so tools like Busybox work
+  FILE* file = fopen("/etc/fstab", "w");
   if (file) {
+    for (int i = 0; i < fake_fstab->num_entries; ++i) {
+      write_fstab_entry(&fake_fstab->recs[i], file);
+    }
     fclose(file);
+    fs_mgr_free_fstab(fake_fstab);
+  } else {
+    LOG(ERROR) << "Unable to create /etc/fstab";
   }
 }
 
