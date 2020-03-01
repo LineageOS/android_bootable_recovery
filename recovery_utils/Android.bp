@@ -45,6 +45,10 @@ cc_defaults {
         "libfstab",
         "libhealthhalutils",
     ],
+
+    whole_static_libs: [
+        "libext2_blkid",
+    ],
 }
 
 // A utility lib that's local to recovery (in contrast, libotautil is exposed to device-specific
