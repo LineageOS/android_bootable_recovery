@@ -131,7 +131,7 @@ static bool StartSdcardFuse(const std::string& path) {
 
   // The installation process expects to find the sdcard unmounted. Unmount it with MNT_DETACH so
   // that our open file continues to work but new references see it as unmounted.
-  umount2("/sdcard", MNT_DETACH);
+  umount2("/data", MNT_DETACH);
 
   return run_fuse_sideload(std::move(file_data_reader)) == 0;
 }
