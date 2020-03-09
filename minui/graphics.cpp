@@ -30,6 +30,7 @@
 #include "minui/minui.h"
 
 static GRFont* gr_font = nullptr;
+static GRFont* gr_font_menu = nullptr;
 static MinuiBackend* gr_backend = nullptr;
 
 static int overscan_offset_x = 0;
@@ -51,6 +52,10 @@ static bool outside(int x, int y) {
 
 const GRFont* gr_sys_font() {
   return gr_font;
+}
+
+const GRFont* gr_menu_font() {
+  return gr_font_menu;
 }
 
 PixelFormat gr_pixel_format() {
@@ -359,6 +364,11 @@ int gr_init() {
   if (ret != 0) {
     printf("Failed to init font: %d, continuing graphic backend initialization without font file\n",
            ret);
+  }
+  ret = gr_init_font("font_menu", &gr_font_menu);
+  if (ret != 0) {
+    printf("Failed to init menu font: %d. Falling back to system font\n", ret);
+    gr_font_menu = gr_font;
   }
 
   auto backend = std::unique_ptr<MinuiBackend>{ std::make_unique<MinuiBackendDrm>() };
