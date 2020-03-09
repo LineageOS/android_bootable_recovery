@@ -172,8 +172,8 @@ static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Wipe all user data?", "  THIS CAN NOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Factory data reset" };
 
-  size_t chosen_item = device->GetUI()->ShowPromptWipeDataConfirmationMenu(
-      headers, items,
+  size_t chosen_item = device->GetUI()->ShowMenu(
+      headers, items, 0, true,
       std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
 
   return (chosen_item == 1);
