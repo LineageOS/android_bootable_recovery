@@ -139,6 +139,7 @@ void gr_fill(int x1, int y1, int x2, int y2);
 void gr_texticon(int x, int y, const GRSurface* icon);
 
 const GRFont* gr_sys_font();
+const GRFont* gr_menu_font();
 int gr_init_font(const char* name, GRFont** dest);
 void gr_text(const GRFont* font, int x, int y, const char* s, bool bold);
 // Returns -1 if font is nullptr.
