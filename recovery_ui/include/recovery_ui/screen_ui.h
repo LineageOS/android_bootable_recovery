@@ -37,6 +37,7 @@ enum class UIElement {
   MENU_SEL_BG,
   MENU_SEL_BG_ACTIVE,
   MENU_SEL_FG,
+  SCROLLBAR,
   LOG,
   TEXT_FILL,
   INFO
@@ -55,6 +56,9 @@ class DrawInterface {
 
   // Draws a horizontal rule at Y. Returns the offset it should be moving along Y-axis.
   virtual int DrawHorizontalRule(int y) const = 0;
+
+  // Draws a vertical line from y to y + height, on the right of the screen.
+  virtual void DrawScrollBar(int y, int height) const = 0;
 
   // Draws a line of text. Returns the offset it should be moving along Y-axis.
   virtual int DrawTextLine(int x, int y, const std::string& line, bool bold) const = 0;
@@ -189,6 +193,41 @@ class GraphicMenu : public Menu {
   std::vector<std::unique_ptr<GRSurface>> graphic_items_;
 };
 
+class MenuDrawFunctions : public DrawInterface {
+ public:
+  MenuDrawFunctions(const DrawInterface& wrappee);
+  void SetColor(UIElement e) const override {
+    wrappee_.SetColor(e);
+  }
+  void DrawHighlightBar(int x, int y, int width, int height) const {
+    wrappee_.DrawHighlightBar(x, y, width, height);
+  };
+  void DrawScrollBar(int y, int height) const {
+    wrappee_.DrawScrollBar(y, height);
+  }
+  int DrawHorizontalRule(int y) const override {
+    return wrappee_.DrawHorizontalRule(y);
+  }
+  void DrawSurface(const GRSurface* surface, int sx, int sy, int w, int h, int dx,
+                   int dy) const override {
+    wrappee_.DrawSurface(surface, sx, sy, w, h, dx, dy);
+  }
+  void DrawFill(int x, int y, int w, int h) const override {
+    wrappee_.DrawFill(x, y, w, h);
+  }
+  void DrawTextIcon(int x, int y, const GRSurface* surface) const override {
+    wrappee_.DrawTextIcon(x, y, surface);
+  }
+  int DrawTextLine(int x, int y, const std::string& line, bool bold) const override;
+  int DrawTextLines(int x, int y, const std::vector<std::string>& lines) const override;
+  int DrawWrappedTextLines(int x, int y, const std::vector<std::string>& lines) const override;
+
+  int menu_char_height_;
+  int menu_char_width_;
+ private:
+  const DrawInterface& wrappee_;
+};
+
 // Implementation of RecoveryUI appropriate for devices with a screen
 // (shows an icon + a progress bar, text logging, menu, etc.)
 class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
@@ -246,7 +285,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
       const std::function<int(int, bool)>& key_handler) override;
 
  protected:
-  static constexpr int kMenuIndent = 4;
+  static constexpr int kMenuIndent = 24;
 
   // The margin that we don't want to use for showing texts (e.g. round screen, or screen with
   // rounded corners).
@@ -323,6 +362,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // Implementation of the draw functions in DrawInterface.
   void SetColor(UIElement e) const override;
   void DrawHighlightBar(int x, int y, int width, int height) const override;
+  void DrawScrollBar(int y, int height) const override;
   int DrawHorizontalRule(int y) const override;
   void DrawSurface(const GRSurface* surface, int sx, int sy, int w, int h, int dx,
                    int dy) const override;
@@ -331,6 +371,8 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   int DrawTextLine(int x, int y, const std::string& line, bool bold) const override;
   int DrawTextLines(int x, int y, const std::vector<std::string>& lines) const override;
   int DrawWrappedTextLines(int x, int y, const std::vector<std::string>& lines) const override;
+
+  std::unique_ptr<MenuDrawFunctions> menu_draw_funcs_;
 
   // The layout to use.
   int layout_;
@@ -348,6 +390,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   std::unique_ptr<GRSurface> wipe_data_confirmation_text_;
   std::unique_ptr<GRSurface> wipe_data_menu_header_text_;
 
+  std::unique_ptr<GRSurface> lineage_logo_;
   std::unique_ptr<GRSurface> fastbootd_logo_;
 
   // current_icon_ points to one of the frames in intro_frames_ or loop_frames_, indexed by
