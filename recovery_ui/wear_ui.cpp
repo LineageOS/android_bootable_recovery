@@ -29,7 +29,7 @@ constexpr int kDefaultProgressBarBaseline = 259;
 constexpr int kDefaultMenuUnusableRows = 9;
 
 WearRecoveryUI::WearRecoveryUI()
-    : ScreenRecoveryUI(true),
+    : ScreenRecoveryUI(),
       progress_bar_baseline_(android::base::GetIntProperty("ro.recovery.ui.progress_bar_baseline",
                                                            kDefaultProgressBarBaseline)),
       menu_unusable_rows_(android::base::GetIntProperty("ro.recovery.ui.menu_unusable_rows",
@@ -99,7 +99,7 @@ std::unique_ptr<Menu> WearRecoveryUI::CreateMenu(const std::vector<std::string>&
                                                  const std::vector<std::string>& text_items,
                                                  size_t initial_selection) const {
   if (text_rows_ > 0 && text_cols_ > 0) {
-    return std::make_unique<TextMenu>(scrollable_menu_, text_rows_ - menu_unusable_rows_ - 1,
+    return std::make_unique<TextMenu>(false, text_rows_ - menu_unusable_rows_ - 1,
                                       text_cols_ - 1, text_headers, text_items, initial_selection,
                                       char_height_, *this);
   }
