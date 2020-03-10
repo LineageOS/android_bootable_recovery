@@ -148,6 +148,34 @@ int TextMenu::Select(int sel) {
   return selection_;
 }
 
+int TextMenu::SelectVisible(int relative_sel) {
+  int sel = relative_sel;
+  if (scrollable_ && menu_start_ > 0) {
+    sel += menu_start_;
+  }
+
+  return Select(sel);
+}
+
+int TextMenu::Scroll(int updown) {
+  if(!scrollable_) return selection_;
+
+  if ((updown > 0 && menu_start_ + max_display_items_ < ItemsCount()) ||
+      (updown < 0 && menu_start_ > 0)) {
+    menu_start_ += updown;
+
+    /* We can receive a kInvokeItem event from a different source than touch,
+       like from Power button. For this reason, selection should not get out of
+       the screen. Constrain it to the first or last visible item of the list */
+    if (selection_ < menu_start_) {
+      selection_ = menu_start_;
+    } else if (selection_ >= menu_start_ + max_display_items_) {
+      selection_ = menu_start_ + max_display_items_ - 1;
+    }
+  }
+  return selection_;
+}
+
 int TextMenu::DrawHeader(int x, int y) const {
   int offset = 0;
 
@@ -259,6 +287,10 @@ int GraphicMenu::DrawItems(int x, int y, int screen_width, bool long_press) cons
   offset += draw_funcs_.DrawHorizontalRule(y + offset);
 
   return offset;
+}
+
+size_t GraphicMenu::ItemsCount() const {
+  return graphic_items_.size();
 }
 
 bool GraphicMenu::Validate(size_t max_width, size_t max_height, const GRSurface* graphic_headers,
@@ -634,16 +666,20 @@ void ScreenRecoveryUI::CheckBackgroundTextImages() {
 
   FlushKeys();
   while (true) {
-    int key = WaitKey();
-    if (key == static_cast<int>(KeyError::INTERRUPTED)) break;
-    if (key == KEY_POWER || key == KEY_ENTER) {
-      break;
-    } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
-      selected = (selected == 0) ? locales_entries.size() - 1 : selected - 1;
-      SelectAndShowBackgroundText(locales_entries, selected);
-    } else if (key == KEY_DOWN || key == KEY_VOLUMEDOWN) {
-      selected = (selected == locales_entries.size() - 1) ? 0 : selected + 1;
-      SelectAndShowBackgroundText(locales_entries, selected);
+    InputEvent evt = WaitInputEvent();
+    if (evt.type() == EventType::EXTRA) {
+      if (evt.key() == static_cast<int>(KeyError::INTERRUPTED)) break;
+    }
+    if (evt.type() == EventType::KEY) {
+      if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER) {
+        break;
+      } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
+        selected = (selected == 0) ? locales_entries.size() - 1 : selected - 1;
+        SelectAndShowBackgroundText(locales_entries, selected);
+      } else if (evt.key() == KEY_DOWN || evt.key() == KEY_VOLUMEDOWN) {
+        selected = (selected == locales_entries.size() - 1) ? 0 : selected + 1;
+        SelectAndShowBackgroundText(locales_entries, selected);
+      }
     }
   }
 
@@ -777,12 +813,22 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
 
     SetColor(UIElement::INFO);
 
-    if (lineage_logo_) {
+    if (lineage_logo_ && back_icon_) {
       auto logo_width = gr_get_width(lineage_logo_.get());
       auto logo_height = gr_get_height(lineage_logo_.get());
       auto centered_x = ScreenWidth() / 2 - logo_width / 2;
       DrawSurface(lineage_logo_.get(), 0, 0, logo_width, logo_height, centered_x, y);
       y += logo_height;
+
+      if (!menu_->IsMain()) {
+        int h_unit = gr_fb_width() / 9;
+        int v_unit = gr_fb_height() / 16;
+        auto icon_w = gr_get_width(back_icon_.get());
+        auto icon_h = gr_get_height(back_icon_.get());
+        auto icon_x = margin_width_ + (h_unit *1/2) + ((h_unit * 2) - icon_w) / 2;
+        auto icon_y = margin_height_ + (v_unit * 3/2) + ((v_unit * 3/2) - icon_h) / 2;
+        gr_blit(back_icon_.get(), 0, 0, icon_w, icon_h, icon_x, icon_y);
+      }
     } else {
       for (size_t i = 0; i < title_lines_.size(); i++) {
         y += DrawTextLine(x, y, title_lines_[i], i == 0);
@@ -791,6 +837,7 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     }
 
     y += menu_->DrawHeader(x, y);
+    menu_start_y_ = y + 12; // Skip horizontal rule and some margin
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
   }
 
@@ -976,6 +1023,7 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   error_text_ = LoadLocalizedBitmap("error_text");
 
   lineage_logo_ = LoadBitmap("logo_image");
+  back_icon_ = LoadBitmap("ic_back");
   if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
       android::base::GetBoolProperty("ro.fastbootd.available", false)) {
     fastbootd_logo_ = LoadBitmap("fastbootd");
@@ -1161,11 +1209,20 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
       Redraw();
       while (show_prompt) {
         show_prompt = false;
-        int key = WaitKey();
-        if (key == static_cast<int>(KeyError::INTERRUPTED)) return;
-        if (key == KEY_POWER || key == KEY_ENTER) {
+        InputEvent evt = WaitInputEvent();
+        if (evt.type() == EventType::EXTRA) {
+          if (evt.key() == static_cast<int>(KeyError::INTERRUPTED)) {
+            return;
+          }
+        }
+        if (evt.type() != EventType::KEY) {
+          show_prompt = true;
+          continue;
+        }
+        if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER || evt.key() == KEY_BACKSPACE ||
+            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE) {
           return;
-        } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
+        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP || evt.key() == KEY_SCROLLUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
@@ -1261,6 +1318,39 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
+int ScreenRecoveryUI::SelectMenu(const Point& point) {
+  int new_sel = Device::kNoAction;
+  int h_unit = gr_fb_width() / 9;
+  int v_unit = gr_fb_height() / 16;
+  std::lock_guard<std::mutex> lg(updateMutex);
+  if (menu_) {
+    if (!menu_->IsMain() && point.x() >= h_unit * 1/2 && point.x() < h_unit * 5/2 &&
+        point.y() >= v_unit * 3/2 && point.y() < v_unit * 3) {
+      return Device::kGoBack;
+    }
+
+    if (point.y() >= menu_start_y_) {
+      int old_sel = menu_->selection();
+      int relative_sel = (point.y() - menu_start_y_) / MenuItemHeight();
+      new_sel = menu_->SelectVisible(relative_sel);
+      if (new_sel != -1 && new_sel != old_sel) {
+        update_screen_locked();
+      }
+    }
+  }
+  return new_sel;
+}
+
+int ScreenRecoveryUI::ScrollMenu(int updown) {
+  std::lock_guard<std::mutex> lg(updateMutex);
+  int sel = Device::kNoAction;
+  if (menu_) {
+    sel = menu_->Scroll(updown);
+    update_screen_locked();
+  }
+  return sel;
+}
+
 size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
                                   const std::function<int(int, bool)>& key_handler) {
   // Throw away keys pressed previously, so user doesn't accidentally trigger menu items.
@@ -1279,23 +1369,37 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
   int selected = menu_->selection();
   int chosen_item = -1;
   while (chosen_item < 0) {
-    int key = WaitKey();
-    if (key == static_cast<int>(KeyError::INTERRUPTED)) {  // WaitKey() was interrupted.
-      return static_cast<size_t>(KeyError::INTERRUPTED);
-    }
-    if (key == static_cast<int>(KeyError::TIMED_OUT)) {  // WaitKey() timed out.
-      if (WasTextEverVisible()) {
-        continue;
-      } else {
-        LOG(INFO) << "Timed out waiting for key input; rebooting.";
-        menu_.reset();
-        Redraw();
-        return static_cast<size_t>(KeyError::TIMED_OUT);
+    InputEvent evt = WaitInputEvent();
+    if (evt.type() == EventType::EXTRA) {
+      if (evt.key() == static_cast<int>(KeyError::INTERRUPTED)) {
+        // WaitKey() was interrupted.
+        return static_cast<size_t>(KeyError::INTERRUPTED);
+      }
+      if (evt.key() == static_cast<int>(KeyError::TIMED_OUT)) {  // WaitKey() timed out.
+        if (WasTextEverVisible()) {
+          continue;
+        } else {
+          LOG(INFO) << "Timed out waiting for key input; rebooting.";
+          menu_.reset();
+          Redraw();
+          return static_cast<size_t>(KeyError::TIMED_OUT);
+        }
       }
     }
 
-    bool visible = IsTextVisible();
-    int action = key_handler(key, visible);
+    int action = Device::kNoAction;
+    if (evt.type() == EventType::TOUCH) {
+      int touch_sel = SelectMenu(evt.pos());
+      if (touch_sel < 0) {
+        action = touch_sel;
+      } else {
+        action = Device::kInvokeItem;
+        selected = touch_sel;
+      }
+    } else {
+      bool visible = IsTextVisible();
+      action = key_handler(evt.key(), visible);
+    }
     if (action < 0) {
       switch (action) {
         case Device::kHighlightUp:
@@ -1303,6 +1407,12 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
           break;
         case Device::kHighlightDown:
           selected = SelectMenu(++selected);
+          break;
+        case Device::kScrollUp:
+          selected = ScrollMenu(-1);
+          break;
+        case Device::kScrollDown:
+          selected = ScrollMenu(1);
           break;
         case Device::kInvokeItem:
           chosen_item = selected;
