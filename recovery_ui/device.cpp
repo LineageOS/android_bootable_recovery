@@ -92,6 +92,11 @@ int Device::HandleMenuKey(int key, bool visible) {
     case KEY_SEARCH:
       return kHighlightUp;
 
+    case KEY_SCROLLUP:
+      return kScrollUp;
+    case KEY_SCROLLDOWN:
+      return kScrollDown;
+
     case KEY_ENTER:
     case KEY_POWER:
     case BTN_MOUSE:
