@@ -96,10 +96,18 @@ class Menu {
   // Sets the current selection to |sel|. Handle the overflow cases depending on if the menu is
   // scrollable.
   virtual int Select(int sel) = 0;
+  // Select by index within the currently visible items.
+  // Matches Select() if not scrollable
+  virtual int SelectVisible(int relative_sel) = 0;
+  // Scroll the menu by updown, if scrollable
+  virtual int Scroll(int updown) = 0;
   // Displays the menu headers on the screen at offset x, y
   virtual int DrawHeader(int x, int y) const = 0;
   // Iterates over the menu items and displays each of them at offset x, y.
-  virtual int DrawItems(int x, int y, int screen_width, bool long_press) const = 0;
+  virtual int DrawItems(int x, int y, int screen_width, bool long_press,
+                        int* menu_start_y = nullptr) const = 0;
+  // Returns count of menu items.
+  virtual size_t ItemsCount() const = 0;
 
  protected:
   Menu(size_t initial_selection, const DrawInterface& draw_func);
@@ -119,15 +127,18 @@ class TextMenu : public Menu {
            size_t initial_selection, int char_height, const DrawInterface& draw_funcs);
 
   int Select(int sel) override;
+  int SelectVisible(int relative_sel) override;
+  int Scroll(int updown) override;
   int DrawHeader(int x, int y) const override;
-  int DrawItems(int x, int y, int screen_width, bool long_press) const override;
+  int DrawItems(int x, int y, int screen_width, bool long_press,
+                int* menu_start_y = nullptr) const override;
+  size_t ItemsCount() const override {
+    return text_items_.size();
+  };
 
   bool scrollable() const {
     return scrollable_;
   }
-
-  // Returns count of menu items.
-  size_t ItemsCount() const;
 
   // Returns the index of the first menu item.
   size_t MenuStart() const;
@@ -180,8 +191,19 @@ class GraphicMenu : public Menu {
               size_t initial_selection, const DrawInterface& draw_funcs);
 
   int Select(int sel) override;
+  int SelectVisible(int sel) override {
+    return Select(sel);
+  }
+  int Scroll(int updown __unused) override {
+    return selection_;
+  };
   int DrawHeader(int x, int y) const override;
-  int DrawItems(int x, int y, int screen_width, bool long_press) const override;
+  int DrawItems(int x, int y, int screen_width, bool long_press,
+                int* menu_start_y = nullptr) const override;
+
+  size_t ItemsCount() const override {
+    return graphic_items_.size();
+  }
 
   // Checks if all the header and items are valid GRSurface's; and that they can fit in the area
   // defined by |max_width| and |max_height|.
@@ -273,7 +295,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // printing messages
   void Print(const char* fmt, ...) override __printflike(2, 3);
   void PrintOnScreenOnly(const char* fmt, ...) override __printflike(2, 3);
-  void ShowFile(const std::string& filename) override;
+  int ShowFile(const std::string& filename) override;
 
   // menu display
   size_t ShowMenu(const std::vector<std::string>& headers, const std::vector<std::string>& items,
@@ -298,6 +320,10 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   size_t ShowPromptWipeDataConfirmationMenu(
       const std::vector<std::string>& backup_headers, const std::vector<std::string>& backup_items,
       const std::function<int(int, bool)>& key_handler) override;
+
+  int MenuItemHeight() const override {
+    return MenuCharHeight() + 2 * MenuItemPadding();
+  }
 
  protected:
   static constexpr int kMenuIndent = 24;
@@ -342,6 +368,8 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // Sets the menu highlight to the given index, wrapping if necessary. Returns the actual item
   // selected.
   virtual int SelectMenu(int sel);
+  virtual int SelectMenu(const Point& point);
+  virtual int ScrollMenu(int updown);
 
   virtual void draw_background_locked();
   virtual void draw_foreground_locked();
@@ -355,7 +383,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   void ProgressThreadLoop();
 
-  virtual void ShowFile(FILE*);
+  virtual int ShowFile(FILE*);
   virtual void PrintV(const char*, bool, va_list);
   void PutChar(char);
   void ClearText();
@@ -394,9 +422,6 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   }
   int MenuItemPadding() const override {
     return menu_char_height_ * 2 / 3;
-  }
-  int MenuItemHeight() const override {
-    return MenuCharHeight() + 2 * MenuItemPadding();
   }
 
   std::unique_ptr<MenuDrawFunctions> menu_draw_funcs_;
@@ -456,6 +481,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   bool scrollable_menu_;
   std::unique_ptr<Menu> menu_;
+  int menu_start_y_;
 
   // An alternate text screen, swapped with 'text_' when we're viewing a log file.
   char** file_viewer_text_;
