@@ -161,7 +161,7 @@ int TextMenu::DrawHeader(int x, int y) const {
   return offset;
 }
 
-int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
+int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press, int* menu_start_y) const {
   int offset = 0;
   int padding = draw_funcs_.MenuItemPadding();
 
@@ -169,6 +169,8 @@ int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
   offset += draw_funcs_.DrawHorizontalRule(y + offset) + 4;
 
   int item_container_offset = offset; // store it for drawing scrollbar on most top
+  if (menu_start_y != nullptr)
+    *menu_start_y = y + item_container_offset;
 
   for (size_t i = MenuStart(); i < MenuEnd(); ++i) {
     bool bold = false;
@@ -234,7 +236,8 @@ int GraphicMenu::DrawHeader(int x, int y) const {
   return graphic_headers_->height;
 }
 
-int GraphicMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
+int GraphicMenu::DrawItems(int x, int y, int screen_width, bool long_press,
+                           int* menu_start_y __unused) const {
   int offset = 0;
 
   draw_funcs_.SetColor(UIElement::MENU);
@@ -634,16 +637,20 @@ void ScreenRecoveryUI::CheckBackgroundTextImages() {
 
   FlushKeys();
   while (true) {
-    int key = WaitKey();
-    if (key == static_cast<int>(KeyError::INTERRUPTED)) break;
-    if (key == KEY_POWER || key == KEY_ENTER) {
-      break;
-    } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
-      selected = (selected == 0) ? locales_entries.size() - 1 : selected - 1;
-      SelectAndShowBackgroundText(locales_entries, selected);
-    } else if (key == KEY_DOWN || key == KEY_VOLUMEDOWN) {
-      selected = (selected == locales_entries.size() - 1) ? 0 : selected + 1;
-      SelectAndShowBackgroundText(locales_entries, selected);
+    InputEvent evt = WaitInputEvent();
+    if (evt.type() == EventType::EXTRA) {
+      if (evt.key() == static_cast<int>(KeyError::INTERRUPTED)) break;
+    }
+    if (evt.type() == EventType::KEY) {
+      if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER) {
+        break;
+      } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
+        selected = (selected == 0) ? locales_entries.size() - 1 : selected - 1;
+        SelectAndShowBackgroundText(locales_entries, selected);
+      } else if (evt.key() == KEY_DOWN || evt.key() == KEY_VOLUMEDOWN) {
+        selected = (selected == locales_entries.size() - 1) ? 0 : selected + 1;
+        SelectAndShowBackgroundText(locales_entries, selected);
+      }
     }
   }
 
@@ -791,7 +798,7 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     }
 
     y += menu_->DrawHeader(x, y);
-    y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
+    y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress(), &menu_start_y_);
   }
 
   // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
@@ -1144,7 +1151,7 @@ void ScreenRecoveryUI::ClearText() {
   }
 }
 
-void ScreenRecoveryUI::ShowFile(FILE* fp) {
+int ScreenRecoveryUI::ShowFile(FILE* fp) {
   std::vector<off_t> offsets;
   offsets.push_back(ftello(fp));
   ClearText();
@@ -1161,11 +1168,16 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
       Redraw();
       while (show_prompt) {
         show_prompt = false;
-        int key = WaitKey();
-        if (key == static_cast<int>(KeyError::INTERRUPTED)) return;
-        if (key == KEY_POWER || key == KEY_ENTER) {
-          return;
-        } else if (key == KEY_UP || key == KEY_VOLUMEUP) {
+        InputEvent evt = WaitInputEvent();
+        if (evt.type() != EventType::KEY) {
+          show_prompt = true;
+          continue;
+        }
+        if (evt.key() == static_cast<int>(KeyError::INTERRUPTED)) return -1;
+        if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER || evt.key() == KEY_BACKSPACE ||
+            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE) {
+          return evt.key();
+        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
@@ -1174,7 +1186,7 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
           }
         } else {
           if (feof(fp)) {
-            return;
+            return -1;
           }
           offsets.push_back(ftello(fp));
         }
@@ -1193,13 +1205,14 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
       }
     }
   }
+  return -1;
 }
 
-void ScreenRecoveryUI::ShowFile(const std::string& filename) {
+int ScreenRecoveryUI::ShowFile(const std::string& filename) {
   std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(filename.c_str(), "re"), fclose);
   if (!fp) {
     Print("  Unable to open %s: %s\n", filename.c_str(), strerror(errno));
-    return;
+    return -1;
   }
 
   char** old_text = text_;
@@ -1210,11 +1223,12 @@ void ScreenRecoveryUI::ShowFile(const std::string& filename) {
   text_ = file_viewer_text_;
   ClearText();
 
-  ShowFile(fp.get());
+  int key = ShowFile(fp.get());
 
   text_ = old_text;
   text_col_ = old_text_col;
   text_row_ = old_text_row;
+  return key;
 }
 
 std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(
@@ -1261,6 +1275,23 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
+int ScreenRecoveryUI::SelectMenu(const Point& point) {
+  std::lock_guard<std::mutex> lg(updateMutex);
+  int sel = Device::kNoAction;
+  if (menu_) {
+    int old_sel = menu_->selection();
+    sel = (point.y() - menu_start_y_) / MenuItemHeight();
+    if (sel >= menu_->ItemsCount()) {
+      sel = Device::kNoAction;
+    }
+    if (sel != -1 && sel != old_sel) {
+      menu_->Select(sel);
+      update_screen_locked();
+    }
+  }
+  return sel;
+}
+
 size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
                                   const std::function<int(int, bool)>& key_handler) {
   // Throw away keys pressed previously, so user doesn't accidentally trigger menu items.
@@ -1279,23 +1310,37 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
   int selected = menu_->selection();
   int chosen_item = -1;
   while (chosen_item < 0) {
-    int key = WaitKey();
-    if (key == static_cast<int>(KeyError::INTERRUPTED)) {  // WaitKey() was interrupted.
-      return static_cast<size_t>(KeyError::INTERRUPTED);
-    }
-    if (key == static_cast<int>(KeyError::TIMED_OUT)) {  // WaitKey() timed out.
-      if (WasTextEverVisible()) {
-        continue;
-      } else {
-        LOG(INFO) << "Timed out waiting for key input; rebooting.";
-        menu_.reset();
-        Redraw();
-        return static_cast<size_t>(KeyError::TIMED_OUT);
+    InputEvent evt = WaitInputEvent();
+    if (evt.type() == EventType::EXTRA) {
+      if (evt.key() == static_cast<int>(KeyError::TIMED_OUT)) {
+        // WaitKey() was interrupted.
+        return static_cast<size_t>(KeyError::INTERRUPTED);
+      }
+      if (evt.key() == static_cast<int>(KeyError::TIMED_OUT)) {  // WaitKey() timed out.
+        if (WasTextEverVisible()) {
+          continue;
+        } else {
+          LOG(INFO) << "Timed out waiting for key input; rebooting.";
+          menu_.reset();
+          Redraw();
+          return static_cast<size_t>(KeyError::TIMED_OUT);
+        }
       }
     }
 
-    bool visible = IsTextVisible();
-    int action = key_handler(key, visible);
+    int action = Device::kNoAction;
+    if (evt.type() == EventType::TOUCH) {
+      int touch_sel = SelectMenu(evt.pos());
+      if (touch_sel < 0) {
+        action = touch_sel;
+      } else {
+        action = Device::kInvokeItem;
+        selected = touch_sel;
+      }
+    } else {
+      bool visible = IsTextVisible();
+      action = key_handler(evt.key(), visible);
+    }
     if (action < 0) {
       switch (action) {
         case Device::kHighlightUp:
@@ -1305,6 +1350,9 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
           selected = SelectMenu(++selected);
           break;
         case Device::kInvokeItem:
+          if (chosen_item < 0) {
+            chosen_item = Device::kGoBack;
+          }
           chosen_item = selected;
           break;
         case Device::kNoAction:
