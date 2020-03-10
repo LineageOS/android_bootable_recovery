@@ -74,7 +74,7 @@ RecoveryUI::RecoveryUI()
       touch_high_threshold_(android::base::GetIntProperty("ro.recovery.ui.touch_high_threshold",
                                                           kDefaultTouchHighThreshold)),
       key_interrupted_(false),
-      key_queue_len(0),
+      event_queue_len(0),
       key_last_down(-1),
       key_long_press(false),
       key_down_count(0),
@@ -85,6 +85,10 @@ RecoveryUI::RecoveryUI()
       has_down_key(false),
       has_touch_screen(false),
       touch_slot_(0),
+      touch_finger_down_(false),
+      touch_saw_x_(false),
+      touch_saw_y_(false),
+      touch_reported_(false),
       is_bootreason_recovery_ui_(false),
       screensaver_state_(ScreensaverState::DISABLED) {
   memset(key_pressed, 0, sizeof(key_pressed));
@@ -241,78 +245,48 @@ bool RecoveryUI::Init(const std::string& /* locale */) {
   return true;
 }
 
-enum SwipeDirection { UP, DOWN, RIGHT, LEFT };
+void RecoveryUI::OnTouchPress() {
+  touch_start_ = touch_track_ = touch_pos_;
+}
 
-static SwipeDirection FlipSwipeDirection(SwipeDirection direction) {
-  switch (direction) {
-    case UP:
-      return SwipeDirection::DOWN;
-    case DOWN:
-      return SwipeDirection::UP;
-    case RIGHT:
-      return SwipeDirection::LEFT;
-    case LEFT:
-      return SwipeDirection::RIGHT;
+void RecoveryUI::OnTouchTrack() {
+  if (touch_pos_.y() <= gr_fb_height()) {
+    while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
+      int dy = touch_pos_.y() - touch_track_.y();
+      int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP;
+      ProcessKey(key, 1);  // press key
+      ProcessKey(key, 0);  // and release it
+      int sgn = (dy > 0) - (dy < 0);
+      touch_track_.y(touch_track_.y() + sgn * MenuItemHeight());
+    }
   }
 }
 
-void RecoveryUI::OnTouchEvent() {
-  Point delta = touch_pos_ - touch_start_;
-  SwipeDirection direction;
-
-  // We only consider a valid swipe if:
-  // - the delta along one axis is below touch_low_threshold_;
-  // - and the delta along the other axis is beyond touch_high_threshold_.
-  if (abs(delta.y()) < touch_low_threshold_ && abs(delta.x()) > touch_high_threshold_) {
-    direction = delta.x() < 0 ? SwipeDirection::LEFT : SwipeDirection::RIGHT;
-  } else if (abs(delta.x()) < touch_low_threshold_ && abs(delta.y()) > touch_high_threshold_) {
-    direction = delta.y() < 0 ? SwipeDirection::UP : SwipeDirection::DOWN;
-  } else {
-    for (const auto& vk : virtual_keys_) {
-      if (touch_start_.x() >= vk.min_.x() && touch_start_.x() < vk.max_.x() &&
-          touch_start_.y() >= vk.min_.y() && touch_start_.y() < vk.max_.y()) {
-        ProcessKey(vk.keycode, 1);  // press key
-        ProcessKey(vk.keycode, 0);  // and release it
-        return;
-      }
-    }
-    LOG(DEBUG) << "Ignored " << delta.x() << " " << delta.y() << " (low: " << touch_low_threshold_
-               << ", high: " << touch_high_threshold_ << ")";
-    return;
-  }
-
+void RecoveryUI::OnTouchRelease() {
   // Allow turning on text mode with any swipe, if bootloader has set a bootreason of recovery_ui.
   if (is_bootreason_recovery_ui_ && !IsTextVisible()) {
     ShowText(true);
     return;
   }
 
-  // Flip swipe direction if screen is rotated upside down
-  if (gr_get_rotation() == GRRotation::DOWN) {
-    direction = FlipSwipeDirection(direction);
+  // Check vkeys.  Only report if touch both starts and ends in the vkey.
+  if (touch_start_.y() > gr_fb_height() && touch_pos_.y() > gr_fb_height()) {
+    for (const auto& vk : virtual_keys_) {
+      if (vk.inside(touch_start_) && vk.inside(touch_pos_)) {
+        ProcessKey(vk.keycode, 1);  // press key
+        ProcessKey(vk.keycode, 0);  // and release it
+      }
+    }
+    return;
   }
 
-  LOG(DEBUG) << "Swipe direction=" << direction;
-  switch (direction) {
-    case SwipeDirection::UP:
-      ProcessKey(KEY_UP, 1);  // press up key
-      ProcessKey(KEY_UP, 0);  // and release it
-      break;
+  // If we tracked a vertical swipe, ignore the release
+  if (touch_track_ != touch_start_) {
+    return;
+  }
 
-    case SwipeDirection::DOWN:
-      ProcessKey(KEY_DOWN, 1);  // press down key
-      ProcessKey(KEY_DOWN, 0);  // and release it
-      break;
-
-    case SwipeDirection::LEFT:
-      ProcessKey(KEY_BACK, 1);  // press back key
-      ProcessKey(KEY_BACK, 0);  // and release it
-      break;
-    case SwipeDirection::RIGHT:
-      ProcessKey(KEY_POWER, 1);  // press power key
-      ProcessKey(KEY_POWER, 0);  // and release it
-      break;
-  };
+  // Simple touch
+  EnqueueTouch(touch_pos_);
 }
 
 int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
@@ -322,10 +296,6 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
   }
 
   // Touch inputs handling.
-  //
-  // We handle the touch inputs by tracking the position changes between initial contacting and
-  // upon lifting. touch_start_X/Y record the initial positions, with touch_finger_down set. Upon
-  // detecting the lift, we unset touch_finger_down and detect a swipe based on position changes.
   //
   // Per the doc Multi-touch Protocol at below, there are two protocols.
   // https://www.kernel.org/doc/Documentation/input/multi-touch-protocol.txt
@@ -343,14 +313,17 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
 
   if (ev.type == EV_SYN) {
     if (touch_screen_allowed_ && ev.code == SYN_REPORT) {
-      // There might be multiple SYN_REPORT events. We should only detect a swipe after lifting the
-      // contact.
-      if (touch_finger_down_ && !touch_swiping_) {
-        touch_start_ = touch_pos_;
-        touch_swiping_ = true;
-      } else if (!touch_finger_down_ && touch_swiping_) {
-        touch_swiping_ = false;
-        OnTouchEvent();
+      // There might be multiple SYN_REPORT events. Only report press/release once.
+      if (!touch_reported_ && touch_finger_down_) {
+        if (touch_saw_x_ && touch_saw_y_) {
+          OnTouchPress();
+          touch_reported_ = true;
+          touch_saw_x_ = touch_saw_y_ = false;
+        }
+      } else if (touch_reported_ && !touch_finger_down_) {
+        OnTouchRelease();
+        touch_reported_ = false;
+        touch_saw_x_ = touch_saw_y_ = false;
       }
     }
     return 0;
@@ -386,13 +359,23 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
 
     switch (ev.code) {
       case ABS_MT_POSITION_X:
-        touch_pos_.x(ev.value);
         touch_finger_down_ = true;
+        touch_saw_x_ = true;
+        touch_pos_.x(ev.value);
+        if (touch_reported_ && touch_saw_y_) {
+          OnTouchTrack();
+          touch_saw_x_ = touch_saw_y_ = false;
+        }
         break;
 
       case ABS_MT_POSITION_Y:
-        touch_pos_.y(ev.value);
         touch_finger_down_ = true;
+        touch_saw_y_ = true;
+        touch_pos_.y(ev.value);
+        if (touch_reported_ && touch_saw_x_) {
+          OnTouchTrack();
+          touch_saw_x_ = touch_saw_y_ = false;
+        }
         break;
 
       case ABS_MT_TRACKING_ID:
@@ -497,11 +480,22 @@ void RecoveryUI::TimeKey(int key_code, int count) {
 }
 
 void RecoveryUI::EnqueueKey(int key_code) {
-  std::lock_guard<std::mutex> lg(key_queue_mutex);
-  const int queue_max = sizeof(key_queue) / sizeof(key_queue[0]);
-  if (key_queue_len < queue_max) {
-    key_queue[key_queue_len++] = key_code;
-    key_queue_cond.notify_one();
+  std::lock_guard<std::mutex> lg(event_queue_mutex);
+  const int queue_max = sizeof(event_queue) / sizeof(event_queue[0]);
+  if (event_queue_len < queue_max) {
+    InputEvent event(key_code);
+    event_queue[event_queue_len++] = event;
+    event_queue_cond.notify_one();
+  }
+}
+
+void RecoveryUI::EnqueueTouch(const Point& pos) {
+  std::lock_guard<std::mutex> lg(event_queue_mutex);
+  const int queue_max = sizeof(event_queue) / sizeof(event_queue[0]);
+  if (event_queue_len < queue_max) {
+    InputEvent event(pos);
+    event_queue[event_queue_len++] = event;
+    event_queue_cond.notify_one();
   }
 }
 
@@ -540,23 +534,23 @@ void RecoveryUI::SetScreensaverState(ScreensaverState state) {
   }
 }
 
-int RecoveryUI::WaitKey() {
-  std::unique_lock<std::mutex> lk(key_queue_mutex);
+RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
+  std::unique_lock<std::mutex> lk(event_queue_mutex);
 
   // Check for a saved key queue interruption.
   if (key_interrupted_) {
     SetScreensaverState(ScreensaverState::NORMAL);
-    return static_cast<int>(KeyError::INTERRUPTED);
+    return InputEvent(EventType::EXTRA, KeyError::INTERRUPTED);
   }
 
   // Time out after UI_WAIT_KEY_TIMEOUT_SEC, unless a USB cable is plugged in.
   do {
-    bool rc = key_queue_cond.wait_for(lk, std::chrono::seconds(UI_WAIT_KEY_TIMEOUT_SEC), [this] {
-      return this->key_queue_len != 0 || key_interrupted_;
+    bool rc = event_queue_cond.wait_for(lk, std::chrono::seconds(UI_WAIT_KEY_TIMEOUT_SEC), [this] {
+      return this->event_queue_len != 0 || key_interrupted_;
     });
     if (key_interrupted_) {
       SetScreensaverState(ScreensaverState::NORMAL);
-      return static_cast<int>(KeyError::INTERRUPTED);
+      return InputEvent(EventType::EXTRA, KeyError::INTERRUPTED);
     }
     if (screensaver_state_ != ScreensaverState::DISABLED) {
       if (!rc) {
@@ -569,8 +563,8 @@ int RecoveryUI::WaitKey() {
       } else if (screensaver_state_ != ScreensaverState::NORMAL) {
         // Drop the first key if it's changing from OFF to NORMAL.
         if (screensaver_state_ == ScreensaverState::OFF) {
-          if (key_queue_len > 0) {
-            memcpy(&key_queue[0], &key_queue[1], sizeof(int) * --key_queue_len);
+          if (event_queue_len > 0) {
+            memcpy(&event_queue[0], &event_queue[1], sizeof(int) * --event_queue_len);
           }
         }
 
@@ -578,14 +572,14 @@ int RecoveryUI::WaitKey() {
         SetScreensaverState(ScreensaverState::NORMAL);
       }
     }
-  } while (IsUsbConnected() && key_queue_len == 0);
+  } while (IsUsbConnected() && event_queue_len == 0);
 
-  int key = static_cast<int>(KeyError::TIMED_OUT);
-  if (key_queue_len > 0) {
-    key = key_queue[0];
-    memcpy(&key_queue[0], &key_queue[1], sizeof(int) * --key_queue_len);
+  InputEvent event;
+  if (event_queue_len > 0) {
+    event = event_queue[0];
+    memcpy(&event_queue[0], &event_queue[1], sizeof(InputEvent) * --event_queue_len);
   }
-  return key;
+  return event;
 }
 
 void RecoveryUI::CancelWaitKey() {
@@ -594,10 +588,10 @@ void RecoveryUI::CancelWaitKey() {
 
 void RecoveryUI::InterruptKey() {
   {
-    std::lock_guard<std::mutex> lg(key_queue_mutex);
+    std::lock_guard<std::mutex> lg(event_queue_mutex);
     key_interrupted_ = true;
   }
-  key_queue_cond.notify_one();
+  event_queue_cond.notify_one();
 }
 
 bool RecoveryUI::IsUsbConnected() {
@@ -641,8 +635,8 @@ bool RecoveryUI::HasTouchScreen() const {
 }
 
 void RecoveryUI::FlushKeys() {
-  std::lock_guard<std::mutex> lg(key_queue_mutex);
-  key_queue_len = 0;
+  std::lock_guard<std::mutex> lg(event_queue_mutex);
+  event_queue_len = 0;
 }
 
 RecoveryUI::KeyAction RecoveryUI::CheckKey(int key, bool is_long_press) {
