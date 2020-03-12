@@ -821,12 +821,10 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
       y += logo_height;
 
       if (!menu_->IsMain()) {
-        int h_unit = gr_fb_width() / 9;
-        int v_unit = gr_fb_height() / 16;
         auto icon_w = gr_get_width(back_icon_.get());
         auto icon_h = gr_get_height(back_icon_.get());
-        auto icon_x = margin_width_ + (h_unit *1/2) + ((h_unit * 2) - icon_w) / 2;
-        auto icon_y = margin_height_ + (v_unit * 3/2) + ((v_unit * 3/2) - icon_h) / 2;
+        auto icon_x = centered_x / 2 - icon_w / 2;
+        auto icon_y = y - logo_height / 2 - icon_h / 2;
         gr_blit(back_icon_.get(), 0, 0, icon_w, icon_h, icon_x, icon_y);
       }
     } else {
@@ -1319,14 +1317,23 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
 }
 
 int ScreenRecoveryUI::SelectMenu(const Point& point) {
-  int new_sel = Device::kNoAction;
-  int h_unit = gr_fb_width() / 9;
-  int v_unit = gr_fb_height() / 16;
   std::lock_guard<std::mutex> lg(updateMutex);
+  int new_sel = Device::kNoAction;
   if (menu_) {
-    if (!menu_->IsMain() && point.x() >= h_unit * 1/2 && point.x() < h_unit * 5/2 &&
-        point.y() >= v_unit * 3/2 && point.y() < v_unit * 3) {
-      return Device::kGoBack;
+    if (!menu_->IsMain()) {
+      // Back arrow hitbox
+      const static int logo_width = gr_get_width(lineage_logo_.get());
+      const static int logo_height = gr_get_height(lineage_logo_.get());
+      const static int icon_w = gr_get_width(back_icon_.get());
+      const static int icon_h = gr_get_height(back_icon_.get());
+      const static int centered_x = ScreenWidth() / 2 - logo_width / 2;
+      const static int icon_x = centered_x / 2 - icon_w / 2;
+      const static int icon_y = margin_height_ + logo_height / 2 - icon_h / 2;
+
+      if (point.x() >= icon_x && point.x() <= icon_x + icon_w &&
+          point.y() >= icon_y && point.y() <= icon_y + icon_h) {
+        return Device::kGoBack;
+      }
     }
 
     if (point.y() >= menu_start_y_) {
