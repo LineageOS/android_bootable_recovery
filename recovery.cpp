@@ -186,6 +186,15 @@ bool ask_to_continue_unverified(Device* device) {
   }
 }
 
+bool ask_to_continue_downgrade(Device* device) {
+  if (get_build_type() == "user") {
+    return false;
+  } else {
+    ui->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "This package will downgrade your system", "Install anyway?");
+  }
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Wipe all user data?", "  THIS CAN NOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Factory data reset" };
@@ -918,7 +927,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
       }
 
       status = install_package(update_package, should_wipe_cache, true, retry_count,
-                               true /* verify */, ui);
+                               true /* verify */, false /* allow_ab_downgrade */, ui);
       if (status != INSTALL_SUCCESS) {
         ui->Print("Installation aborted.\n");
 
