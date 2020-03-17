@@ -19,5 +19,4 @@
 #include "recovery_ui/device.h"
 #include "recovery_ui/ui.h"
 
-int ApplyFromSdcard(Device* device, RecoveryUI* ui,
-                    const std::function<bool(Device*)>& ask_to_continue_unverified_fn);
+int ApplyFromSdcard(Device* device, RecoveryUI* ui);

@@ -25,6 +25,7 @@
 #include <ziparchive/zip_archive.h>
 
 #include "package.h"
+#include "recovery_ui/device.h"
 #include "recovery_ui/ui.h"
 
 enum InstallResult {
@@ -70,3 +71,6 @@ bool verify_package_compatibility(ZipArchiveHandle package_zip);
 // Mandatory checks: ota-type, pre-device and serial number(if presents)
 // AB OTA specific checks: pre-build version, fingerprint, timestamp.
 int CheckPackageMetadata(const std::map<std::string, std::string>& metadata, OtaType ota_type);
+
+// Defined in recovery.cpp, just declare it and it will eventually link fine.
+bool ask_to_continue_unverified(Device* device);

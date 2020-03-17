@@ -90,9 +90,7 @@ static bool WriteStatusToFd(MinadbdCommandStatus status, int fd) {
 
 // Installs the package from FUSE. Returns the installation result and whether it should continue
 // waiting for new commands.
-static auto AdbInstallPackageHandler(
-    Device* device, int* result,
-    const std::function<bool(Device*)>& ask_to_continue_unverified_fn) {
+static auto AdbInstallPackageHandler(Device* device, int* result) {
   RecoveryUI* ui = device->GetUI();
 
   // How long (in seconds) we wait for the package path to be ready. It doesn't need to be too long
@@ -117,8 +115,8 @@ static auto AdbInstallPackageHandler(
     ui->CancelWaitKey();
 
     *result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, true /* verify */, ui);
-    if (*result == INSTALL_UNVERIFIED && ask_to_continue_unverified_fn &&
-        ask_to_continue_unverified_fn(device)) {
+    if (*result == INSTALL_UNVERIFIED &&
+        ui->IsTextVisible() && ask_to_continue_unverified(device)) {
       *result =
           install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, false /* verify */, ui);
     }
@@ -357,8 +355,7 @@ static void CreateMinadbdServiceAndExecuteCommands(
   signal(SIGPIPE, SIG_DFL);
 }
 
-int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action,
-                 const std::function<bool(Device*)>& ask_to_continue_unverified_fn) {
+int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot_action) {
   // Save the usb state to restore after the sideload operation.
   std::string usb_state = android::base::GetProperty("sys.usb.state", "none");
   // Clean up state and stop adbd.
@@ -369,8 +366,7 @@ int ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinAction* reboot
 
   int install_result = INSTALL_ERROR;
   std::map<MinadbdCommand, CommandFunction> command_map{
-    { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, device, &install_result,
-                                          ask_to_continue_unverified_fn) },
+    { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, device, &install_result) },
     { MinadbdCommand::kRebootAndroid, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootAndroid,
                                                 &install_result, reboot_action) },
     { MinadbdCommand::kRebootBootloader,
