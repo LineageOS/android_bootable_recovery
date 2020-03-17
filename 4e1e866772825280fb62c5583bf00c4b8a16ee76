@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9d86982_4c825d89",
+        "filename": "install/include/install/install.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-03-17T22:10:23Z",
+      "side": 1,
+      "message": "Still bad but better",
+      "revId": "4e1e866772825280fb62c5583bf00c4b8a16ee76",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
