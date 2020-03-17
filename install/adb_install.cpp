@@ -50,6 +50,7 @@
 #include "recovery_ui/ui.h"
 
 bool ask_to_continue_unverified(Device* device);
+bool ask_to_continue_downgrade(Device* device);
 
 // A CommandFunction returns a pair of (result, should_continue), which indicates the command
 // execution result and whether it should proceed to the next iteration. The execution result will
@@ -116,11 +117,17 @@ static auto AdbInstallPackageHandler(Device* device, int* result) {
     }
     ui->CancelWaitKey();
 
-    *result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, true /* verify */, ui);
+    *result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, true /* verify */,
+                              false /* allow_ab_downgrade */, ui);
     if (*result == INSTALL_UNVERIFIED &&
         ui->IsTextVisible() && ask_to_continue_unverified(device)) {
-      *result =
-          install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, false /* verify */, ui);
+      *result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, false /* verify */,
+                                false /* allow_ab_downgrade */, ui);
+    }
+    if (*result == INSTALL_DOWNGRADE &&
+      ui->IsTextVisible() && ask_to_continue_downgrade(device)) {
+      *result = install_package(FUSE_SIDELOAD_HOST_PATHNAME, false, false, 0, false /* verify */,
+                                true /* allow_ab_downgrade */, ui);
     }
     break;
   }
