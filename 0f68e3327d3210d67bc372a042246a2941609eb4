@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2040efb3_9309d407",
+        "filename": "install/adb_install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-03-17T21:58:07Z",
+      "side": 1,
+      "message": "soo this kinda sucks",
+      "revId": "0f68e3327d3210d67bc372a042246a2941609eb4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
