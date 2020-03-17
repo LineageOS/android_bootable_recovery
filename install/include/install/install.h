@@ -64,7 +64,8 @@ bool ReadMetadataFromPackage(ZipArchiveHandle zip, std::map<std::string, std::st
 // Checks if the metadata in the OTA package has expected values. Mandatory checks: ota-type,
 // pre-device and serial number (if presents). A/B OTA specific checks: pre-build version,
 // fingerprint, timestamp.
-bool CheckPackageMetadata(const std::map<std::string, std::string>& metadata, OtaType ota_type);
+bool CheckPackageMetadata(const std::map<std::string, std::string>& metadata, OtaType ota_type,
+                          RecoveryUI* ui);
 
 // Ensures the path to the update package is mounted. Also set the |should_use_fuse| to true if the
 // package stays on a removable media.
