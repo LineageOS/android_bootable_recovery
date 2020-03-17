@@ -177,7 +177,7 @@ static bool yes_no(Device* device, const char* question1, const char* question2)
   return (chosen_item == 1);
 }
 
-static bool ask_to_continue_unverified_fn(Device* device) {
+bool ask_to_continue_unverified(Device* device) {
   if (get_build_type() == "user") {
     return false;
   } else {
@@ -583,11 +583,10 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_ADB_SIDELOAD) {
-          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action,
-                                ask_to_continue_unverified_fn);
+          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
         } else {
           adb = false;
-          status = ApplyFromSdcard(device, ui, ask_to_continue_unverified_fn);
+          status = ApplyFromSdcard(device, ui);
         }
 
         ui->Print("\nInstall from %s completed with status %d.\n", adb ? "ADB" : "SD card", status);
@@ -976,8 +975,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
-    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action,
-                          !sideload_auto_reboot ? ask_to_continue_unverified_fn : nullptr);
+    status = ApplyFromAdb(device, false /* rescue_mode */, &next_action);
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
     if (sideload_auto_reboot) {
       status = INSTALL_REBOOT;
