@@ -114,7 +114,7 @@ service fastbootd /system/bin/fastbootd
     seclabel u:r:fastbootd:s0
 
 # Restart adbd so it can run as root
-on property:sys.usb.config=adb && property:lineage.service.adb.root=1
+on property:sys.usb.config=adb && property:service.adb.root=1
     restart adbd
 
 on fs && property:sys.usb.configfs=1
