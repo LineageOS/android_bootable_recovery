@@ -22,6 +22,30 @@
       "revId": "166437c51b73b5921f22377973feb1f2ea13786b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33a160e9_82b79a90",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-03-25T22:10:20Z",
+      "side": 1,
+      "message": "\u003d\u003d NULL, heh",
+      "parentUuid": "3ca5f1a0_6cc23e34",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 33
+      },
+      "revId": "166437c51b73b5921f22377973feb1f2ea13786b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
