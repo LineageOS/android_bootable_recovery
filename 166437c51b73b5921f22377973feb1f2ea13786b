@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ca5f1a0_6cc23e34",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-03-25T21:51:32Z",
+      "side": 1,
+      "message": "😮 I totally did not realize that that is exactly what this would do:\nif (android::fs_mgr::GetEntryForMountPoint(\u0026fake_fstab, entry.mount_point) !\u003d NULL) {",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 33
+      },
+      "revId": "166437c51b73b5921f22377973feb1f2ea13786b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
