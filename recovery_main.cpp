@@ -487,6 +487,10 @@ int main(int argc, char** argv) {
     android::base::SetProperty("lineage.service.adb.root", "1");
   }
 
+  if (get_build_type() != "user") {
+    android::base::SetProperty("ro.ota.allow_downgrade", "true");
+  }
+
   while (true) {
     std::string usb_config = fastboot ? "fastboot" : is_ro_debuggable() ? "adb" : "none";
     std::string usb_state = android::base::GetProperty("sys.usb.state", "none");
