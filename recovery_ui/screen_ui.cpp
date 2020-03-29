@@ -1336,7 +1336,8 @@ int ScreenRecoveryUI::SelectMenu(const Point& point) {
       }
     }
 
-    if (point.y() >= menu_start_y_) {
+    if (point.y() >= menu_start_y_ &&
+        point.y() < menu_start_y_ + menu_->ItemsCount() * MenuItemHeight()) {
       int old_sel = menu_->selection();
       int relative_sel = (point.y() - menu_start_y_) / MenuItemHeight();
       new_sel = menu_->SelectVisible(relative_sel);
