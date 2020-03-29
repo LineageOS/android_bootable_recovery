@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ecf96cfb_53d0adc8",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2020-03-29T21:32:05Z",
+      "side": 1,
+      "message": "This looks fine to me. Not opposed.",
+      "parentUuid": "c8e2140c_459c95bf",
+      "range": {
+        "startLine": 520,
+        "startChar": 6,
+        "endLine": 520,
+        "endChar": 23
+      },
+      "revId": "97d5fc27ab4900cb995cc1293e4ba5e68ca70e18",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f82e87d1_6029ede1",
         "filename": "recovery.cpp",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2020-03-29T21:13:48Z",
       "side": 1,
       "message": "ditto, or even `break;`",
+      "range": {
+        "startLine": 535,
+        "startChar": 8,
+        "endLine": 535,
+        "endChar": 25
+      },
+      "revId": "97d5fc27ab4900cb995cc1293e4ba5e68ca70e18",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fec9faa_3b063fbb",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 535,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2020-03-29T21:32:05Z",
+      "side": 1,
+      "message": "This looks fine to me. Not opposed.",
+      "parentUuid": "f82e87d1_6029ede1",
       "range": {
         "startLine": 535,
         "startChar": 8,
