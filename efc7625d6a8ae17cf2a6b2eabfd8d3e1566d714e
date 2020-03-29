@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75c90928_21c6c7d8",
+        "filename": "recovery_ui/device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-03-29T14:25:59Z",
+      "side": 1,
+      "message": "Welp thats not true",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 67
+      },
+      "revId": "efc7625d6a8ae17cf2a6b2eabfd8d3e1566d714e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
