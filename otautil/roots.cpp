@@ -196,7 +196,7 @@ int format_volume(const std::string& volume, const std::string& directory) {
     LOG(ERROR) << "can't give path \"" << volume << "\" to format_volume";
     return -1;
   }
-  if (ensure_path_unmounted(volume) != 0) {
+  if (ensure_volume_unmounted(v->blk_device) != 0) {
     LOG(ERROR) << "format_volume: Failed to unmount \"" << v->mount_point << "\"";
     return -1;
   }
