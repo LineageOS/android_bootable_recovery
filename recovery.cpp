@@ -506,16 +506,18 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
     }
     ui->SetProgressType(RecoveryUI::EMPTY);
 
+change_menu:
     size_t chosen_item = ui->ShowMenu(
-        {}, device->GetMenuItems(), 0, false,
+        device->GetMenuHeaders(), device->GetMenuItems(), 0, false,
         std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
     // Handle Interrupt key
     if (chosen_item == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
       return Device::KEY_INTERRUPTED;
     }
-    // We are already in the main menu
+
     if (chosen_item == Device::kGoBack || chosen_item == Device::kGoHome) {
-      continue;
+      device->GoHome();
+      goto change_menu;
     }
 
     // Device-specific code may take some action here. It may return one of the core actions
@@ -526,6 +528,12 @@ static Device::BuiltinAction prompt_and_wait(Device* device, int status) {
             : device->InvokeMenuItem(chosen_item);
 
     switch (chosen_action) {
+      case Device::MENU_BASE:
+      case Device::MENU_UPDATE:
+      case Device::MENU_WIPE:
+      case Device::MENU_ADVANCED:
+        goto change_menu;
+
       case Device::NO_ACTION:
         break;
 
