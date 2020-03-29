@@ -560,6 +560,7 @@ int main(int argc, char** argv) {
       case Device::ENTER_RECOVERY:
         LOG(INFO) << "Entering recovery";
         fastboot = false;
+        device->GoHome();
         break;
 
       default:
