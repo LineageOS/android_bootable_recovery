@@ -395,6 +395,8 @@ static bool wipe_ab_device(size_t wipe_package_size) {
 
 static void choose_recovery_file(Device* device) {
   std::vector<std::string> entries;
+  entries.push_back("Back");
+
   if (has_cache) {
     for (int i = 0; i < KEEP_LOG_COUNT; i++) {
       auto add_to_entries = [&](const char* filename) {
@@ -423,8 +425,6 @@ static void choose_recovery_file(Device* device) {
     }
   }
 
-  entries.push_back("Back");
-
   std::vector<std::string> headers{ "Select file to view" };
 
   size_t chosen_item = 0;
@@ -438,7 +438,7 @@ static void choose_recovery_file(Device* device) {
       break;
     }
     if (chosen_item == Device::kGoHome || chosen_item == Device::kGoBack ||
-        chosen_item == entries.size() - 1) {
+        chosen_item == 0) {
       break;
     }
     ui->ShowFile(entries[chosen_item]);
