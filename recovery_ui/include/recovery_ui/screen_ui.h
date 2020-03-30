@@ -92,7 +92,7 @@ class Menu {
  public:
   virtual ~Menu() = default;
   // Returns the current menu selection.
-  size_t selection() const;
+  int selection() const;
   // Sets the current selection to |sel|. Handle the overflow cases depending on if the menu is
   // scrollable.
   virtual int Select(int sel) = 0;
@@ -112,7 +112,7 @@ class Menu {
  protected:
   Menu(size_t initial_selection, const DrawInterface& draw_func);
   // Current menu selection.
-  size_t selection_;
+  int selection_;
   // Reference to the class that implements all the draw functions.
   const DrawInterface& draw_funcs_;
 };
@@ -444,6 +444,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   std::unique_ptr<GRSurface> lineage_logo_;
   std::unique_ptr<GRSurface> back_icon_;
+  std::unique_ptr<GRSurface> back_icon_sel_;
   std::unique_ptr<GRSurface> fastbootd_logo_;
 
   // current_icon_ points to one of the frames in intro_frames_ or loop_frames_, indexed by
