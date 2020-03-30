@@ -61,19 +61,18 @@ int Menu::selection() const {
   return selection_;
 }
 
-TextMenu::TextMenu(bool scrollable, size_t max_items, size_t max_length,
+TextMenu::TextMenu(bool wrappable, size_t max_items, size_t max_length,
                    const std::vector<std::string>& headers, const std::vector<std::string>& items,
                    size_t initial_selection, int char_height, const DrawInterface& draw_funcs)
     : Menu(initial_selection, draw_funcs),
-      scrollable_(scrollable),
+      wrappable_(wrappable),
       max_display_items_(max_items),
       max_item_length_(max_length),
       text_headers_(headers),
       char_height_(char_height) {
   CHECK_LE(max_items, static_cast<size_t>(std::numeric_limits<int>::max()));
 
-  // It's fine to have more entries than text_rows_ if scrollable menu is supported.
-  size_t items_count = scrollable_ ? items.size() : std::min(items.size(), max_display_items_);
+  size_t items_count = items.size();
   for (size_t i = 0; i < items_count; ++i) {
     text_items_.emplace_back(items[i].substr(0, max_item_length_));
   }
@@ -105,7 +104,7 @@ size_t TextMenu::ItemsCount() const {
 }
 
 bool TextMenu::ItemsOverflow(std::string* cur_selection_str) const {
-  if (!scrollable_ || ItemsCount() <= max_display_items_) {
+  if (ItemsCount() <= max_display_items_) {
     return false;
   }
 
@@ -121,32 +120,20 @@ int TextMenu::Select(int sel) {
 
   int min = IsMain() ? 0 : -1; // -1 is back arrow
 
-  // Wraps the selection at boundary if the menu is not scrollable.
-  if (!scrollable_) {
-    if (sel < min) {
-      selection_ = count - 1;
-    } else if (sel >= count) {
-      selection_ = min;
-    } else {
-      selection_ = sel;
-    }
-
-    return selection_;
+  if (sel < min) {
+    selection_ = wrappable() ? count - 1 : min;
+  } else if (sel >= count) {
+    selection_ = wrappable() ? min : count - 1;
+  } else {
+    selection_ = sel;
   }
 
-  if (sel < min) {
-    selection_ = min;
-  } else if (sel >= count) {
-    selection_ = count - 1;
-  } else {
-    if (sel >= 0) {
-      if (static_cast<size_t>(sel) < menu_start_) {
-        menu_start_--;
-      } else if (static_cast<size_t>(sel) >= MenuEnd()) {
-        menu_start_++;
-      }
+  if (selection_ >= 0) {
+    if (selection_ < menu_start_) {
+      menu_start_ = selection_;
+    } else if (static_cast<size_t>(selection_) >= MenuEnd()) {
+      menu_start_ = selection_ - max_display_items_ + 1;
     }
-    selection_ = sel;
   }
 
   return selection_;
@@ -154,7 +141,7 @@ int TextMenu::Select(int sel) {
 
 int TextMenu::SelectVisible(int relative_sel) {
   int sel = relative_sel;
-  if (scrollable_ && menu_start_ > 0) {
+  if (menu_start_ > 0) {
     sel += menu_start_;
   }
 
@@ -162,8 +149,6 @@ int TextMenu::SelectVisible(int relative_sel) {
 }
 
 int TextMenu::Scroll(int updown) {
-  if(!scrollable_) return selection_;
-
   if ((updown > 0 && menu_start_ + max_display_items_ < ItemsCount()) ||
       (updown < 0 && menu_start_ > 0)) {
     menu_start_ += updown;
@@ -184,11 +169,7 @@ int TextMenu::DrawHeader(int x, int y) const {
   int offset = 0;
 
   draw_funcs_.SetColor(UIElement::HEADER);
-  if (!scrollable()) {
-    offset += draw_funcs_.DrawWrappedTextLines(x, y + offset, text_headers());
-  } else {
-    offset += draw_funcs_.DrawTextLines(x, y + offset, text_headers());
-  }
+  offset += draw_funcs_.DrawWrappedTextLines(x, y + offset, text_headers());
 
   return offset;
 }
@@ -382,13 +363,11 @@ int MenuDrawFunctions::DrawWrappedTextLines(int x, int y, const std::vector<std:
   return offset;
 }
 
-ScreenRecoveryUI::ScreenRecoveryUI() : ScreenRecoveryUI(true) {}
-
 constexpr int kDefaultMarginHeight = 0;
 constexpr int kDefaultMarginWidth = 0;
 constexpr int kDefaultAnimationFps = 30;
 
-ScreenRecoveryUI::ScreenRecoveryUI(bool scrollable_menu)
+ScreenRecoveryUI::ScreenRecoveryUI()
     : margin_width_(
           android::base::GetIntProperty("ro.recovery.ui.margin_width", kDefaultMarginWidth)),
       margin_height_(
@@ -413,7 +392,6 @@ ScreenRecoveryUI::ScreenRecoveryUI(bool scrollable_menu)
       text_row_(0),
       show_text(false),
       show_text_ever(false),
-      scrollable_menu_(scrollable_menu),
       file_viewer_text_(nullptr),
       stage(-1),
       max_stage(-1),
@@ -1313,7 +1291,8 @@ std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(const std::vector<std::string
   int menu_rows = (ScreenHeight() - margin_height_*2 - gr_get_height(lineage_logo_.get())
                   - menu_char_height*title_lines_.size()) / MenuItemHeight() - text_headers.size();
   int menu_cols = (ScreenWidth() - margin_width_*2 - kMenuIndent) / menu_char_width;
-  return std::make_unique<TextMenu>(scrollable_menu_, menu_rows, menu_cols, text_headers, text_items,
+  bool wrap_selection = !HasThreeButtons() && !HasTouchScreen();
+  return std::make_unique<TextMenu>(wrap_selection, menu_rows, menu_cols, text_headers, text_items,
                                     initial_selection, menu_char_height, *menu_draw_funcs_);
 }
 

@@ -122,7 +122,7 @@ class TextMenu : public Menu {
  public:
   // Constructs a Menu instance with the given |headers|, |items| and properties. Sets the initial
   // selection to |initial_selection|.
-  TextMenu(bool scrollable, size_t max_items, size_t max_length,
+  TextMenu(bool wrappable, size_t max_items, size_t max_length,
            const std::vector<std::string>& headers, const std::vector<std::string>& items,
            size_t initial_selection, int char_height, const DrawInterface& draw_funcs);
 
@@ -137,8 +137,8 @@ class TextMenu : public Menu {
     return text_headers_.size() == 0;
   }
 
-  bool scrollable() const {
-    return scrollable_;
+  bool wrappable() const {
+    return wrappable_;
   }
 
   // Returns the index of the first menu item.
@@ -167,7 +167,7 @@ class TextMenu : public Menu {
 
  private:
   // The menu is scrollable to display more items. Used on wear devices who have smaller screens.
-  const bool scrollable_;
+  const bool wrappable_;
   // The max number of menu items to fit vertically on a screen.
   const size_t max_display_items_;
   // The length of each item to fit horizontally on a screen.
@@ -270,7 +270,6 @@ class MenuDrawFunctions : public DrawInterface {
 class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
  public:
   ScreenRecoveryUI();
-  explicit ScreenRecoveryUI(bool scrollable_menu);
   ~ScreenRecoveryUI() override;
 
   bool Init(const std::string& locale) override;
@@ -482,7 +481,6 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   std::vector<std::string> title_lines_;
 
-  bool scrollable_menu_;
   std::unique_ptr<Menu> menu_;
   int menu_start_y_;
 
