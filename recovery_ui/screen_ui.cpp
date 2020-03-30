@@ -57,7 +57,7 @@ static double now() {
 Menu::Menu(size_t initial_selection, const DrawInterface& draw_func)
     : selection_(initial_selection), draw_funcs_(draw_func) {}
 
-size_t Menu::selection() const {
+int Menu::selection() const {
   return selection_;
 }
 
@@ -110,7 +110,7 @@ bool TextMenu::ItemsOverflow(std::string* cur_selection_str) const {
   }
 
   *cur_selection_str =
-      android::base::StringPrintf("Current item: %zu/%zu", selection_ + 1, ItemsCount());
+      android::base::StringPrintf("Current item: %d/%zu", selection_ + 1, ItemsCount());
   return true;
 }
 
@@ -119,12 +119,14 @@ int TextMenu::Select(int sel) {
   CHECK_LE(ItemsCount(), static_cast<size_t>(std::numeric_limits<int>::max()));
   int count = ItemsCount();
 
+  int min = IsMain() ? 0 : -1; // -1 is back arrow
+
   // Wraps the selection at boundary if the menu is not scrollable.
   if (!scrollable_) {
-    if (sel < 0) {
+    if (sel < min) {
       selection_ = count - 1;
     } else if (sel >= count) {
-      selection_ = 0;
+      selection_ = min;
     } else {
       selection_ = sel;
     }
@@ -132,15 +134,17 @@ int TextMenu::Select(int sel) {
     return selection_;
   }
 
-  if (sel < 0) {
-    selection_ = 0;
+  if (sel < min) {
+    selection_ = min;
   } else if (sel >= count) {
     selection_ = count - 1;
   } else {
-    if (static_cast<size_t>(sel) < menu_start_) {
-      menu_start_--;
-    } else if (static_cast<size_t>(sel) >= MenuEnd()) {
-      menu_start_++;
+    if (sel >= 0) {
+      if (static_cast<size_t>(sel) < menu_start_) {
+        menu_start_--;
+      } else if (static_cast<size_t>(sel) >= MenuEnd()) {
+        menu_start_++;
+      }
     }
     selection_ = sel;
   }
@@ -825,7 +829,8 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
         auto icon_h = gr_get_height(back_icon_.get());
         auto icon_x = centered_x / 2 - icon_w / 2;
         auto icon_y = y - logo_height / 2 - icon_h / 2;
-        gr_blit(back_icon_.get(), 0, 0, icon_w, icon_h, icon_x, icon_y);
+        gr_blit(back_icon_sel_ && menu_->selection() == -1 ? back_icon_sel_.get() : back_icon_.get(),
+                0, 0, icon_w, icon_h, icon_x, icon_y);
       }
     } else {
       for (size_t i = 0; i < title_lines_.size(); i++) {
@@ -1022,6 +1027,7 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
 
   lineage_logo_ = LoadBitmap("logo_image");
   back_icon_ = LoadBitmap("ic_back");
+  back_icon_sel_ = LoadBitmap("ic_back_sel");
   if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
       android::base::GetBoolProperty("ro.fastbootd.available", false)) {
     fastbootd_logo_ = LoadBitmap("fastbootd");
@@ -1423,7 +1429,11 @@ size_t ScreenRecoveryUI::ShowMenu(std::unique_ptr<Menu>&& menu, bool menu_only,
           selected = ScrollMenu(1);
           break;
         case Device::kInvokeItem:
-          chosen_item = selected;
+          if (selected < 0) {
+            chosen_item = Device::kGoBack;
+          } else {
+            chosen_item = selected;
+          }
           break;
         case Device::kNoAction:
           break;
