@@ -92,7 +92,7 @@ class Menu {
  public:
   virtual ~Menu() = default;
   // Returns the current menu selection.
-  size_t selection() const;
+  int selection() const;
   // Sets the current selection to |sel|. Handle the overflow cases depending on if the menu is
   // scrollable.
   virtual int Select(int sel) = 0;
@@ -112,7 +112,7 @@ class Menu {
  protected:
   Menu(size_t initial_selection, const DrawInterface& draw_func);
   // Current menu selection.
-  size_t selection_;
+  int selection_;
   // Reference to the class that implements all the draw functions.
   const DrawInterface& draw_funcs_;
 };
