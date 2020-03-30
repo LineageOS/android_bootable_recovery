@@ -444,6 +444,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   std::unique_ptr<GRSurface> lineage_logo_;
   std::unique_ptr<GRSurface> back_icon_;
+  std::unique_ptr<GRSurface> back_icon_sel_;
   std::unique_ptr<GRSurface> fastbootd_logo_;
 
   // current_icon_ points to one of the frames in intro_frames_ or loop_frames_, indexed by
