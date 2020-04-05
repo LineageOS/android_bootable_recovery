@@ -30,7 +30,7 @@ LOCAL_SRC_FILES := \
 LOCAL_MODULE := libminadbd
 LOCAL_CFLAGS := $(minadbd_cflags)
 LOCAL_C_INCLUDES := bootable/recovery system/core/adb
-LOCAL_WHOLE_STATIC_LIBRARIES := libadbd
+LOCAL_WHOLE_STATIC_LIBRARIES := libadbd libqemu_pipe
 LOCAL_STATIC_LIBRARIES := libcrypto libbase
 
 include $(BUILD_STATIC_LIBRARY)
