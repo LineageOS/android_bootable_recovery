@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0acea904_13a3922c",
+        "filename": "volume_manager/EmulatedVolume.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-04-06T22:21:03Z",
+      "side": 1,
+      "message": "Not sure if this is the preferred way to split a line of chained streams",
+      "range": {
+        "startLine": 76,
+        "startChar": 18,
+        "endLine": 76,
+        "endChar": 21
+      },
+      "revId": "de4808b7bd0342ef72427220338d841e14802988",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
