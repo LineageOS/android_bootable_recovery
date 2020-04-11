@@ -595,7 +595,7 @@ RecoveryUI::InputEvent RecoveryUI::WaitInputEvent() {
 }
 
 void RecoveryUI::CancelWaitKey() {
-  EnqueueKey(KEY_REFRESH);
+  EnqueueKey(KEY_AGAIN);
 }
 
 void RecoveryUI::InterruptKey() {

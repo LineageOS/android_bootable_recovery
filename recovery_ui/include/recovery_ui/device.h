@@ -37,6 +37,7 @@ class Device {
   static constexpr const int kRefresh = -7;
   static constexpr const int kScrollUp = -8;
   static constexpr const int kScrollDown = -9;
+  static constexpr const int kDoSideload = -10;
 
   // ENTER vs REBOOT: The latter will trigger a reboot that goes through bootloader, which allows
   // using a new bootloader / recovery image if applicable. For example, REBOOT_RESCUE goes from
