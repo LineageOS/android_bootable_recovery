@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27b17ae6_8f88c94b",
+        "filename": "recovery_ui/device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-04-11T10:17:28Z",
+      "side": 1,
+      "message": "Very much arbitrary, if you have better names for it lmk :p",
+      "revId": "e4c344acac9c57bba81813db1f47d642416c8599",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
