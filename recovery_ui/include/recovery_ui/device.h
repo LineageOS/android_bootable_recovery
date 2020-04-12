@@ -65,6 +65,7 @@ class Device {
     REBOOT_RECOVERY = 18,
     REBOOT_RESCUE = 19,
     WIPE_SYSTEM = 100,
+    ENABLE_ADB = 101,
     MENU_BASE = 200,
     MENU_WIPE = 202,
     MENU_ADVANCED = 203,
