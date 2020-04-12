@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "420534dc_37da4b61",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-04-12T23:06:10Z",
+      "side": 1,
+      "message": "Open to discussion about this.\nHonestly not sure why this isn\u0027t a yes_no() already, but w/e",
+      "range": {
+        "startLine": 204,
+        "startChar": 0,
+        "endLine": 206,
+        "endChar": 0
+      },
+      "revId": "078caea99307c237f442d0fcf12f1f29aec9000f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
