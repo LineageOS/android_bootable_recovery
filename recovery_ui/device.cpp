@@ -52,9 +52,9 @@ static std::vector<menu_action_t> g_advanced_actions{
 
 static std::vector<std::string> g_wipe_header{ "Factory reset" };
 static std::vector<menu_action_t> g_wipe_actions{
-  { "Wipe data/factory reset", Device::WIPE_DATA },
-  { "Wipe cache partition", Device::WIPE_CACHE },
-  { "Wipe system partition", Device::WIPE_SYSTEM },
+  { "Format data/factory reset", Device::WIPE_DATA },
+  { "Format cache partition", Device::WIPE_CACHE },
+  { "Format system partition", Device::WIPE_SYSTEM },
 };
 
 static std::vector<menu_action_t>* current_menu_ = &g_main_actions;
