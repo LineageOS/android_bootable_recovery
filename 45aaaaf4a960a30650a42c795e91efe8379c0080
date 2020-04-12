@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6d31277_16ed3bec",
+        "filename": "recovery.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-04-12T18:00:24Z",
+      "side": 1,
+      "message": "brackets not needed",
+      "revId": "45aaaaf4a960a30650a42c795e91efe8379c0080",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b133f7ac_549a4216",
+        "filename": "recovery_main.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-04-12T18:00:24Z",
+      "side": 1,
+      "message": "so we want the toggle only on eng?",
+      "range": {
+        "startLine": 462,
+        "startChar": 0,
+        "endLine": 462,
+        "endChar": 56
+      },
+      "revId": "45aaaaf4a960a30650a42c795e91efe8379c0080",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
