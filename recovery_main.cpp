@@ -458,9 +458,12 @@ int main(int argc, char** argv) {
     device->RemoveMenuItemForAction(Device::RUN_GRAPHICS_TEST);
     device->RemoveMenuItemForAction(Device::RUN_LOCALE_TEST);
     device->RemoveMenuItemForAction(Device::ENTER_RESCUE);
+  } else {
+    device->RemoveMenuItemForAction(Device::ENABLE_ADB);
   }
 
   if (get_build_type() == "user") {
+    device->RemoveMenuItemForAction(Device::ENABLE_ADB);
     device->RemoveMenuItemForAction(Device::WIPE_SYSTEM);
     device->RemoveMenuItemForAction(Device::MOUNT_SYSTEM);
   }
