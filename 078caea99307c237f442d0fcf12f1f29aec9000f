@@ -46,6 +46,29 @@
       "revId": "078caea99307c237f442d0fcf12f1f29aec9000f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "370c867b_8201dc78",
+        "filename": "recovery_ui/device.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-04-13T20:16:58Z",
+      "side": 1,
+      "message": "Can we drop this as well?",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 30
+      },
+      "revId": "078caea99307c237f442d0fcf12f1f29aec9000f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
