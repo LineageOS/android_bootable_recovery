@@ -61,3 +61,5 @@ int setup_install_mounts();
 bool logical_partitions_mapped();
 
 std::string get_system_root();
+
+void ensure_logical_partitions_mapped();

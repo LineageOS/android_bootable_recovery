@@ -639,6 +639,7 @@ change_menu:
 
       case Device::APPLY_UPDATE:
       case Device::ENTER_RESCUE: {
+        ensure_logical_partitions_mapped();
         save_current_log = true;
 
         Device::BuiltinAction reboot_action;
@@ -1046,6 +1047,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     // mode. When 'sideload-auto-reboot' is used, text display will NOT be turned on by default. And
     // it will reboot after sideload finishes even if there are errors. This is to enable automated
     // testing.
+    ensure_logical_partitions_mapped();
     save_current_log = true;
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
@@ -1057,6 +1059,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
       ui->Print("Rebooting automatically.\n");
     }
   } else if (rescue) {
+    ensure_logical_partitions_mapped();
     save_current_log = true;
     status = ApplyFromAdb(device, true /* rescue_mode */, &next_action);
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
