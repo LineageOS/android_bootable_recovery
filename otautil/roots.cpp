@@ -100,6 +100,13 @@ void load_volume_table() {
   } else {
     LOG(ERROR) << "Unable to create /etc/fstab";
   }
+
+  // Map logical partitions
+  if (ensure_path_mounted_at(get_system_root(), "/mnt/system") != -1) {
+    if (ensure_path_unmounted("/mnt/system") == -1) {
+      LOG(ERROR) << "Unable to umount /system";
+    }
+  }
 }
 
 Volume* volume_for_mount_point(const std::string& mount_point) {
