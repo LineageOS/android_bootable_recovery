@@ -326,6 +326,17 @@ int setup_install_mounts() {
       }
     }
   }
+  // Temporarily mount system partition so that EnsurePathMounted() function
+  // declared in $TOP/system/core/fs_mgr/fs_mgr_roots.cpp will map logical
+  // partitions at /dev/block/mapper directory for us.
+  if (!logical_partitions_mapped()) {
+    if (ensure_path_mounted_at(get_system_root(), "/mnt/system") != -1) {
+      // Now unmount it as we don't really need to do anything with it yet.
+      if (ensure_path_unmounted("/mnt/system") == -1) {
+        LOG(ERROR) << "Unable to umount /system";
+      }
+    }
+  }
   return 0;
 }
 
