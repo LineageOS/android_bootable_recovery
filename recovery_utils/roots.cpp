@@ -39,6 +39,7 @@
 #include <ext4_utils/wipe.h>
 #include <fs_mgr.h>
 #include <fs_mgr/roots.h>
+#include <fs_mgr_dm_linear.h>
 
 #include "otautil/sysutil.h"
 
@@ -366,6 +367,8 @@ int format_volume(const std::string& volume) {
   return format_volume(volume, "");
 }
 
+static bool logical_partitions_auto_mapped = false;
+
 int setup_install_mounts() {
   if (fstab.empty()) {
     LOG(ERROR) << "can't set up install mounts: no fstab loaded";
@@ -389,6 +392,16 @@ int setup_install_mounts() {
       }
     }
   }
+  // Map logical partitions
+  if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
+      !logical_partitions_mapped()) {
+    std::string super_name = fs_mgr_get_super_partition_name();
+    if (!android::fs_mgr::CreateLogicalPartitions("/dev/block/by-name/" + super_name)) {
+      LOG(ERROR) << "Failed to map logical partitions";
+    } else {
+      logical_partitions_auto_mapped = true;
+    }
+  }
   return 0;
 }
 
@@ -396,4 +409,8 @@ bool HasCache() {
   CHECK(!fstab.empty());
   static bool has_cache = volume_for_mount_point(CACHE_ROOT) != nullptr;
   return has_cache;
+}
+
+bool logical_partitions_mapped() {
+  return android::fs_mgr::LogicalPartitionsMapped() || logical_partitions_auto_mapped;
 }
