@@ -595,7 +595,7 @@ int main(int argc, char** argv) {
       }
 
       case Device::ENTER_FASTBOOT:
-        if (android::fs_mgr::LogicalPartitionsMapped()) {
+        if (logical_partitions_mapped()) {
           ui->Print("Partitions may be mounted - rebooting to enter fastboot.");
           Reboot("fastboot");
         } else {
