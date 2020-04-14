@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mount.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -647,6 +648,18 @@ change_menu:
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_UPDATE) {
+          // Temporarily mount system partition so that EnsurePathMounted() function
+          // declared in $TOP/system/core/fs_mgr/fs_mgr_roots.cpp will map logical
+          // partitions at /dev/block/mapper directory for us.
+          if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
+              !logical_partitions_mapped()) {
+            if (ensure_path_mounted_at(get_system_root(), "/mnt/system") != -1) {
+              // Now unmount it as we dons't really need to do anything with it yet.
+              if (umount("/mnt/system") < 0) {
+                LOG(ERROR) << "Unable to umount /mnt/system";
+              }
+            }
+          }
           status = apply_update_menu(device, ui, &reboot_action);
         }
 
