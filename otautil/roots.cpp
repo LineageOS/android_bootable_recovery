@@ -100,6 +100,14 @@ void load_volume_table() {
   } else {
     LOG(ERROR) << "Unable to create /etc/fstab";
   }
+
+  // Map logical partitions
+  if (!logical_partitions_mapped()) {
+    std::string super_name = fs_mgr_get_super_partition_name();
+    if (!android::fs_mgr::CreateLogicalPartitions("/dev/block/by-name/" + super_name)) {
+        LOG(ERROR) << "Failed to create logical partitions";
+    }
+  }
 }
 
 Volume* volume_for_mount_point(const std::string& mount_point) {
