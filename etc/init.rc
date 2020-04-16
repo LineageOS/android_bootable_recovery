@@ -19,7 +19,7 @@ on init
 
     symlink /system/bin /bin
     symlink /system/etc /etc
-    rmdir /sbin
+    exec u:r:recovery:s0 -- /system/bin/rm -rf /sbin
     symlink /system/bin /sbin
 
     mount cgroup none /acct cpuacct
