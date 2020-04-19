@@ -26,7 +26,6 @@ namespace android {
 namespace volmgr {
 namespace ntfs {
 
-status_t Check(const std::string& source);
 status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
                bool executable, int ownerUid, int ownerGid, int permMask);
 

@@ -26,7 +26,6 @@ namespace android {
 namespace volmgr {
 namespace f2fs {
 
-status_t Check(const std::string& source, bool trusted);
 status_t Mount(const std::string& source, const std::string& target, const std::string& opts = "",
                bool trusted = false, bool portable = false);
 

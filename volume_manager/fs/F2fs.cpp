@@ -32,17 +32,6 @@ namespace android {
 namespace volmgr {
 namespace f2fs {
 
-static const char* kFsckPath = "/sbin/fsck.f2fs";
-
-status_t Check(const std::string& source, bool trusted) {
-    std::vector<std::string> cmd;
-    cmd.push_back(kFsckPath);
-    cmd.push_back("-a");
-    cmd.push_back(source);
-
-    return ForkExecvp(cmd, trusted ? sFsckContext : sFsckUntrustedContext);
-}
-
 status_t Mount(const std::string& source, const std::string& target,
                const std::string& opts /* = "" */, bool trusted, bool portable) {
     std::string data(opts);

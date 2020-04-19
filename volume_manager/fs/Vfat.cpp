@@ -52,66 +52,6 @@ namespace android {
 namespace volmgr {
 namespace vfat {
 
-static const char* kFsckPath = "/sbin/fsck_msdos";
-
-status_t Check(const std::string& source) {
-    if (access(kFsckPath, X_OK)) {
-        SLOGW("Skipping fs checks\n");
-        return 0;
-    }
-
-    int pass = 1;
-    int rc = 0;
-    do {
-        std::vector<std::string> cmd;
-        cmd.push_back(kFsckPath);
-        cmd.push_back("-p");
-        cmd.push_back("-f");
-        cmd.push_back(source);
-
-        // Fat devices are currently always untrusted
-        rc = ForkExecvp(cmd, sFsckUntrustedContext);
-
-        if (rc < 0) {
-            SLOGE("Filesystem check failed due to logwrap error");
-            errno = EIO;
-            return -1;
-        }
-
-        switch (rc) {
-            case 0:
-                SLOGI("Filesystem check completed OK");
-                return 0;
-
-            case 2:
-                SLOGE("Filesystem check failed (not a FAT filesystem)");
-                errno = ENODATA;
-                return -1;
-
-            case 4:
-                if (pass++ <= 3) {
-                    SLOGW("Filesystem modified - rechecking (pass %d)", pass);
-                    continue;
-                }
-                SLOGE("Failing check after too many rechecks");
-                errno = EIO;
-                return -1;
-
-            case 8:
-                SLOGE("Filesystem check failed (no filesystem)");
-                errno = ENODATA;
-                return -1;
-
-            default:
-                SLOGE("Filesystem check failed (unknown exit code %d)", rc);
-                errno = EIO;
-                return -1;
-        }
-    } while (0);
-
-    return 0;
-}
-
 status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
                bool executable, int ownerUid, int ownerGid, int permMask, bool createLost) {
     int rc;
