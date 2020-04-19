@@ -35,6 +35,7 @@
 #include "Disk.h"
 #include "DiskPartition.h"
 #include "EmulatedVolume.h"
+#include "RootVolume.h"
 #include "VolumeBase.h"
 #include "NetlinkManager.h"
 
@@ -150,7 +151,8 @@ VolumeManager* VolumeManager::Instance(void) {
 }
 
 VolumeManager::VolumeManager(void)
-    : mWatcher(nullptr), mNetlinkManager(NetlinkManager::Instance()), mInternalEmulated(nullptr) {
+    : mWatcher(nullptr), mNetlinkManager(NetlinkManager::Instance()),
+      mInternalEmulated(nullptr), mRootVolume(nullptr) {
     // Empty
 }
 
@@ -186,6 +188,9 @@ bool VolumeManager::start(VolumeWatcher* watcher, struct selabel_handle* sehandl
         mInternalEmulated->create();
     }
 
+    mRootVolume = new RootVolume();
+    mRootVolume->create();
+
     if (!mNetlinkManager) {
         mNetlinkManager = NetlinkManager::Instance();
     }
@@ -219,6 +224,10 @@ bool VolumeManager::unmountAll(void) {
         mInternalEmulated->unmount();
     }
 
+    if (mRootVolume) {
+        mRootVolume->unmount();
+    }
+
     for (auto& disk : mDisks) {
         disk->unmountAll();
     }
@@ -230,6 +239,9 @@ void VolumeManager::getVolumeInfo(std::vector<VolumeInfo>& info) {
     std::lock_guard<std::mutex> lock(mLock);
 
     info.clear();
+    if (mRootVolume) {
+        info.push_back(VolumeInfo(mRootVolume));
+    }
     if (mInternalEmulated) {
         info.push_back(VolumeInfo(mInternalEmulated));
     }
@@ -241,6 +253,9 @@ void VolumeManager::getVolumeInfo(std::vector<VolumeInfo>& info) {
 VolumeBase* VolumeManager::findVolume(const std::string& id) {
     if (mInternalEmulated && mInternalEmulated->getId() == id) {
         return mInternalEmulated;
+    }
+    if (mRootVolume && mRootVolume->getId() == id) {
+        return mRootVolume;
     }
     for (const auto& disk : mDisks) {
         auto vol = disk->findVolume(id);
