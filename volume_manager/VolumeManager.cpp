@@ -85,7 +85,7 @@ static void coldboot(const char* path) {
     }
 }
 
-static int process_config(VolumeManager* vm, fstab_rec** data_recp) {
+static int process_config(VolumeManager* vm, fstab_rec* data_recp) {
     struct fstab* fstab = fs_mgr_read_fstab_default();
     if (!fstab) {
         PLOG(ERROR) << "Failed to open default fstab";
@@ -122,11 +122,11 @@ static int process_config(VolumeManager* vm, fstab_rec** data_recp) {
             vm->addDiskSource(new VolumeManager::DiskSource(sysPattern, nickname, partnum, flags,
                                                             fstype, mntopts));
         } else {
-            if (!*data_recp && !strcmp(fstab->recs[i].mount_point, "/data")) {
+            if (!data_recp->fs_type && !strcmp(fstab->recs[i].mount_point, "/data")) {
                 char* detected_fs_type =
                     blkid_get_tag_value(nullptr, "TYPE", fstab->recs[i].blk_device);
                 if (!detected_fs_type || !strcmp(detected_fs_type, fstab->recs[i].fs_type)) {
-                    *data_recp = &fstab->recs[i];
+                    *data_recp = fstab->recs[i];
                 }
             }
         }
@@ -170,13 +170,15 @@ bool VolumeManager::start(VolumeWatcher* watcher) {
 
     mWatcher = watcher;
 
-    fstab_rec* data_rec = nullptr;
+    fstab_rec data_rec;
+    data_rec.fs_type = NULL;
+
     if (process_config(this, &data_rec) != 0) {
         LOG(ERROR) << "Error reading configuration... continuing anyway";
     }
 
-    if (data_rec) {
-        mInternalEmulated = new EmulatedVolume(data_rec, "media/0");
+    if (data_rec.fs_type) {
+        mInternalEmulated = new EmulatedVolume(&data_rec, "media/0");
         mInternalEmulated->create();
     }
 
