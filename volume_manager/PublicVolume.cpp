@@ -99,24 +99,6 @@ status_t PublicVolume::doMount() {
 
     int ret = 0;
     if (mFsType == "exfat") {
-        ret = exfat::Check(mDevPath);
-    } else if (mFsType == "ext4") {
-        ret = ext4::Check(mDevPath, getPath(), false);
-    } else if (mFsType == "f2fs") {
-        ret = f2fs::Check(mDevPath, false);
-    } else if (mFsType == "ntfs") {
-        ret = ntfs::Check(mDevPath);
-    } else if (mFsType == "vfat") {
-        ret = vfat::Check(mDevPath);
-    } else {
-        LOG(WARNING) << getId() << " unsupported filesystem check, skipping";
-    }
-    if (ret) {
-        LOG(ERROR) << getId() << " failed filesystem check";
-        return -EIO;
-    }
-
-    if (mFsType == "exfat") {
         ret = exfat::Mount(mDevPath, getPath(), AID_MEDIA_RW, AID_MEDIA_RW, 0007);
     } else if (mFsType == "ext4") {
         ret = ext4::Mount(mDevPath, getPath(), false, false, true, mMntOpts, false, true);

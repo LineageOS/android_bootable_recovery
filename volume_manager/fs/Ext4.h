@@ -26,7 +26,6 @@ namespace android {
 namespace volmgr {
 namespace ext4 {
 
-status_t Check(const std::string& source, const std::string& target, bool trusted);
 status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
                bool executable, const std::string& opts = "", bool trusted = false,
                bool portable = false);

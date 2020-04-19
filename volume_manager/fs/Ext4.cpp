@@ -52,67 +52,6 @@ namespace android {
 namespace volmgr {
 namespace ext4 {
 
-static const char* kFsckPath = "/sbin/e2fsck";
-
-status_t Check(const std::string& source, const std::string& target, bool trusted) {
-    // The following is shamelessly borrowed from fs_mgr.c, so it should be
-    // kept in sync with any changes over there.
-
-    const char* c_source = source.c_str();
-    const char* c_target = target.c_str();
-
-    int ret;
-    long tmpmnt_flags = MS_NOATIME | MS_NOEXEC | MS_NOSUID;
-    char* tmpmnt_opts = (char*)"nomblk_io_submit,errors=remount-ro";
-
-    /*
-     * First try to mount and unmount the filesystem.  We do this because
-     * the kernel is more efficient than e2fsck in running the journal and
-     * processing orphaned inodes, and on at least one device with a
-     * performance issue in the emmc firmware, it can take e2fsck 2.5 minutes
-     * to do what the kernel does in about a second.
-     *
-     * After mounting and unmounting the filesystem, run e2fsck, and if an
-     * error is recorded in the filesystem superblock, e2fsck will do a full
-     * check.  Otherwise, it does nothing.  If the kernel cannot mount the
-     * filesytsem due to an error, e2fsck is still run to do a full check
-     * fix the filesystem.
-     */
-    ret = mount(c_source, c_target, "ext4", tmpmnt_flags, tmpmnt_opts);
-    if (!ret) {
-        int i;
-        for (i = 0; i < 5; i++) {
-            // Try to umount 5 times before continuing on.
-            // Should we try rebooting if all attempts fail?
-            int result = umount(c_target);
-            if (result == 0) {
-                break;
-            }
-            ALOGW("%s(): umount(%s)=%d: %s\n", __func__, c_target, result, strerror(errno));
-            sleep(1);
-        }
-    }
-
-    /*
-     * Some system images do not have e2fsck for licensing reasons
-     * (e.g. recent SDK system images). Detect these and skip the check.
-     */
-    if (access(kFsckPath, X_OK)) {
-        ALOGD("Not running %s on %s (executable not in system image)\n", kFsckPath, c_source);
-    } else {
-        ALOGD("Running %s on %s\n", kFsckPath, c_source);
-
-        std::vector<std::string> cmd;
-        cmd.push_back(kFsckPath);
-        cmd.push_back("-y");
-        cmd.push_back(c_source);
-
-        return ForkExecvp(cmd, trusted ? sFsckContext : sFsckUntrustedContext);
-    }
-
-    return 0;
-}
-
 status_t Mount(const std::string& source, const std::string& target, bool ro, bool remount,
                bool executable, const std::string& opts /* = "" */, bool trusted, bool portable) {
     int rc;
