@@ -35,11 +35,6 @@ namespace ntfs {
 static const char* kFsckPath = "/sbin/fsck.ntfs";
 static const char* kMountPath = "/sbin/mount.ntfs";
 
-bool IsSupported() {
-    return access(kFsckPath, X_OK) == 0 && access(kMountPath, X_OK) == 0 &&
-           IsFilesystemSupported("ntfs");
-}
-
 status_t Check(const std::string& source) {
     std::vector<std::string> cmd;
     cmd.push_back(kFsckPath);

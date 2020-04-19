@@ -40,10 +40,6 @@ namespace exfat {
 
 static const char* kFsckPath = "/sbin/fsck.exfat";
 
-bool IsSupported() {
-    return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("exfat");
-}
-
 status_t Check(const std::string& source) {
     std::vector<std::string> cmd;
     cmd.push_back(kFsckPath);

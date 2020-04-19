@@ -54,10 +54,6 @@ namespace vfat {
 
 static const char* kFsckPath = "/sbin/fsck_msdos";
 
-bool IsSupported() {
-    return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("vfat");
-}
-
 status_t Check(const std::string& source) {
     if (access(kFsckPath, X_OK)) {
         SLOGW("Skipping fs checks\n");

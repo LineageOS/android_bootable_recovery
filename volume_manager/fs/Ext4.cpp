@@ -54,10 +54,6 @@ namespace ext4 {
 
 static const char* kFsckPath = "/sbin/e2fsck";
 
-bool IsSupported() {
-    return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("ext4");
-}
-
 status_t Check(const std::string& source, const std::string& target, bool trusted) {
     // The following is shamelessly borrowed from fs_mgr.c, so it should be
     // kept in sync with any changes over there.

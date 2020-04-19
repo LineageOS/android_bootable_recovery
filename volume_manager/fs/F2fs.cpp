@@ -34,10 +34,6 @@ namespace f2fs {
 
 static const char* kFsckPath = "/sbin/fsck.f2fs";
 
-bool IsSupported() {
-    return access(kFsckPath, X_OK) == 0 && IsFilesystemSupported("f2fs");
-}
-
 status_t Check(const std::string& source, bool trusted) {
     std::vector<std::string> cmd;
     cmd.push_back(kFsckPath);
