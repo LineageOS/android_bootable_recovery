@@ -25,6 +25,7 @@ cc_library_shared {
         "NetlinkManager.cpp",
         "Process.cpp",
         "PublicVolume.cpp",
+        "RootVolume.cpp",
         "Utils.cpp",
         "VolumeBase.cpp",
         "VolumeManager.cpp",

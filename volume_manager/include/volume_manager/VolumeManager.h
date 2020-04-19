@@ -125,6 +125,7 @@ class VolumeManager {
     NetlinkManager* mNetlinkManager;
     std::mutex mLock;
     VolumeBase* mInternalEmulated;
+    VolumeBase* mRootVolume;
     std::list<DiskSource*> mDiskSources;
     std::list<Disk*> mDisks;
 };
