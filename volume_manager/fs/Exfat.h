@@ -27,7 +27,7 @@ namespace volmgr {
 namespace exfat {
 
 status_t Mount(const std::string& source, const std::string& target, int ownerUid, int ownerGid,
-               int permMask);
+               int permMask, bool useSDFAT);
 
 }  // namespace exfat
 }  // namespace volmgr

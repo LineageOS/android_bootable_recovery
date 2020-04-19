@@ -39,17 +39,17 @@ namespace volmgr {
 namespace exfat {
 
 status_t Mount(const std::string& source, const std::string& target, int ownerUid, int ownerGid,
-               int permMask) {
+               int permMask, bool useSDFAT) {
     int mountFlags = MS_NODEV | MS_NOSUID | MS_DIRSYNC | MS_NOATIME | MS_NOEXEC;
     auto mountData = android::base::StringPrintf("uid=%d,gid=%d,fmask=%o,dmask=%o", ownerUid,
                                                  ownerGid, permMask, permMask);
 
-    if (mount(source.c_str(), target.c_str(), "exfat", mountFlags, mountData.c_str()) == 0) {
+    if (mount(source.c_str(), target.c_str(), useSDFAT ? "sdfat" : "exfat", mountFlags, mountData.c_str()) == 0) {
         return 0;
     }
     PLOG(ERROR) << "Mount failed; attempting read-only";
     mountFlags |= MS_RDONLY;
-    if (mount(source.c_str(), target.c_str(), "exfat", mountFlags, mountData.c_str()) == 0) {
+    if (mount(source.c_str(), target.c_str(), useSDFAT ? "sdfat" : "exfat", mountFlags, mountData.c_str()) == 0) {
         return 0;
     }
 

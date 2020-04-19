@@ -87,9 +87,12 @@ status_t PublicVolume::doDestroy() {
 }
 
 status_t PublicVolume::doMount() {
+    bool useSDFAT = IsFilesystemSupported("sdfat");
     if (!IsFilesystemSupported(mFsType)) {
-        LOG(ERROR) << getId() << " unsupported filesystem " << mFsType;
-        return -EIO;
+        if (!(mFsType == "exfat" && useSDFAT)) {
+            LOG(ERROR) << getId() << " unsupported filesystem " << mFsType;
+            return -EIO;
+        }
     }
 
     if (fs_prepare_dir(getPath().c_str(), 0700, AID_ROOT, AID_ROOT)) {
@@ -99,7 +102,7 @@ status_t PublicVolume::doMount() {
 
     int ret = 0;
     if (mFsType == "exfat") {
-        ret = exfat::Mount(mDevPath, getPath(), AID_MEDIA_RW, AID_MEDIA_RW, 0007);
+        ret = exfat::Mount(mDevPath, getPath(), AID_MEDIA_RW, AID_MEDIA_RW, 0007, useSDFAT);
     } else if (mFsType == "ext4") {
         ret = ext4::Mount(mDevPath, getPath(), false, false, true, mMntOpts, false, true);
     } else if (mFsType == "f2fs") {
