@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae6b9c01_7dd58cfd",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-04-20T09:57:26Z",
+      "side": 1,
+      "message": "EnsurePathMounted setups the logical partitions.\nYou might call it on /system and then unmount it\nThis way we avoid touching fs_mgr",
+      "revId": "89d5af18bdca78c118fd28ed0e8afe46065b43f0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
