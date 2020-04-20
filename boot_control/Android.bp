@@ -17,6 +17,7 @@
 cc_library_shared {
     name: "bootctrl.default",
     recovery_available: true,
+    vendor: true,
     relative_install_path: "hw",
 
     srcs: ["boot_control.cpp"],
@@ -28,10 +29,17 @@ cc_library_shared {
         "-Wextra",
     ],
 
+    header_libs: [
+        "libhardware_headers",
+    ],
+
     shared_libs: [
         "libbase",
-        "libbootloader_message",
-        "libfs_mgr",
         "liblog",
+    ],
+
+    static_libs: [
+        "libbootloader_message_vendor",
+        "libfstab",
     ],
 }
