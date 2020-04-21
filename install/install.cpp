@@ -629,7 +629,7 @@ static int really_install_package(const std::string& path, bool* wipe_cache, boo
 }
 
 int install_package(const std::string& path, bool should_wipe_cache, bool needs_mount,
-                    int retry_count, bool verify, bool allow_ab_downgrade, RecoveryUI* ui) {
+                    int retry_count,__unused bool verify, bool allow_ab_downgrade, RecoveryUI* ui) {
   CHECK(!path.empty());
 
   auto start = std::chrono::system_clock::now();
@@ -645,7 +645,7 @@ int install_package(const std::string& path, bool should_wipe_cache, bool needs_
   } else {
     bool updater_wipe_cache = false;
     result = really_install_package(path, &updater_wipe_cache, needs_mount, &log_buffer,
-                                    retry_count, verify, allow_ab_downgrade, &max_temperature, ui);
+                                    retry_count, false, allow_ab_downgrade, &max_temperature, ui);
     should_wipe_cache = should_wipe_cache || updater_wipe_cache;
   }
 
