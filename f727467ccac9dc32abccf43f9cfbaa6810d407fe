@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff2da918_0d68474b",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 17793
+      },
+      "writtenOn": "2020-04-28T11:59:07Z",
+      "side": 1,
+      "message": "mounting, unmounting system doesn\u0027t always mean mapping logical partitions",
+      "revId": "f727467ccac9dc32abccf43f9cfbaa6810d407fe",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
