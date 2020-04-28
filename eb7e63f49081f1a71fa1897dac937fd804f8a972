@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12d17089_afb2c83f",
+        "filename": "otautil/roots.cpp",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 14934
+      },
+      "writtenOn": "2020-04-28T11:34:29Z",
+      "side": 1,
+      "message": "else { LOG(ERROR) \u003c\u003c \"Unable to map logical partitions\"; }?",
+      "revId": "eb7e63f49081f1a71fa1897dac937fd804f8a972",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
