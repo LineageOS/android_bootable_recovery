@@ -422,7 +422,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
     return menu_char_width_;
   }
   int MenuItemPadding() const override {
-    return menu_char_height_ * 2 / 3;
+    return menu_char_height_;
   }
 
   std::unique_ptr<MenuDrawFunctions> menu_draw_funcs_;
