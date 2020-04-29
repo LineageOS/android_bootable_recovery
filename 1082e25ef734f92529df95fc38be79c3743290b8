@@ -16,6 +16,24 @@
       "revId": "1082e25ef734f92529df95fc38be79c3743290b8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56fa9068_d8fb1a1c",
+        "filename": "recovery_ui/include/recovery_ui/device.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 14934
+      },
+      "writtenOn": "2020-04-29T13:08:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9192d9a7_5a9623d3",
+      "revId": "1082e25ef734f92529df95fc38be79c3743290b8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
