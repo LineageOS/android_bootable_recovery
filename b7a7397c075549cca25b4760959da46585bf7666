@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91680af4_fa933146",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-04-29T18:13:51Z",
+      "side": 1,
+      "message": "derp, bold \\o/",
+      "revId": "b7a7397c075549cca25b4760959da46585bf7666",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
