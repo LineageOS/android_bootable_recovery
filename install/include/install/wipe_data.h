@@ -31,3 +31,6 @@ bool WipeData(Device* device, bool convert_fbe);
 
 // Returns true on success.
 bool WipeSystem(RecoveryUI* ui, const std::function<bool()>& confirm);
+
+// Returns true on success.
+bool WipeDataExcludeMedia(RecoveryUI* ui, const std::function<bool()>& confirm);

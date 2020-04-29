@@ -69,6 +69,7 @@ class Device {
     MENU_BASE = 200,
     MENU_WIPE = 202,
     MENU_ADVANCED = 203,
+    WIPE_DATA_EXCLUDE_MEDIA = 300,
   };
 
   explicit Device(RecoveryUI* ui);
