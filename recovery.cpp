@@ -613,6 +613,16 @@ change_menu:
         }
         break;
 
+      case Device::WIPE_DATA_EXCLUDE_MEDIA: {
+        save_current_log = true;
+        std::function<bool()> confirm_func = [&device]() {
+          return yes_no(device, "Wipe data?", "  THIS CAN NOT BE UNDONE!");
+        };
+        WipeDataExcludeMedia(ui, ui->IsTextVisible() ? confirm_func : nullptr);
+        if (!ui->IsTextVisible()) return Device::NO_ACTION;
+        break;
+      }
+
       case Device::WIPE_CACHE: {
         save_current_log = true;
         std::function<bool()> confirm_func = [&device]() {
