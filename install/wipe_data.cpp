@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <functional>
 #include <vector>
@@ -30,11 +32,17 @@
 #include "otautil/dirutil.h"
 #include "otautil/logging.h"
 #include "otautil/roots.h"
+#include "otautil/sysutil.h"
 #include "recovery_ui/ui.h"
 
 constexpr const char* CACHE_ROOT = "/cache";
 constexpr const char* DATA_ROOT = "/data";
 constexpr const char* METADATA_ROOT = "/metadata";
+
+constexpr const int NUM_WIPE_EXCLUDE_PATHS = 1;
+constexpr const char* WIPE_EXCLUDE_PATHS[NUM_WIPE_EXCLUDE_PATHS] = {
+  "/data/media/*"
+};
 
 static bool EraseVolume(const char* volume, RecoveryUI* ui, bool convert_fbe) {
   bool is_cache = (strcmp(volume, CACHE_ROOT) == 0);
@@ -88,6 +96,24 @@ static bool EraseVolume(const char* volume, RecoveryUI* ui, bool convert_fbe) {
   return (result == 0);
 }
 
+static int exec_cmd(const std::vector<std::string>& args) {
+  CHECK(!args.empty());
+  auto argv = StringVectorToNullTerminatedArray(args);
+
+  pid_t child;
+  if ((child = fork()) == 0) {
+    execv(argv[0], argv.data());
+    _exit(EXIT_FAILURE);
+  }
+
+  int status;
+  waitpid(child, &status, 0);
+  if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+    LOG(ERROR) << args[0] << " failed with status " << WEXITSTATUS(status);
+  }
+  return WEXITSTATUS(status);
+}
+
 bool WipeCache(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
   bool has_cache = volume_for_mount_point("/cache") != nullptr;
   if (!has_cache) {
@@ -134,5 +160,38 @@ bool WipeSystem(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
   ui->Print("\n-- Wiping system...\n");
   bool success = EraseVolume(get_system_root().c_str(), ui, false);
   ui->Print("System wipe %s.\n", success ? "complete" : "failed");
+  return success;
+}
+
+bool WipeDataExcludeMedia(RecoveryUI* ui, const std::function<bool()>& confirm_func) {
+  if (confirm_func && !confirm_func()) {
+    return false;
+  }
+
+  bool success = false;
+  ui->Print("\n-- Wiping data without internal storage...\n");
+  if (ensure_path_mounted(DATA_ROOT) == 0) {
+    std::vector<std::string> delete_files_args = {
+      "/system/bin/find", DATA_ROOT, "-type", "f",
+    };
+    std::vector<std::string> delete_dirs_args = {
+      "/system/bin/find", DATA_ROOT, "-type", "d",
+    };
+    for (int i = 0; i < NUM_WIPE_EXCLUDE_PATHS; i++) {
+      delete_files_args.push_back("!");
+      delete_files_args.push_back("-path");
+      delete_files_args.push_back(WIPE_EXCLUDE_PATHS[i]);
+      delete_dirs_args.push_back("!");
+      delete_dirs_args.push_back("-path");
+      delete_dirs_args.push_back(WIPE_EXCLUDE_PATHS[i]);
+    }
+    delete_files_args.push_back("-delete");
+    delete_dirs_args.push_back("-delete");
+    if (exec_cmd(delete_files_args) == 0)
+      success = true;
+    exec_cmd(delete_dirs_args);
+    ensure_path_unmounted(DATA_ROOT);
+  }
+  ui->Print("Data wipe %s.\n", success ? "complete" : "failed");
   return success;
 }
