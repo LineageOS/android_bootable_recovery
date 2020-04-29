@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83fcfb15_1ae9e76b",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-04-29T10:40:50Z",
+      "side": 1,
+      "message": "pass false directly?",
+      "range": {
+        "startLine": 217,
+        "startChar": 67,
+        "endLine": 217,
+        "endChar": 71
+      },
+      "revId": "6aea4ce9356bab435cb5a314748c948775f21db5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
