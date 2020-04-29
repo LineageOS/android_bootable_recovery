@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9192d9a7_5a9623d3",
+        "filename": "recovery_ui/include/recovery_ui/device.h",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-04-29T12:26:19Z",
+      "side": 1,
+      "message": "would be 102",
+      "revId": "1082e25ef734f92529df95fc38be79c3743290b8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
