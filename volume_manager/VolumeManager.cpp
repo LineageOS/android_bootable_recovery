@@ -156,12 +156,6 @@ VolumeManager::VolumeManager(void)
 
 VolumeManager::~VolumeManager(void) {
     stop();
-    for (auto& disk : mDisks) {
-        delete disk;
-    }
-    for (auto& source : mDiskSources) {
-        delete source;
-    }
 }
 
 bool VolumeManager::start(VolumeWatcher* watcher, struct selabel_handle* sehandle_) {
@@ -186,9 +180,6 @@ bool VolumeManager::start(VolumeWatcher* watcher, struct selabel_handle* sehandl
         mInternalEmulated->create();
     }
 
-    if (!mNetlinkManager) {
-        mNetlinkManager = NetlinkManager::Instance();
-    }
     if (!mNetlinkManager->start()) {
         LOG(ERROR) << "Unable to start NetlinkManager";
         return false;
@@ -203,8 +194,17 @@ bool VolumeManager::start(VolumeWatcher* watcher, struct selabel_handle* sehandl
 }
 
 void VolumeManager::stop(void) {
+    for (auto& disk : mDisks) {
+        disk->destroy();
+        delete disk;
+    }
+    mDisks.clear();
+    for (auto& source : mDiskSources) {
+        delete source;
+    }
+    mDiskSources.clear();
+
     mNetlinkManager->stop();
-    mNetlinkManager = nullptr;
     mWatcher = nullptr;
 }
 
