@@ -243,6 +243,10 @@ static int apply_update_menu(Device* device, RecoveryUI* ui, Device::BuiltinActi
     if (chosen == Device::kGoBack) {
       break;
     }
+    if (chosen == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
+      return Device::KEY_INTERRUPTED;
+    }
+
     if (chosen == item_sideload) {
       status = ApplyFromAdb(device, false /* rescue_mode */, reboot_action);
     } else {
