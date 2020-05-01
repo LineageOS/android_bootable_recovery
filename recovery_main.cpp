@@ -37,6 +37,7 @@
 #include <thread>
 #include <vector>
 
+#include <android-base/chrono_utils.h>
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/properties.h>
@@ -49,6 +50,9 @@
 #include <selinux/android.h>
 #include <selinux/label.h>
 #include <selinux/selinux.h>
+
+#include <fs_mgr/roots.h>
+#include <fs_mgr_dm_linear.h>
 
 #include "common.h"
 #include "fastboot/fastboot.h"
@@ -555,8 +559,15 @@ int main(int argc, char** argv) {
 
       case Device::ENTER_FASTBOOT:
         if (logical_partitions_mapped()) {
-          ui->Print("Partitions may be mounted - rebooting to enter fastboot.");
-          android::base::SetProperty(ANDROID_RB_PROPERTY, "reboot,fastboot");
+          ui->Print("Partitions may be mounted - trying to unmap partitions.");
+          if (!android::fs_mgr::DestroyLogicalPartitions(5s)) {
+              LOG(ERROR) << "Failed to unmap partitions - rebooting to enter fastboot.";
+              android::base::SetProperty(ANDROID_RB_PROPERTY, "reboot,fastboot");
+          } else {
+              android::fs_mgr::SetLogicalPartitionsMapped(false);
+              LOG(INFO) << "Entering fastboot";
+              fastboot = true;
+          }
         } else {
           LOG(INFO) << "Entering fastboot";
           fastboot = true;
