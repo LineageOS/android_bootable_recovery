@@ -514,6 +514,9 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // Display the background texts for "erasing", "error", "no_command" and "installing" for the
   // selected locale.
   void SelectAndShowBackgroundText(const std::vector<std::string>& locales_entries, size_t sel);
+
+  // Empty string for non-A/B devices.
+  std::string boot_slot_msg_;
 };
 
 #endif  // RECOVERY_UI_H
