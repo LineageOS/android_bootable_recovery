@@ -418,7 +418,13 @@ ScreenRecoveryUI::ScreenRecoveryUI(bool scrollable_menu)
       stage(-1),
       max_stage(-1),
       locale_(""),
-      rtl_locale_(false) {}
+      rtl_locale_(false) {
+  if (android::base::GetBoolProperty("ro.build.ab_update", false)) {
+    std::string slot = android::base::GetProperty("ro.boot.slot_suffix", "");
+    if (android::base::StartsWith(slot, "_")) slot.erase(0, 1);
+    boot_slot_msg_ = "Active slot: " + slot;
+  }
+}
 
 ScreenRecoveryUI::~ScreenRecoveryUI() {
   progress_thread_stopped_ = true;
@@ -745,7 +751,7 @@ void ScreenRecoveryUI::DrawTextIcon(int x, int y, const GRSurface* surface) cons
 
 int ScreenRecoveryUI::DrawTextLine(int x, int y, const std::string& line, bool bold) const {
   gr_text(gr_sys_font(), x, y, line.c_str(), bold);
-  return char_height_ + 4;
+  return char_height_ + kLineSep;
 }
 
 int ScreenRecoveryUI::DrawTextLines(int x, int y, const std::vector<std::string>& lines) const {
@@ -839,6 +845,14 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     int x = margin_width_ + kMenuIndent;
     SetColor(UIElement::INFO);
     y += DrawTextLines(x, y, title_lines_);
+    if (!boot_slot_msg_.empty()) {
+      // Render the boot slot right-justified in the final title line.
+      if (!title_lines_.empty()) {
+        y -= char_height_ + kLineSep;  // Back up a line.
+      }
+      int slot_x = ScreenWidth() - x - (char_width_ * boot_slot_msg_.length());
+      y += DrawTextLine(slot_x, y, boot_slot_msg_, false);
+    }
     y += MenuItemPadding();
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
