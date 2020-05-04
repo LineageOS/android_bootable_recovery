@@ -841,7 +841,7 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
                 0, 0, icon_w, icon_h, icon_x, icon_y);
       }
     }
-    for (size_t i = 0; i < title_lines_.size(); i++) {
+    for (size_t i = logo && back_icon_; i < title_lines_.size(); i++) {
       y += DrawTextLine(x, y, title_lines_[i], i == 0);
     }
     y += MenuItemPadding();
