@@ -566,7 +566,10 @@ void ScreenRecoveryUI::draw_foreground_locked() {
 void ScreenRecoveryUI::SetColor(UIElement e) const {
   switch (e) {
     case UIElement::INFO:
-      gr_color(249, 194, 0, 255);
+      if (fastbootd_logo_enabled_)
+        gr_color(0xfd, 0xd8, 0x35, 255);
+      else
+        gr_color(0xf8, 0x90, 0xff, 255);
       break;
     case UIElement::HEADER:
       if (fastbootd_logo_enabled_)
