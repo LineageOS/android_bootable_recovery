@@ -839,14 +839,14 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
         gr_blit(back_icon_sel_ && menu_->selection() == -1 ? back_icon_sel_.get() : back_icon_.get(),
                 0, 0, icon_w, icon_h, icon_x, icon_y);
       }
-      y += MenuItemPadding();
-    } else {
-      for (size_t i = 0; i < title_lines_.size(); i++) {
-        y += DrawTextLine(x, y, title_lines_[i], i == 0);
-      }
-      y += DrawTextLines(x, y, help_message);
+    }
+    for (size_t i = 0; i < title_lines_.size(); i++) {
+      y += DrawTextLine(x, y, title_lines_[i], i == 0);
     }
 
+    y += DrawTextLines(x, y, help_message);
+
+    y += MenuItemPadding();
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
