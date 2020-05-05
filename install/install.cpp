@@ -391,7 +391,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   auto zip = package->GetZipArchiveHandle();
   bool has_metadata = ReadMetadataFromPackage(zip, &metadata);
 
-  const bool package_is_ab = !has_metadata && get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
+  const bool package_is_ab = has_metadata && get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
   const bool package_is_brick = get_value(metadata, "ota-type") == OtaTypeToString(OtaType::BRICK);
   if (package_is_brick) {
     LOG(INFO) << "Installing a brick package";
