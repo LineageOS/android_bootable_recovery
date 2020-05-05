@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <android-base/logging.h>
+#include <android-base/properties.h>
 
 #include "recovery_ui/ui.h"
 
@@ -67,6 +68,14 @@ static void PopulateMenuItems() {
 }
 
 Device::Device(RecoveryUI* ui) : ui_(ui) {
+  if (android::base::GetBoolProperty("ro.build.ab_update", false)) {
+    for (auto& action : g_wipe_actions) {
+      if (action.second == Device::WIPE_SYSTEM) {
+        action.first += " (active slot)";
+        break;
+      }
+    }
+  }
   PopulateMenuItems();
 }
 
