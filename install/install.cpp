@@ -339,7 +339,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   auto zip = package->GetZipArchiveHandle();
   bool has_metadata = ReadMetadataFromPackage(zip, &metadata);
 
-  bool package_is_ab = !has_metadata && get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
+  bool package_is_ab = has_metadata && get_value(metadata, "ota-type") == OtaTypeToString(OtaType::AB);
   bool device_supports_ab = android::base::GetBoolProperty("ro.build.ab_update", false);
   bool ab_device_supports_nonab = true;
   bool device_only_supports_ab = device_supports_ab && !ab_device_supports_nonab;
