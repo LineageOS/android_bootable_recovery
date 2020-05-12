@@ -937,9 +937,10 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     ui->SetStage(st_cur, st_max);
   }
 
-  std::vector<std::string> title_lines =
-      android::base::Split(android::base::GetProperty("ro.bootimage.build.fingerprint", ""), ":");
-  title_lines.insert(std::begin(title_lines), "Lineage Recovery");
+  std::vector<std::string> title_lines = {
+    "LineageOS " + android::base::GetProperty("ro.lineage.version", "(unknown)"),
+    "Android " + android::base::GetProperty("ro.build.version.release", "(unknown)"),
+  };
   ui->SetTitle(title_lines);
 
   ui->ResetKeyInterruptStatus();
