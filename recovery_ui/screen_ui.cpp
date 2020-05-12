@@ -845,12 +845,14 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
       for (size_t i = 0; i < title_lines_.size(); i++) {
         y += DrawTextLine(x, y, title_lines_[i], i == 0);
       }
-      y += DrawTextLines(x, y, help_message);
     }
 
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
+    y += MenuItemPadding();
+    SetColor(UIElement::INFO);
+    y += DrawTextLines(x, y, help_message);
   }
 
   // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
