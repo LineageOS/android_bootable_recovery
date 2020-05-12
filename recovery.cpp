@@ -938,7 +938,6 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   }
 
   ui->SetTitle({
-      "Lineage Recovery",
       "Android " + android::base::GetProperty("ro.build.version.release", "(unknown)"),
       "LineageOS " + android::base::GetProperty("ro.lineage.version", "(unknown)"),
   });
