@@ -37,7 +37,6 @@ static const std::vector<std::pair<std::string, Device::BuiltinAction>> kFastboo
 };
 
 void FillDefaultFastbootLines(std::vector<std::string>& title_lines) {
-  title_lines.push_back("Android Fastboot");
   title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   title_lines.push_back("Bootloader version - " + android::base::GetProperty("ro.bootloader", ""));
   title_lines.push_back("Baseband version - " +
