@@ -844,12 +844,14 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
       for (size_t i = 0; i < title_lines_.size(); i++) {
         y += DrawTextLine(x, y, title_lines_[i], i == 0);
       }
-      y += DrawTextLines(x, y, help_message);
     }
 
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
+    y += MenuItemPadding();
+    SetColor(UIElement::INFO);
+    y += DrawTextLines(x, y, help_message);
   }
 
   // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
@@ -1301,7 +1303,7 @@ std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(
       - gr_get_height(logo.get())
       - line_height * title_lines_.size()
       - line_height * 3  // For help text.
-      - MenuItemPadding();
+      - 2 * MenuItemPadding();
   if (GraphicMenu::Validate(max_width, max_height, graphic_header, graphic_items)) {
     return std::make_unique<GraphicMenu>(graphic_header, graphic_items, initial_selection, *this);
   }
