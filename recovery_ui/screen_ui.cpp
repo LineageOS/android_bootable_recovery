@@ -810,8 +810,10 @@ void ScreenRecoveryUI::draw_screen_locked() {
     "Any button cycles highlight.",
     "Long-press activates.",
   };
+  static const std::vector<std::string> NO_HELP = {};
   // clang-format on
-  draw_menu_and_text_buffer_locked(HasThreeButtons() ? REGULAR_HELP : LONG_PRESS_HELP);
+  draw_menu_and_text_buffer_locked(
+      HasTouchScreen() ? NO_HELP : HasThreeButtons() ? REGULAR_HELP : LONG_PRESS_HELP);
 }
 
 // Draws the menu and text buffer on the screen. Should only be called with updateMutex locked.
@@ -845,12 +847,16 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
       for (size_t i = 0; i < title_lines_.size(); i++) {
         y += DrawTextLine(x, y, title_lines_[i], i == 0);
       }
-      y += DrawTextLines(x, y, help_message);
     }
 
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
+    if (!help_message.empty()) {
+      y += MenuItemPadding();
+      SetColor(UIElement::INFO);
+      y += DrawTextLines(x, y, help_message);
+    }
   }
 
   // Display from the bottom up, until we hit the top of the screen, the bottom of the menu, or
