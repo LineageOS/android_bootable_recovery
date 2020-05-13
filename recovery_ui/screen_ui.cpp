@@ -803,7 +803,8 @@ void ScreenRecoveryUI::draw_screen_locked() {
 
   // clang-format off
   static std::vector<std::string> REGULAR_HELP{
-    "Use volume up/down and power.",
+    "Use the volume up/down buttons to change the selection.",
+    "Use the power button to activate the selection.",
   };
   static std::vector<std::string> LONG_PRESS_HELP{
     "Any button cycles highlight.",
