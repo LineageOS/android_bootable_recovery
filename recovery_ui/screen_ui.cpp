@@ -777,7 +777,8 @@ void ScreenRecoveryUI::SetTitle(const std::vector<std::string>& lines) {
 std::vector<std::string> ScreenRecoveryUI::GetMenuHelpMessage() const {
   // clang-format off
   static std::vector<std::string> REGULAR_HELP{
-    "Use volume up/down and power.",
+    "Use the volume up/down keys to navigate.",
+    "Use the power key to select.",
   };
   static std::vector<std::string> LONG_PRESS_HELP{
     "Any button cycles highlight.",
