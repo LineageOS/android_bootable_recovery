@@ -69,12 +69,10 @@ static void PopulateMenuItems() {
 
 Device::Device(RecoveryUI* ui) : ui_(ui) {
   if (android::base::GetBoolProperty("ro.build.ab_update", false)) {
-    for (auto& action : g_wipe_actions) {
-      if (action.second == Device::WIPE_SYSTEM) {
-        action.first += " (active slot)";
-        break;
-      }
-    }
+    // There's not much point in formatting the active slot's system partition
+    // because ROMs are flashed to the inactive slot. Removing the menu option
+    // prevents users from accidentally trashing a functioning ROM.
+    RemoveMenuItemForAction(Device::WIPE_SYSTEM);
   }
   PopulateMenuItems();
 }
