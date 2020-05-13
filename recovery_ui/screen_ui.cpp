@@ -742,7 +742,7 @@ void ScreenRecoveryUI::DrawTextIcon(int x, int y, const GRSurface* surface) cons
 
 int ScreenRecoveryUI::DrawTextLine(int x, int y, const std::string& line, bool bold) const {
   gr_text(gr_sys_font(), x, y, line.c_str(), bold);
-  return char_height_ + 4;
+  return char_height_ + kLineSep;
 }
 
 int ScreenRecoveryUI::DrawTextLines(int x, int y, const std::vector<std::string>& lines) const {
@@ -1291,7 +1291,14 @@ std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(
   size_t max_width = ScreenWidth() - margin_width_ - kMenuIndent;
   // vertical unusable area: margin height + title lines + helper message + high light bar.
   // It is safe to reserve more space.
-  size_t max_height = ScreenHeight() - margin_height_ - char_height_ * (title_lines_.size() + 3);
+  auto& logo = fastbootd_logo_enabled_ ? fastbootd_logo_ : lineage_logo_;
+  size_t line_height = char_height_ + kLineSep;
+  size_t max_height = ScreenHeight()
+      - margin_height_
+      - gr_get_height(logo.get())
+      - line_height * title_lines_.size()
+      - line_height * 3  // For help text.
+      - MenuItemPadding();
   if (GraphicMenu::Validate(max_width, max_height, graphic_header, graphic_items)) {
     return std::make_unique<GraphicMenu>(graphic_header, graphic_items, initial_selection, *this);
   }
