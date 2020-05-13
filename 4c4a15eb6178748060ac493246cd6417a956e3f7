@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f16bf1b8_6299060f",
+        "filename": "recovery_ui/device.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-05-13T15:24:57Z",
+      "side": 1,
+      "message": "move to recovery_main.cpp",
+      "revId": "4c4a15eb6178748060ac493246cd6417a956e3f7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
