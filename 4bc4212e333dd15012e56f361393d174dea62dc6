@@ -68,6 +68,30 @@
       "revId": "4bc4212e333dd15012e56f361393d174dea62dc6",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7720cd1_73368fd5",
+        "filename": "recovery.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2020-05-14T22:04:38Z",
+      "side": 1,
+      "message": "other opinions voiced internally say to keep it so, leave as is.",
+      "parentUuid": "39a8db51_f3b1f29f",
+      "range": {
+        "startLine": 943,
+        "startChar": 6,
+        "endLine": 943,
+        "endChar": 87
+      },
+      "revId": "4bc4212e333dd15012e56f361393d174dea62dc6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
