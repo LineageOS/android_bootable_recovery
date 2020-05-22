@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7cfb9b28_59898820",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-05-22T08:06:39Z",
+      "side": 1,
+      "message": "this should become fastboot light",
+      "revId": "799b33a9111e4d3083ce27ac0571e7f8c6ea0fec",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
