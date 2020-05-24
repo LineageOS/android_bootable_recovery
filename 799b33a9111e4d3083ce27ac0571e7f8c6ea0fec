@@ -16,6 +16,24 @@
       "revId": "799b33a9111e4d3083ce27ac0571e7f8c6ea0fec",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f9b98d6_65bccfbf",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-05-24T03:13:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7cfb9b28_59898820",
+      "revId": "799b33a9111e4d3083ce27ac0571e7f8c6ea0fec",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
