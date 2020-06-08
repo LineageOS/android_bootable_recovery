@@ -22,6 +22,30 @@
       "revId": "de025e425762b24feae784fe8db213a5ab689763",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f17a175_4a9833d4",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1313,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-08T17:21:46Z",
+      "side": 1,
+      "message": "I just hard-coded the maximum amount of room the help message could take.",
+      "parentUuid": "ae25a3f1_511398a0",
+      "range": {
+        "startLine": 1313,
+        "startChar": 6,
+        "endLine": 1313,
+        "endChar": 26
+      },
+      "revId": "de025e425762b24feae784fe8db213a5ab689763",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
