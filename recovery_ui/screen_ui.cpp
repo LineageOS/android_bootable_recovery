@@ -1287,24 +1287,6 @@ void ScreenRecoveryUI::ShowFile(const std::string& filename) {
   text_row_ = old_text_row;
 }
 
-std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(
-    const GRSurface* graphic_header, const std::vector<const GRSurface*>& graphic_items,
-    const std::vector<std::string>& text_headers, const std::vector<std::string>& text_items,
-    size_t initial_selection) const {
-  // horizontal unusable area: margin width + menu indent
-  size_t max_width = ScreenWidth() - margin_width_ - kMenuIndent;
-  // vertical unusable area: margin height + title lines + helper message + high light bar.
-  // It is safe to reserve more space.
-  size_t max_height = ScreenHeight() - margin_height_ - char_height_ * (title_lines_.size() + 3);
-  if (GraphicMenu::Validate(max_width, max_height, graphic_header, graphic_items)) {
-    return std::make_unique<GraphicMenu>(graphic_header, graphic_items, initial_selection, *this);
-  }
-
-  fprintf(stderr, "Failed to initialize graphic menu, falling back to use the text menu.\n");
-
-  return CreateMenu(text_headers, text_items, initial_selection);
-}
-
 std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(const std::vector<std::string>& text_headers,
                                                    const std::vector<std::string>& text_items,
                                                    size_t initial_selection) const {

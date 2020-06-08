@@ -346,15 +346,6 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   virtual bool LoadWipeDataMenuText();
 
-  // Creates a GraphicMenu with |graphic_header| and |graphic_items|. If the GraphicMenu isn't
-  // valid or it doesn't fit on the screen; falls back to create a TextMenu instead. If succeeds,
-  // returns a unique pointer to the created menu; otherwise returns nullptr.
-  virtual std::unique_ptr<Menu> CreateMenu(const GRSurface* graphic_header,
-                                           const std::vector<const GRSurface*>& graphic_items,
-                                           const std::vector<std::string>& text_headers,
-                                           const std::vector<std::string>& text_items,
-                                           size_t initial_selection) const;
-
   // Creates a TextMenu with |text_headers| and |text_items|; and sets the menu selection to
   // |initial_selection|.
   virtual std::unique_ptr<Menu> CreateMenu(const std::vector<std::string>& text_headers,
