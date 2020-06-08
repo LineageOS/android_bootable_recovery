@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae25a3f1_511398a0",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 1313,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-08T16:32:10Z",
+      "side": 1,
+      "message": "Room should also be made for the help text that might be rendered below the menu, but the number of help text lines is currently not visible to this function. Perhaps we should pass the amount of available vertical space to CreateMenu?",
+      "range": {
+        "startLine": 1313,
+        "startChar": 6,
+        "endLine": 1313,
+        "endChar": 26
+      },
+      "revId": "de025e425762b24feae784fe8db213a5ab689763",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
