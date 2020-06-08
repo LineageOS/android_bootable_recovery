@@ -48,7 +48,7 @@ void VrRecoveryUI::DrawTextIcon(int x, int y, const GRSurface* surface) const {
 int VrRecoveryUI::DrawTextLine(int x, int y, const std::string& line, bool bold) const {
   gr_text(gr_sys_font(), x + stereo_offset_, y, line.c_str(), bold);
   gr_text(gr_sys_font(), x - stereo_offset_ + ScreenWidth(), y, line.c_str(), bold);
-  return char_height_ + 4;
+  return TextLineHeight();
 }
 
 int VrRecoveryUI::DrawHorizontalRule(int y) const {
