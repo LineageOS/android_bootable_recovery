@@ -506,6 +506,9 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   std::mutex updateMutex;
 
  private:
+  // The vertical space added to a line of text.
+  static constexpr int kLineSep = 4;
+
   void SetLocale(const std::string&);
 
   // Display the background texts for "erasing", "error", "no_command" and "installing" for the

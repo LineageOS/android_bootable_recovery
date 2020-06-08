@@ -745,7 +745,7 @@ void ScreenRecoveryUI::DrawTextIcon(int x, int y, const GRSurface* surface) cons
 
 int ScreenRecoveryUI::DrawTextLine(int x, int y, const std::string& line, bool bold) const {
   gr_text(gr_sys_font(), x, y, line.c_str(), bold);
-  return char_height_ + 4;
+  return char_height_ + kLineSep;
 }
 
 int ScreenRecoveryUI::DrawTextLines(int x, int y, const std::vector<std::string>& lines) const {
@@ -1310,8 +1310,11 @@ std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(const std::vector<std::string
                                                    size_t initial_selection) const {
   int menu_char_width = MenuCharWidth();
   int menu_char_height = MenuCharHeight();
-  int menu_rows = (ScreenHeight() - margin_height_*2 - gr_get_height(lineage_logo_.get())
-                  - menu_char_height*title_lines_.size()) / MenuItemHeight() - text_headers.size();
+  int title_line_height = char_height_ + kLineSep;
+  int menu_rows = (ScreenHeight() - margin_height_ * 2 - gr_get_height(lineage_logo_.get()) -
+                   title_line_height * title_lines_.size()) /
+                      MenuItemHeight() -
+                  text_headers.size();
   int menu_cols = (ScreenWidth() - margin_width_*2 - kMenuIndent) / menu_char_width;
   return std::make_unique<TextMenu>(scrollable_menu_, menu_rows, menu_cols, text_headers, text_items,
                                     initial_selection, menu_char_height, *menu_draw_funcs_);
