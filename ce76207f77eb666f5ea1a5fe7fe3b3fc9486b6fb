@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b670aa20_59bfaea0",
+        "filename": "recovery_ui/include/recovery_ui/screen_ui.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-20T22:46:49Z",
+      "side": 1,
+      "message": "no longer needed",
+      "range": {
+        "startLine": 447,
+        "startChar": 2,
+        "endLine": 447,
+        "endChar": 50
+      },
+      "revId": "ce76207f77eb666f5ea1a5fe7fe3b3fc9486b6fb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
