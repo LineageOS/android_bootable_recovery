@@ -268,6 +268,9 @@ class RecoveryUI {
     fastbootd_logo_enabled_ = enable;
   }
 
+  // Set whether or not the fastbootd icon is displayed in recovery (default: false).
+  bool switch_logo_enabled_;
+
   // Resets the key interrupt status.
   void ResetKeyInterruptStatus() {
     key_interrupted_ = false;

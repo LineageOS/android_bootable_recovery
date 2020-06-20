@@ -54,7 +54,8 @@ constexpr int kDefaultTouchLowThreshold = 50;
 constexpr int kDefaultTouchHighThreshold = 90;
 
 RecoveryUI::RecoveryUI()
-    : brightness_normal_(50),
+    : switch_logo_enabled_(false),
+      brightness_normal_(50),
       brightness_dimmed_(25),
       brightness_file_(BRIGHTNESS_FILE),
       max_brightness_file_(MAX_BRIGHTNESS_FILE),
