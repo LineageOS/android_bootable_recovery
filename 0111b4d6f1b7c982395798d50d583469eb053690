@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5144d322_4a1f877d",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-20T21:33:24Z",
+      "side": 1,
+      "message": "This can be simplified to:\n\n  bool use_switch_logo \u003d\n    android::base::GetBoolProperty(\"ro.boot.dynamic_partitions\", false) ||\n    android::base::GetBoolProperty(\"ro.fastbootd.available\", false);\n\nAlso, move it inside the \u0027if (menu_)\u0027.",
+      "range": {
+        "startLine": 824,
+        "startChar": 0,
+        "endLine": 831,
+        "endChar": 3
+      },
+      "revId": "0111b4d6f1b7c982395798d50d583469eb053690",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
