@@ -822,7 +822,16 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
   int y = margin_height_;
 
   if (menu_) {
-    auto& logo = fastbootd_logo_enabled_ ? fastbootd_logo_ : lineage_logo_;
+    // Set whether or not the fastbootd icon is displayed in recovery.
+    bool use_switch_logo_;
+    if ((android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
+         android::base::GetBoolProperty("ro.fastbootd.available", false))) {
+      use_switch_logo_ = true;
+    } else {
+      use_switch_logo_ = false;
+    }
+
+    auto& logo = fastbootd_logo_enabled_ ? fastbootd_logo_ : use_switch_logo_ ? lineage_logo_switch_ : lineage_logo_;
     auto logo_width = gr_get_width(logo.get());
     auto logo_height = gr_get_height(logo.get());
     auto centered_x = ScreenWidth() / 2 - logo_width / 2;
@@ -1034,12 +1043,14 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   no_command_text_ = LoadLocalizedBitmap("no_command_text");
   error_text_ = LoadLocalizedBitmap("error_text");
 
-  lineage_logo_ = LoadBitmap("logo_image");
   back_icon_ = LoadBitmap("ic_back");
   back_icon_sel_ = LoadBitmap("ic_back_sel");
   if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
       android::base::GetBoolProperty("ro.fastbootd.available", false)) {
+    lineage_logo_ = LoadBitmap("logo_image_switch");
     fastbootd_logo_ = LoadBitmap("fastbootd");
+  } else {
+    lineage_logo_ = LoadBitmap("logo_image");
   }
 
   // Background text for "installing_update" could be "installing update" or
