@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "be39bdbb_319f2000",
+        "filename": "recovery_ui/include/recovery_ui/ui.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-20T20:23:36Z",
+      "side": 1,
+      "message": "Why add a new data member? This is set and used only in draw_menu_and_text_buffer_locked(), so it could be a local variable in that function.",
+      "range": {
+        "startLine": 271,
+        "startChar": 0,
+        "endLine": 272,
+        "endChar": 28
+      },
+      "revId": "40e2db865751c6b48d798660ff48a387b69de286",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db277d05_877dc792",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-20T20:23:36Z",
+      "side": 1,
+      "message": "This should default to false.",
+      "range": {
+        "startLine": 824,
+        "startChar": 63,
+        "endLine": 824,
+        "endChar": 67
+      },
+      "revId": "40e2db865751c6b48d798660ff48a387b69de286",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8d33921d_3c00194a",
         "filename": "recovery_ui/screen_ui.cpp",
         "patchSetId": 1
