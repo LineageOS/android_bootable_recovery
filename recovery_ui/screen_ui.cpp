@@ -821,8 +821,16 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     const std::vector<std::string>& help_message) {
   int y = margin_height_;
 
+  // Set whether or not the fastbootd icon is displayed in recovery.
+  bool switch_logo_enabled_;
+  if (android::base::GetBoolProperty("ro.fastbootd.available", false)) {
+    switch_logo_enabled_ = true;
+  } else {
+    switch_logo_enabled_ = false;
+  }
+
   if (menu_) {
-    auto& logo = fastbootd_logo_enabled_ ? fastbootd_logo_ : lineage_logo_;
+    auto& logo = fastbootd_logo_enabled_ ? fastbootd_logo_ : switch_logo_enabled_ ? lineage_logo_switch_ : lineage_logo_;
     auto logo_width = gr_get_width(logo.get());
     auto logo_height = gr_get_height(logo.get());
     auto centered_x = ScreenWidth() / 2 - logo_width / 2;
@@ -1035,6 +1043,7 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   error_text_ = LoadLocalizedBitmap("error_text");
 
   lineage_logo_ = LoadBitmap("logo_image");
+  lineage_logo_switch_ = LoadBitmap("logo_image_switch");
   back_icon_ = LoadBitmap("ic_back");
   back_icon_sel_ = LoadBitmap("ic_back_sel");
   if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) ||
