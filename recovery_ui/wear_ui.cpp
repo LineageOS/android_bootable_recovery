@@ -99,9 +99,8 @@ std::unique_ptr<Menu> WearRecoveryUI::CreateMenu(const std::vector<std::string>&
                                                  const std::vector<std::string>& text_items,
                                                  size_t initial_selection) const {
   if (text_rows_ > 0 && text_cols_ > 0) {
-    return std::make_unique<TextMenu>(false, text_rows_ - menu_unusable_rows_ - 1,
-                                      text_cols_ - 1, text_headers, text_items, initial_selection,
-                                      char_height_, *this);
+    return std::make_unique<TextMenu>(false, text_cols_ - 1, text_headers, text_items,
+                                      initial_selection, char_height_, *this);
   }
 
   return nullptr;
