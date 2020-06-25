@@ -61,22 +61,19 @@ int Menu::selection() const {
   return selection_;
 }
 
-TextMenu::TextMenu(bool wrappable, size_t max_items, size_t max_length,
+TextMenu::TextMenu(bool wrappable, size_t max_length,
                    const std::vector<std::string>& headers, const std::vector<std::string>& items,
                    size_t initial_selection, int char_height, const DrawInterface& draw_funcs)
     : Menu(initial_selection, draw_funcs),
       wrappable_(wrappable),
-      max_display_items_(max_items),
       max_item_length_(max_length),
       text_headers_(headers),
       char_height_(char_height) {
-  CHECK_LE(max_items, static_cast<size_t>(std::numeric_limits<int>::max()));
 
   size_t items_count = items.size();
   for (size_t i = 0; i < items_count; ++i) {
     text_items_.emplace_back(items[i].substr(0, max_item_length_));
   }
-  menu_start_ = std::max(0, (int)selection_ - (int)max_display_items_ + 1);
 
   CHECK(!text_items_.empty());
 }
@@ -823,6 +820,7 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     }
     y += menu_->DrawHeader(x, y);
     menu_start_y_ = y + 12; // Skip horizontal rule and some margin
+    menu_->SetMenuHeight(std::max(0, ScreenHeight() - menu_start_y_));
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
     if (!help_message.empty()) {
       y += MenuItemPadding();
@@ -1288,11 +1286,9 @@ std::unique_ptr<Menu> ScreenRecoveryUI::CreateMenu(const std::vector<std::string
                                                    size_t initial_selection) const {
   int menu_char_width = MenuCharWidth();
   int menu_char_height = MenuCharHeight();
-  int menu_rows = (ScreenHeight() - margin_height_*2 - gr_get_height(lineage_logo_.get())
-                  - menu_char_height*title_lines_.size()) / MenuItemHeight() - text_headers.size();
   int menu_cols = (ScreenWidth() - margin_width_*2 - kMenuIndent) / menu_char_width;
   bool wrap_selection = !HasThreeButtons() && !HasTouchScreen();
-  return std::make_unique<TextMenu>(wrap_selection, menu_rows, menu_cols, text_headers, text_items,
+  return std::make_unique<TextMenu>(wrap_selection, menu_cols, text_headers, text_items,
                                     initial_selection, menu_char_height, *menu_draw_funcs_);
 }
 

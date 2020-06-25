@@ -108,6 +108,7 @@ class Menu {
   // Returns count of menu items.
   virtual size_t ItemsCount() const = 0;
   virtual bool IsMain() const = 0;
+  virtual void SetMenuHeight(int height) = 0;
 
  protected:
   Menu(size_t initial_selection, const DrawInterface& draw_func);
@@ -122,7 +123,7 @@ class TextMenu : public Menu {
  public:
   // Constructs a Menu instance with the given |headers|, |items| and properties. Sets the initial
   // selection to |initial_selection|.
-  TextMenu(bool wrappable, size_t max_items, size_t max_length,
+  TextMenu(bool wrappable, size_t max_length,
            const std::vector<std::string>& headers, const std::vector<std::string>& items,
            size_t initial_selection, int char_height, const DrawInterface& draw_funcs);
 
@@ -165,11 +166,18 @@ class TextMenu : public Menu {
   // |cur_selection_str| if the items exceed the screen limit.
   bool ItemsOverflow(std::string* cur_selection_str) const;
 
+  // The number of displayable items is only known after we started drawing the menu (to consider logo, header, etc.)
+  // Make it settable after the menu is created
+  void SetMenuHeight(int height) {
+    max_display_items_ = height / draw_funcs_.MenuItemHeight();
+    menu_start_ = std::max(0, (int)selection_ - (int)max_display_items_ + 1);
+  }
+
  private:
   // The menu is scrollable to display more items. Used on wear devices who have smaller screens.
   const bool wrappable_;
   // The max number of menu items to fit vertically on a screen.
-  const size_t max_display_items_;
+  size_t max_display_items_;
   // The length of each item to fit horizontally on a screen.
   const size_t max_item_length_;
   // The menu headers.
@@ -204,6 +212,7 @@ class GraphicMenu : public Menu {
   bool IsMain() const override {
     return true;
   }
+  void SetMenuHeight(int height __unused) override {}
 
   // Checks if all the header and items are valid GRSurface's; and that they can fit in the area
   // defined by |max_width| and |max_height|.
