@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ad68a49_de2321f9",
+        "filename": "recovery_ui/include/recovery_ui/screen_ui.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-25T18:25:33Z",
+      "side": 1,
+      "message": "Instead of a new function, how about add a max_height parameter to DrawItems()?",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 45
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9925ce4_b453cc37",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-06-25T18:25:33Z",
+      "side": 1,
+      "message": "Also need to subtract the height from the help_message rendered below the menu.",
+      "range": {
+        "startLine": 823,
+        "startChar": 4,
+        "endLine": 823,
+        "endChar": 70
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
