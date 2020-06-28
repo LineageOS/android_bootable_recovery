@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2981c786_cc5c5b9c",
+        "filename": "recovery_ui/include/recovery_ui/screen_ui.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-06-28T21:16:11Z",
+      "side": 1,
+      "message": "The Menu class does not know the screen height, so i would still have to pass that in as a parameter.\nIf I have to edit the interface i might as well make it its own method.",
+      "parentUuid": "0ad68a49_de2321f9",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 45
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9925ce4_b453cc37",
         "filename": "recovery_ui/screen_ui.cpp",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2020-06-25T18:25:33Z",
       "side": 1,
       "message": "Also need to subtract the height from the help_message rendered below the menu.",
+      "range": {
+        "startLine": 823,
+        "startChar": 4,
+        "endLine": 823,
+        "endChar": 70
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86988b7f_80ccbcf4",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-06-28T21:16:11Z",
+      "side": 1,
+      "message": "I\u0027m not convinced that\u0027s a good idea. We would partially go back to hardcoding height values.\nI think we can ignore it and assume all devices are at least capable of fitting the help text in the main menu, which would be enough?\n\nI\u0027m open for more input though.",
+      "parentUuid": "d9925ce4_b453cc37",
       "range": {
         "startLine": 823,
         "startChar": 4,
