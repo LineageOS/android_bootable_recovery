@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0d258101_b100410f",
+        "filename": "recovery_ui/include/recovery_ui/screen_ui.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-07-01T01:54:47Z",
+      "side": 1,
+      "message": "I don\u0027t understand. You could change DrawItems like this:\n\n  virtual int DrawItems(int x, int y, int screen_width, int max_height, bool long_press) const \u003d 0;\n\nand call it like this:\n\n  y +\u003d menu_-\u003eDrawItems(x, y, ScreenWidth(), ScreenHeight() - y - help_height, IsLongPress());\n\nInternally, DrawItems would do the equivalent of the current SetMenuHeight(max_height).",
+      "parentUuid": "2981c786_cc5c5b9c",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 45
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d9925ce4_b453cc37",
         "filename": "recovery_ui/screen_ui.cpp",
         "patchSetId": 1
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "I\u0027m not convinced that\u0027s a good idea. We would partially go back to hardcoding height values.\nI think we can ignore it and assume all devices are at least capable of fitting the help text in the main menu, which would be enough?\n\nI\u0027m open for more input though.",
       "parentUuid": "d9925ce4_b453cc37",
+      "range": {
+        "startLine": 823,
+        "startChar": 4,
+        "endLine": 823,
+        "endChar": 70
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7849dd69_e569709d",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 25863
+      },
+      "writtenOn": "2020-07-01T01:54:47Z",
+      "side": 1,
+      "message": "Are there any consequences for drawing off the end of the screen? (Will it produce errors?) If not, then it\u0027s probably OK to assume there is enough vertical real estate.\n\nMaybe you could draw the help text, save the height, draw the menu over the help text, then draw the help text again underneath the menu:\n\n    auto draw_help \u003d [this](int x, int y, const auto\u0026 help_message) -\u003e int {\n      SetColor(UIElement::INFO);\n      return help_message.empty() ? 0 : MenuItemPadding() + DrawTextLines(x, y, help_message);\n    };\n    int help_height \u003d draw_help(x, y, help_message);\n    y +\u003d menu_-\u003eDrawItems(x, y, ScreenWidth(), ScreenHeight() - y - help_height, IsLongPress());\n    y +\u003d draw_help(x, y, help_mesage);\n\nThis would only work if the temporary rendering of the help text is guaranteed to be completely overwritten by the menu rendering and later text rendering.",
+      "parentUuid": "86988b7f_80ccbcf4",
       "range": {
         "startLine": 823,
         "startChar": 4,
