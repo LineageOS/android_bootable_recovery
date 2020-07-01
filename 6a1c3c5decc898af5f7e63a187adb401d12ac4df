@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "c135b657_5f96d778",
+        "filename": "recovery_ui/include/recovery_ui/screen_ui.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-07-01T08:56:24Z",
+      "side": 1,
+      "message": "I would also need to make DrawItems not const. Overall, a setter looks better",
+      "parentUuid": "0d258101_b100410f",
+      "range": {
+        "startLine": 111,
+        "startChar": 2,
+        "endLine": 111,
+        "endChar": 45
+      },
+      "revId": "6a1c3c5decc898af5f7e63a187adb401d12ac4df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d9925ce4_b453cc37",
         "filename": "recovery_ui/screen_ui.cpp",
         "patchSetId": 1
