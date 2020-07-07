@@ -89,28 +89,41 @@
  * @SDE_RM_TOPOLOGY_NONE:                 No topology in use currently
  * @SDE_RM_TOPOLOGY_SINGLEPIPE:           1 LM, 1 PP, 1 INTF/WB
  * @SDE_RM_TOPOLOGY_SINGLEPIPE_DSC:       1 LM, 1 DSC, 1 PP, 1 INTF/WB
+ * @SDE_RM_TOPOLOGY_SINGLEPIPE_VDC:       1 LM, 1 VDC, 1 PP, 1 INTF/WB
  * @SDE_RM_TOPOLOGY_DUALPIPE:             2 LM, 2 PP, 2 INTF/WB
  * @SDE_RM_TOPOLOGY_DUALPIPE_DSC:         2 LM, 2 DSC, 2 PP, 2 INTF/WB
  * @SDE_RM_TOPOLOGY_DUALPIPE_3DMERGE:     2 LM, 2 PP, 3DMux, 1 INTF/WB
  * @SDE_RM_TOPOLOGY_DUALPIPE_3DMERGE_DSC: 2 LM, 2 PP, 3DMux, 1 DSC, 1 INTF/WB
+ * @SDE_RM_TOPOLOGY_DUALPIPE_3DMERGE_VDC: 2 LM, 2 PP, 3DMux, 1 VDC, 1 INTF/WB
  * @SDE_RM_TOPOLOGY_DUALPIPE_DSCMERGE:    2 LM, 2 PP, 2 DSC Merge, 1 INTF/WB
  * @SDE_RM_TOPOLOGY_PPSPLIT:              1 LM, 2 PPs, 2 INTF/WB
+ * @SDE_RM_TOPOLOGY_QUADPIPE_3DMERGE      4 LM, 4 PP, 3DMux, 2 INTF
+ * @SDE_RM_TOPOLOGY_QUADPIPE_3DMERGE_DSC  4 LM, 4 PP, 3DMux, 3 DSC, 2 INTF
+ * @SDE_RM_TOPOLOGY_QUADPIPE_DSCMERE      4 LM, 4 PP, 4 DSC Merge, 2 INTF
+ * @SDE_RM_TOPOLOGY_QUADPIPE_DSC4HSMERGE  4 LM, 4 PP, 4 DSC Merge, 1 INTF
  */
 
 static uint32_t get_lm_number(const std::string& topology) {
   if (topology == "sde_singlepipe") return 1;
   if (topology == "sde_singlepipe_dsc") return 1;
+  if (topology == "sde_singlepipe_vdc") return 1;
   if (topology == "sde_dualpipe") return 2;
   if (topology == "sde_dualpipe_dsc") return 2;
+  if (topology == "sde_dualpipe_vdc") return 2;
   if (topology == "sde_dualpipemerge") return 2;
   if (topology == "sde_dualpipemerge_dsc") return 2;
+  if (topology == "sde_dualpipemerge_vdc") return 2;
   if (topology == "sde_dualpipe_dscmerge") return 2;
   if (topology == "sde_ppsplit") return 1;
-  return 2;
+  if (topology == "sde_quadpipemerge") return 4;
+  if (topology == "sde_quadpipe_3dmerge_dsc") return 4;
+  if (topology == "sde_quadpipe_dscmerge") return 4;
+  if (topology == "sde_quadpipe_dsc4hsmerge") return 4;
+  return DEFAULT_NUM_LMS;
 }
 
 static uint32_t get_topology_lm_number(int fd, uint32_t blob_id) {
-  uint32_t num_lm = 2;
+  uint32_t num_lm = DEFAULT_NUM_LMS;
 
   drmModePropertyBlobRes* blob = drmModeGetPropertyBlob(fd, blob_id);
   if (!blob) {
@@ -125,6 +138,7 @@ static uint32_t get_topology_lm_number(int fd, uint32_t blob_id) {
   while (std::getline(stream, line)) {
     if (line.find(topology) != std::string::npos) {
       num_lm = get_lm_number(std::string(line, topology.length()));
+      break;
     }
   }
 
@@ -180,14 +194,8 @@ int MinuiBackendDrmQti::AtomicPopulatePlane(int plane, drmModeAtomicReqPtr atomi
   crtc_y = 0;
   crtc_w = width / number_of_lms;
   crtc_h = height;
-
-  if (plane == Left) {
-    src_x = 0;
-    crtc_x = 0;
-  } else {
-    src_x = width / number_of_lms;
-    crtc_x = width / number_of_lms;
-  }
+  src_x = (width / number_of_lms) * plane;
+  crtc_x = (width / number_of_lms) * plane;
 
   if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "FB_ID",
                                drm[index].GRSurfaceDrms[drm[index].current_buffer]->fb_id))
@@ -621,7 +629,7 @@ GRSurface* MinuiBackendDrmQti::Init() {
   drmModeRes* res = nullptr;
   drm_fd = -1;
 
-  number_of_lms = 2;
+  number_of_lms = DEFAULT_NUM_LMS;
   /* Consider DRM devices in order. */
   for (int i = 0; i < DRM_MAX_MINOR; i++) {
     auto dev_name = android::base::StringPrintf(DRM_DEV_NAME, DRM_DIR_NAME, i);
@@ -725,6 +733,9 @@ GRSurface* MinuiBackendDrmQti::Init() {
     for (int j = 0; j < (int)conn_res.props->count_props; ++j) {
       conn_res.props_info[j] = drmModeGetProperty(drm_fd, conn_res.props->props[j]);
 
+      /* Get preferred mode information and extract the
+       * number of layer mixers needed from the topology name.
+       */
       if (!strcmp(conn_res.props_info[j]->name, "mode_properties")) {
         number_of_lms = get_topology_lm_number(drm_fd, conn_res.props->prop_values[j]);
         printf("number of lms in topology %d\n", number_of_lms);
