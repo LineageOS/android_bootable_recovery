@@ -27,7 +27,8 @@
 #include "minui/minui.h"
 
 #define NUM_MAIN 1
-#define NUM_PLANES 2
+#define NUM_PLANES 4
+#define DEFAULT_NUM_LMS 2
 
 struct Crtc {
   drmModeObjectProperties* props;
