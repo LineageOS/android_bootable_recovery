@@ -169,13 +169,18 @@ class TextMenu : public Menu {
   // The number of displayable items is only known after we started drawing the menu (to consider logo, header, etc.)
   // Make it settable after the menu is created
   void SetMenuHeight(int height) {
-    max_display_items_ = height / draw_funcs_.MenuItemHeight();
-    menu_start_ = std::max(0, (int)selection_ - (int)max_display_items_ + 1);
+    if (!calibrated_height_) {
+      max_display_items_ = height / draw_funcs_.MenuItemHeight();
+      menu_start_ = std::max(0, (int)selection_ - (int)max_display_items_ + 1);
+      calibrated_height_ = true;
+    }
   }
 
  private:
   // The menu is scrollable to display more items. Used on wear devices who have smaller screens.
   const bool wrappable_;
+  // Did we compute our max height already?
+  bool calibrated_height_;
   // The max number of menu items to fit vertically on a screen.
   size_t max_display_items_;
   // The length of each item to fit horizontally on a screen.

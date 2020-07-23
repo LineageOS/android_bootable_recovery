@@ -66,6 +66,7 @@ TextMenu::TextMenu(bool wrappable, size_t max_length,
                    size_t initial_selection, int char_height, const DrawInterface& draw_funcs)
     : Menu(initial_selection, draw_funcs),
       wrappable_(wrappable),
+      calibrated_height_(false),
       max_item_length_(max_length),
       text_headers_(headers),
       char_height_(char_height) {
