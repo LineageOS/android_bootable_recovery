@@ -2,6 +2,7 @@ subdirs = [
     "applypatch",
     "bootloader_message",
     "edify",
+    "fsupdater",
     "otafault",
     "otautil",
     "uncrypt",
