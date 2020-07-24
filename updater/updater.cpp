@@ -15,6 +15,7 @@
  */
 
 #include "updater/updater.h"
+#include "fsupdater/fsupdater.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -124,6 +125,7 @@ int main(int argc, char** argv) {
   // Configure edify's functions.
 
   RegisterBuiltins();
+  RegisterFsUpdaterFunctions();
   RegisterInstallFunctions();
   RegisterBlockImageFunctions();
   RegisterDynamicPartitionsFunctions();

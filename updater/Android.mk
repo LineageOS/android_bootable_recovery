@@ -71,6 +71,7 @@ LOCAL_CFLAGS := \
 
 LOCAL_STATIC_LIBRARIES := \
     libupdater \
+    libfsupdater \
     $(TARGET_RECOVERY_UPDATER_LIBS) \
     $(TARGET_RECOVERY_UPDATER_EXTRA_LIBS) \
     $(updater_common_static_libraries)
