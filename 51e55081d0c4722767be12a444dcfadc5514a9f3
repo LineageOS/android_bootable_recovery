@@ -22,6 +22,30 @@
       "revId": "51e55081d0c4722767be12a444dcfadc5514a9f3",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c78ee651_139fe3d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-07-28T15:41:32Z",
+      "side": 1,
+      "message": "did not know it was a git command lol",
+      "parentUuid": "494dec8d_7e982611",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 62
+      },
+      "revId": "51e55081d0c4722767be12a444dcfadc5514a9f3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
