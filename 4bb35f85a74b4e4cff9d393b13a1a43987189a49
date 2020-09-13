@@ -22,6 +22,30 @@
       "revId": "4bb35f85a74b4e4cff9d393b13a1a43987189a49",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f73bcd4_f28d8576",
+        "filename": "applypatch/vendor_flash_recovery.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 24438
+      },
+      "writtenOn": "2020-09-13T14:25:38Z",
+      "side": 1,
+      "message": "enable \u003cservicename\u003e\n\nTurns a disabled service into an enabled one as if the service did not specify disabled. If the service is supposed to be running, it will be started now. Typically used when the bootloader sets a variable that indicates a specific service should be started when needed. E.g.\n\non property:ro.boot.myfancyhardware\u003d1\n    enable my_fancy_service_for_my_fancy_hardware\n\n------------------------------------------------\nThis isn\u0027t a bootloader prop is it.",
+      "parentUuid": "853b1f37_5f8197e8",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 10
+      },
+      "revId": "4bb35f85a74b4e4cff9d393b13a1a43987189a49",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
