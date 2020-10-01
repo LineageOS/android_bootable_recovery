@@ -340,6 +340,8 @@ int MenuDrawFunctions::DrawTextLines(int x, int y, const std::vector<std::string
 }
 
 int MenuDrawFunctions::DrawWrappedTextLines(int x, int y, const std::vector<std::string>& lines) const {
+  const int padding = MenuItemPadding() / 2;
+
   // Keep symmetrical margins based on the given offset (i.e. x).
   size_t text_cols = (gr_fb_width() - x * 2) / MenuCharWidth();
   int offset = 0;
@@ -361,8 +363,11 @@ int MenuDrawFunctions::DrawWrappedTextLines(int x, int y, const std::vector<std:
           next_start += last_space + 1;
         }
       }
-      offset += DrawTextLine(x, y + offset, sub, false);
+      offset += DrawTextLine(x, y + offset, sub, false) - (2 * MenuItemPadding() - padding);
     }
+  }
+  if (!lines.empty()) {
+    offset += 2 * MenuItemPadding() - padding;
   }
   return offset;
 }
