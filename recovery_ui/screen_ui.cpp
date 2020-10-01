@@ -355,10 +355,10 @@ int MenuDrawFunctions::DrawWrappedTextLines(int x, int y, const std::vector<std:
           next_start += last_space + 1;
         }
       }
-      offset += DrawTextLine(x, y + offset, sub, false);
+      offset += DrawTextLine(x, y + offset, sub, false) - 2 * MenuItemPadding();
     }
   }
-  return offset;
+  return offset + MenuItemPadding();
 }
 
 constexpr int kDefaultMarginHeight = 0;
