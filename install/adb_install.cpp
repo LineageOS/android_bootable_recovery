@@ -362,7 +362,7 @@ InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinActi
 
   RecoveryUI* ui = device->GetUI();
 
-  InstallResult install_result = INSTALL_ERROR;
+  InstallResult install_result = INSTALL_NONE;
   std::map<MinadbdCommand, CommandFunction> command_map{
     { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, ui, &install_result) },
     { MinadbdCommand::kRebootAndroid, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootAndroid,
