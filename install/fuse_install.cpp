@@ -212,14 +212,14 @@ InstallResult ApplyFromSdcard(Device* device) {
   auto ui = device->GetUI();
   if (ensure_path_mounted(SDCARD_ROOT) != 0) {
     LOG(ERROR) << "\n-- Couldn't mount " << SDCARD_ROOT << ".\n";
-    return INSTALL_ERROR;
+    return INSTALL_NONE;
   }
 
   std::string path = BrowseDirectory(SDCARD_ROOT, device, ui);
   if (path.empty()) {
     LOG(ERROR) << "\n-- No package file selected.\n";
     ensure_path_unmounted(SDCARD_ROOT);
-    return INSTALL_ERROR;
+    return INSTALL_NONE;
   }
 
   // Hint the install function to read from a block map file.
