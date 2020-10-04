@@ -488,6 +488,9 @@ static Device::BuiltinAction PromptAndWait(Device* device, InstallResult status)
         if (status == INSTALL_REBOOT) {
           return reboot_action;
         }
+        if (status == INSTALL_NONE) {
+          update_in_progress = false;
+        }
 
         if (status == INSTALL_SUCCESS) {
           update_in_progress = false;
