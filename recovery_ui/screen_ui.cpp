@@ -1512,9 +1512,7 @@ size_t ScreenRecoveryUI::ShowMenu(const std::vector<std::string>& headers,
 size_t ScreenRecoveryUI::ShowPromptWipeDataMenu(const std::vector<std::string>& backup_headers,
                                                 const std::vector<std::string>& backup_items,
                                                 const std::function<int(int, bool)>& key_handler) {
-  auto wipe_data_menu = CreateMenu(wipe_data_menu_header_text_.get(),
-                                   { try_again_text_.get(), factory_data_reset_text_.get() },
-                                   backup_headers, backup_items, 0);
+  auto wipe_data_menu = CreateMenu(backup_headers, backup_items, 0);
   if (wipe_data_menu == nullptr) {
     return 0;
   }
