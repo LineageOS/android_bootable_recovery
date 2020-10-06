@@ -35,6 +35,8 @@
 #include <unistd.h>
 #include <utime.h>
 
+#include <linux/xattr.h>
+
 #include <memory>
 #include <string>
 #include <vector>
