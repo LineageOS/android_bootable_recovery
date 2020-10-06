@@ -77,5 +77,7 @@ class UpdaterRuntimeInterface {
   // On devices supports A/B, add current slot suffix to arg. Otherwise, return |arg| as is.
   virtual std::string AddSlotSuffix(const std::string_view arg) const = 0;
 
-  virtual struct selabel_handle* sehandle() const = 0;
+  virtual struct selabel_handle* sehandle() const {
+    return nullptr;
+  }
 };
