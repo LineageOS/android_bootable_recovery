@@ -46,6 +46,30 @@
       "revId": "9cb63535647adcf0182d6b95fefbeb63ee1e51fd",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "379bef59_1684adfe",
+        "filename": "bootloader_message/Android.bp",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-10-16T10:08:47Z",
+      "side": 1,
+      "message": "Do we? I don\u0027t know.",
+      "parentUuid": "4963e1c5_14971a56",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 6
+      },
+      "revId": "9cb63535647adcf0182d6b95fefbeb63ee1e51fd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
