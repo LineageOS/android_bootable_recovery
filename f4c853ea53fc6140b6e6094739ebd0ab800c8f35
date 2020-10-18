@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d53e7a0_89383aa8",
+        "filename": "minui/events.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2020-10-18T12:24:57Z",
+      "side": 1,
+      "message": "explicitly",
+      "range": {
+        "startLine": 85,
+        "startChar": 19,
+        "endLine": 85,
+        "endChar": 30
+      },
+      "revId": "f4c853ea53fc6140b6e6094739ebd0ab800c8f35",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
