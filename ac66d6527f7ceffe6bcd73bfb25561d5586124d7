@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "404f6013_e11356b5",
+        "filename": "minui/events.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2020-10-18T11:40:25Z",
+      "side": 1,
+      "message": "I\u0027d modify this comment as well to reflect the \"why\" to the skipping.\nAlso, the ckmment talks about EV_ABS, which I don\u0027t see handled here at all",
+      "revId": "ac66d6527f7ceffe6bcd73bfb25561d5586124d7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
