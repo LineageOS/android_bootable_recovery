@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05511af7_239c7cce",
+        "filename": "recovery_ui/include/recovery_ui/ui.h",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2020-10-18T16:00:32Z",
+      "side": 1,
+      "message": "Moved this to forward declaration because in the VolumeManager patch we would create a header circular dependency",
+      "revId": "803e0573eccf8c1767f44878816f76643a06814e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
