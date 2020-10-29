@@ -187,6 +187,7 @@ int MinuiBackendDrmQti::AtomicPopulatePlane(int plane, drmModeAtomicReqPtr atomi
   uint32_t crtc_x, crtc_y, crtc_w, crtc_h;
   int width = drm[index].monitor_crtc->mode.hdisplay;
   int height = drm[index].monitor_crtc->mode.vdisplay;
+  int zpos = 0;
 
   src_y = 0;
   src_w = width / number_of_lms;
@@ -196,6 +197,11 @@ int MinuiBackendDrmQti::AtomicPopulatePlane(int plane, drmModeAtomicReqPtr atomi
   crtc_h = height;
   src_x = (width / number_of_lms) * plane;
   crtc_x = (width / number_of_lms) * plane;
+
+  /* populate z-order property required for 4 layer mixer */
+  if (number_of_lms == 4) zpos = plane >> 1;
+
+  atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "zpos", zpos);
 
   if (atomic_add_prop_to_plane(plane_res, atomic_req, plane_res[plane].plane->plane_id, "FB_ID",
                                drm[index].GRSurfaceDrms[drm[index].current_buffer]->fb_id))
@@ -602,7 +608,7 @@ void MinuiBackendDrmQti::DisableNonMainCrtcs(int fd, drmModeRes* resources,
 }
 
 void MinuiBackendDrmQti::UpdatePlaneFB(DrmConnector index) {
-  uint32_t i;
+  uint32_t i, prop_id;
 
   /* Set atomic req */
   drmModeAtomicReqPtr atomic_req = drmModeAtomicAlloc();
@@ -610,6 +616,12 @@ void MinuiBackendDrmQti::UpdatePlaneFB(DrmConnector index) {
     printf("Atomic Alloc failed. Could not update fb_id\n");
     return;
   }
+
+  /* Add conn-crtc association property required
+   * for driver to recognize quadpipe topology.
+   */
+  add_prop(&conn_res, connector, Connector, drm[index].monitor_connector->connector_id, "CRTC_ID",
+           drm[index].monitor_crtc->crtc_id, index);
 
   /* Add property */
   for (i = 0; i < number_of_lms; i++)
