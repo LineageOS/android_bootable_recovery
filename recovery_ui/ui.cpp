@@ -455,7 +455,7 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
       case RecoveryUI::REBOOT:
         if (reboot_enabled) {
           android::volmgr::VolumeManager::Instance()->unmountAll();
-          Reboot("userrequested,recovery,ui");
+          Reboot("");
         }
         break;
 

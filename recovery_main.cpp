@@ -555,12 +555,7 @@ int main(int argc, char** argv) {
     switch (ret) {
       case Device::SHUTDOWN:
         ui->Print("Shutting down...\n");
-        Shutdown("userrequested,recovery");
-        break;
-
-      case Device::SHUTDOWN_FROM_FASTBOOT:
-        ui->Print("Shutting down...\n");
-        Shutdown("userrequested,fastboot");
+        Shutdown();
         break;
 
       case Device::REBOOT_BOOTLOADER:
@@ -610,19 +605,9 @@ int main(int argc, char** argv) {
         device->GoHome();
         break;
 
-      case Device::REBOOT:
-        ui->Print("Rebooting...\n");
-        Reboot("userrequested,recovery");
-        break;
-
-      case Device::REBOOT_FROM_FASTBOOT:
-        ui->Print("Rebooting...\n");
-        Reboot("userrequested,fastboot");
-        break;
-
       default:
         ui->Print("Rebooting...\n");
-        Reboot("unknown" + std::to_string(ret));
+        Reboot("");
         break;
     }
   }
