@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b9f2625_a3cfe68b",
+        "filename": "recovery.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2021-01-06T06:22:16Z",
+      "side": 1,
+      "message": "Should this text be terminated with a newline?",
+      "revId": "1d4787799a769b6dbe8d5fabefca0c4bae76a51a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
