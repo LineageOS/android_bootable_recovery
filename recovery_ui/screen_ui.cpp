@@ -377,7 +377,9 @@ ScreenRecoveryUI::ScreenRecoveryUI()
           android::base::GetIntProperty("ro.recovery.ui.margin_height", kDefaultMarginHeight)),
       animation_fps_(
           android::base::GetIntProperty("ro.recovery.ui.animation_fps", kDefaultAnimationFps)),
-      density_(static_cast<float>(android::base::GetIntProperty("ro.sf.lcd_density", 160)) / 160.f),
+      density_(static_cast<float>(
+          android::base::GetIntProperty("ro.recovery.ui.screen_density",
+              android::base::GetIntProperty("ro.sf.lcd_density", 160))) / 160.f),
       blank_unblank_on_init_(
           android::base::GetBoolProperty("ro.recovery.ui.blank_unblank_on_init", false)),
       current_icon_(NONE),
