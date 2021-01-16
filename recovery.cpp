@@ -613,7 +613,13 @@ change_menu:
           break;
         }
         if (ensure_path_mounted_at(android::fs_mgr::GetSystemRoot(), "/mnt/system") != -1) {
-          ui->Print("Mounted /system.\n");
+          ui->Print("Mounted /mnt/system.\n");
+        }
+        break;
+
+      case Device::UNMOUNT_SYSTEM:
+        if (ensure_path_unmounted(android::fs_mgr::GetSystemRoot()) != -1) {
+          ui->Print("Unounted /mnt/system.\n");
         }
         break;
 
