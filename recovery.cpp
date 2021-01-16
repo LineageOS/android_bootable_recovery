@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mount.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -605,16 +606,26 @@ change_menu:
         break;
       }
 
-      case Device::MOUNT_SYSTEM:
-        // For Virtual A/B, set up the snapshot devices (if exist).
-        if (!CreateSnapshotPartitions()) {
-          ui->Print("Virtual A/B: snapshot partitions creation failed.\n");
-          break;
-        }
-        if (ensure_path_mounted_at(android::fs_mgr::GetSystemRoot(), "/mnt/system") != -1) {
-          ui->Print("Mounted /system.\n");
+      case Device::MOUNT_SYSTEM: {
+        static bool mounted = false;
+        if (!mounted) {
+          // For Virtual A/B, set up the snapshot devices (if exist).
+          if (!logical_partitions_mapped() && !CreateSnapshotPartitions()) {
+            ui->Print("Virtual A/B: snapshot partitions creation failed.\n");
+            break;
+          }
+          if (ensure_path_mounted_at(android::fs_mgr::GetSystemRoot(), "/mnt/system") != -1) {
+            ui->Print("Mounted /mnt/system.\n");
+            mounted = true;
+          }
+        } else {
+          if (umount("/mnt/system") != -1) {
+            ui->Print("Unounted /mnt/system.\n");
+            mounted = false;
+          }
         }
         break;
+      }
 
       case Device::KEY_INTERRUPTED:
         return Device::KEY_INTERRUPTED;
