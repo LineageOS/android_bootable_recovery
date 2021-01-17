@@ -47,6 +47,7 @@
 #include <android-base/unique_fd.h>
 
 #include "install/package.h"
+#include "install/snapshot_utils.h"
 #include "install/verifier.h"
 #include "install/wipe_data.h"
 #include "otautil/error_code.h"
@@ -352,6 +353,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   bool device_supports_ab = android::base::GetBoolProperty("ro.build.ab_update", false);
   bool ab_device_supports_nonab = true;
   bool device_only_supports_ab = device_supports_ab && !ab_device_supports_nonab;
+  bool device_supports_virtual_ab = android::base::GetBoolProperty("ro.virtual_ab.enabled", false);
 
   if (package_is_ab) {
     CHECK(package->GetType() == PackageType::kFile);
@@ -366,6 +368,15 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
       log_buffer->push_back(android::base::StringPrintf("error: %d", kUpdateBinaryCommandFailure));
       return INSTALL_ERROR;
     }
+  }
+
+  if (!package_is_ab && !logical_partitions_mapped()) {
+    CreateSnapshotPartitions();
+    map_logical_partitions();
+  } else if (package_is_ab && device_supports_virtual_ab && logical_partitions_mapped()) {
+    LOG(ERROR) << "Logical partitions are mapped. "
+               << "Please reboot recovery before installing an OTA update.";
+    return INSTALL_ERROR;
   }
 
   ReadSourceTargetBuild(metadata, log_buffer);
