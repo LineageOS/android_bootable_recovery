@@ -364,7 +364,16 @@ int setup_install_mounts() {
       }
     }
   }
-  // Map logical partitions
+  return 0;
+}
+
+bool HasCache() {
+  CHECK(!fstab.empty());
+  static bool has_cache = volume_for_mount_point(CACHE_ROOT) != nullptr;
+  return has_cache;
+}
+
+void map_logical_partitions() {
   if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
       !logical_partitions_mapped()) {
     std::string super_name = fs_mgr_get_super_partition_name();
@@ -374,13 +383,6 @@ int setup_install_mounts() {
       logical_partitions_auto_mapped = true;
     }
   }
-  return 0;
-}
-
-bool HasCache() {
-  CHECK(!fstab.empty());
-  static bool has_cache = volume_for_mount_point(CACHE_ROOT) != nullptr;
-  return has_cache;
 }
 
 bool logical_partitions_mapped() {

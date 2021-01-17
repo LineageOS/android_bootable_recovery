@@ -47,6 +47,7 @@
 #include <android-base/unique_fd.h>
 
 #include "install/package.h"
+#include "install/snapshot_utils.h"
 #include "install/verifier.h"
 #include "install/wipe_data.h"
 #include "otautil/error_code.h"
@@ -366,6 +367,11 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
       log_buffer->push_back(android::base::StringPrintf("error: %d", kUpdateBinaryCommandFailure));
       return INSTALL_ERROR;
     }
+  }
+
+  if (!package_is_ab) {
+    CreateSnapshotPartitions();
+    map_logical_partitions();
   }
 
   ReadSourceTargetBuild(metadata, log_buffer);
