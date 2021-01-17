@@ -62,4 +62,6 @@ int setup_install_mounts();
 // Returns true if there is /cache in the volumes.
 bool HasCache();
 
+void map_logical_partitions();
+
 bool logical_partitions_mapped();
