@@ -45,6 +45,8 @@
 using android::fs_mgr::Fstab;
 using android::fs_mgr::FstabEntry;
 using android::fs_mgr::ReadDefaultFstab;
+using android::dm::DeviceMapper;
+using android::dm::DmDeviceState;
 
 static void write_fstab_entry(const FstabEntry& entry, FILE* file) {
   if (entry.fs_type != "emmc" && !entry.fs_mgr_flags.vold_managed && !entry.blk_device.empty() &&
@@ -339,8 +341,6 @@ int format_volume(const std::string& volume) {
   return format_volume(volume, "");
 }
 
-static bool logical_partitions_auto_mapped = false;
-
 int setup_install_mounts() {
   if (fstab.empty()) {
     LOG(ERROR) << "can't set up install mounts: no fstab loaded";
@@ -364,16 +364,6 @@ int setup_install_mounts() {
       }
     }
   }
-  // Map logical partitions
-  if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
-      !logical_partitions_mapped()) {
-    std::string super_name = fs_mgr_get_super_partition_name();
-    if (!android::fs_mgr::CreateLogicalPartitions("/dev/block/by-name/" + super_name)) {
-      LOG(ERROR) << "Failed to map logical partitions";
-    } else {
-      logical_partitions_auto_mapped = true;
-    }
-  }
   return 0;
 }
 
@@ -383,6 +373,35 @@ bool HasCache() {
   return has_cache;
 }
 
+static bool logical_partitions_auto_mapped = false;
+
+void map_logical_partitions() {
+  if (android::base::GetBoolProperty("ro.boot.dynamic_partitions", false) &&
+      !logical_partitions_mapped()) {
+    std::string super_name = fs_mgr_get_super_partition_name();
+    if (!android::fs_mgr::CreateLogicalPartitions("/dev/block/by-name/" + super_name)) {
+      LOG(ERROR) << "Failed to map logical partitions";
+    } else {
+      logical_partitions_auto_mapped = true;
+    }
+  }
+}
+
+bool dm_find_system() {
+  auto rec = GetEntryForPath(&fstab, android::fs_mgr::GetSystemRoot());
+  if (!rec->fs_mgr_flags.logical) {
+    return false;
+  }
+  // If the fstab entry for system it's a path instead of a name, then it was already mapped
+  if (rec->blk_device[0] != '/') {
+    if (DeviceMapper::Instance().GetState(rec->blk_device) == DmDeviceState::INVALID) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool logical_partitions_mapped() {
-  return android::fs_mgr::LogicalPartitionsMapped() || logical_partitions_auto_mapped;
+  return android::fs_mgr::LogicalPartitionsMapped() || logical_partitions_auto_mapped ||
+      dm_find_system();
 }
