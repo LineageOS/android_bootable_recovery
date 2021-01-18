@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5c66eff_7f19cb1f",
+        "filename": "recovery_utils/roots.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2021-01-18T09:59:54Z",
+      "side": 1,
+      "message": "added this check so that we also detect when partitions were mapped by somebody else, in this case CreateSnapshotPartitions()",
+      "range": {
+        "startLine": 406,
+        "startChar": 6,
+        "endLine": 406,
+        "endChar": 20
+      },
+      "revId": "90cfaff40df394b511ab868a6ef80c03f6884863",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
