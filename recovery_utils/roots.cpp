@@ -54,7 +54,7 @@ static void write_fstab_entry(const FstabEntry& entry, FILE* file) {
     fprintf(file, "%s ", entry.blk_device.c_str());
     fprintf(file, "%s ", entry.mount_point.c_str());
     fprintf(file, "%s ", entry.fs_type.c_str());
-    fprintf(file, "%s 0 0\n", entry.fs_options.empty() ? entry.fs_options.c_str() : "defaults");
+    fprintf(file, "%s 0 0\n", !entry.fs_options.empty() ? entry.fs_options.c_str() : "defaults");
   }
 }
 
