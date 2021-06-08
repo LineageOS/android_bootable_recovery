@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "423e6e62_36ed8981",
+        "filename": "install/wipe_data.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2021-06-08T19:23:39Z",
+      "side": 1,
+      "message": "remove empty line",
+      "revId": "4913f187e33cf006b886e80b5d9d625af359c8ee",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7cf9faf0_ba3e66d5",
+        "filename": "install/wipe_data.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2021-06-08T19:23:39Z",
+      "side": 1,
+      "message": "move to curret L#80 above first use",
+      "revId": "4913f187e33cf006b886e80b5d9d625af359c8ee",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
