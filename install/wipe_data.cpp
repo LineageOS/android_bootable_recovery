@@ -16,8 +16,11 @@
 
 #include "install/wipe_data.h"
 
+#include <fcntl.h>
+#include <linux/fs.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 
 #include <functional>
@@ -27,6 +30,7 @@
 #include <android-base/logging.h>
 #include <android-base/stringprintf.h>
 #include <fs_mgr/roots.h>
+#include <libdm/dm.h>
 
 #include "install/snapshot_utils.h"
 #include "otautil/dirutil.h"
@@ -55,6 +59,34 @@ static bool EraseVolume(const char* volume, RecoveryUI* ui, bool convert_fbe) {
   ui->Print("Formatting %s...\n", volume);
 
   Volume* vol = volume_for_mount_point(volume);
+
+  if (vol->fs_mgr_flags.logical) {
+    map_logical_partitions();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    android::dm::DeviceMapper& dm = android::dm::DeviceMapper::Instance();
+    if (vol->blk_device[0] != '/' && !dm.GetDmDevicePathByName(vol->blk_device, &vol->blk_device)) {
+      PLOG(ERROR) << "Failed to find dm device path for " << vol->blk_device;
+      return false;
+    }
+
+    int fd = open(vol->blk_device.c_str(), O_RDWR);
+    int val = 0;
+
+    if (fd < 0) {
+      PLOG(ERROR) << "Failed to open " << vol->blk_device;
+      return false;
+    }
+
+    if (ioctl(fd, BLKROSET, &val) != 0) {
+      PLOG(ERROR) << "Failed to set " << vol->blk_device << " rw";
+      close(fd);
+      return false;
+    }
+
+    close(fd);
+  }
+
   if (ensure_volume_unmounted(vol->blk_device) == -1) {
     PLOG(ERROR) << "Failed to unmount volume!";
     return false;
