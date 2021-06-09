@@ -16,6 +16,24 @@
       "revId": "14e4edd952018495962f220b802b9fe2322c3d58",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96692eed_c2332a6b",
+        "filename": "install/wipe_data.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 25925
+      },
+      "writtenOn": "2021-06-09T13:50:05Z",
+      "side": 1,
+      "message": "Sadly \"logical_partitions_mapped()\" actually returns true before mapping finished\nInstead adapted some of the code from \"dm_find_system()\" which works fine.",
+      "parentUuid": "fdcbd8e6_cec420a6",
+      "revId": "14e4edd952018495962f220b802b9fe2322c3d58",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
