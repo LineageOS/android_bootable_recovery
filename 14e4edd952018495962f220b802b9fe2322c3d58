@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fdcbd8e6_cec420a6",
+        "filename": "install/wipe_data.cpp",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2021-06-09T12:52:02Z",
+      "side": 1,
+      "message": "I am not a fan of arbitrary numbers. What if 50ms isn\u0027t enough? and what if it\u0027s done after 2ms? \nThere is a \"logical_partitions_mapped()\" that should do the job?\nMaybe something like this (untested, room for improvement):\n\n// map_logical_partitions is non-blocking, so check for some limited time\n// if it succeeded\nint i;\nfor (i \u003d 0; i \u003c 50; i++) {\n    if (logical_partitions_mapped()) break;\n    std::this_thread::sleep_for(std::chrono::milliseconds(1));\n}\n\nif (!logical_partitions_mapped()) {\n    PLOG(ERROR) \u003c\u003c \"Failed to map dynamic partitions\";\n    return false;\n}",
+      "revId": "14e4edd952018495962f220b802b9fe2322c3d58",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
