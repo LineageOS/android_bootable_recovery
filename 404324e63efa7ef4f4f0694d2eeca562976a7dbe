@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93212890_6dcf70e6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2021-06-09T08:49:23Z",
+      "side": 1,
+      "message": "a little more text would be good to have. why doesnt it work now or what does the change actually do?",
+      "revId": "404324e63efa7ef4f4f0694d2eeca562976a7dbe",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20d70da8_022360e0",
+        "filename": "install/wipe_data.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2021-06-09T08:49:23Z",
+      "side": 1,
+      "message": "why is it necessary to sleep here at all? and why 50ms?\nshould be explained with a comment",
+      "revId": "404324e63efa7ef4f4f0694d2eeca562976a7dbe",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
