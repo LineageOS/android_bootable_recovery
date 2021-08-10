@@ -53,6 +53,7 @@ static std::vector<menu_action_t> g_advanced_actions{
 
 static std::vector<std::string> g_wipe_header{ "Factory reset" };
 static std::vector<menu_action_t> g_wipe_actions{
+  { "Reboot system now", Device::REBOOT },
   { "Format data/factory reset", Device::WIPE_DATA },
   { "Format cache partition", Device::WIPE_CACHE },
   { "Format system partition", Device::WIPE_SYSTEM },
