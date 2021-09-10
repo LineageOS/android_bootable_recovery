@@ -40,10 +40,10 @@ namespace android {
 namespace volmgr {
 
 /* SELinux contexts used depending on the block device type */
-extern security_context_t sBlkidContext;
-extern security_context_t sBlkidUntrustedContext;
-extern security_context_t sFsckContext;
-extern security_context_t sFsckUntrustedContext;
+extern char* sBlkidContext;
+extern char* sBlkidUntrustedContext;
+extern char* sFsckContext;
+extern char* sFsckUntrustedContext;
 
 status_t CreateDeviceNode(const std::string& path, dev_t dev);
 status_t DestroyDeviceNode(const std::string& path);
@@ -70,7 +70,7 @@ status_t ReadMetadataUntrusted(const std::string& path, std::string& fsType, std
 
 /* Returns either WEXITSTATUS() status, or a negative errno */
 status_t ForkExecvp(const std::vector<std::string>& args);
-status_t ForkExecvp(const std::vector<std::string>& args, security_context_t context);
+status_t ForkExecvp(const std::vector<std::string>& args, char* context);
 
 bool IsFilesystemSupported(const std::string& fsType);
 

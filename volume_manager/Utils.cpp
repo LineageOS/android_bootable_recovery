@@ -53,10 +53,10 @@ using namespace std::chrono_literals;
 namespace android {
 namespace volmgr {
 
-security_context_t sBlkidContext = nullptr;
-security_context_t sBlkidUntrustedContext = nullptr;
-security_context_t sFsckContext = nullptr;
-security_context_t sFsckUntrustedContext = nullptr;
+char* sBlkidContext = nullptr;
+char* sBlkidUntrustedContext = nullptr;
+char* sFsckContext = nullptr;
+char* sFsckUntrustedContext = nullptr;
 
 #include <blkid/blkid.h>
 
@@ -226,7 +226,7 @@ status_t ForkExecvp(const std::vector<std::string>& args) {
     return ForkExecvp(args, nullptr);
 }
 
-status_t ForkExecvp(const std::vector<std::string>& args, security_context_t context) {
+status_t ForkExecvp(const std::vector<std::string>& args, char* context) {
     std::vector<std::string> output;
     size_t argc = args.size();
     char** argv = (char**)calloc(argc + 1, sizeof(char*));
