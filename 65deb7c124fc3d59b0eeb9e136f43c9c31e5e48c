@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "1cc72e1b_d0641b14",
         "filename": "/COMMIT_MSG",
@@ -20,8 +21,31 @@
         "endChar": 42
       },
       "revId": "65deb7c124fc3d59b0eeb9e136f43c9c31e5e48c",
-      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
-      "unresolved": true
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9202908e_fb4e1f47",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2021-11-14T05:25:27Z",
+      "side": 1,
+      "message": "meh - I\u0027m the author and I\u0027m cool with shame of the typo lol",
+      "parentUuid": "1cc72e1b_d0641b14",
+      "range": {
+        "startLine": 10,
+        "startChar": 36,
+        "endLine": 10,
+        "endChar": 42
+      },
+      "revId": "65deb7c124fc3d59b0eeb9e136f43c9c31e5e48c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
