@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "df767390_a696fa1c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2021-11-18T20:00:17Z",
+      "side": 1,
+      "message": "Juan - please stop leaving random CR/V on closed changes - it has no effect, and they\u0027re merged, so there\u0027s no point.",
+      "revId": "a162619b167c1589e37a3de2ca0215cedfae7a2a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
