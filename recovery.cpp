@@ -621,7 +621,7 @@ change_menu:
           }
         } else {
           if (umount("/mnt/system") != -1) {
-            ui->Print("Unounted /mnt/system.\n");
+            ui->Print("Unmounted /mnt/system.\n");
             mounted = false;
           }
         }
