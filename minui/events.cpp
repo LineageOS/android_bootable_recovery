@@ -29,8 +29,10 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 
 #include <android-base/properties.h>
+#include <android-base/strings.h>
 #include <android-base/unique_fd.h>
 
 #include "minui/minui.h"
@@ -127,12 +129,12 @@ static int inotify_cb(int fd, __unused uint32_t epevents) {
     }
     offset += sizeof(inotify_event) + pevent->len;
 
-    pevent->name[pevent->len] = '\0';
-    if (strncmp(pevent->name, "event", 5)) {
+    std::string event_name(pevent->name, pevent->len);
+    if (!android::base::StartsWith(event_name, "event")) {
       continue;
     }
 
-    android::base::unique_fd dfd(openat(dirfd(dir.get()), pevent->name, O_RDONLY));
+    android::base::unique_fd dfd(openat(dirfd(dir.get()), event_name.c_str(), O_RDONLY));
     if (dfd == -1) {
       break;
     }
