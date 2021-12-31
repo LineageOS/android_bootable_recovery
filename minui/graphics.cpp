@@ -392,8 +392,16 @@ int gr_init() {
   gr_backend = backend.release();
 
   int overscan_percent = android::base::GetIntProperty("ro.minui.overscan_percent", 0);
-  overscan_offset_x = gr_draw->width * overscan_percent / 100;
-  overscan_offset_y = gr_draw->height * overscan_percent / 100;
+  int overscan_percent_x = android::base::GetIntProperty("ro.minui.horizontal_overscan_percent", 0);
+  int overscan_percent_y = android::base::GetIntProperty("ro.minui.vertical_overscan_percent", 0);
+
+  if (overscan_percent_x || overscan_percent_y) {
+    overscan_offset_x = gr_draw->width * overscan_percent_x / 100;
+    overscan_offset_y = gr_draw->height * overscan_percent_y / 100;
+  } else {
+    overscan_offset_x = gr_draw->width * overscan_percent / 100;
+    overscan_offset_y = gr_draw->height * overscan_percent / 100;
+  }
 
   gr_flip();
   gr_flip();
