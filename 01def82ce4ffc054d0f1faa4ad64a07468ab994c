@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c30bde9c_7fad31da",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2022-02-25T15:24:19Z",
+      "side": 1,
+      "message": "Opt out could be nice, but we\u0027ll see if it\u0027s needed I guess.",
+      "revId": "01def82ce4ffc054d0f1faa4ad64a07468ab994c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
