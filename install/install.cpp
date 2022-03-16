@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
 
 #include "install/install.h"
 
@@ -216,7 +216,7 @@ bool CheckPackageMetadata(const std::map<std::string, std::string>& metadata, Ot
   auto device = android::base::GetProperty("ro.product.device", "");
   auto pkg_device = get_value(metadata, "pre-device");
   // device name can be a | separated list, so need to check
-  if (pkg_device.empty() || !isInStringList(device, pkg_device, FINGERPRING_SEPARATOR ":")) {
+  if (pkg_device.empty() || !isInStringList(device, pkg_device, FINGERPRING_SEPARATOR ":" ",")) {
     LOG(ERROR) << "Package is for product " << pkg_device << " but expected " << device;
     return false;
   }
