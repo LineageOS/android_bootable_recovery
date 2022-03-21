@@ -125,6 +125,10 @@ void gr_exit();
 
 int gr_fb_width();
 int gr_fb_height();
+int gr_fb_width_real();
+int gr_fb_height_real();
+int gr_overscan_offset_x();
+int gr_overscan_offset_y();
 
 void gr_flip();
 void gr_fb_blank(bool blank);
