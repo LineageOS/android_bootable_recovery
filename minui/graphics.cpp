@@ -501,6 +501,24 @@ int gr_fb_height() {
              : gr_draw->height - 2 * overscan_offset_y;
 }
 
+int gr_fb_width_real() {
+  return (rotation == GRRotation::LEFT || rotation == GRRotation::RIGHT) ? gr_draw->height
+                                                                         : gr_draw->width;
+}
+
+int gr_fb_height_real() {
+  return (rotation == GRRotation::LEFT || rotation == GRRotation::RIGHT) ? gr_draw->width
+                                                                         : gr_draw->height;
+}
+
+int gr_overscan_offset_x() {
+  return overscan_offset_x;
+}
+
+int gr_overscan_offset_y() {
+  return overscan_offset_y;
+}
+
 void gr_fb_blank(bool blank) {
   gr_backend->Blank(blank);
 }
