@@ -34,8 +34,8 @@ static GRFont* gr_font = nullptr;
 static GRFont* gr_font_menu = nullptr;
 static MinuiBackend* gr_backend = nullptr;
 
-static int overscan_offset_x = 0;
-static int overscan_offset_y = 0;
+int overscan_offset_x = 0;
+int overscan_offset_y = 0;
 
 static uint32_t gr_current = ~0;
 static constexpr uint32_t alpha_mask = 0xff000000;

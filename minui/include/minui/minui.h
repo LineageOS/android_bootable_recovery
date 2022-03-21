@@ -28,6 +28,9 @@
 #include <android-base/macros.h>
 #include <android-base/unique_fd.h>
 
+extern int overscan_offset_x;
+extern int overscan_offset_y;
+
 //
 // Graphics.
 //
