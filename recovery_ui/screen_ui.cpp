@@ -1357,7 +1357,10 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
   return sel;
 }
 
-int ScreenRecoveryUI::SelectMenu(const Point& point) {
+int ScreenRecoveryUI::SelectMenu(const Point& p) {
+  // Correct position for overscan
+  const Point point(p.x() - gr_overscan_offset_x(), p.y() - gr_overscan_offset_y());
+
   int new_sel = Device::kNoAction;
   std::lock_guard<std::mutex> lg(updateMutex);
   if (menu_) {
