@@ -271,7 +271,7 @@ void RecoveryUI::OnTouchPress() {
 }
 
 void RecoveryUI::OnTouchTrack() {
-  if (touch_pos_.y() <= gr_fb_height()) {
+  if (touch_pos_.y() <= gr_fb_height_real()) {
     while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
       int dy = touch_pos_.y() - touch_track_.y();
       int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP;
@@ -291,7 +291,7 @@ void RecoveryUI::OnTouchRelease() {
   }
 
   // Check vkeys.  Only report if touch both starts and ends in the vkey.
-  if (touch_start_.y() > gr_fb_height() && touch_pos_.y() > gr_fb_height()) {
+  if (touch_start_.y() > gr_fb_height_real() && touch_pos_.y() > gr_fb_height_real()) {
     for (const auto& vk : virtual_keys_) {
       if (vk.inside(touch_start_) && vk.inside(touch_pos_)) {
         ProcessKey(vk.keycode, 1);  // press key
@@ -383,7 +383,7 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       case ABS_MT_POSITION_X:
         touch_finger_down_ = true;
         touch_saw_x_ = true;
-        touch_pos_.x(ev.value * gr_fb_width() / (touch_max_.x() - touch_min_.x()));
+        touch_pos_.x(ev.value * gr_fb_width_real() / (touch_max_.x() - touch_min_.x()));
         if (touch_reported_ && touch_saw_y_) {
           OnTouchTrack();
           touch_saw_x_ = touch_saw_y_ = false;
@@ -393,7 +393,7 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
       case ABS_MT_POSITION_Y:
         touch_finger_down_ = true;
         touch_saw_y_ = true;
-        touch_pos_.y(ev.value * gr_fb_height() / (touch_max_.y() - touch_min_.y()));
+        touch_pos_.y(ev.value * gr_fb_height_real() / (touch_max_.y() - touch_min_.y()));
         if (touch_reported_ && touch_saw_x_) {
           OnTouchTrack();
           touch_saw_x_ = touch_saw_y_ = false;
