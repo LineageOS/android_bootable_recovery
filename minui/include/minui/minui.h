@@ -28,6 +28,9 @@
 #include <android-base/macros.h>
 #include <android-base/unique_fd.h>
 
+extern int overscan_offset_x;
+extern int overscan_offset_y;
+
 //
 // Graphics.
 //
@@ -115,6 +118,8 @@ void gr_exit();
 
 int gr_fb_width();
 int gr_fb_height();
+int gr_fb_width_real();
+int gr_fb_height_real();
 
 void gr_flip();
 void gr_fb_blank(bool blank);

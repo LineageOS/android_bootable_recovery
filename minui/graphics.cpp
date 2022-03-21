@@ -34,8 +34,8 @@ static GRFont* gr_font = nullptr;
 static GRFont* gr_font_menu = nullptr;
 static MinuiBackend* gr_backend = nullptr;
 
-static int overscan_offset_x = 0;
-static int overscan_offset_y = 0;
+int overscan_offset_x = 0;
+int overscan_offset_y = 0;
 
 static uint32_t gr_current = ~0;
 static constexpr uint32_t alpha_mask = 0xff000000;
@@ -439,6 +439,16 @@ int gr_fb_height() {
   return (rotation == GRRotation::LEFT || rotation == GRRotation::RIGHT)
              ? gr_draw->width - 2 * overscan_offset_x
              : gr_draw->height - 2 * overscan_offset_y;
+}
+
+int gr_fb_width_real() {
+  return (rotation == GRRotation::LEFT || rotation == GRRotation::RIGHT) ? gr_draw->height
+                                                                         : gr_draw->width;
+}
+
+int gr_fb_height_real() {
+  return (rotation == GRRotation::LEFT || rotation == GRRotation::RIGHT) ? gr_draw->width
+                                                                         : gr_draw->height;
 }
 
 void gr_fb_blank(bool blank) {
