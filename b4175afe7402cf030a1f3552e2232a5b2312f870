@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2a7c6ced_f8e8e5b0",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2022-03-21T20:30:21Z",
+      "side": 0,
+      "message": "can probably add getters via functions instead of using extern",
+      "revId": "b4175afe7402cf030a1f3552e2232a5b2312f870",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
