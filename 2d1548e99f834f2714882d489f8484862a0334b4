@@ -33,6 +33,23 @@
       "message": "Unfortunately this does not work, I will try to find out why. Touch inputs are still detected in a wrong position.",
       "revId": "2d1548e99f834f2714882d489f8484862a0334b4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "40651497_87458748",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14010
+      },
+      "writtenOn": "2022-03-24T16:59:15Z",
+      "side": 1,
+      "message": "I think this kind of solution is not suitable. Given how the overscan is implemented in the recovery, and how it affects the position of the various elements of the recovery, on mata we need to treat the x and y coordinates of the touch inputs in two different ways - we must not add the overscan offset to the x coord (otherwise tapping on the back arrow becomes impossible, because taps are detected as happening right next to it), while we must add an offset to the y coordinate. Thus, this patch does not solve the problem, and adding such an \u0027asymmetrical\u0027 correction here makes little sense, because if in the future there is a device facing the opposite problem, it\u0027d be impossible to solve it without breaking mata\u0027s workaround. This is clearly a device-specific problem that requires a device-specific solution.",
+      "revId": "2d1548e99f834f2714882d489f8484862a0334b4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
