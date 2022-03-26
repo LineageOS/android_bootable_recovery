@@ -16,6 +16,24 @@
       "message": "can probably add getters via functions instead of using extern",
       "revId": "b4175afe7402cf030a1f3552e2232a5b2312f870",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cc6def6_485a3ade",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2022-03-26T15:28:01Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "2a7c6ced_f8e8e5b0",
+      "revId": "b4175afe7402cf030a1f3552e2232a5b2312f870",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
