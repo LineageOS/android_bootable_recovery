@@ -63,7 +63,7 @@ status_t EmulatedVolume::doMount() {
         return -errno;
     }
     if (fs_prepare_dir(getPath().c_str(), 0700, AID_ROOT, AID_ROOT)) {
-        PLOG(ERROR) << getId() << " failed to create mount points";
+        PLOG(WARN) << getId() << " failed to create mount points";
         return -errno;
     }
 
@@ -77,7 +77,7 @@ status_t EmulatedVolume::doMount() {
         return -EIO;
     }
     if (BindMount(bindPath, getPath()) != OK) {
-        PLOG(ERROR) << getId() << " failed to bind mount " << bindPath << " on " << getPath();
+        PLOG(WARN) << getId() << " failed to bind mount " << bindPath << " on " << getPath();
         ForceUnmount(kStagingPath);
         return -EIO;
     }
