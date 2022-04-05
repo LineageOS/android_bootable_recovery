@@ -187,7 +187,7 @@ status_t KillProcessesUsingPath(const std::string& path) {
 
 status_t BindMount(const std::string& source, const std::string& target) {
     if (::mount(source.c_str(), target.c_str(), "", MS_BIND, NULL)) {
-        PLOG(ERROR) << "Failed to bind mount " << source << " to " << target;
+        PLOG(WARNING) << "Failed to bind mount " << source << " to " << target;
         return -errno;
     }
     return OK;
