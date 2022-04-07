@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "291d7652_90eced2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 15173
+      },
+      "writtenOn": "2022-04-07T18:35:12Z",
+      "side": 1,
+      "message": "It fixes the build, someone else can verify that the log to screen is still gone.",
+      "revId": "975d24a1ff549124f45ff2a1c76e6c3faa9a6ea0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
