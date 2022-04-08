@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68cb5ea7_1dfb8909",
+        "filename": "install/install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2022-04-08T09:04:53Z",
+      "side": 1,
+      "message": "WARNING ?",
+      "range": {
+        "startLine": 362,
+        "startChar": 8,
+        "endLine": 362,
+        "endChar": 13
+      },
+      "revId": "3dfbda411c812b1d6ddbffb41de8703a485d4156",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
