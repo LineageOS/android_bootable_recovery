@@ -359,9 +359,9 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
 
   const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
   if (ViolatesSPLDowngrade(zip, current_spl)) {
-    LOG(ERROR) << "Denying OTA because it's SPL downgrade";
-    return INSTALL_ERROR;
+    LOG(ERROR) << "The OTA package will downgrade security patch level";
   }
+
 
   if (package_is_ab) {
     CHECK(package->GetType() == PackageType::kFile);
