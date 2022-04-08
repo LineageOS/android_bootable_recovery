@@ -186,10 +186,10 @@ static bool CheckAbSpecificMetadata(const std::map<std::string, std::string>& me
       !android::base::ParseInt(pkg_post_timestamp_string, &pkg_post_timestamp) ||
       pkg_post_timestamp < build_timestamp) {
     if (get_value(metadata, "ota-downgrade") != "yes") {
-      LOG(ERROR) << "Update package is older than the current build, expected a build "
+      LOG(INFO) << "Update package is older than the current build, expected a build "
                     "newer than timestamp "
                  << build_timestamp << " but package has timestamp " << pkg_post_timestamp
-                 << " and downgrade not allowed.";
+                 << " this is considered a downgrade";
       undeclared_downgrade = true;
     } else if (pkg_pre_build_fingerprint.empty()) {
       LOG(ERROR) << "Downgrade package must have a pre-build version set, not allowed.";
@@ -425,7 +425,8 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   bool device_supports_virtual_ab = android::base::GetBoolProperty("ro.virtual_ab.enabled", false);
 
   const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
-  if (ViolatesSPLDowngrade(zip, current_spl)) {
+  if (ViolatesSPLDowngrade(zip, current_spl) &&
+      !(ui->IsTextVisible() && ask_to_continue_downgrade(ui->GetDevice()))) {
     LOG(ERROR) << "Denying OTA because it's SPL downgrade";
     return INSTALL_ERROR;
   }

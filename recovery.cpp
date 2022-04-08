@@ -192,7 +192,7 @@ bool ask_to_continue_downgrade(Device* device) {
     return false;
   } else {
     device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-    return yes_no(device, "This package will downgrade your system", "Install anyway?");
+    return yes_no(device, "This package will downgrade your system, which may cause data loss", "Install anyway?");
   }
 }
 
