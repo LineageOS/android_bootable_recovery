@@ -64,6 +64,7 @@ using namespace std::chrono_literals;
 
 bool ask_to_continue_unverified(Device* device);
 bool ask_to_continue_downgrade(Device* device);
+bool ask_to_continue_spl_downgrade(Device* device);
 
 static constexpr int kRecoveryApiVersion = 3;
 // We define RECOVERY_API_VERSION in Android.mk, which will be picked up by build system and packed
@@ -378,7 +379,8 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   bool device_supports_virtual_ab = android::base::GetBoolProperty("ro.virtual_ab.enabled", false);
 
   const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
-  if (ViolatesSPLDowngrade(zip, current_spl)) {
+  if (ViolatesSPLDowngrade(zip, current_spl) &&
+      !(ui->IsTextVisible() && ask_to_continue_spl_downgrade(ui->GetDevice()))) {
     LOG(ERROR) << "Denying OTA because it's SPL downgrade";
     return INSTALL_ERROR;
   }
