@@ -196,6 +196,19 @@ bool ask_to_continue_downgrade(Device* device) {
   }
 }
 
+bool ask_to_continue_spl_downgrade(Device* device) {
+  if (get_build_type() == "user") {
+    return false;
+  } else {
+    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device,
+      "!!! WARNING !!! Downgrade detected. This can lead to permanent data loss
+      "THIS CANNOT BE UNDONE!"
+      "Restoring the system might require formatting the user data.",
+      "Install anyway?");
+  }
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Format user data?", "This includes internal storage.", "THIS CANNOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Format data" };
