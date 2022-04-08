@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cba1a39f_5f9c653d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2022-04-08T09:04:22Z",
+      "side": 1,
+      "message": "This seems incomplete. (struct fuse_data).file_blocks and .curr_block should be uint64_t as well.\n\nAlso i have to check whether this plays nicely with our caching mechanism. Tom if you\u0027re still around what do you think?",
+      "revId": "020267fd709862971683a535d8bc4648bdc1981d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
