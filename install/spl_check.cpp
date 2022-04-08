@@ -30,7 +30,7 @@ bool ViolatesSPLDowngrade(const build::tools::releasetools::OtaMetadata& metadat
   // example, 05 for May). Otherwise this comparison doesn't work. We don't expect SPL date formats
   // to change, leave this as is.
   if (post_spl < current_spl) {
-    LOG(ERROR) << "Current SPL: " << current_spl << " Target SPL: " << post_spl
+    LOG(WARNING) << "Current SPL: " << current_spl << " Target SPL: " << post_spl
                << " this is considered a downgrade";
     if (metadata.spl_downgrade() || metadata.downgrade()) {
       LOG(WARNING)
