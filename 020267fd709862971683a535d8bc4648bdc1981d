@@ -39,6 +39,30 @@
       },
       "revId": "020267fd709862971683a535d8bc4648bdc1981d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be07842c_8b7f020d",
+        "filename": "fuse_sideload/fuse_sideload.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2022-04-09T12:40:56Z",
+      "side": 1,
+      "message": "Ah got it. We\u0027ve been using this in TWRP and sideloading large files like my stock OTA had no issues there.\nhttps://gerrit.twrp.me/c/android_bootable_recovery/+/4814\n\nAfter this patch and the SPL overriding, my A/B stock ROM flash is stuck on step 1/2 forever ( Couldn\u0027t debug further because I had no way to get out of sideload). I\u0027m not sure if that behaviour is related to this patch, however letting y\u0027all know.",
+      "parentUuid": "6b3f103b_67f03441",
+      "range": {
+        "startLine": 316,
+        "startChar": 0,
+        "endLine": 319,
+        "endChar": 58
+      },
+      "revId": "020267fd709862971683a535d8bc4648bdc1981d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
