@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66f843eb_a5934f3a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2022-04-09T11:00:23Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this come with a warning/confirmation message? It can lead to data loss",
+      "revId": "58d51ed65da2aac61047c157600459002b36b48b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
