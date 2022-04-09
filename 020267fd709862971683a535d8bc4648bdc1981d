@@ -16,6 +16,29 @@
       "message": "This seems incomplete. (struct fuse_data).file_blocks and .curr_block should be uint64_t as well.\n\nAlso i have to check whether this plays nicely with our caching mechanism. Tom if you\u0027re still around what do you think?",
       "revId": "020267fd709862971683a535d8bc4648bdc1981d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b3f103b_67f03441",
+        "filename": "fuse_sideload/fuse_sideload.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2022-04-09T08:35:24Z",
+      "side": 1,
+      "message": "Ok this is the only place where the bigger variable has an effect, so it\u0027s fine.",
+      "range": {
+        "startLine": 316,
+        "startChar": 0,
+        "endLine": 319,
+        "endChar": 58
+      },
+      "revId": "020267fd709862971683a535d8bc4648bdc1981d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
