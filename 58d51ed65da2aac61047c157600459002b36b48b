@@ -34,6 +34,24 @@
       "parentUuid": "66f843eb_a5934f3a",
       "revId": "58d51ed65da2aac61047c157600459002b36b48b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "428f2f8b_ba816519",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2022-04-09T12:30:01Z",
+      "side": 1,
+      "message": "Yes, A/B install prompted a downgrade warning and required confirmation before proceeding.",
+      "parentUuid": "49e81bcf_74eeeb43",
+      "revId": "58d51ed65da2aac61047c157600459002b36b48b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
