@@ -42,7 +42,7 @@ updater_common_static_libraries := \
     libbrotli \
     libbz \
     libziparchive \
-    libz \
+    libz_stable \
     libbase \
     libcrypto_static \
     libcrypto_utils \
