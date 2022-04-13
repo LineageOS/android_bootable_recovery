@@ -20,6 +20,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "1a7b4c4b_5ca5b7db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5503
+      },
+      "writtenOn": "2022-04-13T03:53:40Z",
+      "side": 1,
+      "message": "The block size should be at least 512bytes so a 32-bit block number should be good for up to 2tb.\n\nThe problem is that the code that calculates offsets by multiplying (block number) * (block size) is not using 64-bit math.\n\nOf course, making the block number a 64-bit value does solve this .. in the much same way that a hammer can solve opening an egg. 😊  It is quick and easy but also not very elegant.",
+      "parentUuid": "cba1a39f_5f9c653d",
+      "revId": "020267fd709862971683a535d8bc4648bdc1981d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "6b3f103b_67f03441",
         "filename": "fuse_sideload/fuse_sideload.cpp",
         "patchSetId": 1
