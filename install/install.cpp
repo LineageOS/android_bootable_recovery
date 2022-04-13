@@ -158,15 +158,6 @@ static bool CheckAbSpecificMetadata(const std::map<std::string, std::string>& me
     return false;
   }
 
-  auto device_fingerprint = android::base::GetProperty("ro.build.fingerprint", "");
-  auto pkg_pre_build_fingerprint = get_value(metadata, "pre-build");
-  if (!pkg_pre_build_fingerprint.empty() &&
-      !isInStringList(device_fingerprint, pkg_pre_build_fingerprint, FINGERPRING_SEPARATOR)) {
-    LOG(ERROR) << "Package is for source build " << pkg_pre_build_fingerprint << " but expected "
-               << device_fingerprint;
-    return false;
-  }
-
   // Check for downgrade version.
   bool undeclared_downgrade = false;
   int64_t build_timestamp =
@@ -175,6 +166,7 @@ static bool CheckAbSpecificMetadata(const std::map<std::string, std::string>& me
   // We allow to full update to the same version we are running, in case there
   // is a problem with the current copy of that version.
   auto pkg_post_timestamp_string = get_value(metadata, "post-timestamp");
+  auto pkg_pre_build_fingerprint = get_value(metadata, "pre-build");
   if (pkg_post_timestamp_string.empty() ||
       !android::base::ParseInt(pkg_post_timestamp_string, &pkg_post_timestamp) ||
       pkg_post_timestamp < build_timestamp) {
