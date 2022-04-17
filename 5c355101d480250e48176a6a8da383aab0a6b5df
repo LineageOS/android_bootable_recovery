@@ -16,6 +16,24 @@
       "message": "This already supports multiple values though?",
       "revId": "5c355101d480250e48176a6a8da383aab0a6b5df",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d6d2a43_4a948eaf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 18796
+      },
+      "writtenOn": "2022-04-17T23:08:00Z",
+      "side": 1,
+      "message": "did you mean using boot variable file ?. that would require manually creating a file with supported fingerprint.",
+      "parentUuid": "9f59d163_8e2b3958",
+      "revId": "5c355101d480250e48176a6a8da383aab0a6b5df",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
