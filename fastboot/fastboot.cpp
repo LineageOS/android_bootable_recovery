@@ -42,7 +42,8 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
 
   std::string bootloader_version = android::base::GetProperty("ro.bootloader", "");
   std::string baseband_version = android::base::GetProperty("ro.build.expect.baseband", "");
-  std::string hw_version = android::base::GetProperty("ro.revision", "");
+  std::string hw_version = android::base::GetProperty(
+      "ro.boot.hardware.revision", android::base::GetProperty("ro.revision", ""));
   std::vector<std::string> title_lines;
   title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   if (!android::base::EqualsIgnoreCase(bootloader_version, "unknown")) {
