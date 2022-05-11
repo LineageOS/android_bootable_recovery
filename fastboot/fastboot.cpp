@@ -47,7 +47,8 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
   title_lines.push_back("Serial number - " + android::base::GetProperty("ro.serialno", ""));
   title_lines.push_back(std::string("Secure boot - ") +
                         ((android::base::GetProperty("ro.secure", "") == "1") ? "yes" : "no"));
-  title_lines.push_back("HW version - " + android::base::GetProperty("ro.revision", ""));
+  title_lines.push_back("HW version - " + android::base::GetProperty("ro.boot.hardware.revision",
+                        android::base::GetProperty("ro.revision", "")));
 
   ui->ResetKeyInterruptStatus();
   ui->SetTitle(title_lines);
