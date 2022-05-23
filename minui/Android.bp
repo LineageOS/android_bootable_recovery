@@ -27,6 +27,7 @@ cc_library {
     vendor_available: true,
 
     defaults: [
+        "uses_legacy_fd_fbdev_defaults",
         "recovery_defaults",
     ],
 
