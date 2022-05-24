@@ -16,6 +16,24 @@
       "message": "Is hw_version 0 not a valid version?",
       "revId": "ee62af6909808210db07925fddea0dcc66383427",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38548d17_89897d92",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2022-05-24T01:41:19Z",
+      "side": 1,
+      "message": "Pixels set it to DEV1.0/PROTO1.0/DVT (and probably other versions), not 0. 0 is just the default.",
+      "parentUuid": "9175898b_1d164c08",
+      "revId": "ee62af6909808210db07925fddea0dcc66383427",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
