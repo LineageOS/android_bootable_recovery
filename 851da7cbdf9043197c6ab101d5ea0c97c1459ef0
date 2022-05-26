@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ec1dd5a_fbcd7ac5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2022-05-26T08:21:51Z",
+      "side": 1,
+      "message": "Need to do this from device.\n\nWithout this change:\n\nfp4:\nbootloader: 18d1:d00d\nfastbootd: 18d1:4ee0\n\nsunfish:\nbootloader: 18d1:4ee0\nfastbootd: 18d1:4ee0\n\nlemonadep:\nbootloader: 18d1:d00d\nfastbootd: 18d1:4ee0",
+      "revId": "851da7cbdf9043197c6ab101d5ea0c97c1459ef0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
