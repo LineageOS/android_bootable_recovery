@@ -16,6 +16,23 @@
       "message": "Need to do this from device.\n\nWithout this change:\n\nfp4:\nbootloader: 18d1:d00d\nfastbootd: 18d1:4ee0\n\nsunfish:\nbootloader: 18d1:4ee0\nfastbootd: 18d1:4ee0\n\nlemonadep:\nbootloader: 18d1:d00d\nfastbootd: 18d1:4ee0",
       "revId": "851da7cbdf9043197c6ab101d5ea0c97c1459ef0",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "405921d7_343826af",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2022-05-26T22:22:19Z",
+      "side": 1,
+      "message": "Pretty sure you can just override these in device specific init.rc",
+      "revId": "851da7cbdf9043197c6ab101d5ea0c97c1459ef0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
