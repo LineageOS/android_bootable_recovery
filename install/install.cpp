@@ -567,7 +567,9 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   } else {
     LOG(FATAL) << "Invalid status code " << status;
   }
-  PerformPowerwashIfRequired(zip, device);
+  if (package_is_ab) {
+    PerformPowerwashIfRequired(zip, device);
+  }
 
   return INSTALL_SUCCESS;
 }
