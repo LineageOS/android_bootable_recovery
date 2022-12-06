@@ -341,6 +341,8 @@ class RecoveryUI {
   bool InitScreensaver();
   void SetScreensaverState(ScreensaverState state);
 
+  virtual int SetSwCallback(int code, int value) = 0;
+
   // Key event input queue
   std::mutex event_queue_mutex;
   std::condition_variable event_queue_cond;
