@@ -133,6 +133,7 @@ int gr_overscan_offset_y();
 void gr_flip();
 void gr_fb_blank(bool blank);
 void gr_fb_blank(bool blank, int index);
+bool gr_has_multiple_connectors();
 
 // Clears entire surface to current color.
 void gr_clear();
