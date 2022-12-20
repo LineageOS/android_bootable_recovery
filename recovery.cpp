@@ -254,6 +254,7 @@ static int apply_update_menu(Device* device, RecoveryUI* ui, Device::BuiltinActi
     } else {
       status = ApplyFromStorage(device, volumes[chosen - 1], ui);
     }
+    break;
   }
   return status;
 }
