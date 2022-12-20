@@ -269,6 +269,9 @@ phony {
     name: "recovery_deps",
     recovery: true,
     required: [
+        "e2fsck.recovery",
+        "resize2fs.recovery",
+        "tune2fs.recovery",
         "mkfs.erofs.recovery",
         "dump.erofs.recovery",
         "fsck.erofs.recovery",
