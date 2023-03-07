@@ -54,6 +54,7 @@
 #include <memory>
 
 #include <android-base/macros.h>
+#include <android-base/properties.h>
 #include <android-base/stringprintf.h>
 #include <android-base/unique_fd.h>
 #include <drm_fourcc.h>
@@ -181,6 +182,98 @@ static int atomic_add_prop_to_plane(Plane* plane_res, drmModeAtomicReq* req, uin
   return 0;
 }
 
+static int SetupSprBlobV1(int fd, uint32_t* blob_id) {
+  SPRPackType pack_type = SPRPackType::kPentile;
+  SPRFilterType filter_type = SPRFilterType::kFourTap;
+  SPRAdaptiveModeType adpative_mode = SPRAdaptiveModeType::kYYGM;
+
+  drm_msm_spr_init_cfg spr_init_cfg;
+  spr_init_cfg.cfg0 = 1;
+  spr_init_cfg.cfg1 = 1;
+  spr_init_cfg.cfg2 = 1;
+  spr_init_cfg.cfg3 = 0;
+  spr_init_cfg.flags = 0;
+  spr_init_cfg.cfg4 = (pack_type == SPRPackType::kRGBW);
+  spr_init_cfg.cfg5 = kDefaultColorPhaseIncrement.at(pack_type);
+  spr_init_cfg.cfg6 = kDefaultColorPhaseRepeat.at(pack_type);
+  spr_init_cfg.cfg7 = static_cast<uint16_t>(filter_type);
+  spr_init_cfg.cfg8 = static_cast<uint16_t>(adpative_mode);
+  if (pack_type == SPRPackType::kRGBW) {
+    spr_init_cfg.cfg9 = 512;
+    std::copy(kDefaultRGBWGains.begin(), kDefaultRGBWGains.end(), spr_init_cfg.cfg11);
+  }
+  spr_init_cfg.cfg10 = 0;
+  std::copy(kDecimationRatioMap.at(pack_type).begin(), kDecimationRatioMap.at(pack_type).end(),
+            spr_init_cfg.cfg11);
+  std::copy(kDefaultOPRGains.begin(), kDefaultOPRGains.end(), spr_init_cfg.cfg13);
+  std::copy(kDefaultAdaptiveStrengths.begin(), kDefaultAdaptiveStrengths.end(), spr_init_cfg.cfg14);
+  std::copy(kDefaultOPROffsets.begin(), kDefaultOPROffsets.end(), spr_init_cfg.cfg15);
+  std::copy(kDefaultFilterCoeffsMap.at(filter_type).begin(),
+            kDefaultFilterCoeffsMap.at(filter_type).end(), spr_init_cfg.cfg16);
+  std::copy(kDefaultColorPhaseMap.at(pack_type).begin(), kDefaultColorPhaseMap.at(pack_type).end(),
+            spr_init_cfg.cfg17);
+
+  if (drmModeCreatePropertyBlob(fd, &spr_init_cfg, sizeof(drm_msm_spr_init_cfg), blob_id)) {
+    printf("failed to create spr blob\n");
+    return -EINVAL;
+  }
+
+  return 0;
+}
+
+static int SetupSprBlobV2(int fd, uint32_t* blob_id) {
+  SPRPackType pack_type = SPRPackType::kPentile;
+  SPRFilterType filter_type = SPRFilterType::kFourTap;
+  SPRAdaptiveModeType adpative_mode = SPRAdaptiveModeType::kYYGM;
+
+  drm_msm_spr_init_cfg_v2 spr_init_cfg_v2;
+  spr_init_cfg_v2.cfg0 = 1;
+  spr_init_cfg_v2.cfg1 = 1;
+  spr_init_cfg_v2.cfg2 = 1;
+  spr_init_cfg_v2.cfg3 = 0;
+  spr_init_cfg_v2.flags = 0;
+  spr_init_cfg_v2.cfg4 = (pack_type == SPRPackType::kRGBW);
+  spr_init_cfg_v2.cfg5 = kDefaultColorPhaseIncrement.at(pack_type);
+  spr_init_cfg_v2.cfg6 = kDefaultColorPhaseRepeat.at(pack_type);
+  spr_init_cfg_v2.cfg7 = static_cast<uint16_t>(filter_type);
+  spr_init_cfg_v2.cfg8 = static_cast<uint16_t>(adpative_mode);
+  if (pack_type == SPRPackType::kRGBW) {
+    spr_init_cfg_v2.cfg9 = 512;
+    std::copy(kDefaultRGBWGains.begin(), kDefaultRGBWGains.end(), spr_init_cfg_v2.cfg11);
+  }
+  spr_init_cfg_v2.cfg10 = 0;
+  std::copy(kDecimationRatioMap.at(pack_type).begin(), kDecimationRatioMap.at(pack_type).end(),
+            spr_init_cfg_v2.cfg11);
+  std::copy(kDefaultOPRGains.begin(), kDefaultOPRGains.end(), spr_init_cfg_v2.cfg13);
+  std::copy(kDefaultAdaptiveStrengths.begin(), kDefaultAdaptiveStrengths.end(),
+            spr_init_cfg_v2.cfg14);
+  std::copy(kDefaultOPROffsets.begin(), kDefaultOPROffsets.end(), spr_init_cfg_v2.cfg15);
+  std::copy(kDefaultFilterCoeffsMap.at(filter_type).begin(),
+            kDefaultFilterCoeffsMap.at(filter_type).end(), spr_init_cfg_v2.cfg16);
+  std::copy(kDefaultColorPhaseMap.at(pack_type).begin(), kDefaultColorPhaseMap.at(pack_type).end(),
+            spr_init_cfg_v2.cfg17);
+
+  if (drmModeCreatePropertyBlob(fd, &spr_init_cfg_v2, sizeof(drm_msm_spr_init_cfg_v2), blob_id)) {
+    printf("failed to create spr blob\n");
+    return -EINVAL;
+  }
+
+  return 0;
+}
+
+static int SetupSprBlob(int fd, const std::string& prop_name, uint32_t* blob_id) {
+  int ret = 0;
+  if (prop_name == "SDE_SPR_INIT_CFG_V1") {
+    ret = SetupSprBlobV1(fd, blob_id);
+  } else if (prop_name == "SDE_SPR_INIT_CFG_V2") {
+    ret = SetupSprBlobV2(fd, blob_id);
+  } else {
+    ret = -ENOENT;
+  }
+
+  return ret;
+}
+
 int MinuiBackendDrmQti::AtomicPopulatePlane(int plane, drmModeAtomicReqPtr atomic_req,
                                             DrmConnector index) {
   uint32_t src_x, src_y, src_w, src_h;
@@ -255,6 +348,10 @@ int MinuiBackendDrmQti::TeardownPipeline(drmModeAtomicReqPtr atomic_req, DrmConn
            0, index);
   add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "MODE_ID", 0, index);
   add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "ACTIVE", 0, index);
+  if (spr_enabled) {
+    add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, spr_prop_name.c_str(), 0,
+             index);
+  }
 
   for (i = 0; i < number_of_lms; i++) {
     ret =
@@ -283,6 +380,10 @@ int MinuiBackendDrmQti::SetupPipeline(drmModeAtomicReqPtr atomic_req, DrmConnect
     add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "MODE_ID",
              crtc_res.mode_blob_id, index);
     add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, "ACTIVE", 1, index);
+    if (spr_enabled) {
+      add_prop(&crtc_res, crtc, Crtc, drm[index].monitor_crtc->crtc_id, spr_prop_name.c_str(),
+               crtc_res.spr_blob_id, index);
+    }
   }
 
   /* Setup planes */
@@ -641,6 +742,7 @@ GRSurface* MinuiBackendDrmQti::Init() {
   drmModeRes* res = nullptr;
   drm_fd = -1;
 
+  spr_enabled = android::base::GetIntProperty("vendor.display.enable_spr", 0);
   number_of_lms = DEFAULT_NUM_LMS;
   /* Consider DRM devices in order. */
   for (int i = 0; i < DRM_MAX_MINOR; i++) {
@@ -729,8 +831,14 @@ GRSurface* MinuiBackendDrmQti::Init() {
   if (!crtc_res.props_info)
     return NULL;
   else
-    for (int j = 0; j < (int)crtc_res.props->count_props; ++j)
+    for (int j = 0; j < (int)crtc_res.props->count_props; ++j) {
       crtc_res.props_info[j] = drmModeGetProperty(drm_fd, crtc_res.props->props[j]);
+      /* Get spr property name */
+      if (!strcmp(crtc_res.props_info[j]->name, "SDE_SPR_INIT_CFG_V1") ||
+          !strcmp(crtc_res.props_info[j]->name, "SDE_SPR_INIT_CFG_V2")) {
+        spr_prop_name = crtc_res.props_info[j]->name;
+      }
+    }
 
   /* Set connector resources */
   conn_res.props = drmModeObjectGetProperties(drm_fd, drm[DRM_MAIN].monitor_connector->connector_id,
@@ -781,6 +889,13 @@ GRSurface* MinuiBackendDrmQti::Init() {
                                 &crtc_res.mode_blob_id)) {
     printf("failed to create mode blob\n");
     return NULL;
+  }
+
+  /* Setup spr blob id if enabled */
+  if (spr_enabled) {
+    if (SetupSprBlob(drm_fd, spr_prop_name, &crtc_res.spr_blob_id)) {
+      return NULL;
+    }
   }
 
   /* Save fb_prop_id*/
