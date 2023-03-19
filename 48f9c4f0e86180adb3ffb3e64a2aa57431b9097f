@@ -70,6 +70,24 @@
       "parentUuid": "3aa456f6_3337e1ad",
       "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1de4ebec_96c39a17",
+        "filename": "bootloader_message/bootloader_message.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2023-03-19T22:11:43Z",
+      "side": 1,
+      "message": "Yeah - this device is probably coming to a rest on 20, so I\u0027m thinking if we don\u0027t mind just leaving it as it is would be best here.\n\nNo one but LGE 8996 will use this in reality haha.",
+      "parentUuid": "9d4d7c4c_cccf210b",
+      "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
