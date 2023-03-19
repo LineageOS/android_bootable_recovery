@@ -52,6 +52,24 @@
       "parentUuid": "5107974b_406a1d79",
       "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9d4d7c4c_cccf210b",
+        "filename": "bootloader_message/bootloader_message.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 18205
+      },
+      "writtenOn": "2023-03-19T20:47:58Z",
+      "side": 1,
+      "message": "\u003e imo, offset should always be the truth of when to start wiping the message\n\nFor LG we purpusely want to use an offset different from what the bootloader expects (0). If we only wipe from OFFSET to OFFSET + sizeof(bootloader_message) but the bootloader writes at 0, then we will never wipe a message written by the bootloader. That may or may not be an issue, that this commit solves.\n\n\u003e so we now assume that we always want to wipe the first n bytes of the misc partition if the offset is ≤1024?\n\nYes, that is arbitrary. It is a bad assumption if your bootloader also uses an offset \u003c1024 (and non zero). But this feature is not going to be used by any new devices so I see no point in complicating it now. When the commit was written all its users all complied with the assumption.",
+      "parentUuid": "3aa456f6_3337e1ad",
+      "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
