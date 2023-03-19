@@ -34,6 +34,24 @@
       "parentUuid": "8f3f8627_42cfe75b",
       "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aa456f6_3337e1ad",
+        "filename": "bootloader_message/bootloader_message.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2023-03-19T20:23:01Z",
+      "side": 1,
+      "message": "sorry, I know it\u0027s explained in the message, but I don\u0027t get how it would work.\nso we now assume that we always want to wipe the first n bytes of the misc partition if the offset is ≤1024?\nthat\u0027s kind of arbitrary and not really something related to the offset we add, it\u0027s device specific behaviour.\nimo, offset should always be the truth of when to start wiping the message, if we also want to wipe the first n bytes after offset, it\u0027s unrelated.\nand that would also mean we never wipe the actual message size in misc, but the first sector, still a different behaviour than I\u0027d expect.\nif the lge bootlooader works like that ( what goes in the first n bytes? wipe-data? isn\u0027t that part of the usual message struct? )",
+      "parentUuid": "5107974b_406a1d79",
+      "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
