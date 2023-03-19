@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f3f8627_42cfe75b",
+        "filename": "bootloader_message/bootloader_message.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2023-03-19T18:14:09Z",
+      "side": 1,
+      "message": "I\u0027m a bit lost here, won\u0027t this end up overwriting the first n bytes?\n\nThis makes the assumption the misc message data is always \u003e2048 bytes into the partition if we want preserve the first n bytes, but that\u0027s bootloader dependant, not really a random value to pick.",
+      "revId": "48f9c4f0e86180adb3ffb3e64a2aa57431b9097f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
