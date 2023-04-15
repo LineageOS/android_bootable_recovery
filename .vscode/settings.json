@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "future": "cpp",
+        "system_error": "cpp",
+        "regex": "cpp"
+    }
+}

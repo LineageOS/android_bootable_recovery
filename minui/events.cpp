@@ -82,6 +82,10 @@ static bool should_add_input_device(int fd, bool allow_touch_inputs) {
     return false;
   }
 
+  // Some touch devices do not have proper events--allow anyway
+  if(allow_touch_inputs)
+    return true;
+
   // We assume that only EV_ABS, EV_KEY, EV_REL, and EV_SW event types are ever needed.
   // EV_ABS is only allowed if allow_touch_inputs is set.
   // EV_REL can be explicitly disallowed. This is needed to skip sensor inputs on some devices.
