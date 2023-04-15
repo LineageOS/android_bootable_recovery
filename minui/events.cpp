@@ -79,6 +79,9 @@ static bool should_add_input_device(int fd, bool allow_touch_inputs) {
 
   // Read the evbits of the input device.
   if (ioctl(fd, EVIOCGBIT(0, sizeof(ev_bits)), ev_bits) == -1) {
+    // Some touch devices do not have available evbits--allow anyway
+    if(allow_touch_inputs)
+        return true;
     return false;
   }
 
