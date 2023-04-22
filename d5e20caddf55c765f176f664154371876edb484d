@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cda9bc37_fa7bd494",
+        "filename": "minui/events.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2023-04-22T18:59:53Z",
+      "side": 1,
+      "message": "missing space after \"if\"",
+      "range": {
+        "startLine": 86,
+        "startChar": 2,
+        "endLine": 86,
+        "endChar": 5
+      },
+      "revId": "d5e20caddf55c765f176f664154371876edb484d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
