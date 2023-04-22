@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ff08ad3_35fd5855",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2023-04-22T19:02:17Z",
+      "side": 1,
+      "message": "Actually, looking at the other events, there is already should_skip_ev_rel(), maybe do the same for the others?",
+      "revId": "d5e20caddf55c765f176f664154371876edb484d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cda9bc37_fa7bd494",
