@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "37a158a7_ecf67b08",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2023-05-31T02:33:25Z",
+      "side": 1,
+      "message": "so under further review, this change still doesn\u0027t do what i\u0027d like it to. it seems to get stuck sometimes and not others. could have something to do with number of input devices at a given time? touch always works when controller is not connected, but when controller is connected, touch often does not work.",
+      "parentUuid": "3ff08ad3_35fd5855",
+      "revId": "d5e20caddf55c765f176f664154371876edb484d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cda9bc37_fa7bd494",
