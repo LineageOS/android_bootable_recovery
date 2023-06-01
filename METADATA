@@ -1,9 +1,3 @@
-# *** THIS PACKAGE HAS SPECIAL LICENSING CONDITIONS.  PLEASE
-#     CONSULT THE OWNERS AND opensource-licensing@google.com BEFORE
-#     DEPENDING ON IT IN YOUR PROJECT. ***
 third_party {
-  license_note: "would be NOTICE save for OFL in:\n"
-  "   fonts/README\n"
-  "   fonts/OFL.txt\n"
-  license_type: BY_EXCEPTION_ONLY
+  license_type: NOTICE
 }
