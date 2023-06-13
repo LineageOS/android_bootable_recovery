@@ -36,10 +36,8 @@ static const std::vector<std::pair<std::string, Device::BuiltinAction>> kFastboo
   { "Power off", Device::SHUTDOWN_FROM_FASTBOOT },
 };
 
-Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::string>& /* args */) {
-  RecoveryUI* ui = device->GetUI();
-
-  std::vector<std::string> title_lines = { "Android Fastboot" };
+void FillDefaultFastbootLines(std::vector<std::string>& title_lines) {
+  title_lines.push_back("Android Fastboot");
   title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   title_lines.push_back("Bootloader version - " + android::base::GetProperty("ro.bootloader", ""));
   title_lines.push_back("Baseband version - " +
@@ -48,6 +46,32 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
   title_lines.push_back(std::string("Secure boot - ") +
                         ((android::base::GetProperty("ro.secure", "") == "1") ? "yes" : "no"));
   title_lines.push_back("HW version - " + android::base::GetProperty("ro.revision", ""));
+}
+
+void FillWearableFastbootLines(std::vector<std::string>& title_lines) {
+  title_lines.push_back("Android Fastboot");
+  title_lines.push_back(android::base::GetProperty("ro.product.device", "") + " - " +
+                        android::base::GetProperty("ro.revision", ""));
+  title_lines.push_back(android::base::GetProperty("ro.bootloader", ""));
+
+  const size_t max_baseband_len = 24;
+  const std::string& baseband = android::base::GetProperty("ro.build.expect.baseband", "");
+  title_lines.push_back(baseband.length() > max_baseband_len
+                            ? baseband.substr(0, max_baseband_len - 3) + "..."
+                            : baseband);
+
+  title_lines.push_back("Serial #: " + android::base::GetProperty("ro.serialno", ""));
+}
+
+Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::string>& /* args */) {
+  RecoveryUI* ui = device->GetUI();
+  std::vector<std::string> title_lines;
+
+  if (ui->IsWearable()) {
+    FillWearableFastbootLines(title_lines);
+  } else {
+    FillDefaultFastbootLines(title_lines);
+  }
 
   ui->ResetKeyInterruptStatus();
   ui->SetTitle(title_lines);
