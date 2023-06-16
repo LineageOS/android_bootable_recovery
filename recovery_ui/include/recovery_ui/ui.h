@@ -177,6 +177,10 @@ class RecoveryUI {
       const std::vector<std::string>& backup_headers, const std::vector<std::string>& backup_items,
       const std::function<int(int, bool)>& key_handler) = 0;
 
+  virtual bool IsWearable() {
+    return false;
+  }
+
   // Set whether or not the fastbootd logo is displayed.
   void SetEnableFastbootdLogo(bool enable) {
     fastbootd_logo_enabled_ = enable;
