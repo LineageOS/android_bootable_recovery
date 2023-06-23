@@ -377,10 +377,12 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   bool device_only_supports_ab = device_supports_ab && !ab_device_supports_nonab;
   bool device_supports_virtual_ab = android::base::GetBoolProperty("ro.virtual_ab.enabled", false);
 
-  const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
-  if (ViolatesSPLDowngrade(zip, current_spl)) {
-    LOG(ERROR) << "Denying OTA because it's SPL downgrade";
-    return INSTALL_ERROR;
+  if (get_build_type() == "user") {
+    const auto current_spl = android::base::GetProperty("ro.build.version.security_patch", "");
+    if (ViolatesSPLDowngrade(zip, current_spl)) {
+      LOG(ERROR) << "Denying OTA because it's SPL downgrade";
+      return INSTALL_ERROR;
+    }
   }
 
   if (package_is_ab) {

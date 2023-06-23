@@ -70,3 +70,5 @@ bool CheckPackageMetadata(const std::map<std::string, std::string>& metadata, Ot
 // Ensures the path to the update package is mounted. Also set the |should_use_fuse| to true if the
 // package stays on a removable media.
 bool SetupPackageMount(const std::string& package_path, bool* should_use_fuse);
+
+std::string get_build_type();
