@@ -129,6 +129,7 @@ int gr_fb_width_real();
 int gr_fb_height_real();
 int gr_overscan_offset_x();
 int gr_overscan_offset_y();
+GRRotation gr_touch_rotation();
 
 void gr_flip();
 void gr_fb_blank(bool blank);
@@ -160,6 +161,9 @@ void gr_rotate(GRRotation rotation);
 
 // Get current rotation
 GRRotation gr_get_rotation();
+
+// Sets touch rotation
+void gr_rotate_touch(GRRotation rotation);
 
 // Returns the current PixelFormat being used.
 PixelFormat gr_pixel_format();
