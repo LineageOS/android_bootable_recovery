@@ -41,6 +41,7 @@ static uint32_t gr_current = ~0;
 // gr_draw is owned by backends.
 static GRSurface* gr_draw = nullptr;
 static GRRotation rotation = GRRotation::NONE;
+static GRRotation touch_rotation = GRRotation::NONE;
 static PixelFormat pixel_format = PixelFormat::UNKNOWN;
 // The graphics backend list that provides fallback options for the default backend selection.
 // For example, it will fist try DRM, then try FBDEV if DRM is unavailable.
@@ -474,6 +475,18 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
     gr_rotate(GRRotation::NONE);
   }
 
+  std::string touch_rotation_str =
+      android::base::GetProperty("ro.minui.default_touch_rotation", "ROTATION_NONE");
+  if (touch_rotation_str == "ROTATION_RIGHT") {
+    gr_rotate_touch(GRRotation::RIGHT);
+  } else if (touch_rotation_str == "ROTATION_DOWN") {
+    gr_rotate_touch(GRRotation::DOWN);
+  } else if (touch_rotation_str == "ROTATION_LEFT") {
+    gr_rotate_touch(GRRotation::LEFT);
+  } else {  // "ROTATION_NONE" or unknown string
+    gr_rotate_touch(GRRotation::NONE);
+  }
+
   if (gr_draw->pixel_bytes != 4) {
     printf("gr_init: Only 4-byte pixel formats supported\n");
   }
@@ -519,6 +532,10 @@ int gr_overscan_offset_y() {
   return overscan_offset_y;
 }
 
+GRRotation gr_touch_rotation() {
+  return touch_rotation;
+}
+
 void gr_fb_blank(bool blank) {
   gr_backend->Blank(blank);
 }
@@ -529,6 +546,10 @@ void gr_fb_blank(bool blank, int index) {
 
 void gr_rotate(GRRotation rot) {
   rotation = rot;
+}
+
+void gr_rotate_touch(GRRotation rot) {
+  touch_rotation = rot;
 }
 
 bool gr_has_multiple_connectors() {
