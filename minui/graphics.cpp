@@ -511,6 +511,10 @@ int gr_fb_height_real() {
                                                                          : gr_draw->height;
 }
 
+GRRotation gr_fb_rotation() {
+  return rotation;
+}
+
 int gr_overscan_offset_x() {
   return overscan_offset_x;
 }

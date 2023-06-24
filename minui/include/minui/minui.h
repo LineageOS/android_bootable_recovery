@@ -127,6 +127,7 @@ int gr_fb_width();
 int gr_fb_height();
 int gr_fb_width_real();
 int gr_fb_height_real();
+GRRotation gr_fb_rotation();
 int gr_overscan_offset_x();
 int gr_overscan_offset_y();
 
