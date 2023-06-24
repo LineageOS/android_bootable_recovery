@@ -1353,8 +1353,34 @@ int ScreenRecoveryUI::SelectMenu(int sel) {
 }
 
 int ScreenRecoveryUI::SelectMenu(const Point& p) {
+  Point point;
+
+  const auto scaleX = static_cast<double>(p.x()) / ScreenWidth();
+  const auto scaleY = static_cast<double>(p.y()) / ScreenHeight();
+
+  // Correct position for touch rotation
+  switch (gr_touch_rotation()) {
+    case GRRotation::NONE:
+      point.x(ScreenWidth() * scaleX);
+      point.y(ScreenHeight() * scaleY);
+      break;
+    case GRRotation::RIGHT:
+      point.x(ScreenWidth() * scaleY);
+      point.y(ScreenHeight() - (ScreenHeight() * scaleX));
+      break;
+    case GRRotation::DOWN:
+      point.x(ScreenWidth() - (ScreenWidth() * scaleX));
+      point.y(ScreenHeight() - (ScreenHeight() * scaleY));
+      break;
+    case GRRotation::LEFT:
+      point.x(ScreenWidth() - (ScreenWidth() * scaleY));
+      point.y(ScreenHeight() * scaleX);
+      break;
+  }
+
   // Correct position for overscan
-  const Point point(p.x() - gr_overscan_offset_x(), p.y() - gr_overscan_offset_y());
+  point.x(point.x() - gr_overscan_offset_x());
+  point.y(point.y() - gr_overscan_offset_y());
 
   int new_sel = Device::kNoAction;
   std::lock_guard<std::mutex> lg(updateMutex);
