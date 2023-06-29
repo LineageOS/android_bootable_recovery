@@ -30,8 +30,8 @@
  *
  * To work well with this tool, the gzipped sections of the target image must have been generated
  * using the same deflate encoder that is available in applypatch, namely, the one in the zlib
- * library.  In practice this means that images should be compressed using the "minigzip" tool
- * included in the zlib distribution, not the GNU gzip program.
+ * library.  In practice this means that images should be compressed using the toybox "gzip" toy,
+ * not the GNU gzip program.
  *
  * An "imgdiff" patch consists of a header describing the chunk structure of the file and any
  * encoding parameters needed for the gzipped chunks, followed by N bsdiff patches, one per chunk.
