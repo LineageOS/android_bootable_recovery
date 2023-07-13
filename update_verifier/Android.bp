@@ -66,7 +66,7 @@ cc_library_static {
     ],
 
     whole_static_libs: [
-        "libsnapshot_snapuserd",
+        "libsnapuserd_client",
     ],
 
     shared_libs: [
