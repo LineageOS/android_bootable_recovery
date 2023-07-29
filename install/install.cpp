@@ -383,6 +383,13 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
     return INSTALL_ERROR;
   }
 
+  static bool ab_package_installed = false;
+  if (ab_package_installed) {
+    LOG(ERROR) << "A/B package was just installed. "
+               << "Please reboot recovery before installing another package.";
+    return INSTALL_ERROR;
+  }
+
   if (package_is_ab) {
     CHECK(package->GetType() == PackageType::kFile);
   }
@@ -568,6 +575,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
     LOG(FATAL) << "Invalid status code " << status;
   }
   if (package_is_ab) {
+    ab_package_installed = true;
     PerformPowerwashIfRequired(zip, device);
   }
 
