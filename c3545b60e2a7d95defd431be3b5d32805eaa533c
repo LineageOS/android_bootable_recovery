@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6eb699f7_1a634966",
+        "filename": "install/install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2023-07-29T09:37:52Z",
+      "side": 1,
+      "message": "could use a second \"L\"",
+      "revId": "c3545b60e2a7d95defd431be3b5d32805eaa533c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
