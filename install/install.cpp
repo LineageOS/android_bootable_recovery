@@ -62,6 +62,7 @@
 
 using namespace std::chrono_literals;
 
+bool ask_to_ab_reboot(Device* device);
 bool ask_to_continue_unverified(Device* device);
 bool ask_to_continue_downgrade(Device* device);
 
@@ -569,6 +570,9 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   }
   if (package_is_ab) {
     PerformPowerwashIfRequired(zip, device);
+    if (ask_to_ab_reboot(device)) {
+      Reboot("userrequested,recovery,ui");
+    }
   }
 
   return INSTALL_SUCCESS;
