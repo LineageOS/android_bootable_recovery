@@ -193,6 +193,11 @@ bool ask_to_continue_downgrade(Device* device) {
   }
 }
 
+bool ask_to_ab_reboot(Device* device) {
+  device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+  return yes_no(device, "This package requires that you restart recovery", "Reboot to recovery?");
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Format user data?", "This includes internal storage.", "THIS CANNOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Format data" };
