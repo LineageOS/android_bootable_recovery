@@ -434,7 +434,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
     if (std::string err; !clear_bootloader_message(&err)) {
       LOG(ERROR) << "Failed to clear BCB message: " << err;
     }
-    Reboot("userrequested,recovery,ui");
+    Reboot("recovery");
   };
 
   static bool ab_package_installed = false;
