@@ -367,7 +367,8 @@ static bool PerformPowerwashIfRequired(ZipArchiveHandle zip, Device *device) {
 // If the package contains an update binary, extract it and run it.
 static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
                                      std::vector<std::string>* log_buffer, int retry_count,
-                                     int* max_temperature, Device* device) {
+                                     int* max_temperature, bool should_auto_reboot,
+                                     Device* device) {
   auto ui = device->GetUI();
   std::map<std::string, std::string> metadata;
   auto zip = package->GetZipArchiveHandle();
@@ -587,7 +588,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
   if (package_is_ab) {
     ab_package_installed = true;
     PerformPowerwashIfRequired(zip, device);
-    if (ask_to_ab_reboot(device)) {
+    if (ask_to_ab_reboot(device) && !should_auto_reboot) {
       reboot_to_recovery();
     }
   }
@@ -597,7 +598,8 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
 
 static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
                                              std::vector<std::string>* log_buffer, int retry_count,
-                                             int* max_temperature, Device* device) {
+                                             int* max_temperature, bool should_auto_reboot,
+                                             Device* device) {
   auto ui = device->GetUI();
   ui->SetBackground(RecoveryUI::INSTALLING_UPDATE);
   // Give verification half the progress bar...
@@ -619,7 +621,7 @@ static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
   }
   ui->SetEnableReboot(false);
   auto result =
-      TryUpdateBinary(package, wipe_cache, log_buffer, retry_count, max_temperature, device);
+      TryUpdateBinary(package, wipe_cache, log_buffer, retry_count, max_temperature, should_auto_reboot, device);
   ui->SetEnableReboot(true);
   ui->Print("\n");
 
@@ -627,7 +629,8 @@ static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
 }
 
 InstallResult InstallPackage(Package* package, const std::string_view package_id,
-                             bool should_wipe_cache, int retry_count, Device* device) {
+                             bool should_wipe_cache, int retry_count,
+                             bool should_auto_reboot, Device* device) {
   auto ui = device->GetUI();
   auto start = std::chrono::system_clock::now();
 
@@ -650,7 +653,7 @@ InstallResult InstallPackage(Package* package, const std::string_view package_id
   } else {
     bool updater_wipe_cache = false;
     result = VerifyAndInstallPackage(package, &updater_wipe_cache, &log_buffer, retry_count,
-                                     &max_temperature, device);
+                                     &max_temperature, should_auto_reboot, device);
     should_wipe_cache = should_wipe_cache || updater_wipe_cache;
   }
 
