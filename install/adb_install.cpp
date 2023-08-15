@@ -116,7 +116,7 @@ static auto AdbInstallPackageHandler(Device* device, InstallResult* result) {
     auto package =
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
                                    std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
-    *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0, device);
+    *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0, false, device);
     break;
   }
 

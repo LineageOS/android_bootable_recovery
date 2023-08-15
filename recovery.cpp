@@ -893,7 +893,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
                      std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
                  memory_package != nullptr) {
         status = InstallPackage(memory_package.get(), update_package, should_wipe_cache,
-                                retry_count, device);
+                                retry_count, sideload_auto_reboot, device);
       } else {
         // We may fail to memory map the package on 32 bit builds for packages with 2GiB+ size.
         // In such cases, we will try to install the package with fuse. This is not the default
