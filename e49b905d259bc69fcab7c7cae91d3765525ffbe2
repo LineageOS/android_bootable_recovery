@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6ee966c_5b8b5d43",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2023-08-16T17:16:21Z",
+      "side": 1,
+      "message": "works, tested on sargo and pro1",
+      "revId": "e49b905d259bc69fcab7c7cae91d3765525ffbe2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
