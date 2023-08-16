@@ -779,6 +779,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
         } else if (option == "sideload_auto_reboot") {
           sideload = true;
           sideload_auto_reboot = true;
+          device->GetUI()->SetSideloadAutoReboot(sideload_auto_reboot);
         } else if (option == "shutdown_after") {
           shutdown_after = true;
         } else if (option == "update_package") {
