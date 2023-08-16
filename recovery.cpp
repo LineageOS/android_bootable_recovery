@@ -969,6 +969,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     if (!sideload_auto_reboot) {
       ui->ShowText(true);
     }
+    ui->SetSideloadAutoReboot(sideload_auto_reboot);
     status = ApplyFromAdb(device, false /* rescue_mode */, &next_action);
     ui->Print("\nInstall from ADB complete (status: %d).\n", status);
     if (sideload_auto_reboot) {
