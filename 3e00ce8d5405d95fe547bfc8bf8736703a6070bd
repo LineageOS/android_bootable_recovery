@@ -16,6 +16,24 @@
       "message": "As discussed on Discord, this makes no sense, please put more effort is this.\nAs a tip, maybe start checking if O_CLOEXEC does something? It isn\u0027t there in the old open() call",
       "revId": "3e00ce8d5405d95fe547bfc8bf8736703a6070bd",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7024a34d_420db490",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32674
+      },
+      "writtenOn": "2023-08-20T12:32:37Z",
+      "side": 1,
+      "message": "I tried without O_CLOEXEC just like the old open() call before, same stuff happened. Still hanging at splash.\n\nWell I guess I\u0027ll keep looking around the kernel then.",
+      "parentUuid": "94addf95_f57c8ad2",
+      "revId": "3e00ce8d5405d95fe547bfc8bf8736703a6070bd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
