@@ -90,6 +90,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "061ede75_e05c50d5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25485
+      },
+      "writtenOn": "2023-08-31T10:52:00Z",
+      "side": 1,
+      "message": "this will not break installing zip in user variant, only disable ask to reboot. if someone want to install something in user build he just need to reboot to recovery manually.",
+      "parentUuid": "9e659764_efd503d2",
+      "revId": "028f3c9ea2c237a64a70bd7798f31f47d4943518",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5bc5ea22_fe5b3661",
