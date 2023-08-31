@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5bc5ea22_fe5b3661",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2023-08-31T10:30:27Z",
+      "side": 1,
+      "message": "Missing }",
+      "range": {
+        "startLine": 179,
+        "startChar": 34,
+        "endLine": 179,
+        "endChar": 35
+      },
+      "revId": "028f3c9ea2c237a64a70bd7798f31f47d4943518",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
