@@ -54,6 +54,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a6ab11d_8be77578",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25485
+      },
+      "writtenOn": "2023-08-31T10:43:49Z",
+      "side": 1,
+      "message": "According to the release method of AOSP \"user\" variant is final release and dev have to do that stuffs in userdebug",
+      "parentUuid": "86ad8a14_ae5cfcc1",
+      "revId": "028f3c9ea2c237a64a70bd7798f31f47d4943518",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5bc5ea22_fe5b3661",
