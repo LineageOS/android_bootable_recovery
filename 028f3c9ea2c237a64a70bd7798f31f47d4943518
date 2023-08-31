@@ -99,6 +99,30 @@
       },
       "revId": "028f3c9ea2c237a64a70bd7798f31f47d4943518",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2bbafe5_e24b597b",
+        "filename": "recovery.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2023-08-31T10:37:49Z",
+      "side": 1,
+      "message": "now it\u0027s completely broken.",
+      "parentUuid": "e5f2847d_d075f1d7",
+      "range": {
+        "startLine": 179,
+        "startChar": 34,
+        "endLine": 179,
+        "endChar": 35
+      },
+      "revId": "028f3c9ea2c237a64a70bd7798f31f47d4943518",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
