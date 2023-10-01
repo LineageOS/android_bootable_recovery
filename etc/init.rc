@@ -73,6 +73,10 @@ on boot
     class_start default
     class_start hal
 
+    setprop ro.adb.secure.recovery 0
+    setprop sys.usb.config adb
+    setprop service.adb.root 1
+
 on firmware_mounts_complete
    rm /dev/.booting
 
@@ -105,11 +109,13 @@ service console /system/bin/sh
 on init && property:ro.debuggable=1
     start console
 
-service charger /system/bin/charger
+service real_charger /system/bin/charger
+    disabled
     critical
     seclabel u:r:charger:s0
 
-service recovery /system/bin/recovery
+service real_recovery /system/bin/recovery
+    disabled
     socket recovery stream 422 system system
     seclabel u:r:recovery:s0
 
