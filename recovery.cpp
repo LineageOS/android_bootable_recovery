@@ -130,6 +130,10 @@ static bool IsRoDebuggable() {
   return android::base::GetBoolProperty("ro.debuggable", false);
 }
 
+static bool IsDeviceUnlocked() {
+  return "orange" == android::base::GetProperty("ro.boot.verifiedbootstate", "");
+}
+
 // Clear the recovery command and prepare to boot a (hopefully working) system,
 // copy our log file to cache as well (for the system to read). This function is
 // idempotent: call it as many times as you like.
@@ -182,13 +186,21 @@ bool ask_to_ab_reboot(Device* device) {
 }
 
 bool ask_to_continue_unverified(Device* device) {
-  device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-  return yes_no(device, "Signature verification failed", "Install anyway?");
+  if (!IsDeviceUnlocked()) {
+    return false;
+  } else {
+    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "Signature verification failed", "Install anyway?");
+  }
 }
 
 bool ask_to_continue_downgrade(Device* device) {
-  device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-  return yes_no(device, "This package will downgrade your system", "Install anyway?");
+  if (!IsDeviceUnlocked()) {
+    return false;
+  } else {
+    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "This package will downgrade your system", "Install anyway?");
+  }
 }
 
 static bool ask_to_wipe_data(Device* device) {
