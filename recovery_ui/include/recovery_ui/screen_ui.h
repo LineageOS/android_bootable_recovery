@@ -32,6 +32,7 @@
 class GRSurface;
 
 enum class UIElement {
+  BATTERY_LOW,
   HEADER,
   MENU,
   MENU_SEL_BG,
@@ -393,6 +394,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   virtual std::vector<std::string> GetMenuHelpMessage() const;
 
   virtual void draw_background_locked();
+  virtual void draw_battery_capacity_locked();
   virtual void draw_foreground_locked();
   virtual void draw_screen_locked();
   virtual void draw_menu_and_text_buffer_locked(const std::vector<std::string>& help_message);
@@ -402,6 +404,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   const GRSurface* GetCurrentFrame() const;
   const GRSurface* GetCurrentText() const;
 
+  void BattMonitorThreadLoop();
   void ProgressThreadLoop();
 
   virtual void ShowFile(FILE*);
@@ -523,6 +526,11 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   bool rtl_locale_;
 
   std::mutex updateMutex;
+
+  std::thread batt_monitor_thread_;
+  std::atomic<bool> batt_monitor_thread_stopped_{ false };
+  int32_t batt_capacity_;
+  bool charging_;
 
   // Switch the display to active one after graphics is ready
   bool is_graphics_available;
