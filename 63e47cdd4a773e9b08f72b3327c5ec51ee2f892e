@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3c0d6987_f7b744da",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14734
+      },
+      "writtenOn": "2023-10-18T22:12:41Z",
+      "side": 1,
+      "message": "I\u0027m not that good at this, but did all my best. So if anyone has any improvements, please welcome\n\nPreview of the current state: https://imgur.com/F2SUdFR",
+      "revId": "63e47cdd4a773e9b08f72b3327c5ec51ee2f892e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
