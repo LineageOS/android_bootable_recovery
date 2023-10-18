@@ -37,11 +37,16 @@
 #include <unordered_map>
 #include <vector>
 
+#include <aidl/android/hardware/health/BatteryStatus.h>
+
 #include <android-base/chrono_utils.h>
 #include <android-base/logging.h>
 #include <android-base/properties.h>
 #include <android-base/stringprintf.h>
 #include <android-base/strings.h>
+
+#include <health/utils.h>
+#include <healthd/BatteryMonitor.h>
 
 #include "minui/minui.h"
 #include "otautil/paths.h"
@@ -406,9 +411,16 @@ ScreenRecoveryUI::ScreenRecoveryUI()
       max_stage(-1),
       locale_(""),
       rtl_locale_(false),
+      batt_capacity_(0),
+      charging_(false),
       is_graphics_available(false) {}
 
 ScreenRecoveryUI::~ScreenRecoveryUI() {
+  batt_monitor_thread_stopped_ = true;
+  if (batt_monitor_thread_.joinable()) {
+    batt_monitor_thread_.join();
+  }
+
   progress_thread_stopped_ = true;
   if (progress_thread_.joinable()) {
     progress_thread_.join();
@@ -570,6 +582,12 @@ void ScreenRecoveryUI::draw_foreground_locked() {
    fastboot light: #FDD835 */
 void ScreenRecoveryUI::SetColor(UIElement e) const {
   switch (e) {
+    case UIElement::BATTERY_LOW:
+      if (fastbootd_logo_enabled_)
+        gr_color(0xfd, 0x35, 0x35, 255);
+      else
+        gr_color(0xc7, 0x15, 0x85, 255);
+      break;
     case UIElement::INFO:
       if (fastbootd_logo_enabled_)
         gr_color(0xfd, 0xd8, 0x35, 255);
@@ -807,6 +825,7 @@ void ScreenRecoveryUI::draw_screen_locked() {
   gr_clear();
 
   draw_menu_and_text_buffer_locked(GetMenuHelpMessage());
+  draw_battery_capacity_locked();
 }
 
 // Draws the menu and text buffer on the screen. Should only be called with updateMutex locked.
@@ -860,6 +879,60 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
   }
 }
 
+// Draws the battery capacity on the screen. Should only be called with updateMutex locked.
+void ScreenRecoveryUI::draw_battery_capacity_locked() {
+  int x;
+  int y = gr_get_height(lineage_logo_.get());
+  int icon_x, icon_y, icon_h, icon_w;
+
+  // Battery status
+  std::string batt_capacity = std::to_string(batt_capacity_) + '%';
+
+  if (charging_)
+    batt_capacity.push_back('+');
+  else if (batt_capacity.back() == '+')
+    batt_capacity.pop_back();
+
+  if (menu_) {
+    // Battery icon
+    x = (ScreenWidth() - margin_width_ * 2 - kMenuIndent) - char_width_;
+
+    SetColor(UIElement::INFO);
+
+    // Top
+    icon_x = x + char_width_ / 3;
+    icon_y = y;
+    icon_w = char_width_ / 3;
+    icon_h = char_height_ / 12;
+    gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h);
+
+    // Main rect
+    icon_x = x;
+    icon_y = y + icon_h;
+    icon_w = char_width_;
+    icon_h = char_height_ - (char_height_ / 12);
+    gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h);
+
+    // Capacity
+    if (batt_capacity_ <= 15) SetColor(UIElement::BATTERY_LOW);
+    icon_x = x + char_width_ / 6;
+    icon_y = y + char_height_ / 12;
+    icon_w = char_width_ - (2 * char_width_ / 6);
+    icon_h = char_height_ - (3 * char_height_ / 12);
+    int cap_h = icon_h * batt_capacity_ / 100;
+    gr_fill(icon_x, icon_y + icon_h - cap_h, icon_x + icon_w, icon_y + icon_h);
+    gr_color(0, 0, 0, 255);
+    gr_fill(icon_x, icon_y, icon_x + icon_w, icon_y + icon_h - cap_h);
+
+    x -= char_width_;  // Separator
+
+    // Battery text
+    SetColor(UIElement::INFO);
+    x -= batt_capacity.size() * char_width_;
+    DrawTextLine(x, icon_y, batt_capacity.c_str(), false);
+  }
+}
+
 // Redraw everything on the screen and flip the screen (make it visible).
 // Should only be called with updateMutex locked.
 void ScreenRecoveryUI::update_screen_locked() {
@@ -877,6 +950,51 @@ void ScreenRecoveryUI::update_progress_locked() {
     draw_foreground_locked();  // Draw only the progress bar and overlays
   }
   gr_flip();
+}
+
+void ScreenRecoveryUI::BattMonitorThreadLoop() {
+  using aidl::android::hardware::health::BatteryStatus;
+  using android::hardware::health::InitHealthdConfig;
+
+  auto config = std::make_unique<healthd_config>();
+  InitHealthdConfig(config.get());
+
+  auto batt_monitor = std::make_unique<android::BatteryMonitor>();
+  batt_monitor->init(config.get());
+
+  while (!batt_monitor_thread_stopped_) {
+    bool redraw = false;
+    {
+      std::lock_guard<std::mutex> lg(updateMutex);
+
+      auto charge_status = static_cast<BatteryStatus>(batt_monitor->getChargeStatus());
+      // Treat unknown status as on charger.
+      bool charging = (charge_status != BatteryStatus::DISCHARGING &&
+                       charge_status != BatteryStatus::NOT_CHARGING &&
+                       charge_status != BatteryStatus::FULL);
+      if (charging_ != charging) {
+        charging_ = charging;
+        redraw = true;
+      }
+
+      android::BatteryProperty prop;
+      android::status_t status = batt_monitor->getProperty(android::BATTERY_PROP_CAPACITY, &prop);
+      // If we can't read battery percentage, it may be a device without battery. In this
+      // situation, use 100 as a fake battery percentage.
+      if (status != android::OK) {
+        prop.valueInt64 = 100;
+      }
+
+      int32_t batt_capacity = static_cast<int32_t>(prop.valueInt64);
+      if (batt_capacity_ != batt_capacity) {
+        batt_capacity_ = batt_capacity;
+        redraw = true;
+      }
+
+      if (redraw) update_screen_locked();
+    }
+    std::this_thread::sleep_for(5s);
+  }
 }
 
 void ScreenRecoveryUI::ProgressThreadLoop() {
@@ -1069,6 +1187,9 @@ bool ScreenRecoveryUI::Init(const std::string& locale) {
   LoadWipeDataMenuText();
 
   LoadAnimation();
+
+  // Keep the battery capacity updated.
+  batt_monitor_thread_ = std::thread(&ScreenRecoveryUI::BattMonitorThreadLoop, this);
 
   // Keep the progress bar updated, even when the process is otherwise busy.
   progress_thread_ = std::thread(&ScreenRecoveryUI::ProgressThreadLoop, this);
