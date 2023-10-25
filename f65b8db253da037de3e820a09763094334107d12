@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13551c63_b8b17d94",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27212
+      },
+      "writtenOn": "2023-10-25T19:06:22Z",
+      "side": 1,
+      "message": "You\u0027re going to need a close paren, `)`, in lines 189 \u0026 198, after `IsDeviceUnlocked()`.",
+      "revId": "f65b8db253da037de3e820a09763094334107d12",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
