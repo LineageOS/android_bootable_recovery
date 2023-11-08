@@ -70,6 +70,7 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
   if (ui->IsWearable()) {
     FillWearableFastbootLines(title_lines);
   } else {
+    ui->SetEnableFastbootdLogo(true);
     FillDefaultFastbootLines(title_lines);
   }
 
