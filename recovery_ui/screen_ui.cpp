@@ -181,15 +181,7 @@ int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
   if (!scrollable()) {
     offset += draw_funcs_.DrawHorizontalRule(y + offset) + 4;
   }
-
-  int items_block_height = gr_fb_height() - y - offset;;
-  int total = (char_height_ + 4) * (selection() + 1);;
-  int j = 0;
-  if (total > items_block_height) {
-    j = ((total - items_block_height) / (char_height_ + 4)) + 1;
-  }
-
-  for (size_t i = (MenuStart() + j); i < MenuEnd(); ++i) {
+  for (size_t i = MenuStart(); i < MenuEnd(); ++i) {
     bool bold = false;
     if (i == selection()) {
       // Draw the highlight bar.
