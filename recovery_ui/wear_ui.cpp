@@ -42,7 +42,6 @@ WearRecoveryUI::WearRecoveryUI()
                                                              kDefaultIsScreenCircle)) {
   // TODO: menu_unusable_rows_ should be computed based on the lines in draw_screen_locked().
   touch_screen_allowed_ = true;
-  SetEnableFastbootdLogo(false); // logo not required on Wear
 }
 
 // Draw background frame on the screen.  Does not flip pages.
