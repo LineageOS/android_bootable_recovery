@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include <android-base/logging.h>
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 
@@ -42,6 +43,50 @@ WearRecoveryUI::WearRecoveryUI()
                                                              kDefaultIsScreenCircle)) {
   // TODO: menu_unusable_rows_ should be computed based on the lines in draw_screen_locked().
   touch_screen_allowed_ = true;
+}
+
+static void FlipOrientation() {
+  auto rotation = gr_get_rotation();
+  if (rotation == GRRotation::NONE) {
+    gr_rotate(GRRotation::DOWN);
+  } else if (rotation == GRRotation::DOWN) {
+    gr_rotate(GRRotation::NONE);
+  } else {
+    LOG(WARNING) << "Unsupported rotation for wrist orientation" << static_cast<int>(rotation);
+  }
+}
+
+// Match values in
+// frameworks/opt/wear/src/com/android/clockwork/wristorientation/WristOrientationService.java
+enum class WristOrientation : unsigned {
+  LEFT_WRIST_ROTATION_0 = 0,
+  LEFT_WRIST_ROTATION_180 = 1,
+  RIGHT_WRIST_ROTATION_0 = 2,
+  RIGHT_WRIST_ROTATION_180 = 3,
+};
+
+static void InitWristOrientation() {
+  auto prop = android::base::GetUintProperty("ro.boot.wrist_orientation", 0u);
+  WristOrientation orientation{ prop };
+  if (orientation == WristOrientation::LEFT_WRIST_ROTATION_180 ||
+      orientation == WristOrientation::RIGHT_WRIST_ROTATION_180) {
+    LOG(INFO)
+        << "InitWristOrientation(): flipping orientation because, 'ro.boot.wrist_orientation'="
+        << prop;
+
+    FlipOrientation();
+  }
+}
+
+bool WearRecoveryUI::Init(const std::string& locale) {
+  auto result = ScreenRecoveryUI::Init(locale);
+  auto wrist_orientation_enabled =
+      android::base::GetBoolProperty("config.enable_wristorientation", false);
+  LOG(INFO) << "WearRecoveryUI::Init(): enable_wristorientation=" << wrist_orientation_enabled;
+  if (wrist_orientation_enabled) {
+    InitWristOrientation();
+  }
+  return result;
 }
 
 // Draw background frame on the screen.  Does not flip pages.
