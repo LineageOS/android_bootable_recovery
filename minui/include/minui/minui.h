@@ -153,6 +153,9 @@ unsigned int gr_get_height(const GRSurface* surface);
 // Sets rotation, flips gr_fb_width/height if 90 degree rotation difference
 void gr_rotate(GRRotation rotation);
 
+// Get current rotation
+GRRotation gr_get_rotation();
+
 // Returns the current PixelFormat being used.
 PixelFormat gr_pixel_format();
 

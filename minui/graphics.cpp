@@ -503,6 +503,10 @@ void gr_rotate(GRRotation rot) {
   rotation = rot;
 }
 
+GRRotation gr_get_rotation() {
+  return rotation;
+}
+
 bool gr_has_multiple_connectors() {
   return gr_backend->HasMultipleConnectors();
 }
