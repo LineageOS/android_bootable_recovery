@@ -32,7 +32,7 @@ import os.path
 import sys
 import zipfile
 
-import ota_from_target_files  # pylint: disable=import-error
+import ota_utils  # pylint: disable=import-error
 
 
 class GenUpdateConfig(object):
@@ -100,7 +100,7 @@ class GenUpdateConfig(object):
     def _get_property_files(package_zip):
         """Constructs the property-files list for A/B streaming metadata."""
 
-        ab_ota = ota_from_target_files.AbOtaPropertyFiles()
+        ab_ota = ota_utils.AbOtaPropertyFiles()
         property_str = ab_ota.GetPropertyFilesString(package_zip, False)
         property_files = []
         for file in property_str.split(','):
