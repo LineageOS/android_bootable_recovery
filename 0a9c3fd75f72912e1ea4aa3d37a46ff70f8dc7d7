@@ -16,6 +16,29 @@
       "message": "this hasn\u0027t been missed, you just pushed it _right_ as we started 21 bringup.\n\nI stared a conversation about it internally.",
       "revId": "0a9c3fd75f72912e1ea4aa3d37a46ff70f8dc7d7",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32c3acba_1b6a181f",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2023-12-14T10:52:54Z",
+      "side": 1,
+      "message": "you want to do that once in ScreenRecoveryUI::Init, you don\u0027t need to init the battery monitor each time you want to get the property.\n\nAdd\n`std::unique_ptr\u003cBatteryMonitor\u003e battery_monitor_;` to the class\n\nSomething like \n```\nauto config \u003d std::make_unique\u003chealthd_config\u003e();\nInitHealthdConfig(config.get());\nbattery_monitor_ \u003d std::make_unique\u003cBatteryMonitor\u003e();\nbattery_monitor_-\u003einit(c);\n```\n\nthe first two lines should be run once, but I think it\u0027s safe to assume this gets constructed once?",
+      "range": {
+        "startLine": 963,
+        "startChar": 0,
+        "endLine": 967,
+        "endChar": 38
+      },
+      "revId": "0a9c3fd75f72912e1ea4aa3d37a46ff70f8dc7d7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
