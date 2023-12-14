@@ -39,6 +39,30 @@
       },
       "revId": "0a9c3fd75f72912e1ea4aa3d37a46ff70f8dc7d7",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09301220_0928ccfe",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 967,
+      "author": {
+        "id": 14734
+      },
+      "writtenOn": "2023-12-14T19:27:41Z",
+      "side": 1,
+      "message": "Done\n\nNow it should init health config and battery monitor only once (out of loop).\n\nI really don\u0027t want to do that in ScreenRecoveryUI::In it, because you need to include health header that will mess up other sources where screen_ui.h is used... required dependencies added only for librecovery_ui",
+      "parentUuid": "32c3acba_1b6a181f",
+      "range": {
+        "startLine": 963,
+        "startChar": 0,
+        "endLine": 967,
+        "endChar": 38
+      },
+      "revId": "0a9c3fd75f72912e1ea4aa3d37a46ff70f8dc7d7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
