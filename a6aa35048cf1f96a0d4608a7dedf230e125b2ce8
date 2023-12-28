@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9aba6160_35e0251b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14734
+      },
+      "writtenOn": "2023-12-28T11:56:11Z",
+      "side": 1,
+      "message": "Works as expected for me. \n\nBy the way, some modern platforms may need additional things like adsp_loader module to get the battery status in recovery, but should be done already. At least there is Ia9b62249176dc6b86fd7ab40697940cb83c45cc2",
+      "revId": "a6aa35048cf1f96a0d4608a7dedf230e125b2ce8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
