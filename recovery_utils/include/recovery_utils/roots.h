@@ -48,7 +48,8 @@ int format_volume(const std::string& volume);
 // "/cache"), no paths permitted.  Attempts to unmount the volume if
 // it is mounted.
 // Copies 'directory' to root of the newly formatted volume
-int format_volume(const std::string& volume, const std::string& directory);
+int format_volume(const std::string& volume, const std::string& directory,
+                  std::string_view new_fstype);
 
 // Ensure that all and only the volumes that packages expect to find
 // mounted (/tmp and /cache) are mounted.  Returns 0 on success.
