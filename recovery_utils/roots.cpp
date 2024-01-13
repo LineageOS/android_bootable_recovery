@@ -177,8 +177,25 @@ int format_volume(const std::string& volume, const std::string& directory,
   }
 
   // If the raw disk will be used as a metadata encrypted device mapper target,
-  // next boot will first mount this partition as read only, and then unmount,
-  // call encrypt_inplace.
+  // next boot will do encrypt_in_place the raw disk. While fs_mgr mounts /data
+  // as RO to avoid write file operations before encrypt_inplace, this code path
+  // is not well tested so we would like to avoid it if possible. For safety,
+  // let vold do the formatting on boot for metadata encrypted devices, except
+  // when user specified a new fstype. Because init formats /data according
+  // to fstab, it's difficult to override the fstab in init.
+  if (!v->metadata_key_dir.empty() && length == 0 && new_fstype.empty()) {
+    android::base::unique_fd fd(open(v->blk_device.c_str(), O_RDWR));
+    if (fd == -1) {
+      PLOG(ERROR) << "format_volume: failed to open " << v->blk_device;
+      return -1;
+    }
+    int64_t device_size = get_file_size(fd.get(), 0);
+    if (device_size > 0 && !wipe_block_device(fd.get(), device_size)) {
+      LOG(INFO) << "format_volume: wipe metadata encrypted " << v->blk_device << " with size "
+                << device_size;
+      return 0;
+    }
+  }
 
   if ((v->fs_type == "ext4" && new_fstype.empty()) || new_fstype == "ext4") {
     LOG(INFO) << "Formatting " << v->blk_device << " as ext4";
