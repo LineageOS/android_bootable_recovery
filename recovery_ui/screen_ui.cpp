@@ -978,7 +978,20 @@ void ScreenRecoveryUI::BattMonitorThreadLoop() {
       }
 
       android::BatteryProperty prop;
-      android::status_t status = batt_monitor->getProperty(android::BATTERY_PROP_CAPACITY, &prop);
+      android::base::Timer t;
+      android::status_t status;
+      while(t.duration() < 1s) {
+        status = batt_monitor->getProperty(android::BATTERY_PROP_CAPACITY, &prop);
+        if (status == android::OK) {
+          break;
+        }
+
+        LOG(WARNING) << "Trying again for reinitializing battery info";
+        if (redraw) update_screen_locked();
+        batt_monitor->init(config.get());
+        std::this_thread::sleep_for(100ms);
+      }
+
       // If we can't read battery percentage, it may be a device without battery. In this
       // situation, use 100 as a fake battery percentage.
       if (status != android::OK) {
