@@ -952,6 +952,7 @@ void ScreenRecoveryUI::update_progress_locked() {
   gr_flip();
 }
 
+#define INIT_RETRY_MAX 10
 void ScreenRecoveryUI::BattMonitorThreadLoop() {
   using aidl::android::hardware::health::BatteryStatus;
   using android::hardware::health::InitHealthdConfig;
@@ -961,6 +962,7 @@ void ScreenRecoveryUI::BattMonitorThreadLoop() {
 
   auto batt_monitor = std::make_unique<android::BatteryMonitor>();
   batt_monitor->init(config.get());
+  int retry_count = 0;
 
   while (!batt_monitor_thread_stopped_) {
     bool redraw = false;
@@ -984,6 +986,11 @@ void ScreenRecoveryUI::BattMonitorThreadLoop() {
       if (status != android::OK) {
         LOG(WARNING) << "Using fake battery capacity 100.";
         prop.valueInt64 = 100;
+        LOG(WARNING) << "Retry count for reinitialization:" << retry_count;
+        if (retry_count++ < INIT_RETRY_MAX) {
+          // Try reinit
+          batt_monitor->init(config.get());
+        }
       }
 
       int32_t batt_capacity = static_cast<int32_t>(prop.valueInt64);
