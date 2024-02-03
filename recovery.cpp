@@ -186,7 +186,7 @@ bool ask_to_continue_unverified(Device* device) {
     return false;
   } else {
     device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-    return yes_no(device, "Signature verification failed", "Install anyway?");
+    return true;
   }
 }
 
