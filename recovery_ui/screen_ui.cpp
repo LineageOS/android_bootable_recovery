@@ -982,7 +982,6 @@ void ScreenRecoveryUI::BattMonitorThreadLoop() {
       // If we can't read battery percentage, it may be a device without battery. In this
       // situation, use 100 as a fake battery percentage.
       if (status != android::OK) {
-        LOG(WARNING) << "Using fake battery capacity 100.";
         prop.valueInt64 = 100;
       }
 
