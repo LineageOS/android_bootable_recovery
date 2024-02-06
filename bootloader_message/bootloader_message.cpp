@@ -314,6 +314,16 @@ bool WriteMiscMemtagMessage(const misc_memtag_message& message, std::string* err
                                        offsetof(misc_system_space_layout, memtag_message), err);
 }
 
+bool ReadMiscKcmdlineMessage(misc_kcmdline_message* message, std::string* err) {
+  return ReadMiscPartitionSystemSpace(message, sizeof(*message),
+                                      offsetof(misc_system_space_layout, kcmdline_message), err);
+}
+
+bool WriteMiscKcmdlineMessage(const misc_kcmdline_message& message, std::string* err) {
+  return WriteMiscPartitionSystemSpace(&message, sizeof(message),
+                                       offsetof(misc_system_space_layout, kcmdline_message), err);
+}
+
 extern "C" bool write_reboot_bootloader(void) {
   std::string err;
   return write_reboot_bootloader(&err);
