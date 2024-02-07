@@ -100,6 +100,13 @@ struct misc_memtag_message {
   uint8_t reserved[55];
 } __attribute__((packed));
 
+struct misc_kcmdline_message {
+  uint8_t version;
+  uint32_t magic;
+  uint64_t kcmdline_flags;
+  uint8_t reserved[51];
+} __attribute__((packed));
+
 #define MISC_VIRTUAL_AB_MESSAGE_VERSION 2
 #define MISC_VIRTUAL_AB_MAGIC_HEADER 0x56740AB0
 
@@ -116,11 +123,17 @@ struct misc_memtag_message {
 // See system/extras/mtectrl in AOSP for more information.
 #define MISC_MEMTAG_MODE_FORCED 0x20
 
+#define MISC_KCMDLINE_MESSAGE_VERSION 1
+#define MISC_KCMDLINE_MAGIC_HEADER 0x6ab5110c
+#define MISC_KCMDLINE_BINDER_RUST 0x1
+
 #if (__STDC_VERSION__ >= 201112L) || defined(__cplusplus)
 static_assert(sizeof(struct misc_virtual_ab_message) == 64,
               "struct misc_virtual_ab_message has wrong size");
 static_assert(sizeof(struct misc_memtag_message) == 64,
               "struct misc_memtag_message has wrong size");
+static_assert(sizeof(struct misc_kcmdline_message) == 64,
+              "struct misc_kcmdline_message has wrong size");
 #endif
 
 // This struct is not meant to be used directly, rather, it is to make
@@ -128,6 +141,7 @@ static_assert(sizeof(struct misc_memtag_message) == 64,
 struct misc_system_space_layout {
   misc_virtual_ab_message virtual_ab_message;
   misc_memtag_message memtag_message;
+  misc_kcmdline_message kcmdline_message;
 } __attribute__((packed));
 
 #ifdef __cplusplus
@@ -198,6 +212,10 @@ bool WriteMiscVirtualAbMessage(const misc_virtual_ab_message& message, std::stri
 // Read or write the memtag message from system space in /misc.
 bool ReadMiscMemtagMessage(misc_memtag_message* message, std::string* err);
 bool WriteMiscMemtagMessage(const misc_memtag_message& message, std::string* err);
+
+// Read or write the kcmdline message from system space in /misc.
+bool ReadMiscKcmdlineMessage(misc_kcmdline_message* message, std::string* err);
+bool WriteMiscKcmdlineMessage(const misc_kcmdline_message& message, std::string* err);
 #else
 
 #include <stdbool.h>
