@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <android-base/properties.h>
 #include <bootloader_message/bootloader_message.h>
 #include <log/log.h>
 
@@ -36,6 +37,45 @@ static void log(const char* fmt, ...) {
   va_end(vb);
 }
 
+static int check_control_message() {
+  misc_control_message m;
+  std::string err;
+  if (!ReadMiscControlMessage(&m, &err)) {
+    log("Could not read misctrl message: %s", err.c_str());
+    return 1;
+  }
+
+  if (m.magic != MISC_CONTROL_MAGIC_HEADER || m.version != MISC_CONTROL_MESSAGE_VERSION) {
+    log("misctrl message invalid, resetting it");
+    m = { .version = MISC_CONTROL_MESSAGE_VERSION,
+          .magic = MISC_CONTROL_MAGIC_HEADER,
+          .misctrl_flags = 0 };
+  }
+
+  int res = 0;
+
+  const size_t ps = getpagesize();
+
+  if (ps != 4096 && ps != 16384) {
+    log("Unrecognized page size: %zu", ps);
+    res = 1;
+  }
+
+  if (ps == 16384) {
+    m.misctrl_flags |= MISC_CONTROL_16KB_BEFORE;
+  }
+
+  bool before_16kb = m.misctrl_flags & MISC_CONTROL_16KB_BEFORE;
+  res |= android::base::SetProperty("ro.misctrl.16kb_before", before_16kb ? "1" : "0");
+
+  if (!WriteMiscControlMessage(m, &err)) {
+    log("Could not write misctrl message: %s", err.c_str());
+    res |= 1;
+  }
+
+  return res;
+}
+
 static int check_reserved_space() {
   bool empty;
   std::string err;
@@ -57,5 +97,8 @@ static int check_reserved_space() {
 }
 
 int main() {
-  return check_reserved_space();
+  int err = 0;
+  err |= check_control_message();
+  err |= check_reserved_space();
+  return err;
 }
