@@ -216,6 +216,10 @@ bool WriteMiscMemtagMessage(const misc_memtag_message& message, std::string* err
 // Read or write the kcmdline message from system space in /misc.
 bool ReadMiscKcmdlineMessage(misc_kcmdline_message* message, std::string* err);
 bool WriteMiscKcmdlineMessage(const misc_kcmdline_message& message, std::string* err);
+
+// Check reserved system space.
+bool CheckReservedSystemSpaceEmpty(bool* empty, std::string* err);
+
 #else
 
 #include <stdbool.h>
