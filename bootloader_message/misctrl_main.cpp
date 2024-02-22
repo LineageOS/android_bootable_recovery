@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <android-base/logging.h>
 #include <android-base/properties.h>
 #include <bootloader_message/bootloader_message.h>
 #include <log/log.h>
@@ -21,32 +22,16 @@
 
 #include <cstdio>
 
-static void log(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
-static void log(const char* fmt, ...) {
-  va_list va;
-  va_start(va, fmt);
-
-  va_list vb;
-  va_copy(vb, va);
-
-  __android_log_vprint(ANDROID_LOG_ERROR, "misctrl", fmt, va);
-  va_end(va);
-
-  vfprintf(stderr, fmt, vb);
-  fprintf(stderr, "\n");
-  va_end(vb);
-}
-
 static int check_control_message() {
   misc_control_message m;
   std::string err;
   if (!ReadMiscControlMessage(&m, &err)) {
-    log("Could not read misctrl message: %s", err.c_str());
+    LOG(ERROR) << "Could not read misctrl message: " << err.c_str();
     return 1;
   }
 
   if (m.magic != MISC_CONTROL_MAGIC_HEADER || m.version != MISC_CONTROL_MESSAGE_VERSION) {
-    log("misctrl message invalid, resetting it");
+    LOG(WARNING) << "misctrl message invalid, resetting it";
     m = { .version = MISC_CONTROL_MESSAGE_VERSION,
           .magic = MISC_CONTROL_MAGIC_HEADER,
           .misctrl_flags = 0 };
@@ -57,7 +42,7 @@ static int check_control_message() {
   const size_t ps = getpagesize();
 
   if (ps != 4096 && ps != 16384) {
-    log("Unrecognized page size: %zu", ps);
+    LOG(ERROR) << "Unrecognized page size: " << ps;
     res = 1;
   }
 
@@ -69,7 +54,7 @@ static int check_control_message() {
   res |= android::base::SetProperty("ro.misctrl.16kb_before", before_16kb ? "1" : "0");
 
   if (!WriteMiscControlMessage(m, &err)) {
-    log("Could not write misctrl message: %s", err.c_str());
+    LOG(ERROR) << "Could not write misctrl message: " << err.c_str();
     res |= 1;
   }
 
@@ -81,22 +66,24 @@ static int check_reserved_space() {
   std::string err;
   bool success = CheckReservedSystemSpaceEmpty(&empty, &err);
   if (!success) {
-    log("Could not read reserved space: %s", err.c_str());
+    LOG(ERROR) << "Could not read reserved space: " << err.c_str();
     return 1;
   }
-  log("System reserved space empty? %d.", empty);
+  LOG(INFO) << "System reserved space empty? " << empty;
 
   if (!err.empty()) {
-    constexpr size_t kPrintChunkSize = 256;
-    for (size_t i = 0; i < err.size(); i += kPrintChunkSize) {
-      log("DATA: %s", err.substr(i, kPrintChunkSize).c_str());
-    }
+    LOG(ERROR) << "Reserved misc space being used: " << err;
   }
 
   return empty ? 0 : 1;
 }
 
-int main() {
+int main(int argc, char** argv) {
+  {
+    using namespace android::base;
+    (void)argc;
+    InitLogging(argv, TeeLogger(LogdLogger(), &StderrLogger));
+  }
   int err = 0;
   err |= check_control_message();
   err |= check_reserved_space();
