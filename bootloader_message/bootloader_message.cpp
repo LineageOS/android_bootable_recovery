@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <android-base/file.h>
+#include <android-base/hex.h>
 #include <android-base/properties.h>
 #include <android-base/stringprintf.h>
 #include <android-base/unique_fd.h>
@@ -322,6 +323,33 @@ bool ReadMiscKcmdlineMessage(misc_kcmdline_message* message, std::string* err) {
 bool WriteMiscKcmdlineMessage(const misc_kcmdline_message& message, std::string* err) {
   return WriteMiscPartitionSystemSpace(&message, sizeof(message),
                                        offsetof(misc_system_space_layout, kcmdline_message), err);
+}
+
+bool ReadMiscControlMessage(misc_control_message* message, std::string* err) {
+  return ReadMiscPartitionSystemSpace(message, sizeof(*message),
+                                      offsetof(misc_system_space_layout, control_message), err);
+}
+
+bool WriteMiscControlMessage(const misc_control_message& message, std::string* err) {
+  return WriteMiscPartitionSystemSpace(&message, sizeof(message),
+                                       offsetof(misc_system_space_layout, control_message), err);
+}
+
+bool CheckReservedSystemSpaceEmpty(bool* empty, std::string* err) {
+  constexpr size_t kReservedSize = SYSTEM_SPACE_SIZE_IN_MISC - sizeof(misc_system_space_layout);
+
+  uint8_t space[kReservedSize];
+  if (!ReadMiscPartitionSystemSpace(&space, kReservedSize, sizeof(misc_system_space_layout), err)) {
+    return false;
+  }
+
+  *empty = space[0] == 0 && 0 == memcmp(space, space + 1, kReservedSize - 1);
+
+  if (!*empty) {
+    *err = android::base::HexString(space, kReservedSize);
+  }
+
+  return true;
 }
 
 extern "C" bool write_reboot_bootloader(void) {
