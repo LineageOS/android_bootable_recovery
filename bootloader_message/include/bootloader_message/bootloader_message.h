@@ -107,6 +107,14 @@ struct misc_kcmdline_message {
   uint8_t reserved[51];
 } __attribute__((packed));
 
+// holds generic platform info, managed by misctrl
+struct misc_control_message {
+  uint8_t version;
+  uint32_t magic;
+  uint64_t misctrl_flags;
+  uint8_t reserved[51];
+} __attribute__((packed));
+
 #define MISC_VIRTUAL_AB_MESSAGE_VERSION 2
 #define MISC_VIRTUAL_AB_MAGIC_HEADER 0x56740AB0
 
@@ -127,6 +135,10 @@ struct misc_kcmdline_message {
 #define MISC_KCMDLINE_MAGIC_HEADER 0x6ab5110c
 #define MISC_KCMDLINE_BINDER_RUST 0x1
 
+#define MISC_CONTROL_MESSAGE_VERSION 1
+#define MISC_CONTROL_MAGIC_HEADER 0x736d6f72
+#define MISC_CONTROL_16KB_BEFORE 0x1
+
 #if (__STDC_VERSION__ >= 201112L) || defined(__cplusplus)
 static_assert(sizeof(struct misc_virtual_ab_message) == 64,
               "struct misc_virtual_ab_message has wrong size");
@@ -134,6 +146,8 @@ static_assert(sizeof(struct misc_memtag_message) == 64,
               "struct misc_memtag_message has wrong size");
 static_assert(sizeof(struct misc_kcmdline_message) == 64,
               "struct misc_kcmdline_message has wrong size");
+static_assert(sizeof(struct misc_control_message) == 64,
+              "struct misc_control_message has wrong size");
 #endif
 
 // This struct is not meant to be used directly, rather, it is to make
@@ -142,7 +156,13 @@ struct misc_system_space_layout {
   misc_virtual_ab_message virtual_ab_message;
   misc_memtag_message memtag_message;
   misc_kcmdline_message kcmdline_message;
+  misc_control_message control_message;
 } __attribute__((packed));
+
+#if (__STDC_VERSION__ >= 201112L) || defined(__cplusplus)
+static_assert(sizeof(struct misc_system_space_layout) % 64 == 0,
+              "prefer to extend by 64 byte chunks, for consistency");
+#endif
 
 #ifdef __cplusplus
 
@@ -216,6 +236,14 @@ bool WriteMiscMemtagMessage(const misc_memtag_message& message, std::string* err
 // Read or write the kcmdline message from system space in /misc.
 bool ReadMiscKcmdlineMessage(misc_kcmdline_message* message, std::string* err);
 bool WriteMiscKcmdlineMessage(const misc_kcmdline_message& message, std::string* err);
+
+// Read or write the kcmdline message from system space in /misc.
+bool ReadMiscControlMessage(misc_control_message* message, std::string* err);
+bool WriteMiscControlMessage(const misc_control_message& message, std::string* err);
+
+// Check reserved system space.
+bool CheckReservedSystemSpaceEmpty(bool* empty, std::string* err);
+
 #else
 
 #include <stdbool.h>
