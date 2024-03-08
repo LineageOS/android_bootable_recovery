@@ -35,10 +35,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <array>
 #include <string>
 
 #include <android-base/file.h>
 #include <android-base/logging.h>
+#include <android-base/unique_fd.h>
 #include <private/android_logger.h> /* private pmsg functions */
 
 #include "recovery_utils/logging.h"
@@ -114,6 +116,59 @@ ssize_t logsave(
     return android::base::WriteStringToFile(buffer, destination.c_str());
 }
 
+size_t file_size(const char* path) {
+    struct stat st {};
+    if (stat(path, &st) < 0) {
+        return 0;
+    }
+
+    return st.st_size;
+}
+
+bool compare_file(const char* file1, const char* file2) {
+    if (!file_exists(file1) || !file_exists(file2)) {
+        return false;
+    }
+    if (file_size(file1) != file_size(file2)) {
+        return false;
+    }
+    std::array<uint8_t, 1024 * 16> buf1{};
+    std::array<uint8_t, 1024 * 16> buf2{};
+    android::base::unique_fd fd1(open(file1, O_RDONLY));
+    android::base::unique_fd fd2(open(file2, O_RDONLY));
+    auto bytes_remain = file_size(file1);
+    while (bytes_remain > 0) {
+        const auto bytes_to_read = std::min<size_t>(bytes_remain, buf1.size());
+
+        if (!android::base::ReadFully(fd1, buf1.data(), bytes_to_read)) {
+            LOG(ERROR) << "Failed to read from " << file1;
+            return false;
+        }
+        if (!android::base::ReadFully(fd2, buf2.data(), bytes_to_read)) {
+            LOG(ERROR) << "Failed to read from " << file2;
+            return false;
+        }
+        if (memcmp(buf1.data(), buf2.data(), bytes_to_read) != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void rotate_last_kmsg() {
+    if (rotated) {
+        return;
+    }
+    if (!file_exists(LAST_CONSOLE_FILE) && !file_exists(ALT_LAST_CONSOLE_FILE)) {
+        return;
+    }
+    if (!compare_file(LAST_KMSG_FILE, LAST_CONSOLE_FILE) &&
+        !compare_file(LAST_KMSG_FILE, ALT_LAST_CONSOLE_FILE)) {
+        rotate_logs(LAST_LOG_FILE, LAST_KMSG_FILE);
+        rotated = true;
+    }
+}
+
 int main(int argc, char **argv) {
 
     /* Is /cache a mount?, we have been delivered where we are not wanted */
@@ -131,7 +186,7 @@ int main(int argc, char **argv) {
     } else {
         char *line = NULL;
         size_t len = 0;
-        ssize_t read;
+        ssize_t read{};
         while ((read = getline(&line, &len, fp)) != -1) {
             if (strstr(line, " /cache ")) {
                 has_cache = true;
@@ -172,6 +227,7 @@ int main(int argc, char **argv) {
         PLOG(ERROR) << "Failed to unlink " << LAST_INSTALL_FILE;
       }
     }
+    rotate_last_kmsg();
 
     /* Is there a last console log too? */
     if (rotated) {

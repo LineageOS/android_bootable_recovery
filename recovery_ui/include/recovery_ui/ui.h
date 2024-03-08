@@ -275,6 +275,10 @@ class RecoveryUI {
     return 1;
   }
 
+  virtual bool IsWearable() {
+    return false;
+  }
+
   // Set whether or not the fastbootd logo is displayed.
   void SetEnableFastbootdLogo(bool enable) {
     fastbootd_logo_enabled_ = enable;

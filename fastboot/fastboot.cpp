@@ -37,14 +37,11 @@ static const std::vector<std::pair<std::string, Device::BuiltinAction>> kFastboo
   { "Power off", Device::SHUTDOWN_FROM_FASTBOOT },
 };
 
-Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::string>& /* args */) {
-  RecoveryUI* ui = device->GetUI();
-
+void FillDefaultFastbootLines(std::vector<std::string>& title_lines) {
   std::string bootloader_version = android::base::GetProperty("ro.bootloader", "");
   std::string baseband_version = android::base::GetProperty("ro.build.expect.baseband", "");
   std::string hw_version = android::base::GetProperty(
       "ro.boot.hardware.revision", android::base::GetProperty("ro.revision", ""));
-  std::vector<std::string> title_lines;
   title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   if (!android::base::EqualsIgnoreCase(bootloader_version, "unknown")) {
     title_lines.push_back("Bootloader version - " + bootloader_version);
@@ -57,6 +54,33 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
                         ((android::base::GetProperty("ro.secure", "") == "1") ? "yes" : "no"));
   if (!android::base::EqualsIgnoreCase(hw_version, "0")) {
     title_lines.push_back("HW version - " + hw_version);
+  }
+}
+
+void FillWearableFastbootLines(std::vector<std::string>& title_lines) {
+  title_lines.push_back("Android Fastboot");
+  title_lines.push_back(android::base::GetProperty("ro.product.device", "") + " - " +
+                        android::base::GetProperty("ro.revision", ""));
+  title_lines.push_back(android::base::GetProperty("ro.bootloader", ""));
+
+  const size_t max_baseband_len = 24;
+  const std::string& baseband = android::base::GetProperty("ro.build.expect.baseband", "");
+  title_lines.push_back(baseband.length() > max_baseband_len
+                            ? baseband.substr(0, max_baseband_len - 3) + "..."
+                            : baseband);
+
+  title_lines.push_back("Serial #: " + android::base::GetProperty("ro.serialno", ""));
+}
+
+Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::string>& /* args */) {
+  RecoveryUI* ui = device->GetUI();
+  std::vector<std::string> title_lines;
+
+  if (ui->IsWearable()) {
+    FillWearableFastbootLines(title_lines);
+  } else {
+    ui->SetEnableFastbootdLogo(true);
+    FillDefaultFastbootLines(title_lines);
   }
 
   ui->ResetKeyInterruptStatus();

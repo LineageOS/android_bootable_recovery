@@ -724,6 +724,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     { "wipe_ab", no_argument, nullptr, 0 },
     { "wipe_cache", no_argument, nullptr, 0 },
     { "wipe_data", no_argument, nullptr, 0 },
+    { "keep_memtag_mode", no_argument, nullptr, 0 },
     { "wipe_package_size", required_argument, nullptr, 0 },
     { nullptr, 0, nullptr, 0 },
   };
@@ -732,6 +733,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   bool install_with_fuse = false;  // memory map the update package by default.
   bool should_wipe_data = false;
   bool should_prompt_and_wipe_data = false;
+  bool should_keep_memtag_mode = false;
   bool should_wipe_cache = false;
   bool should_wipe_ab = false;
   size_t wipe_package_size = 0;
@@ -791,6 +793,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
           should_wipe_data = true;
         } else if (option == "wipe_package_size") {
           android::base::ParseUint(optarg, &wipe_package_size);
+        } else if (option == "keep_memtag_mode") {
+          should_keep_memtag_mode = true;
         }
         break;
       }
@@ -930,7 +934,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   } else if (should_wipe_data) {
     save_current_log = true;
     CHECK(device->GetReason().has_value());
-    if (!WipeData(device)) {
+    if (!WipeData(device, should_keep_memtag_mode)) {
       status = INSTALL_ERROR;
     }
   } else if (should_prompt_and_wipe_data) {

@@ -3,15 +3,18 @@ service uncrypt /system/bin/uncrypt
     socket uncrypt stream 600 system system
     disabled
     oneshot
+    user root
 
 service setup-bcb /system/bin/uncrypt --setup-bcb
     class main
     socket uncrypt stream 600 system system
     disabled
     oneshot
+    user root
 
 service clear-bcb /system/bin/uncrypt --clear-bcb
     class main
     socket uncrypt stream 600 system system
     disabled
     oneshot
+    user root

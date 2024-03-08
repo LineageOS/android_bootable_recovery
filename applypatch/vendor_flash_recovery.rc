@@ -1,6 +1,7 @@
 service vendor_flash_recovery /vendor/bin/install-recovery.sh
     class main
     oneshot
+    user root
     disabled
 
 # update recovery if enabled

@@ -162,6 +162,9 @@ void gr_rotate(GRRotation rotation);
 // Sets touch rotation
 void gr_rotate_touch(GRRotation rotation);
 
+// Get current rotation
+GRRotation gr_get_rotation();
+
 // Returns the current PixelFormat being used.
 PixelFormat gr_pixel_format();
 

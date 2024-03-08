@@ -92,6 +92,7 @@ on late-init
 service ueventd /system/bin/ueventd
     critical
     seclabel u:r:ueventd:s0
+    user root
 
 service console /system/bin/sh
     class core
@@ -108,20 +109,24 @@ on init && property:ro.debuggable=1
 service charger /system/bin/charger
     critical
     seclabel u:r:charger:s0
+    user root
 
 service recovery /system/bin/recovery
     socket recovery stream 422 system system
     seclabel u:r:recovery:s0
+    user root
 
 service adbd /system/bin/adbd --root_seclabel=u:r:su:s0 --device_banner=recovery
     disabled
     socket adbd stream 660 system system
     seclabel u:r:adbd:s0
+    user root
 
 service fastbootd /system/bin/fastbootd
     disabled
     group system
     seclabel u:r:fastbootd:s0
+    user root
 
 # Restart adbd so it can run as root
 on property:service.adb.root=1

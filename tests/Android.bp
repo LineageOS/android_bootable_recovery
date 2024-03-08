@@ -107,14 +107,11 @@ librecovery_static_libs = [
 // ========================================================
 genrule {
     name: "recovery_image",
-    cmd: "cat $(location testdata/recovery_head) <(cat $(location testdata/recovery_body) | $(location minigzip)) $(location testdata/recovery_tail) > $(out)",
+    cmd: "cat $(location testdata/recovery_head) <(cat $(location testdata/recovery_body) | gzip) $(location testdata/recovery_tail) > $(out)",
     srcs: [
         "testdata/recovery_head",
         "testdata/recovery_body",
         "testdata/recovery_tail",
-    ],
-    tools: [
-        "minigzip",
     ],
     out: [
         "testdata/recovery.img",
@@ -148,7 +145,7 @@ cc_test {
 
     static_libs: libapplypatch_static_libs + librecovery_static_libs + [
         "android.hardware.health-translate-ndk",
-        "android.hardware.health-V2-ndk",
+        "android.hardware.health-V3-ndk",
         "libhealthshim",
         "librecovery_ui",
         "libfusesideload",
