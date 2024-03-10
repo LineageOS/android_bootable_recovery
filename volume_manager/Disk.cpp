@@ -26,7 +26,6 @@
 #include <android-base/logging.h>
 #include <android-base/properties.h>
 #include <android-base/stringprintf.h>
-#include <diskconfig/diskconfig.h>
 
 #include <sgdisk.h>
 
