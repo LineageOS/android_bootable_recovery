@@ -605,6 +605,7 @@ int main(int argc, char** argv) {
       case Device::ENTER_RECOVERY:
         LOG(INFO) << "Entering recovery";
         fastboot = false;
+        ui->SetEnableFastbootdLogo(fastboot);
         device->GoHome();
         break;
 
