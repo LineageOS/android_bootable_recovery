@@ -34,6 +34,24 @@
       "parentUuid": "61e17bd7_512c3c98",
       "revId": "84974154cf508a1e51bde03ed955c9d00b389c70",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2bbcc4c1_e5001371",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-03-16T16:40:48Z",
+      "side": 1,
+      "message": "yeah, but official builds are better to be always verified no matter what, I think...",
+      "parentUuid": "afda9d98_82ff7f27",
+      "revId": "84974154cf508a1e51bde03ed955c9d00b389c70",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
