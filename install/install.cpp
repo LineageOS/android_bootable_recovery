@@ -67,6 +67,7 @@ using namespace std::chrono_literals;
 bool ask_to_ab_reboot(Device* device);
 bool ask_to_continue_unverified(Device* device);
 bool ask_to_continue_downgrade(Device* device);
+bool ask_to_continue_verification(Device* device);
 
 static constexpr int kRecoveryApiVersion = 3;
 // We define RECOVERY_API_VERSION in Android.mk, which will be picked up by build system and packed
@@ -639,10 +640,12 @@ static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
   ui->ShowProgress(VERIFICATION_PROGRESS_FRACTION, VERIFICATION_PROGRESS_TIME);
 
   // Verify package.
-  if (!verify_package(package, ui)) {
-    log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
-    if (!ui->IsTextVisible() || !ask_to_continue_unverified(ui->GetDevice())) {
-        return INSTALL_CORRUPT;
+  if(ask_to_continue_verification(device)) {
+    if (!verify_package(package, ui)) {
+      log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
+      if (!ui->IsTextVisible() || !ask_to_continue_unverified(ui->GetDevice())) {
+          return INSTALL_CORRUPT;
+      }
     }
   }
 
