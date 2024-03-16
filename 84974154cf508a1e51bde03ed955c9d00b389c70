@@ -16,6 +16,24 @@
       "message": "official builds uses userdebug build type, maybe check whether if it\u0027s official build too?",
       "revId": "84974154cf508a1e51bde03ed955c9d00b389c70",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "afda9d98_82ff7f27",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33372
+      },
+      "writtenOn": "2024-03-16T16:33:56Z",
+      "side": 1,
+      "message": "even if we check for that, ask_to_continue_unverified can still allow flashing the OTA though",
+      "parentUuid": "61e17bd7_512c3c98",
+      "revId": "84974154cf508a1e51bde03ed955c9d00b389c70",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
