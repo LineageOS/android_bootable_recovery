@@ -199,6 +199,15 @@ bool ask_to_continue_downgrade(Device* device) {
   }
 }
 
+bool ask_to_continue_verification(Device* device) {
+  if (get_build_type() == "user" || android::base::GetProperty("ro.lineage.releasetype", "") == "NIGHTLY") {
+    return false;
+  } else {
+    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+    return yes_no(device, "OTA verification can take a long time, depending on the package size", "Verify anyway?");
+  }
+}
+
 static bool ask_to_wipe_data(Device* device) {
   std::vector<std::string> headers{ "Format user data?", "This includes internal storage.", "THIS CANNOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Format data" };
