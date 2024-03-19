@@ -96,7 +96,7 @@ class UncryptTest : public ::testing::Test {
     // Connect to the uncrypt socket.
     bool success = false;
     for (int retry = 0; retry < SOCKET_CONNECTION_MAX_RETRY; retry++) {
-      if (connect(sockfd, reinterpret_cast<sockaddr*>(&un), sizeof(sockaddr_un)) != 0) {
+      if (connect(sockfd, reinterpret_cast<sockaddr*>(&un), sizeof(sockaddr_un)) == 0) {
         success = true;
         break;
       }
