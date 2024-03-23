@@ -113,7 +113,8 @@ bool SimulatorRuntime::UnmapPartitionOnDeviceMapper(const std::string& partition
   return true;
 }
 
-bool SimulatorRuntime::UpdateDynamicPartitions(const std::string_view op_list_value) {
+bool SimulatorRuntime::UpdateDynamicPartitions(const std::string_view op_list_value,
+                                               const std::string_view /* super_empty_value */) {
   const std::unordered_set<std::string> commands{
     "resize",    "remove",       "add",          "move",
     "add_group", "resize_group", "remove_group", "remove_all_groups",
