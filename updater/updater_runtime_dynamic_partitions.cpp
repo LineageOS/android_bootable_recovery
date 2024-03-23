@@ -41,6 +41,7 @@ using android::fs_mgr::LpMetadata;
 using android::fs_mgr::MetadataBuilder;
 using android::fs_mgr::Partition;
 using android::fs_mgr::PartitionOpener;
+using android::fs_mgr::ReadFromImageBlob;
 using android::fs_mgr::SlotNumberForSlotSuffix;
 
 static constexpr std::chrono::milliseconds kMapTimeout{ 1000 };
@@ -298,12 +299,30 @@ bool PerformOpRemoveAllGroups(const OpParameters& params) {
 
 }  // namespace
 
-bool UpdaterRuntime::UpdateDynamicPartitions(const std::string_view op_list_value) {
+bool UpdaterRuntime::UpdateDynamicPartitions(const std::string_view op_list_value,
+                                             const std::string_view super_empty_value) {
+  bool flash_metadata = false;
+  const auto partition_opener = PartitionOpener();
   auto super_device = GetSuperDevice();
-  auto builder = MetadataBuilder::New(PartitionOpener(), super_device, 0);
+  auto builder = MetadataBuilder::New(partition_opener, super_device, 0);
   if (builder == nullptr) {
-    LOG(ERROR) << "Failed to load dynamic partition metadata.";
-    return false;
+    LOG(ERROR) << "Failed to load dynamic partition metadata from device.";
+    if (super_empty_value.size()) {
+      LOG(INFO) << "Trying to load dynamic partition metadata from OTA.";
+      const auto metadata = ReadFromImageBlob(super_empty_value.data(), super_empty_value.size());
+      if (metadata == nullptr) {
+        LOG(ERROR) << "Failed to parse dynamic partition metadata from OTA.";
+        return false;
+      }
+      builder = MetadataBuilder::New(*metadata, &partition_opener);
+      if (builder == nullptr) {
+        LOG(ERROR) << "Failed to initialize dynamic partition metadata from OTA.";
+        return false;
+      }
+      flash_metadata = true;
+    } else {
+      return false;
+    }
   }
 
   static const OpMap op_map{
@@ -347,9 +366,16 @@ bool UpdaterRuntime::UpdateDynamicPartitions(const std::string_view op_list_valu
     return false;
   }
 
-  if (!UpdatePartitionTable(super_device, *metadata, 0)) {
-    LOG(ERROR) << "Failed to write metadata.";
-    return false;
+  if (flash_metadata) {
+    if (!FlashPartitionTable(super_device, *metadata)) {
+      LOG(ERROR) << "Failed to flash metadata.";
+      return false;
+    }
+  } else {
+    if (!UpdatePartitionTable(super_device, *metadata, 0)) {
+      LOG(ERROR) << "Failed to write metadata.";
+      return false;
+    }
   }
 
   return true;

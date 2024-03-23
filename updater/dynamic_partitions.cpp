@@ -88,8 +88,10 @@ static constexpr char kMetadataUpdatedMarker[] = "/dynamic_partition_metadata.UP
 
 Value* UpdateDynamicPartitionsFn(const char* name, State* state,
                                  const std::vector<std::unique_ptr<Expr>>& argv) {
-  if (argv.size() != 1) {
-    ErrorAbort(state, kArgsParsingFailure, "%s expects 1 arguments, got %zu", name, argv.size());
+  const std::string_view empty_string_view{};
+  if (argv.size() != 1 && argv.size() != 2) {
+    ErrorAbort(state, kArgsParsingFailure, "%s expects 1 or 2 arguments, got %zu", name,
+               argv.size());
     return StringValue("");
   }
   std::vector<std::unique_ptr<Value>> args;
@@ -100,6 +102,14 @@ Value* UpdateDynamicPartitionsFn(const char* name, State* state,
   if (op_list_value->type != Value::Type::BLOB) {
     ErrorAbort(state, kArgsParsingFailure, "op_list argument to %s must be blob", name);
     return StringValue("");
+  }
+
+  const std::unique_ptr<Value>& super_empty_value = args[1];
+  if (argv.size() > 1) {
+    if (super_empty_value->type != Value::Type::BLOB) {
+      ErrorAbort(state, kArgsParsingFailure, "super_empty argument to %s must be blob", name);
+      return StringValue("");
+    }
   }
 
   std::string updated_marker = Paths::Get().stash_directory_base() + kMetadataUpdatedMarker;
@@ -121,7 +131,8 @@ Value* UpdateDynamicPartitionsFn(const char* name, State* state,
   }
 
   auto updater_runtime = state->updater->GetRuntime();
-  if (!updater_runtime->UpdateDynamicPartitions(op_list_value->data)) {
+  if (!updater_runtime->UpdateDynamicPartitions(
+          op_list_value->data, argv.size() > 1 ? super_empty_value->data : empty_string_view)) {
     return StringValue("");
   }
 
