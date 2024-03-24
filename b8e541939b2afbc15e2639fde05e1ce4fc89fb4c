@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "085c748f_e9103d9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-03-24T21:50:06Z",
+      "side": 1,
+      "message": "Confirmed to be working fine on:\n- Mi8917 \u0026 Mi8937 (retrofit)\n- Mi439 (retrofit)\n- vela (retrofit)\n- umi (launched with dynamic partitions) (sm8250, not in official yet)",
+      "revId": "b8e541939b2afbc15e2639fde05e1ce4fc89fb4c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
