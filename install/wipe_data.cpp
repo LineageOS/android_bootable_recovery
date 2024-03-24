@@ -88,7 +88,14 @@ static bool EraseVolume(const char* volume, RecoveryUI* ui) {
     close(fd);
   }
 
-  if (ensure_volume_unmounted(vol->blk_device) == -1) {
+  std::string blk_device;
+
+  if (!android::base::Realpath(vol->blk_device, &blk_device)) {
+    PLOG(ERROR) << "Failed to convert \"" << vol->blk_device << "\" to absolute path";
+    return false;
+  }
+
+  if (ensure_volume_unmounted(blk_device) == -1) {
     PLOG(ERROR) << "Failed to unmount volume!";
     return false;
   }
