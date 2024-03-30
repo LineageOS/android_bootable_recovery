@@ -16,6 +16,23 @@
       "message": "Funny, I accidentally noticed this on a YouTube video...\n\nIt would be great if someone who uses \u0027ro.recovery.ui.margin_height\u0027 property could confirm that, just in case. Battery capacity status should be drawn on the opposite side from LineageOS version + build date.",
       "revId": "1a9c952181c2d378ad01a66cd4be794792ff41c1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11a94ae6_c2d4178e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 23878
+      },
+      "writtenOn": "2024-03-30T12:03:30Z",
+      "side": 1,
+      "message": "Works for smith.",
+      "revId": "1a9c952181c2d378ad01a66cd4be794792ff41c1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
