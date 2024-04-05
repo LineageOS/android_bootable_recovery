@@ -155,9 +155,13 @@ static std::vector<std::string> get_args(const int argc, char** const argv, std:
   // Write the arguments (excluding the filename in args[0]) back into the
   // bootloader control block. So the device will always boot into recovery to
   // finish the pending work, until FinishRecovery() is called.
-  std::vector<std::string> options(args.cbegin() + 1, args.cend());
-  if (!update_bootloader_message(options, &err)) {
-    LOG(ERROR) << "Failed to set BCB message: " << err;
+  // This should only be done for boot-recovery command so that other commands
+  // won't be overwritten.
+  if (boot_command == "boot-recovery") {
+    std::vector<std::string> options(args.cbegin() + 1, args.cend());
+    if (!update_bootloader_message(options, &err)) {
+      LOG(ERROR) << "Failed to set BCB message: " << err;
+    }
   }
 
   // Finally, if no arguments were specified, check whether we should boot
