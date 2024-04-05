@@ -176,6 +176,11 @@ static bool ask_to_wipe_data(Device* device) {
 }
 
 static InstallResult prompt_and_wipe_data(Device* device) {
+  // Reset to normal system boot so recovery won't cycle indefinitely.
+  std::string err;
+  if (!clear_bootloader_message(&err)) {
+    LOG(ERROR) << "Failed to clear BCB message: " << err;
+  }
   // Use a single string and let ScreenRecoveryUI handles the wrapping.
   std::vector<std::string> wipe_data_menu_headers{
     "Can't load Android system. Your data may be corrupt. "
