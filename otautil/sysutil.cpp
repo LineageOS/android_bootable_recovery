@@ -233,9 +233,13 @@ void Reboot(std::string_view target) {
   while (true) pause();
 }
 
-bool Shutdown(std::string_view target) {
+void Shutdown(std::string_view target) {
   std::string cmd = "shutdown," + std::string(target);
-  return android::base::SetProperty(ANDROID_RB_PROPERTY, cmd);
+  if (!android::base::SetProperty(ANDROID_RB_PROPERTY, cmd)) {
+    LOG(FATAL) << "Shutdown failed";
+  }
+
+  while (true) pause();
 }
 
 std::vector<char*> StringVectorToNullTerminatedArray(const std::vector<std::string>& args) {
