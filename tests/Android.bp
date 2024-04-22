@@ -13,6 +13,7 @@
 // limitations under the License.
 
 package {
+    default_team: "trendy_team_android_kernel",
     // See: http://go/android-license-faq
     // A large-scale-change added 'default_applicable_licenses' to import
     // all of the 'license_kinds' from "bootable_recovery_license"
@@ -234,7 +235,7 @@ cc_fuzz {
     srcs: ["fuzz/verify_package_fuzzer.cpp"],
 
     corpus: [
-      "testdata/otasigned*.zip",
+        "testdata/otasigned*.zip",
     ],
 
     static_libs: [
