@@ -106,7 +106,7 @@ class MemMapping {
 [[noreturn]] void Reboot(std::string_view target);
 
 // Triggers a shutdown.
-bool Shutdown(std::string_view target);
+[[noreturn]] void Shutdown(std::string_view target);
 
 // Returns a null-terminated char* array, where the elements point to the C-strings in the given
 // vector, plus an additional nullptr at the end. This is a helper function that facilitates
