@@ -98,6 +98,5 @@ cc_library_static {
         "//bootable/recovery/install",
         "//bootable/recovery/minadbd",
         "//bootable/recovery/tests",
-        "//bootable/deprecated-ota:__subpackages__",
     ],
 }
