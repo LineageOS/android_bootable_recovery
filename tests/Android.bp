@@ -62,9 +62,6 @@ cc_defaults {
 
 // libapplypatch, libapplypatch_modes
 libapplypatch_static_libs = [
-    "libapplypatch_modes",
-    "libapplypatch",
-    "libedify",
     "libotautil",
     "libbsdiff",
     "libbspatch",
@@ -126,15 +123,9 @@ cc_test {
 
     defaults: [
         "recovery_test_defaults",
-        "libupdater_defaults",
-        "libupdater_device_defaults",
     ],
 
     test_suites: ["device-tests"],
-
-    tidy_timeout_srcs: [
-        "unit/commands_test.cpp",
-    ],
 
     srcs: [
         "unit/*.cpp",
@@ -153,8 +144,6 @@ cc_test {
         "libminui",
         "librecovery_utils",
         "libotautil",
-        "libupdater_device",
-        "libupdater_core",
         "libupdate_verifier",
 
         "libprotobuf-cpp-lite",
@@ -191,11 +180,6 @@ cc_test_host {
 
     defaults: [
         "recovery_test_defaults",
-        "libupdater_defaults",
-    ],
-
-    tidy_timeout_srcs: [
-        "unit/host/imgdiff_test.cpp",
     ],
 
     srcs: [
@@ -203,9 +187,6 @@ cc_test_host {
     ],
 
     static_libs: [
-        "libupdater_host",
-        "libupdater_core",
-        "libimgdiff",
         "libbsdiff",
         "libdivsufsort64",
         "libdivsufsort",
