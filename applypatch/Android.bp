@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-soong_namespace {
-    imports: [
-        "bootable/recovery/edify",
-    ],
-}
-
 package {
     default_applicable_licenses: ["bootable_recovery_applypatch_license"],
 }
