@@ -73,7 +73,7 @@ static constexpr int NO_STATUS_EXIT = 2;
 
 using SHA256Digest = std::array<uint8_t, SHA256_DIGEST_LENGTH>;
 
-#define INSTALL_REQUIRED_MEMORY (400 * 1024 * 1024)
+#define INSTALL_REQUIRED_MEMORY (500 * 1024 * 1024)
 
 struct fuse_data {
   android::base::unique_fd ffd;  // file descriptor for the fuse socket
