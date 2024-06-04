@@ -16,6 +16,23 @@
       "message": "This is very useful for A/B cell phones. (I\u0027m a Beckham user).",
       "revId": "ef2735a8fdb9777e75003d339daed7557f3157b7",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c8ea204_df83101b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-06-04T20:20:34Z",
+      "side": 1,
+      "message": "I\u0027m not sure we want this - IMO the user should have this entirely abstracted to them as it is now.\n\n\"Follow the wiki and everything will be fine\"\n\nExposing this to users across updates (which may contain ASBs) is a bad idea as user could brick their user data.\n\nI\u0027d rather leave this to `fastboot set-active` if you ABSOLUTELY need to.\n\nOpen to thoughts tho, anyone have opposition to any of that?",
+      "revId": "ef2735a8fdb9777e75003d339daed7557f3157b7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
