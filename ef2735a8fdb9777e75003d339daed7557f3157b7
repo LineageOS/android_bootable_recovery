@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc80f14d_4130e1f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33820
+      },
+      "writtenOn": "2024-06-04T13:11:47Z",
+      "side": 1,
+      "message": "This is very useful for A/B cell phones. (I\u0027m a Beckham user).",
+      "revId": "ef2735a8fdb9777e75003d339daed7557f3157b7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
