@@ -16,6 +16,24 @@
       "message": "Maybe send this to AOSP as well?",
       "revId": "6eb91212e3fccc02b2694c62af1042c53c719080",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd060786_d738a1b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29080
+      },
+      "writtenOn": "2024-06-14T06:17:32Z",
+      "side": 1,
+      "message": "You should do it since you\u0027re the author",
+      "parentUuid": "6caf1efa_0e520997",
+      "revId": "6eb91212e3fccc02b2694c62af1042c53c719080",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
