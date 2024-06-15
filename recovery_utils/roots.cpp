@@ -206,7 +206,8 @@ static int64_t get_file_size(int fd, uint64_t reserve_len) {
   return computed_size;
 }
 
-int format_volume(const std::string& volume, const std::string& directory) {
+int format_volume(const std::string& volume, const std::string& directory,
+                  std::string_view new_fstype) {
   const FstabEntry* v = android::fs_mgr::GetEntryForPath(&fstab, volume);
   if (v == nullptr) {
     LOG(ERROR) << "unknown volume \"" << volume << "\"";
@@ -252,11 +253,13 @@ int format_volume(const std::string& volume, const std::string& directory) {
   }
 
   // If the raw disk will be used as a metadata encrypted device mapper target,
-  // next boot will do encrypt_in_place the raw disk which gives a subtle duration
-  // to get any failure in the process. In order to avoid it, let's simply wipe
-  // the raw disk if we don't reserve any space, which behaves exactly same as booting
-  // after "fastboot -w".
-  if (!v->metadata_key_dir.empty() && length == 0) {
+  // next boot will do encrypt_in_place the raw disk. While fs_mgr mounts /data
+  // as RO to avoid write file operations before encrypt_inplace, this code path
+  // is not well tested so we would like to avoid it if possible. For safety,
+  // let vold do the formatting on boot for metadata encrypted devices, except
+  // when user specified a new fstype. Because init formats /data according
+  // to fstab, it's difficult to override the fstab in init.
+  if (!v->metadata_key_dir.empty() && length == 0 && new_fstype.empty()) {
     android::base::unique_fd fd(open(v->blk_device.c_str(), O_RDWR));
     if (fd == -1) {
       PLOG(ERROR) << "format_volume: failed to open " << v->blk_device;
@@ -270,7 +273,8 @@ int format_volume(const std::string& volume, const std::string& directory) {
     }
   }
 
-  if (v->fs_type == "ext4") {
+  if ((v->fs_type == "ext4" && new_fstype.empty()) || new_fstype == "ext4") {
+    LOG(INFO) << "Formatting " << v->blk_device << " as ext4";
     static constexpr int kBlockSize = 4096;
     std::vector<std::string> mke2fs_args = {
       "/system/bin/mke2fs", "-F", "-t", "ext4", "-b", std::to_string(kBlockSize),
@@ -322,6 +326,7 @@ int format_volume(const std::string& volume, const std::string& directory) {
   }
 
   // Has to be f2fs because we checked earlier.
+  LOG(INFO) << "Formatting " << v->blk_device << " as f2fs";
   static constexpr int kSectorSize = 4096;
   std::vector<std::string> make_f2fs_cmd = {
     "/system/bin/make_f2fs",
@@ -366,7 +371,7 @@ int format_volume(const std::string& volume, const std::string& directory) {
 }
 
 int format_volume(const std::string& volume) {
-  return format_volume(volume, "");
+  return format_volume(volume, "", "");
 }
 
 int setup_install_mounts() {

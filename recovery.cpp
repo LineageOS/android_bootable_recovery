@@ -16,11 +16,8 @@
 
 #include "recovery.h"
 
-#include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
-#include <inttypes.h>
-#include <limits.h>
 #include <linux/input.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +51,6 @@
 #include "install/snapshot_utils.h"
 #include "install/wipe_data.h"
 #include "install/wipe_device.h"
-#include "otautil/boot_state.h"
 #include "otautil/error_code.h"
 #include "otautil/package.h"
 #include "otautil/paths.h"
@@ -561,7 +557,7 @@ change_menu:
         update_in_progress = true;
         WriteUpdateInProgress();
 
-        Device::BuiltinAction reboot_action;
+        Device::BuiltinAction reboot_action{};
         if (chosen_action == Device::ENTER_RESCUE) {
           // Switch to graphics screen.
           ui->ShowText(false);
@@ -726,6 +722,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     { "wipe_data", no_argument, nullptr, 0 },
     { "keep_memtag_mode", no_argument, nullptr, 0 },
     { "wipe_package_size", required_argument, nullptr, 0 },
+    { "reformat_data", required_argument, nullptr, 0 },
     { nullptr, 0, nullptr, 0 },
   };
 
@@ -748,8 +745,9 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
 
   auto args_to_parse = StringVectorToNullTerminatedArray(args);
 
-  int arg;
-  int option_index;
+  int arg = 0;
+  int option_index = 0;
+  std::string data_fstype;
   // Parse everything before the last element (which must be a nullptr). getopt_long(3) expects a
   // null-terminated char* array, but without counting null as an arg (i.e. argv[argc] should be
   // nullptr).
@@ -793,6 +791,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
           should_wipe_data = true;
         } else if (option == "wipe_package_size") {
           android::base::ParseUint(optarg, &wipe_package_size);
+        } else if (option == "reformat_data") {
+          data_fstype = optarg;
         } else if (option == "keep_memtag_mode") {
           should_keep_memtag_mode = true;
         }
@@ -820,7 +820,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   // otherwise set it to "installing system update".
   ui->SetSystemUpdateText(security_update);
 
-  int st_cur, st_max;
+  int st_cur = 0, st_max = 0;
   if (!device->GetStage().has_value() &&
       sscanf(device->GetStage().value().c_str(), "%d/%d", &st_cur, &st_max) == 2) {
     ui->SetStage(st_cur, st_max);
@@ -868,7 +868,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     // to log the update attempt since update_package is non-NULL.
     save_current_log = true;
 
-    if (int required_battery_level; retry_count == 0 && !IsBatteryOk(&required_battery_level)) {
+    if (int required_battery_level = 0; retry_count == 0 && !IsBatteryOk(&required_battery_level)) {
       ui->Print("battery capacity is not enough for installing package: %d%% needed\n",
                 required_battery_level);
       // Log the error code to last_install when installation skips due to low battery.
@@ -934,7 +934,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   } else if (should_wipe_data) {
     save_current_log = true;
     CHECK(device->GetReason().has_value());
-    if (!WipeData(device, should_keep_memtag_mode)) {
+    if (!WipeData(device, should_keep_memtag_mode, data_fstype)) {
       status = INSTALL_ERROR;
     }
   } else if (should_prompt_and_wipe_data) {
@@ -949,7 +949,7 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     }
   } else if (should_wipe_cache) {
     save_current_log = true;
-    if (!WipeCache(ui, nullptr)) {
+    if (!WipeCache(ui, nullptr, data_fstype)) {
       status = INSTALL_ERROR;
     }
   } else if (should_wipe_ab) {
