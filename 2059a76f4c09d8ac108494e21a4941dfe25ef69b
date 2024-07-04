@@ -22,6 +22,30 @@
       },
       "revId": "2059a76f4c09d8ac108494e21a4941dfe25ef69b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1a49189_3dac4e2e",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 997,
+      "author": {
+        "id": 31578
+      },
+      "writtenOn": "2024-07-04T17:44:07Z",
+      "side": 1,
+      "message": "sorry for the late fix. I have addressed the issue.",
+      "parentUuid": "3675b649_0986e166",
+      "range": {
+        "startLine": 989,
+        "startChar": 0,
+        "endLine": 997,
+        "endChar": 9
+      },
+      "revId": "2059a76f4c09d8ac108494e21a4941dfe25ef69b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
