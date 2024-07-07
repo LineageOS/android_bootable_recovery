@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9621a36_0f4cec24",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 985,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2024-07-07T10:47:04Z",
+      "side": 1,
+      "message": "space between while and opening (",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1fdc8cad_fe7897b5",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2024-07-07T10:47:04Z",
+      "side": 1,
+      "message": "I am not sure if I am missing something, but inited is only set after the while loop, so can\u0027t ever be true here, can it?",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
