@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9a744af_00e04d8e",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 985,
+      "author": {
+        "id": 31578
+      },
+      "writtenOn": "2024-07-07T18:27:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9621a36_0f4cec24",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1fdc8cad_fe7897b5",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "The while loop is nested in another while loop.",
       "parentUuid": "1fdc8cad_fe7897b5",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c19265a_5a9a5e75",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 31578
+      },
+      "writtenOn": "2024-07-07T18:27:25Z",
+      "side": 1,
+      "message": "yes, there is an outer loop: `while (!batt_monitor_thread_stopped_)`",
+      "parentUuid": "cba986f9_96866504",
       "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
