@@ -87,6 +87,24 @@
       "parentUuid": "cba986f9_96866504",
       "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ad00473_0bdf641a",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-07-07T18:31:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0c19265a_5a9a5e75",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
