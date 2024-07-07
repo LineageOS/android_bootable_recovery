@@ -33,6 +33,24 @@
       "message": "I am not sure if I am missing something, but inited is only set after the while loop, so can\u0027t ever be true here, can it?",
       "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cba986f9_96866504",
+        "filename": "recovery_ui/screen_ui.cpp",
+        "patchSetId": 5
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 22465
+      },
+      "writtenOn": "2024-07-07T11:09:56Z",
+      "side": 1,
+      "message": "The while loop is nested in another while loop.",
+      "parentUuid": "1fdc8cad_fe7897b5",
+      "revId": "716754abf1142d06af03892b77d0ed4f11deb905",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
