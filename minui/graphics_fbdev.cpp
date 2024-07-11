@@ -69,46 +69,59 @@ void MinuiBackendFbdev::SetDisplayedFramebuffer(size_t n) {
 }
 
 GRSurface* MinuiBackendFbdev::Init() {
-  android::base::unique_fd fd(open("/dev/graphics/fb0", O_RDWR | O_CLOEXEC));
-  if (fd == -1) {
-    perror("cannot open fb0");
-    return nullptr;
-  }
-
   fb_fix_screeninfo fi;
-  if (ioctl(fd, FBIOGET_FSCREENINFO, &fi) < 0) {
-    perror("failed to get fb0 info");
-    return nullptr;
+  void* bits = nullptr;
+  uint8_t fb_count = 0;
+  std::string fb_path = "/dev/graphics/fb0";
+  android::base::unique_fd fd(open(fb_path.c_str(), O_RDWR | O_CLOEXEC));
+  while (fd != -1) {
+    if (ioctl(fd, FBIOGET_FSCREENINFO, &fi) < 0) {
+      perror("failed to get fb info");
+      goto next_fb;
+    }
+
+    if (ioctl(fd, FBIOGET_VSCREENINFO, &vi) < 0) {
+      perror("failed to get fb info");
+      goto next_fb;
+    }
+
+    // We print this out for informational purposes only, but
+    // throughout we assume that the framebuffer device uses an RGBX
+    // pixel format.  This is the case for every development device I
+    // have access to.  For some of those devices (eg, hammerhead aka
+    // Nexus 5), FBIOGET_VSCREENINFO *reports* that it wants a
+    // different format (XBGR) but actually produces the correct
+    // results on the display when you write RGBX.
+    //
+    // If you have a device that actually *needs* another pixel format
+    // (ie, BGRX, or 565), patches welcome...
+
+    printf(
+        "fb%d reports (possibly inaccurate):\n"
+        "  vi.bits_per_pixel = %d\n"
+        "  vi.red.offset   = %3d   .length = %3d\n"
+        "  vi.green.offset = %3d   .length = %3d\n"
+        "  vi.blue.offset  = %3d   .length = %3d\n",
+        fb_count, vi.bits_per_pixel, vi.red.offset, vi.red.length, vi.green.offset,
+        vi.green.length, vi.blue.offset, vi.blue.length);
+
+    bits = mmap(0, fi.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (bits == MAP_FAILED) {
+      perror("failed to mmap framebuffer");
+      goto next_fb;
+    }
+
+    // Found a valid fb
+    break;
+
+next_fb:
+    fb_count++;
+    fb_path.replace(fb_path.length()-1, 1, std::to_string(fb_count));
+    fd.reset(open(fb_path.c_str(), O_RDWR | O_CLOEXEC));
   }
 
-  if (ioctl(fd, FBIOGET_VSCREENINFO, &vi) < 0) {
-    perror("failed to get fb0 info");
-    return nullptr;
-  }
-
-  // We print this out for informational purposes only, but
-  // throughout we assume that the framebuffer device uses an RGBX
-  // pixel format.  This is the case for every development device I
-  // have access to.  For some of those devices (eg, hammerhead aka
-  // Nexus 5), FBIOGET_VSCREENINFO *reports* that it wants a
-  // different format (XBGR) but actually produces the correct
-  // results on the display when you write RGBX.
-  //
-  // If you have a device that actually *needs* another pixel format
-  // (ie, BGRX, or 565), patches welcome...
-
-  printf(
-      "fb0 reports (possibly inaccurate):\n"
-      "  vi.bits_per_pixel = %d\n"
-      "  vi.red.offset   = %3d   .length = %3d\n"
-      "  vi.green.offset = %3d   .length = %3d\n"
-      "  vi.blue.offset  = %3d   .length = %3d\n",
-      vi.bits_per_pixel, vi.red.offset, vi.red.length, vi.green.offset, vi.green.length,
-      vi.blue.offset, vi.blue.length);
-
-  void* bits = mmap(0, fi.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  if (bits == MAP_FAILED) {
-    perror("failed to mmap framebuffer");
+  if (fd == -1) {
+    perror("cannot open any framebuffer");
     return nullptr;
   }
 
