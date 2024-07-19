@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99deb49f_35ed8c71",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-07-19T17:51:50Z",
+      "side": 1,
+      "message": "Verified on lanai (Jetson TX2 NX), which has hdmi and dp. Before this, only the primary head would work in recovery. After this, the secondary head can be used if the primary is unplugged.",
+      "revId": "c8695e63743581271e9ecb0572f3e43776664460",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
