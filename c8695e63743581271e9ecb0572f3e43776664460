@@ -16,6 +16,29 @@
       "message": "Verified on lanai (Jetson TX2 NX), which has hdmi and dp. Before this, only the primary head would work in recovery. After this, the secondary head can be used if the primary is unplugged.",
       "revId": "c8695e63743581271e9ecb0572f3e43776664460",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "711decdf_ecab2d68",
+        "filename": "minui/graphics_fbdev.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-07-20T18:01:14Z",
+      "side": 1,
+      "message": "Please no goto with C++",
+      "range": {
+        "startLine": 80,
+        "startChar": 6,
+        "endLine": 80,
+        "endChar": 10
+      },
+      "revId": "c8695e63743581271e9ecb0572f3e43776664460",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
