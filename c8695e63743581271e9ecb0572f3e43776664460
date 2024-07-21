@@ -63,6 +63,30 @@
       },
       "revId": "c8695e63743581271e9ecb0572f3e43776664460",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "302b1b60_cd446ece",
+        "filename": "minui/graphics_fbdev.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-07-21T21:28:55Z",
+      "side": 1,
+      "message": "Acknowledged...",
+      "parentUuid": "fb4bf9d7_e2f81c48",
+      "range": {
+        "startLine": 80,
+        "startChar": 6,
+        "endLine": 80,
+        "endChar": 10
+      },
+      "revId": "c8695e63743581271e9ecb0572f3e43776664460",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
