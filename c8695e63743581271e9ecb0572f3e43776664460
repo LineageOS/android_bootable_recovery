@@ -39,6 +39,30 @@
       },
       "revId": "c8695e63743581271e9ecb0572f3e43776664460",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb4bf9d7_e2f81c48",
+        "filename": "minui/graphics_fbdev.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-07-21T21:24:39Z",
+      "side": 1,
+      "message": "https://github.com/LineageOS/android_bootable_recovery/blob/8bbe7bae399b428cfaa021a511d749c78e5a8e73/minui/resources.cpp#L278\n\nTell that to google. The code would be a lot more ugly with nested ifs and whatnot without goto\u0027s here. I was opting for a cleaner and easier to read code flow that doesn\u0027t deviate much from the existing code.",
+      "parentUuid": "711decdf_ecab2d68",
+      "range": {
+        "startLine": 80,
+        "startChar": 6,
+        "endLine": 80,
+        "endChar": 10
+      },
+      "revId": "c8695e63743581271e9ecb0572f3e43776664460",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
