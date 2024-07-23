@@ -90,6 +90,9 @@ class Device {
     ui_.reset(ui);
   }
 
+  // Called before any mode started up, to bring up network.
+  virtual void InitDevice() {}
+
   // Called before recovery mode started up, to perform whatever device-specific recovery mode
   // preparation as needed.
   virtual void PreRecovery() {}

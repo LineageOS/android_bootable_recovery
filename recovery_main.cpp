@@ -527,6 +527,8 @@ int main(int argc, char** argv) {
     android::base::SetProperty("service.adb.root", "1");
   }
 
+  device->InitDevice();
+
   while (true) {
     // We start adbd in recovery for the device with userdebug build or a unlocked bootloader.
     std::string usb_config =
