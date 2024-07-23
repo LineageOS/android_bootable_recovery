@@ -88,6 +88,9 @@ class Device {
   // failed, or we want a different UI for some reason. The device object will take the ownership.
   virtual void ResetUI(RecoveryUI* ui);
 
+  // Called before any mode started up, to bring up network.
+  virtual void InitDevice() {}
+
   // Called before recovery mode started up, to perform whatever device-specific recovery mode
   // preparation as needed.
   virtual void PreRecovery() {}
