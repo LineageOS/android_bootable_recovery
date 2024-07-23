@@ -29,6 +29,7 @@ class EthernetDevice : public Device {
   explicit EthernetDevice(EthernetRecoveryUI* ui);
   explicit EthernetDevice(EthernetRecoveryUI* ui, std::string interface);
 
+  void InitBringupNetwork() override;
   void PreRecovery() override;
   void PreFastboot() override;
 
