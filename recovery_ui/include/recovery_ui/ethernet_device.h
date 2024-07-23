@@ -29,10 +29,12 @@ class EthernetDevice : public Device {
   explicit EthernetDevice(EthernetRecoveryUI* ui);
   explicit EthernetDevice(EthernetRecoveryUI* ui, std::string interface);
 
+  void InitDevice() override;
   void PreRecovery() override;
   void PreFastboot() override;
 
  private:
+  bool BringupInterface();
   int SetInterfaceFlags(const unsigned set, const unsigned clr);
   void SetTitleIPAddress(const bool interface_up);
 

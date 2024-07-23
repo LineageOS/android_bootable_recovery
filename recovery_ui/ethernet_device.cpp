@@ -41,20 +41,26 @@ EthernetDevice::EthernetDevice(EthernetRecoveryUI* ui, std::string interface)
   }
 }
 
+void EthernetDevice::InitDevice() {
+  BringupInterface();
+  sleep(1);
+}
+
 void EthernetDevice::PreRecovery() {
-  SetInterfaceFlags(0, IFF_UP);
-  SetTitleIPAddress(false);
+  SetTitleIPAddress(BringupInterface());
 }
 
 void EthernetDevice::PreFastboot() {
   android::base::SetProperty("fastbootd.protocol", "tcp");
+  SetTitleIPAddress(BringupInterface());
+}
 
+bool EthernetDevice::BringupInterface() {
   if (SetInterfaceFlags(IFF_UP, 0) < 0) {
     LOG(ERROR) << "Failed to bring up interface";
-    return;
+    return false;
   }
-
-  SetTitleIPAddress(true);
+  return true;
 }
 
 int EthernetDevice::SetInterfaceFlags(const unsigned set, const unsigned clr) {
