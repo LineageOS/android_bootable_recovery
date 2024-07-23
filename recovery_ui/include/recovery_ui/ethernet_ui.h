@@ -25,10 +25,13 @@ class EthernetRecoveryUI : public ScreenRecoveryUI {
   void SetTitle(const std::vector<std::string>& lines) override;
 
   // For EthernetDevice
+  void AddIPv4Address(const std::string& address);
+  void ClearIPAddresses();
   void SetIPv6LinkLocalAddress(const std::string& address = "");
 
  private:
-  std::string address_;
+  std::vector<std::string> ipv4_addresses_;
+  std::string ipv6_linklocal_address_;
 };
 
 #endif  // RECOVERY_ETHERNET_UI_H
