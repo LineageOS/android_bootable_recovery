@@ -22,11 +22,23 @@ void EthernetRecoveryUI::SetTitle(const std::vector<std::string>& lines) {
   ScreenRecoveryUI::SetTitle(lines);
 
   // Append IP address, if any
-  if (!address_.empty()) {
-    title_lines_.push_back("IPv6 link-local address - " + address_);
+  for (auto it = ipv4_addresses_.begin(); it != ipv4_addresses_.end(); ++it) {
+    title_lines_.push_back("IPv4 address - " + *it);
+  }
+  if (!ipv6_linklocal_address_.empty()) {
+    title_lines_.push_back("IPv6 link-local address - " + ipv6_linklocal_address_);
   }
 }
 
+void EthernetRecoveryUI::AddIPv4Address(const std::string& address) {
+  ipv4_addresses_.push_back(address);
+}
+
+void EthernetRecoveryUI::ClearIPAddresses() {
+  ipv4_addresses_.clear();
+  ipv6_linklocal_address_.clear();
+}
+
 void EthernetRecoveryUI::SetIPv6LinkLocalAddress(const std::string& address) {
-  address_ = address;
+  ipv6_linklocal_address_ = address;
 }
