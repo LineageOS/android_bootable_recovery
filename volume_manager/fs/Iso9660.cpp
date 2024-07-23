@@ -36,10 +36,10 @@ status_t Mount(const std::string& source, const std::string& target,
     const char* c_source = source.c_str();
     const char* c_target = target.c_str();
 
-    flags = MS_NODEV | MS_NOEXEC | MS_NOSUID | MS_DIRSYNC | MS_RDONLY;
+    flags = MS_NODEV | MS_NOEXEC | MS_NOSUID | MS_RDONLY;
 
     snprintf(mountData, sizeof(mountData),
-            "utf8,uid=%d,gid=%d", ownerUid, ownerGid);
+            "uid=%d,gid=%d", ownerUid, ownerGid);
 
     return mount(c_source, c_target, type, flags, mountData);
 }
