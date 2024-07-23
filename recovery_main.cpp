@@ -530,6 +530,8 @@ int main(int argc, char** argv) {
     android::base::SetProperty("service.adb.root", "1");
   }
 
+  device->InitDevice();
+
   Device::BuiltinAction next_recovery_action = Device::NO_ACTION;
   while (true) {
     // We start adbd in recovery for the device with userdebug build or a unlocked bootloader.
