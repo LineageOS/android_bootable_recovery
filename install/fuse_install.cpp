@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <string>
@@ -38,6 +39,8 @@
 #include "fuse_sideload.h"
 #include "install/install.h"
 #include "recovery_utils/roots.h"
+
+namespace fs = std::filesystem;
 
 using android::volmgr::VolumeInfo;
 using android::volmgr::VolumeManager;
@@ -58,8 +61,7 @@ static void SetSdcardUpdateBootloaderMessage() {
 
 // Returns the selected filename, or an empty string.
 std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI* ui) {
-  std::unique_ptr<DIR, decltype(&closedir)> d(opendir(path.c_str()), closedir);
-  if (!d) {
+  if (access(path.c_str(), R_OK | X_OK)) {
     PLOG(ERROR) << "error opening " << path;
     return "";
   }
@@ -67,17 +69,19 @@ std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI*
   std::vector<std::string> dirs;
   std::vector<std::string> entries{ "../" };  // "../" is always the first entry.
 
-  dirent* de;
-  while ((de = readdir(d.get())) != nullptr) {
-    std::string name(de->d_name);
+  for (const auto& entry : fs::directory_iterator(path)) {
+    std::string name = entry.path().filename().string();
 
-    if (de->d_type == DT_DIR) {
-      // Skip "." and ".." entries.
-      if (name == "." || name == "..") continue;
+    // Skip "." and ".." entries.
+    if (name == "." || name == "..") continue;
+
+    if (entry.is_directory()) {
       dirs.push_back(name + "/");
-    } else if (de->d_type == DT_REG && (android::base::EndsWithIgnoreCase(name, ".zip") ||
-                                        android::base::EndsWithIgnoreCase(name, ".map"))) {
-      entries.push_back(name);
+    } else if (entry.is_regular_file()) {
+      if (android::base::EndsWithIgnoreCase(name, ".zip") ||
+          android::base::EndsWithIgnoreCase(name, ".map")) {
+        entries.push_back(name);
+      }
     }
   }
 
