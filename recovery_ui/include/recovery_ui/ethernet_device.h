@@ -34,7 +34,7 @@ class EthernetDevice : public Device {
 
  private:
   int SetInterfaceFlags(const unsigned set, const unsigned clr);
-  void SetTitleIPv6LinkLocalAddress(const bool interface_up);
+  void SetTitleIPAddress(const bool interface_up);
 
   android::base::unique_fd ctl_sock_;
   std::string interface_;
