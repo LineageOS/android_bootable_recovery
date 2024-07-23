@@ -84,6 +84,9 @@ int EthernetDevice::SetInterfaceFlags(const unsigned set, const unsigned clr) {
 
 void EthernetDevice::SetTitleIPv6LinkLocalAddress(const bool interface_up) {
   auto recovery_ui = reinterpret_cast<EthernetRecoveryUI*>(GetUI());
+
+  recovery_ui->ClearIPv4Addresses();
+
   if (!interface_up) {
     recovery_ui->SetIPv6LinkLocalAddress();
     return;
@@ -96,24 +99,37 @@ void EthernetDevice::SetTitleIPv6LinkLocalAddress(const bool interface_up) {
     return;
   }
 
+  bool inet6_done = false;
   std::unique_ptr<struct ifaddrs, decltype(&freeifaddrs)> guard{ ifaddr, freeifaddrs };
   for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr->sa_family != AF_INET6 || interface_ != ifa->ifa_name) {
+    if (interface_ != ifa->ifa_name)
+      continue;
+
+    if (ifa->ifa_addr->sa_family == AF_INET) {
+      auto current_addr = reinterpret_cast<struct sockaddr_in*>(ifa->ifa_addr);
+
+      char addrstr[INET_ADDRSTRLEN];
+      inet_ntop(AF_INET, reinterpret_cast<const void*>(&current_addr->sin_addr), addrstr,
+                INET_ADDRSTRLEN);
+      LOG(INFO) << "Our IPv4 address is " << addrstr;
+      recovery_ui->AddIPv4Address(addrstr);
+      continue;
+    } else if (ifa->ifa_addr->sa_family == AF_INET6) {
+      auto current_addr = reinterpret_cast<struct sockaddr_in6*>(ifa->ifa_addr);
+      if (!IN6_IS_ADDR_LINKLOCAL(&(current_addr->sin6_addr))) {
+        continue;
+      }
+
+      char addrstr[INET6_ADDRSTRLEN];
+      inet_ntop(AF_INET6, reinterpret_cast<const void*>(&current_addr->sin6_addr), addrstr,
+                INET6_ADDRSTRLEN);
+      LOG(INFO) << "Our IPv6 link-local address is " << addrstr;
+      recovery_ui->SetIPv6LinkLocalAddress(addrstr);
+      inet6_done = true;
       continue;
     }
-
-    auto current_addr = reinterpret_cast<struct sockaddr_in6*>(ifa->ifa_addr);
-    if (!IN6_IS_ADDR_LINKLOCAL(&(current_addr->sin6_addr))) {
-      continue;
-    }
-
-    char addrstr[INET6_ADDRSTRLEN];
-    inet_ntop(AF_INET6, reinterpret_cast<const void*>(&current_addr->sin6_addr), addrstr,
-              INET6_ADDRSTRLEN);
-    LOG(INFO) << "Our IPv6 link-local address is " << addrstr;
-    recovery_ui->SetIPv6LinkLocalAddress(addrstr);
-    return;
   }
+  if (inet6_done) return;
 
   recovery_ui->SetIPv6LinkLocalAddress();
 }
