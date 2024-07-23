@@ -43,7 +43,7 @@ EthernetDevice::EthernetDevice(EthernetRecoveryUI* ui, std::string interface)
 
 void EthernetDevice::PreRecovery() {
   SetInterfaceFlags(0, IFF_UP);
-  SetTitleIPv6LinkLocalAddress(false);
+  SetTitleIPAddress(false);
 }
 
 void EthernetDevice::PreFastboot() {
@@ -54,7 +54,7 @@ void EthernetDevice::PreFastboot() {
     return;
   }
 
-  SetTitleIPv6LinkLocalAddress(true);
+  SetTitleIPAddress(true);
 }
 
 int EthernetDevice::SetInterfaceFlags(const unsigned set, const unsigned clr) {
@@ -82,38 +82,46 @@ int EthernetDevice::SetInterfaceFlags(const unsigned set, const unsigned clr) {
   return 0;
 }
 
-void EthernetDevice::SetTitleIPv6LinkLocalAddress(const bool interface_up) {
+void EthernetDevice::SetTitleIPAddress(const bool interface_up) {
   auto recovery_ui = reinterpret_cast<EthernetRecoveryUI*>(GetUI());
-  if (!interface_up) {
-    recovery_ui->SetIPv6LinkLocalAddress();
-    return;
-  }
+
+  // Cached IP Addresses needs to be cleared anyways, no matter if errored or not
+  recovery_ui->ClearIPAddresses();
+
+  if (!interface_up) return;
 
   struct ifaddrs* ifaddr;
   if (getifaddrs(&ifaddr) == -1) {
     PLOG(ERROR) << "Failed to get interface addresses";
-    recovery_ui->SetIPv6LinkLocalAddress();
     return;
   }
 
   std::unique_ptr<struct ifaddrs, decltype(&freeifaddrs)> guard{ ifaddr, freeifaddrs };
   for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr->sa_family != AF_INET6 || interface_ != ifa->ifa_name) {
+    if (interface_ != ifa->ifa_name)
+      continue;
+
+    if (ifa->ifa_addr->sa_family == AF_INET) {
+      auto current_addr = reinterpret_cast<struct sockaddr_in*>(ifa->ifa_addr);
+
+      char addrstr[INET_ADDRSTRLEN];
+      inet_ntop(AF_INET, reinterpret_cast<const void*>(&current_addr->sin_addr), addrstr,
+                INET_ADDRSTRLEN);
+      LOG(INFO) << "Our IPv4 address is " << addrstr;
+      recovery_ui->AddIPv4Address(addrstr);
+      continue;
+    } else if (ifa->ifa_addr->sa_family == AF_INET6) {
+      auto current_addr = reinterpret_cast<struct sockaddr_in6*>(ifa->ifa_addr);
+      if (!IN6_IS_ADDR_LINKLOCAL(&(current_addr->sin6_addr))) {
+        continue;
+      }
+
+      char addrstr[INET6_ADDRSTRLEN];
+      inet_ntop(AF_INET6, reinterpret_cast<const void*>(&current_addr->sin6_addr), addrstr,
+                INET6_ADDRSTRLEN);
+      LOG(INFO) << "Our IPv6 link-local address is " << addrstr;
+      recovery_ui->SetIPv6LinkLocalAddress(addrstr);
       continue;
     }
-
-    auto current_addr = reinterpret_cast<struct sockaddr_in6*>(ifa->ifa_addr);
-    if (!IN6_IS_ADDR_LINKLOCAL(&(current_addr->sin6_addr))) {
-      continue;
-    }
-
-    char addrstr[INET6_ADDRSTRLEN];
-    inet_ntop(AF_INET6, reinterpret_cast<const void*>(&current_addr->sin6_addr), addrstr,
-              INET6_ADDRSTRLEN);
-    LOG(INFO) << "Our IPv6 link-local address is " << addrstr;
-    recovery_ui->SetIPv6LinkLocalAddress(addrstr);
-    return;
   }
-
-  recovery_ui->SetIPv6LinkLocalAddress();
 }
