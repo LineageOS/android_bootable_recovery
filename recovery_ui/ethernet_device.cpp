@@ -41,19 +41,20 @@ EthernetDevice::EthernetDevice(EthernetRecoveryUI* ui, std::string interface)
   }
 }
 
-void EthernetDevice::PreRecovery() {
-  SetInterfaceFlags(0, IFF_UP);
-  SetTitleIPv6LinkLocalAddress(false);
-}
-
-void EthernetDevice::PreFastboot() {
-  android::base::SetProperty("fastbootd.protocol", "tcp");
-
+void EthernetDevice::InitBringupNetwork() {
   if (SetInterfaceFlags(IFF_UP, 0) < 0) {
     LOG(ERROR) << "Failed to bring up interface";
     return;
   }
+  sleep(1);
+}
 
+void EthernetDevice::PreRecovery() {
+  SetTitleIPv6LinkLocalAddress(true);
+}
+
+void EthernetDevice::PreFastboot() {
+  android::base::SetProperty("fastbootd.protocol", "tcp");
   SetTitleIPv6LinkLocalAddress(true);
 }
 
