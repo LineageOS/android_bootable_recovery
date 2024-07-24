@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6cc06d4c_e3643012",
+        "filename": "recovery_ui/ethernet_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T07:55:30Z",
+      "side": 0,
+      "message": "the only different is this isn\u0027t it?\nPreRecovery and PreFastboot only diff is the error check, prop and the boolean\nInstead of adding a method can\u0027t you add private function that does the common bits and then sets the prop only in fastboot?",
+      "range": {
+        "startLine": 46,
+        "startChar": 31,
+        "endLine": 46,
+        "endChar": 36
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
