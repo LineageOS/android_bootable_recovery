@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "82e367e1_a8cb3dcf",
+        "filename": "recovery_ui/ethernet_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T07:51:04Z",
+      "side": 1,
+      "message": "```suggestion\nvoid EthernetDevice::SetTitleIPAddress(const bool interface_up) {\n```\n\nHard to think it\u0027ll see many changes and it\u0027s not used a lot so safe to change",
+      "range": {
+        "startLine": 85,
+        "startChar": 21,
+        "endLine": 85,
+        "endChar": 49
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18d35082_75fcc75b",
+        "filename": "recovery_ui/ethernet_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T07:51:04Z",
+      "side": 1,
+      "message": "Shouldn\u0027t you clear here?",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 43
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fcd477e9_5503268a",
+        "filename": "recovery_ui/ethernet_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T07:51:04Z",
+      "side": 1,
+      "message": "you can move that before the loop so it\u0027ll reset the ipv6 unconditionally, and only update it if the iface is found, you\u0027ll be able to drop inet6_done",
+      "range": {
+        "startLine": 134,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 41
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90893cdf_31d2ccd1",
+        "filename": "recovery_ui/include/recovery_ui/ethernet_ui.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T07:51:04Z",
+      "side": 1,
+      "message": "Are you going to use have than 1 ipv4 address?\nif not simply mimic the ipv6 logic and be it, easier.",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 43
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
