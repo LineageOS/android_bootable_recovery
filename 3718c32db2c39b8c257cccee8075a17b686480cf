@@ -22,6 +22,30 @@
       },
       "revId": "3718c32db2c39b8c257cccee8075a17b686480cf",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "100b935e_52c07c30",
+        "filename": "recovery_ui/include/recovery_ui/device.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-07-24T09:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "805cb358_ac4103a1",
+      "range": {
+        "startLine": 94,
+        "startChar": 15,
+        "endLine": 94,
+        "endChar": 33
+      },
+      "revId": "3718c32db2c39b8c257cccee8075a17b686480cf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
