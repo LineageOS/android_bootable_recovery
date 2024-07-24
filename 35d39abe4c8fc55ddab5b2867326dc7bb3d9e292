@@ -46,6 +46,30 @@
       },
       "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "866f6e30_b4f1ea5d",
+        "filename": "recovery_ui/ethernet_device.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-07-24T08:14:44Z",
+      "side": 0,
+      "message": "Acknowledged",
+      "parentUuid": "b4cbb705_b8740257",
+      "range": {
+        "startLine": 46,
+        "startChar": 31,
+        "endLine": 46,
+        "endChar": 36
+      },
+      "revId": "35d39abe4c8fc55ddab5b2867326dc7bb3d9e292",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
