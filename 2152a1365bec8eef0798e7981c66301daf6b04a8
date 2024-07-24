@@ -22,6 +22,30 @@
       },
       "revId": "2152a1365bec8eef0798e7981c66301daf6b04a8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc10b1cc_289858d9",
+        "filename": "install/fuse_install.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-07-24T07:45:45Z",
+      "side": 1,
+      "message": "yeah, entering directory needs X permission",
+      "parentUuid": "187edec6_356c8458",
+      "range": {
+        "startLine": 64,
+        "startChar": 34,
+        "endLine": 64,
+        "endChar": 38
+      },
+      "revId": "2152a1365bec8eef0798e7981c66301daf6b04a8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
