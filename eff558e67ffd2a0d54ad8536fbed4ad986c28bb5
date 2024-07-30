@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad14b85d_685accb1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-07-30T20:06:39Z",
+      "side": 1,
+      "message": "Broke display on virtio (QXL and Virtio graphics card, Both are DRM):\n\n`[    1.280724] Atomic commit failed ret\u003d-22`",
+      "revId": "eff558e67ffd2a0d54ad8536fbed4ad986c28bb5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
