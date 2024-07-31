@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aa603f6_472003a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 21290
+      },
+      "writtenOn": "2024-07-31T16:04:09Z",
+      "side": 1,
+      "message": "can we bump the 2 seconds?\nI didn\u0027t experiment with many values, but 5s works very consisten on my set of devices and it doesn\u0027t harm to let it try for a few more seconds from my understanding(?)",
+      "revId": "efec80fc9e5a6a06f06f31d54251832e71fd154e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
