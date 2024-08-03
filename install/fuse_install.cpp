@@ -57,7 +57,7 @@ static void SetSdcardUpdateBootloaderMessage() {
 }
 
 // Returns the selected filename, or an empty string.
-static std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI* ui) {
+std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI* ui) {
   std::unique_ptr<DIR, decltype(&closedir)> d(opendir(path.c_str()), closedir);
   if (!d) {
     PLOG(ERROR) << "error opening " << path;
