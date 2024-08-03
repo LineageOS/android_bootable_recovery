@@ -107,6 +107,7 @@ cc_library_static {
     srcs: [
         "adb_install.cpp",
         "fuse_install.cpp",
+        "virtiofs_install.cpp",
         "install.cpp",
         "snapshot_utils.cpp",
         "wipe_data.cpp",
