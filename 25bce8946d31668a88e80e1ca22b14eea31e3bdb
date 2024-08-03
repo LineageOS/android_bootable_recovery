@@ -16,6 +16,24 @@
       "message": "Needed for what?",
       "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "396de122_87e2bc8b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-08-03T20:14:25Z",
+      "side": 1,
+      "message": "on virtio, if logical partitions were flashed by OTA zip, then they can\u0027t be remounted as RW due to that flag being set\n\nhonestly speaking I didn\u0027t dig into this, don\u0027t know why it doesn\u0027t happen for phones, but this still should be the proper fix\n\n(since there\u0027s something setting it to RO, why shall it can be remounted as RW lol)",
+      "parentUuid": "67b2c04e_3a441a91",
+      "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
