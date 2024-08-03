@@ -177,7 +177,7 @@ bool PerformOpAdd(const OpParameters& params) {
   const auto& group_name_suffix = AddSlotSuffix(params.arg(1));
 
   if (params.builder->AddPartition(partition_name_suffix, group_name_suffix,
-                                   LP_PARTITION_ATTR_READONLY) == nullptr) {
+                                   0 /*LP_PARTITION_ATTR_READONLY*/) == nullptr) {
     LOG(ERROR) << "Failed to add partition " << partition_name_suffix << " to group "
                << group_name_suffix << ".";
     return false;
