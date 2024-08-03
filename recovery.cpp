@@ -47,6 +47,7 @@
 #include "bootloader_message/bootloader_message.h"
 #include "install/adb_install.h"
 #include "install/fuse_install.h"
+#include "install/virtiofs_install.h"
 #include "install/install.h"
 #include "install/snapshot_utils.h"
 #include "install/wipe_data.h"
@@ -212,6 +213,8 @@ static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* re
   std::vector<std::string> items;
 
   const int item_sideload = 0;
+  const int item_virtiofs = 1;
+  unsigned int non_storage_items = 1; // ADB sideload, at least
   std::vector<VolumeInfo> volumes;
 
   InstallResult status = INSTALL_NONE;
@@ -219,6 +222,12 @@ static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* re
   for (;;) {
     items.clear();
     items.push_back("Apply from ADB");
+
+    if (InitializeVirtiofs()) {
+      non_storage_items++;
+      items.push_back("Choose from virtiofs");
+    }
+
     VolumeManager::Instance()->getVolumeInfo(volumes);
     for (auto vol = volumes.begin(); vol != volumes.end(); /* empty */) {
       if (!vol->mMountable) {
@@ -245,8 +254,10 @@ static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* re
 
     if (chosen == item_sideload) {
       status = ApplyFromAdb(device, false /* rescue_mode */, reboot_action);
+    } else if (chosen == item_virtiofs && InitializeVirtiofs()) {
+      status = ApplyFromVirtiofs(device);
     } else {
-      status = ApplyFromStorage(device, volumes[chosen - 1]);
+      status = ApplyFromStorage(device, volumes[chosen - non_storage_items]);
     }
     break;
   }
