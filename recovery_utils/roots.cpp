@@ -385,6 +385,11 @@ int setup_install_mounts() {
       continue;
     }
 
+    // We may load update package from virtiofs mount point.
+    if (entry.mount_point == "/mnt/vendor/shared") {
+      continue;
+    }
+
     if (entry.mount_point == "/tmp" || entry.mount_point == "/cache") {
       if (ensure_path_mounted(entry.mount_point) != 0) {
         LOG(ERROR) << "Failed to mount " << entry.mount_point;
