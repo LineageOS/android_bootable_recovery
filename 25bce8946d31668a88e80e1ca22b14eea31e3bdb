@@ -34,6 +34,24 @@
       "parentUuid": "67b2c04e_3a441a91",
       "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f29b8e9_daa2b62f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-08-05T13:43:02Z",
+      "side": 1,
+      "message": "https://github.com/LineageOS/android_kernel_qcom_sm8550/commit/e51790b9e3e6067b28ecfb23387b8208a1bb4780\n\nIs this related?",
+      "parentUuid": "396de122_87e2bc8b",
+      "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
