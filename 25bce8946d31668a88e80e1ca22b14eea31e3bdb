@@ -70,6 +70,24 @@
       "parentUuid": "0f29b8e9_daa2b62f",
       "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61c2f0fe_e6ba545b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-08-07T17:03:16Z",
+      "side": 1,
+      "message": "\u003e https://github.com/LineageOS/android_kernel_qcom_sm8550/commit/e51790b9e3e6067b28ecfb23387b8208a1bb4780\n\u003e \n\u003e Is this related?\n\nuh oh, it addresses the issue too, shall I drop this?\n\n\u003e https://review.lineageos.org/c/LineageOS/android_system_core/+/383252 should have taken care of that...\n\nIt\u0027ll be nice to have logical partitions to be writable in system too, as we have proper selinux labels in system, and so many tools (such as text editors)...",
+      "parentUuid": "bdf30796_003595bf",
+      "revId": "25bce8946d31668a88e80e1ca22b14eea31e3bdb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
