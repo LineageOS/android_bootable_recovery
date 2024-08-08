@@ -258,7 +258,8 @@ void gr_texticon(int x, int y, const GRSurface* icon) {
 
 void gr_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
   uint32_t r32 = r, g32 = g, b32 = b, a32 = a;
-  if (pixel_format == PixelFormat::ARGB || pixel_format == PixelFormat::BGRA) {
+  if (pixel_format == PixelFormat::ARGB || pixel_format == PixelFormat::BGRA ||
+      pixel_format == PixelFormat::BGRX) {
     gr_current = (a32 << 24) | (r32 << 16) | (g32 << 8) | b32;
   } else if (pixel_format == PixelFormat::RGBA) {
     gr_current = (b32 << 24) | (g32 << 16) | (r32 << 8) | a32;
@@ -420,6 +421,8 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
     pixel_format = PixelFormat::BGRA;
   } else if (format == "RGBA_8888") {
     pixel_format = PixelFormat::RGBA;
+  } else if (format == "BGRX_8888") {
+    pixel_format = PixelFormat::BGRX;
   } else {
     pixel_format = PixelFormat::UNKNOWN;
   }
