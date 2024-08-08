@@ -420,6 +420,8 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
     pixel_format = PixelFormat::BGRA;
   } else if (format == "RGBA_8888") {
     pixel_format = PixelFormat::RGBA;
+  } else if (format == "BGRX_8888") {
+    pixel_format = PixelFormat::BGRX;
   } else {
     pixel_format = PixelFormat::UNKNOWN;
   }
