@@ -45,6 +45,7 @@ struct selabel_handle* sehandle;
 using android::fs_mgr::Fstab;
 using android::fs_mgr::FstabEntry;
 
+static const unsigned int kMajorBlockCdrom = 11;
 static const unsigned int kMajorBlockMmc = 179;
 static const unsigned int kMajorBlockExperimentalMin = 240;
 static const unsigned int kMajorBlockExperimentalMax = 254;
@@ -305,6 +306,8 @@ void VolumeManager::handleBlockEvent(NetlinkEvent* evt) {
                         (IsRunningInEmulator() && major >= (int)kMajorBlockExperimentalMin &&
                          major <= (int)kMajorBlockExperimentalMax)) {
                         flags |= Disk::Flags::kSd;
+                    } else if (major == kMajorBlockCdrom) {
+                        flags |= Disk::Flags::kCdrom;
                     } else {
                         flags |= Disk::Flags::kUsb;
                     }
