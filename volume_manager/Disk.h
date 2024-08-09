@@ -57,6 +57,8 @@ class Disk {
         kEmmc = 1 << 4,
         /* Flag that disk is non-removable */
         kNonRemovable = 1 << 5,
+        /* Flag that disk is CDROM */
+        kCdrom = 1 << 6,
     };
 
     const std::string& getId() { return mId; }
