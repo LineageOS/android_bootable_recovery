@@ -30,6 +30,9 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <linux/module.h>
+#include <sys/syscall.h>
 
 #include <atomic>
 #include <filesystem>
@@ -343,6 +346,73 @@ static void redirect_stdio(const char* filename) {
   }
 }
 
+#define RECOVERY_MODULES_PATH "/vendor/lib/modules"
+
+int init_module(void* module_image, unsigned long len, const char* param_values) {
+    return syscall(__NR_init_module, module_image, len, param_values);
+}
+
+bool load_module(const std::string& path) {
+    FILE* file = fopen(path.c_str(), "r");
+    if (!file) {
+        LOG(ERROR) << "Failed to open module file: " << path;
+        return false;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    rewind(file);
+
+    void* module_image = malloc(file_size);
+    if (!module_image) {
+        LOG(ERROR) << "Failed to allocate memory for module: " << path;
+        fclose(file);
+        return false;
+    }
+
+    size_t read_size = fread(module_image, 1, file_size, file);
+    fclose(file);
+
+    if (read_size != static_cast<size_t>(file_size)) {
+        LOG(ERROR) << "Failed to read module file: " << path;
+        free(module_image);
+        return false;
+    }
+
+    int result = init_module(module_image, file_size, "");
+    free(module_image);
+
+    if (result != 0) {
+        LOG(ERROR) << "Failed to load module: " << path << ", error: " << strerror(errno);
+        return false;
+    }
+
+    return true;
+}
+
+void load_recovery_modules() {
+    DIR* dir = opendir(RECOVERY_MODULES_PATH);
+    if (dir == nullptr) {
+        LOG(ERROR) << "Failed to open directory: " << RECOVERY_MODULES_PATH;
+        return;
+    }
+
+    struct dirent* ent;
+    while ((ent = readdir(dir)) != nullptr) {
+        std::string filename = ent->d_name;
+        if (android::base::EndsWith(filename, ".ko")) {
+            std::string module_path = RECOVERY_MODULES_PATH "/" + filename;
+            if (load_module(module_path)) {
+                LOG(INFO) << "Loaded module: " << filename;
+            } else {
+                LOG(ERROR) << "Failed to load module: " << filename;
+            }
+        }
+    }
+
+    closedir(dir);
+}
+
 int main(int argc, char** argv) {
   // We don't have logcat yet under recovery; so we'll print error on screen and log to stdout
   // (which is redirected to recovery.log) as we used to do.
@@ -368,6 +438,9 @@ int main(int argc, char** argv) {
   redirect_stdio(Paths::Get().temporary_log_file().c_str());
 
   load_volume_table();
+  if (android::base::GetBoolProperty("ro.recovery.load_modules", false)) {
+      load_recovery_modules();
+  }
 
   std::string stage;
   std::vector<std::string> args = get_args(argc, argv, &stage);

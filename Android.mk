@@ -94,4 +94,42 @@ endif
 include $(BUILD_PHONY_PACKAGE)
 
 include \
-    $(LOCAL_PATH)/updater/Android.mk \
+    $(LOCAL_PATH)/updater/Android.mk
+
+ifneq ($(strip $(RECOVERY_LOAD_PREBUILT_MODULES)),)
+    RECOVERY_MODULES_DIR := $(TARGET_RECOVERY_ROOT_OUT)/vendor/lib/modules
+
+    # Create the modules directory in recovery
+    $(shell mkdir -p $(RECOVERY_MODULES_DIR))
+
+    # Function to find the full path of a module
+    define find-module-path
+        $(firstword $(wildcard \
+            $(TARGET_PREBUILT_KERNEL_DIR)/$(1) \
+            $(TARGET_OUT_VENDOR)/lib/modules/$(1) \
+            $(TARGET_OUT_VENDOR_DLKM)/lib/modules/$(1) \
+        ))
+    endef
+
+    # Find and copy specified modules to recovery
+    RECOVERY_COPIED_MODULES := \
+    $(foreach module,$(RECOVERY_LOAD_PREBUILT_MODULES),\
+        $(eval MODULE_SRC := $(call find-module-path,$(module)))\
+        $(if $(MODULE_SRC),\
+            $(eval MODULE_DEST := $(RECOVERY_MODULES_DIR)/$(notdir $(MODULE_SRC)))\
+            $(eval RECOVERY_COPIED_MODULES += $(MODULE_DEST))\
+            $(shell cp -r $(MODULE_SRC) $(MODULE_DEST))\
+            $(info Recovery: Copied $(MODULE_SRC) to $(MODULE_DEST))\
+        ,\
+            $(warning Recovery: Module $(module) not found)\
+        )\
+    )
+
+    # Add a phony target to ensure modules are copied
+    .PHONY: copy_recovery_modules
+    copy_recovery_modules: $(RECOVERY_COPIED_MODULES)
+
+    # Add our phony target to ALL_DEFAULT_INSTALLED_MODULES
+    ALL_DEFAULT_INSTALLED_MODULES += copy_recovery_modules
+endif
+
