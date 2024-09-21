@@ -41,6 +41,8 @@ class Device {
   static constexpr const int kScrollUp = -8;
   static constexpr const int kScrollDown = -9;
   static constexpr const int kRefresh = -10;
+  static constexpr const int kHighlightFirst = -11;
+  static constexpr const int kHighlightLast = -12;
 
   // ENTER vs REBOOT: The latter will trigger a reboot that goes through bootloader, which allows
   // using a new bootloader / recovery image if applicable. For example, REBOOT_RESCUE goes from
