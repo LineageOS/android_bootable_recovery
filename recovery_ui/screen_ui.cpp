@@ -1393,9 +1393,11 @@ void ScreenRecoveryUI::ShowFile(FILE* fp) {
           continue;
         }
         if (evt.key() == KEY_POWER || evt.key() == KEY_ENTER || evt.key() == KEY_BACKSPACE ||
-            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE) {
+            evt.key() == KEY_BACK || evt.key() == KEY_HOME || evt.key() == KEY_HOMEPAGE ||
+            evt.key() == KEY_ESC || evt.key() == KEY_LEFTMETA || evt.key() == KEY_RIGHTMETA) {
           return;
-        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP || evt.key() == KEY_SCROLLUP) {
+        } else if (evt.key() == KEY_UP || evt.key() == KEY_VOLUMEUP || evt.key() == KEY_SCROLLUP ||
+                   evt.key() == KEY_PAGEUP) {
           if (offsets.size() <= 1) {
             show_prompt = true;
           } else {
