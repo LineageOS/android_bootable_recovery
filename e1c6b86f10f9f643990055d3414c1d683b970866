@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4483d4b2_1763e2f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2024-09-28T08:01:12Z",
+      "side": 1,
+      "message": "Can we bump the INSTALL_REQUIRED_MEMORY to 700mb since this is needed for adb sideload function to not crash when sideloading oplus stock ROM",
+      "revId": "e1c6b86f10f9f643990055d3414c1d683b970866",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
