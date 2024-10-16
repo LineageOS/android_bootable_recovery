@@ -535,6 +535,8 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   // Switch the display to active one after graphics is ready
   bool is_graphics_available;
 
+  bool is_battery_less;
+
  private:
   void SetLocale(const std::string&);
 
