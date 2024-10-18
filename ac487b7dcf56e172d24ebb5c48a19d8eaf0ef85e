@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "566306a5_b13e374c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-10-18T22:54:00Z",
+      "side": 1,
+      "message": "battery_less -\u003e batteryless per mikes ask",
+      "revId": "ac487b7dcf56e172d24ebb5c48a19d8eaf0ef85e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
