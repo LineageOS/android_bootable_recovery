@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3e8f9ca_52f445c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19282
+      },
+      "writtenOn": "2024-10-19T14:24:27Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be better to add it as fixup to the original patch at this point to reduce the amount of patches to pick? 😊",
+      "revId": "96404d0b84a18b720b3d45c57751e9c8c6739d19",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
