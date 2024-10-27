@@ -232,6 +232,9 @@ class RecoveryUI {
   // being pressed in the meantime), CheckKey will be called with 'is_long_press' true.
   virtual void KeyLongPress(int key);
 
+  // Redraws the screen.
+  virtual void Redraw() {};
+
   // Normally in recovery there's a key sequence that triggers immediate reboot of the device,
   // regardless of what recovery is doing (with the default CheckKey implementation, it's pressing
   // the power button 7 times in row). Call this to enable or disable that feature. It is enabled by
@@ -348,6 +351,7 @@ class RecoveryUI {
   void OnTouchPress();
   void OnTouchTrack();
   void OnTouchRelease();
+  void OnInputAdded();
   int OnInputEvent(int fd, uint32_t epevents);
   void ProcessKey(int key_code, int updown);
   void TimeKey(int key_code, int count);

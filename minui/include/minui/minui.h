@@ -176,10 +176,12 @@ PixelFormat gr_pixel_format();
 struct input_event;
 
 using ev_callback = std::function<int(int fd, uint32_t epevents)>;
+using ev_added_callback = std::function<void()>;
 using ev_set_key_callback = std::function<int(int code, int value)>;
 using ev_set_sw_callback = std::function<int(int code, int value)>;
 
-int ev_init(ev_callback input_cb, bool allow_touch_inputs = false);
+int ev_init(ev_callback input_cb, ev_added_callback input_added_cb = nullptr,
+            bool allow_touch_inputs = false);
 void ev_exit();
 int ev_add_fd(android::base::unique_fd&& fd, ev_callback cb);
 void ev_iterate_available_keys(const std::function<void(int)>& key_detected);

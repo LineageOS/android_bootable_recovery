@@ -54,6 +54,7 @@ struct FdInfo {
 
 static bool g_allow_touch_inputs = true;
 static ev_callback g_saved_input_cb;
+static ev_added_callback g_saved_input_added_cb;
 static android::base::unique_fd g_epoll_fd;
 static epoll_event g_polled_events[MAX_DEVICES + MAX_MISC_FDS];
 static int g_polled_events_count;
@@ -145,12 +146,17 @@ static int inotify_cb(int fd, __unused uint32_t epevents) {
 
     // Only add, we assume the user will not plug out and plug in USB device again and again :)
     ev_add_fd(std::move(dfd), g_saved_input_cb);
+
+    // Notify about new device being added.
+    if (g_saved_input_added_cb) {
+      g_saved_input_added_cb();
+    }
   }
 
   return 0;
 }
 
-int ev_init(ev_callback input_cb, bool allow_touch_inputs) {
+int ev_init(ev_callback input_cb, ev_added_callback input_added_cb, bool allow_touch_inputs) {
   g_epoll_fd.reset();
 
   android::base::unique_fd epoll_fd(epoll_create1(EPOLL_CLOEXEC));
@@ -205,6 +211,7 @@ int ev_init(ev_callback input_cb, bool allow_touch_inputs) {
   g_epoll_fd.reset(epoll_fd.release());
 
   g_saved_input_cb = input_cb;
+  g_saved_input_added_cb = input_added_cb;
   g_allow_touch_inputs = allow_touch_inputs;
   ev_add_fd(std::move(inotify_fd), inotify_cb);
 
@@ -241,6 +248,7 @@ void ev_exit(void) {
   g_ev_misc_count = 0;
   g_ev_dev_count = 0;
   g_saved_input_cb = nullptr;
+  g_saved_input_added_cb = nullptr;
   g_epoll_fd.reset();
 }
 

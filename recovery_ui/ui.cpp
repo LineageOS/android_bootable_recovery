@@ -208,6 +208,7 @@ bool RecoveryUI::InitScreensaver() {
 
 bool RecoveryUI::Init(const std::string& /* locale */) {
   ev_init(std::bind(&RecoveryUI::OnInputEvent, this, std::placeholders::_1, std::placeholders::_2),
+          std::bind(&RecoveryUI::OnInputAdded, this),
           touch_screen_allowed_);
 
   ev_iterate_available_keys(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
@@ -309,6 +310,18 @@ void RecoveryUI::OnTouchRelease() {
 
   // Simple touch
   EnqueueTouch(touch_pos_);
+}
+
+void RecoveryUI::OnInputAdded() {
+  ev_iterate_available_keys(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+
+  if (touch_screen_allowed_) {
+    ev_iterate_touch_inputs(
+        std::bind(&RecoveryUI::OnTouchDeviceDetected, this, std::placeholders::_1),
+        std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+  }
+
+  Redraw();
 }
 
 int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {

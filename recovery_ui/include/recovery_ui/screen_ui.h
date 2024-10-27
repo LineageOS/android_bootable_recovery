@@ -319,7 +319,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   void KeyLongPress(int) override;
 
-  void Redraw();
+  void Redraw() override;
 
   // Checks the background text image, for debugging purpose. It iterates the locales embedded in
   // the on-device resource files and shows the localized text, for manual inspection.
