@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "56f80f21_6b6c4e10",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-11-06T00:23:15Z",
+      "side": 1,
+      "message": "Isn\u0027t there another one to revert as well?",
+      "revId": "d7c94ed8fc405842e6a27816d86a50b4a5e63849",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
