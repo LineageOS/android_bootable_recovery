@@ -101,6 +101,7 @@ cc_binary {
         "android.hardware.health-V3-ndk", // from librecovery_utils
         "libbase",
         "libcrypto",
+        "libssl",
     ],
 
     static_libs: [
