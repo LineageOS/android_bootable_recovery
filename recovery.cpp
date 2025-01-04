@@ -854,12 +854,12 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
     "Version " + android::base::GetProperty("ro.lineage.build.version", "(unknown)") +
         " (" + ver_date + ")",
   };
-  title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   if (android::base::GetBoolProperty("ro.build.ab_update", false)) {
     std::string slot = android::base::GetProperty("ro.boot.slot_suffix", "");
     if (android::base::StartsWith(slot, "_")) slot.erase(0, 1);
     title_lines.push_back("Active slot - " + slot);
   }
+  title_lines.push_back("Product name - " + android::base::GetProperty("ro.product.device", ""));
   ui->SetTitle(title_lines);
 
   ui->ResetKeyInterruptStatus();
