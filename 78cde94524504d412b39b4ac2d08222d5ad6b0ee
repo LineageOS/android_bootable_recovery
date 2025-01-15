@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1171168a_2204b334",
+        "filename": "minadbd/Android.bp",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2025-01-15T09:34:14Z",
+      "side": 1,
+      "message": "Note that adding libssl in recovery will end up increasing the size by at least ~450kb which might cause issues on devices with small partitions",
+      "revId": "78cde94524504d412b39b4ac2d08222d5ad6b0ee",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
