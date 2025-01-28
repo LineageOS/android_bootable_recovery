@@ -69,6 +69,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/PACKAGING/target_files_intermed
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/PACKAGING/target_files_intermediates/*-target_files-*/SYSTEM/etc/recovery-resource.dat)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/PACKAGING/target_files_intermediates/*-target_files-*/SYSTEM/recovery-from-boot.p)
 
+$(call add-clean-step, find $(OUT_DIR) -type f -name "libminui*" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
