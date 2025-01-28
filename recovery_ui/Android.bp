@@ -45,9 +45,11 @@ cc_library {
     static_libs: [
         "libbatterymonitor",
         "libhealthloop",
-        "libminui",
         "libotautil",
-    ],
+    ] + select(soong_config_variable("bootable_recovery", "minui_lib"), {
+        any @ value: [value],
+        default: ["libminui"],
+    }),
 
     shared_libs: [
         "android.hardware.health-V3-ndk",
