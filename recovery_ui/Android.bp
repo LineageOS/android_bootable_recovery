@@ -27,6 +27,7 @@ cc_library {
 
     defaults: [
         "recovery_defaults",
+        "bootable_recovery_defaults"
     ],
 
     srcs: [
@@ -45,7 +46,6 @@ cc_library {
     static_libs: [
         "libbatterymonitor",
         "libhealthloop",
-        "libminui",
         "libotautil",
     ],
 
