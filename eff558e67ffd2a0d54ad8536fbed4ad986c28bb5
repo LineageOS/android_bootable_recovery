@@ -16,6 +16,23 @@
       "message": "Broke display on virtio (QXL and Virtio graphics card, Both are DRM):\n\n`[    1.280724] Atomic commit failed ret\u003d-22`",
       "revId": "eff558e67ffd2a0d54ad8536fbed4ad986c28bb5",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de75792b_6f704a39",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34224
+      },
+      "writtenOn": "2025-02-15T20:29:32Z",
+      "side": 1,
+      "message": "Helped me with recovery DRM on pipa (Xiaomi Pad 6)",
+      "revId": "eff558e67ffd2a0d54ad8536fbed4ad986c28bb5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
