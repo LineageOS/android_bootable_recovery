@@ -74,6 +74,17 @@ static bool test_bit(size_t bit, unsigned long* array) { // NOLINT
 }
 
 static bool should_add_input_device(int fd, bool allow_touch_inputs) {
+  static auto blacklist_input_devices =
+      android::base::Split(android::base::GetProperty("ro.minui.blacklist_input_devices", ""), ",");
+
+  char name[64];
+  if (ioctl(fd, EVIOCGNAME(sizeof(name)), name) >= 1) {
+    if (std::find(blacklist_input_devices.begin(), blacklist_input_devices.end(),
+                  std::string(name)) != blacklist_input_devices.end()) {
+      return false;
+    }
+  }
+
   // Use unsigned long to match ioctl's parameter type.
   unsigned long ev_bits[BITS_TO_LONGS(EV_MAX)];  // NOLINT
 
