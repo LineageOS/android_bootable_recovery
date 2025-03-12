@@ -1,4 +1,22 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67b4551d_f44f6721",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2025-03-12T19:04:47Z",
+      "side": 1,
+      "message": "Doubt we want devices to include custom minui libraries, I know you\u0027re doing this for nabu but it\u0027s just crazy",
+      "revId": "fcecbed741a5212032ddfb001451c8176933080f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ],
   "submitRequirementResults": []
 }
