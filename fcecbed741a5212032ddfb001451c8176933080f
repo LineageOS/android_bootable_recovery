@@ -16,6 +16,24 @@
       "message": "Doubt we want devices to include custom minui libraries, I know you\u0027re doing this for nabu but it\u0027s just crazy",
       "revId": "fcecbed741a5212032ddfb001451c8176933080f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a1f2f100_14b37648",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30766
+      },
+      "writtenOn": "2025-03-12T19:05:41Z",
+      "side": 1,
+      "message": "yea i dont really expect this to be merged XD hence the direct -1",
+      "parentUuid": "67b4551d_f44f6721",
+      "revId": "fcecbed741a5212032ddfb001451c8176933080f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ],
   "submitRequirementResults": []
