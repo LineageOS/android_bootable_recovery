@@ -16,6 +16,24 @@
       "message": "Afaik this won\u0027t even boot, so what\u0027s the point?",
       "revId": "63ae26f50200358201545368eb5cb1746ce9a35f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2eefcb71_6d4a6037",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2025-03-21T13:02:36Z",
+      "side": 1,
+      "message": "boots if wipe data.",
+      "parentUuid": "1cfd534b_34ebe93d",
+      "revId": "63ae26f50200358201545368eb5cb1746ce9a35f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
