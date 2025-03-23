@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ca43def_5314f65b",
+        "filename": "minui/graphics_drm.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2025-03-23T16:51:16Z",
+      "side": 1,
+      "message": "I don\u0027t see this var being used anywhere. Maybe remove?",
+      "range": {
+        "startLine": 622,
+        "startChar": 14,
+        "endLine": 622,
+        "endChar": 21
+      },
+      "revId": "d0619ba47291d1e69c39f8aff421eb3fc6892260",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
