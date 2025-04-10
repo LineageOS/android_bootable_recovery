@@ -52,6 +52,11 @@ cc_library {
         "libpng",
     ],
 
+    cflags: select(soong_config_variable("RECOVERY_MINUI", "QSSI_DRM"), {
+        "true": ["-DQSSI_DRM"],
+        default: [],
+    }),
+
     target: {
         vendor: {
             exclude_static_libs: [
