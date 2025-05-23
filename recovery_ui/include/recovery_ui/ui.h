@@ -112,6 +112,13 @@ class RecoveryUI {
     TOUCH,
   };
 
+  enum class ScreensaverState {
+    DISABLED,
+    NORMAL,
+    DIMMED,
+    OFF,
+  };
+
   class InputEvent {
    public:
     InputEvent() : type_(EventType::EXTRA), evt_({ 0 }) {
@@ -153,6 +160,8 @@ class RecoveryUI {
   Device* GetDevice() {
     return device_;
   }
+
+  void SetScreensaverState(ScreensaverState state);
 
   // Initializes the object; called before anything else. UI texts will be initialized according
   // to the given locale. Returns true on success.
@@ -329,13 +338,6 @@ class RecoveryUI {
   bool sideload_auto_reboot_;
 
  private:
-  enum class ScreensaverState {
-    DISABLED,
-    NORMAL,
-    DIMMED,
-    OFF,
-  };
-
   Device* device_;
 
   // The sensitivity when detecting a swipe.
@@ -353,7 +355,6 @@ class RecoveryUI {
   void TimeKey(int key_code, int count);
 
   bool InitScreensaver();
-  void SetScreensaverState(ScreensaverState state);
 
   virtual int SetSwCallback(int code, int value) = 0;
 

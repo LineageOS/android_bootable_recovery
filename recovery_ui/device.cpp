@@ -35,6 +35,7 @@ static std::vector<menu_action_t> g_main_actions{
   { "Apply update", Device::APPLY_UPDATE },
   { "Factory reset", Device::MENU_WIPE },
   { "Advanced", Device::MENU_ADVANCED },
+  { "USB Mass Storage", Device::USB_MASS_STORAGE },
 };
 
 static std::vector<std::string> g_advanced_header{ "Advanced options" };
