@@ -66,6 +66,8 @@
 using android::volmgr::VolumeManager;
 using android::volmgr::VolumeInfo;
 
+#include "recovery-usb_mass_storage.cpp"
+
 static constexpr const char* COMMAND_FILE = "/cache/recovery/command";
 static constexpr const char* LAST_KMSG_FILE = "/cache/recovery/last_kmsg";
 static constexpr const char* LAST_LOG_FILE = "/cache/recovery/last_log";
@@ -648,6 +650,10 @@ change_menu:
         }
         break;
       }
+
+      case Device::USB_MASS_STORAGE:
+        usb_mass_storage_menu(device);
+        break;
 
       case Device::KEY_INTERRUPTED:
         return Device::KEY_INTERRUPTED;
