@@ -73,6 +73,10 @@ on boot
     class_start default
     class_start hal
 
+    setprop ro.adb.secure.recovery 0
+    setprop service.adb.root 1
+    setprop sys.usb.config adb
+
 on firmware_mounts_complete
    rm /dev/.booting
 
@@ -88,6 +92,9 @@ on late-init
 
     trigger early-boot
     trigger boot
+
+on charger
+    trigger late-init
 
 service ueventd /system/bin/ueventd
     critical
