@@ -38,6 +38,7 @@ cc_library {
         "events.cpp",
         "graphics.cpp",
         "graphics_drm.cpp",
+        "graphics_drm_qti.cpp",
         "graphics_fbdev.cpp",
         "resources.cpp",
     ],
@@ -62,4 +63,9 @@ cc_library {
             ],
         },
     },
+
+    cflags: select(soong_config_variable("recovery", "target_recovery_uses_qti_drm"), {
+        true: ["-DTARGET_RECOVERY_USES_QTI_DRM"],
+        default: [],
+    }),
 }
