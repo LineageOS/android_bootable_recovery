@@ -22,6 +22,30 @@
       },
       "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "114c48ef_1c42c9ff",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-06-21T12:51:26Z",
+      "side": 1,
+      "message": "no objection, it just needs bit more effort since we\u0027d also need to add selinux label for it.",
+      "parentUuid": "e1f27647_7f3be33a",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 400,
+        "endChar": 35
+      },
+      "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
