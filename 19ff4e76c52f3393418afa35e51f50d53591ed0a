@@ -46,6 +46,30 @@
       },
       "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ddf55cf_60493ad0",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2025-06-21T13:08:25Z",
+      "side": 1,
+      "message": "I suppose we\u0027re safe to reuse ro.vendor.qti.va_odm.support for this purpose? given the fact that these clo commits have landed in their codebase for years.\n\nmeanwhile, is it worth to use a separate class? are they harmful for non-qc devices?",
+      "parentUuid": "114c48ef_1c42c9ff",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 400,
+        "endChar": 35
+      },
+      "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
