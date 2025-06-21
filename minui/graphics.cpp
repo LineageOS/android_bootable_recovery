@@ -26,6 +26,7 @@
 #include <android-base/properties.h>
 
 #include "graphics_drm.h"
+#include "graphics_drm_qti.h"
 #include "graphics_fbdev.h"
 #include "minui/minui.h"
 
@@ -396,7 +397,11 @@ void gr_flip() {
 std::unique_ptr<MinuiBackend> create_backend(GraphicsBackend backend) {
   switch (backend) {
     case GraphicsBackend::DRM:
+#ifdef TARGET_RECOVERY_USES_QTI_DRM
+      return std::make_unique<MinuiBackendDrmQti>();
+#else
       return std::make_unique<MinuiBackendDrm>();
+#endif
     case GraphicsBackend::FBDEV:
       return std::make_unique<MinuiBackendFbdev>();
     default:
