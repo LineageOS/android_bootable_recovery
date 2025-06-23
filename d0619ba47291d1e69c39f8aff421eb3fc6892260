@@ -22,6 +22,30 @@
       },
       "revId": "d0619ba47291d1e69c39f8aff421eb3fc6892260",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b32004cc_19a1d184",
+        "filename": "minui/graphics_drm.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2025-06-23T13:12:46Z",
+      "side": 1,
+      "message": "It\u0027s needed.\n\n```#define add_prop(res, type, Type, id, id_name, id_val, index) \\\n  find_prop_id(res, type, Type, id, id_name, prop_id, index); \\\n  if (prop_id) drmModeAtomicAddProperty(atomic_req, id, prop_id, id_val);```",
+      "parentUuid": "1ca43def_5314f65b",
+      "range": {
+        "startLine": 622,
+        "startChar": 14,
+        "endLine": 622,
+        "endChar": 21
+      },
+      "revId": "d0619ba47291d1e69c39f8aff421eb3fc6892260",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
