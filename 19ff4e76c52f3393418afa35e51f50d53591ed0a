@@ -94,6 +94,30 @@
       },
       "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7cf8a1ae_716aa0bb",
+        "filename": "minui/graphics.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2025-06-23T13:19:39Z",
+      "side": 1,
+      "message": "I\u0027d rather go with compile time flag, instead of prop.",
+      "parentUuid": "1e945adc_b94e68d3",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 400,
+        "endChar": 35
+      },
+      "revId": "19ff4e76c52f3393418afa35e51f50d53591ed0a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
