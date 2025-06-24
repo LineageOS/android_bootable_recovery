@@ -605,8 +605,8 @@ static drmModeCrtc* find_crtc_for_connector(int fd, drmModeRes* resources,
   return nullptr;
 }
 
-std::vector<drmModeConnector*> find_used_connector_by_type(int fd, drmModeRes* resources,
-                                                           unsigned type) {
+static std::vector<drmModeConnector*> find_used_connector_by_type(int fd, drmModeRes* resources,
+                                                                  unsigned type) {
   std::vector<drmModeConnector*> drmConnectors;
   for (int i = 0; i < resources->count_connectors; i++) {
     drmModeConnector* connector = drmModeGetConnector(fd, resources->connectors[i]);
