@@ -810,15 +810,16 @@ bool SetupPackageMount(const std::string& package_path, bool* should_use_fuse) {
   *should_use_fuse = true;
   if (package_path[0] == '@') {
     auto block_map_path = package_path.substr(1);
+    if (ensure_path_mounted(block_map_path) != 0) {
+      LOG(ERROR) << "Failed to mount " << block_map_path;
+      return false;
+    }
+
     if (!CheckPathCanonical(block_map_path)) {
       LOG(ERROR) << "Block map path " << package_path << " not canonical, abort installation.";
       return false;
     }
 
-    if (ensure_path_mounted(block_map_path) != 0) {
-      LOG(ERROR) << "Failed to mount " << block_map_path;
-      return false;
-    }
     auto block_map_data = BlockMapData::ParseBlockMapFile(block_map_path);
     if (!CheckPathCanonical(block_map_data.path())) {
       LOG(ERROR) << "Block map " << package_path << " contains non-canonical path "
