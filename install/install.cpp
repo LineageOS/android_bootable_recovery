@@ -829,15 +829,16 @@ bool SetupPackageMount(const std::string& package_path, bool* should_use_fuse) {
   *should_use_fuse = true;
   if (package_path[0] == '@') {
     auto block_map_path = package_path.substr(1);
+    if (ensure_path_mounted(block_map_path) != 0) {
+      LOG(ERROR) << "Failed to mount " << block_map_path;
+      return false;
+    }
+
     if (!CheckPathCanonical(block_map_path)) {
       LOG(ERROR) << "Block map path " << package_path << " not canonical, abort installation.";
       return false;
     }
 
-    if (ensure_path_mounted(block_map_path) != 0) {
-      LOG(ERROR) << "Failed to mount " << block_map_path;
-      return false;
-    }
     // uncrypt only produces block map only if the package stays on /data.
     *should_use_fuse = false;
     return true;
