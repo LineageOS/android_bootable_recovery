@@ -831,19 +831,6 @@ bool SetupPackageMount(const std::string& package_path, bool* should_use_fuse) {
       LOG(ERROR) << "Failed to mount " << block_map_path;
       return false;
     }
-    auto block_map_data = BlockMapData::ParseBlockMapFile(block_map_path);
-    if (!CheckPathCanonical(block_map_data.path())) {
-      LOG(ERROR) << "Block map " << package_path << " contains non-canonical path "
-                 << block_map_data.path() << " abort installation.";
-      return false;
-    }
-    if (!BlockDevHasFstab(block_map_data.path())) {
-      LOG(ERROR) << "Block device " << block_map_path
-                 << " does not have corresponding fstab. This might be an external device, "
-                    "aborting installation.";
-      return false;
-    }
-
     // uncrypt only produces block map only if the package stays on /data.
     *should_use_fuse = false;
     return true;
