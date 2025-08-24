@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1edc0a23_24477ebe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-08-24T23:35:12Z",
+      "side": 1,
+      "message": "When A only dies, this one can go.\n\n0 reason on A/B.",
+      "revId": "d475cf3eace1eaa24e2f332137e47c6abe9f0901",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
