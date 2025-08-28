@@ -16,6 +16,24 @@
       "message": "Note that for some devices, this can cause a permanent brick, for example in the recent case of bootloader anti-rollback bump on pixels",
       "revId": "1552dae58d6e6130b8abab4c4d3fe900adaec001",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c9f7f9a9_a0c5c7f6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2025-08-28T14:08:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a890dcdc_430e7d2e",
+      "revId": "1552dae58d6e6130b8abab4c4d3fe900adaec001",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
