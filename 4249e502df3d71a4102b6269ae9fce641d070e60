@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c055d66a_29c2e028",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2025-08-28T02:26:15Z",
+      "side": 1,
+      "message": "The previous patch in the older branch asked two prompts for downgrade which seems like asking the user the same thing twice. Moreover the user might not understand what SPL or security patch level is. The prompt also says \"It might cause data loss\" vs \"will cause data loss\".",
+      "revId": "4249e502df3d71a4102b6269ae9fce641d070e60",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
