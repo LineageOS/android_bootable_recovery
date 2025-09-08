@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "872c3a2e_dccefe2c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-09-08T06:12:59Z",
+      "side": 1,
+      "message": "Okay, so PS6 was better IMO, checking for rollback isn\u0027t reliable.\n\nInstead, lets just guard this behind a property.\n\nIf user goes and sets a prop, then flashes, they are uber dumb. Lets those of us who want it build in said property, or users who want to to enable ADB and flash.",
+      "revId": "539f53facae287d0976bd52fecdaa9f72f0cd332",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
