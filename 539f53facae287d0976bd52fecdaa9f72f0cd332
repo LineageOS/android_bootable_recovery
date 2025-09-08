@@ -52,6 +52,24 @@
       "parentUuid": "c399542c_6f5f09aa",
       "revId": "539f53facae287d0976bd52fecdaa9f72f0cd332",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "902ebca9_a30fa13a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-09-08T17:41:42Z",
+      "side": 1,
+      "message": "Oh wait, I misread.\n\nI vote if anything that\u0027s a follow-up patch, instead of implementing anti-roll back logic in this I hope we just do a property like I mentioned to enable downgrading security patch level.",
+      "parentUuid": "f5a215af_f5e597fe",
+      "revId": "539f53facae287d0976bd52fecdaa9f72f0cd332",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
