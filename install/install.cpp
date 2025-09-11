@@ -197,6 +197,14 @@ static bool CheckAbSpecificMetadata(const std::map<std::string, std::string>& me
       undeclared_downgrade = true;
     }
   }
+
+  const auto hw_anti_rollback_enabled =
+      android::base::GetBoolProperty("ro.recovery.hw_anti_rollback_enabled", true);
+  if (undeclared_downgrade && hw_anti_rollback_enabled) {
+    LOG(ERROR) << "Denying downgrade because hardware anti-rollback is enabled.";
+    return false;
+  }
+
   const auto post_build = get_value(metadata, "post-build");
   const auto build_fingerprint = android::base::Tokenize(post_build, "/");
   if (!build_fingerprint.empty() && android::base::GetProperty("ro.build.type", "") == "user") {
