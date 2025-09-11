@@ -16,6 +16,24 @@
       "message": "\"Warning: Security patch level downgrade detected.\",\n  \"This may require formatting data.\",\n  \"Device may brick if hardware rollback protection is enabled. Proceed?\");",
       "revId": "e5b70885f829cf9227cb91d7cb84095cb16eed3e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9eb44aae_0036f0b8",
+        "filename": "recovery.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-09-11T05:53:07Z",
+      "side": 1,
+      "message": "Proceed -\u003e Install anyway?\n\nto be in line with other uses.\n\nAnd I\u0027m open to Warning -\u003e WARNING",
+      "parentUuid": "67171103_761e00c1",
+      "revId": "e5b70885f829cf9227cb91d7cb84095cb16eed3e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
