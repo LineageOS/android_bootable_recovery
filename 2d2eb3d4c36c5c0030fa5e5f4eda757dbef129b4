@@ -50,6 +50,24 @@
       "message": "Sorry about the delay. I got some unfortunate issues with my PC, so i haven\u0027t been able to do much the past few days. From what i can understand, everbody can downgrade spl provided they aren\u0027t affected by antirollback. So, i have that implemented on a separate change.",
       "revId": "2d2eb3d4c36c5c0030fa5e5f4eda757dbef129b4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b440de8_12ad5230",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-09-11T04:15:12Z",
+      "side": 1,
+      "message": "I don\u0027t like that property naming.\n\nhardware rollback is _not the only reason_ to not allow downgrade. If anything hardware rollback should be a /hard stop/ with no bypass.\n\nBut those of us working on Lineage may have valid reasons to want to spl downgrade, or allow users to do so.\n\nI\u0027d really like to have the property I mentioned guarding the function, but allowing it to run, then if anything, a follow up that disables is _even still_ if hardware rollback is present.",
+      "parentUuid": "87dbe588_c8f23cc5",
+      "revId": "2d2eb3d4c36c5c0030fa5e5f4eda757dbef129b4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
