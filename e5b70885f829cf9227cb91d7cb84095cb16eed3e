@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "67171103_761e00c1",
+        "filename": "recovery.cpp",
+        "patchSetId": 9
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-09-11T05:52:30Z",
+      "side": 1,
+      "message": "\"Warning: Security patch level downgrade detected.\",\n  \"This may require formatting data.\",\n  \"Device may brick if hardware rollback protection is enabled. Proceed?\");",
+      "revId": "e5b70885f829cf9227cb91d7cb84095cb16eed3e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
