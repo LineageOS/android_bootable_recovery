@@ -33,6 +33,23 @@
       "message": "@pig lets please guard this to only be avail when persist.vendor.recovery_allow_spl_downgrade is set.",
       "revId": "2d2eb3d4c36c5c0030fa5e5f4eda757dbef129b4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87dbe588_c8f23cc5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 30416
+      },
+      "writtenOn": "2025-09-11T03:52:11Z",
+      "side": 1,
+      "message": "Sorry about the delay. I got some unfortunate issues with my PC, so i haven\u0027t been able to do much the past few days. From what i can understand, everbody can downgrade spl provided they aren\u0027t affected by antirollback. So, i have that implemented on a separate change.",
+      "revId": "2d2eb3d4c36c5c0030fa5e5f4eda757dbef129b4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
