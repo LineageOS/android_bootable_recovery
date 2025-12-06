@@ -129,7 +129,7 @@ void RecoveryUI::OnTouchDeviceDetected(int fd) {
 
   char* p = buf;
   char* endp;
-  for (size_t n = 0; p < buf + len && *p == '0'; ++n) {
+  for (; p < buf + len && *p == '0';) {
     int val[6];
     int f;
     for (f = 0; *p && f < 6; ++f) {
