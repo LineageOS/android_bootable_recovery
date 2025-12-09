@@ -602,6 +602,7 @@ change_menu:
       }
 
       case Device::APPLY_UPDATE:
+      case Device::APPLY_ADB_SIDELOAD:
       case Device::ENTER_RESCUE: {
         save_current_log = true;
         update_in_progress = true;
@@ -612,6 +613,8 @@ change_menu:
           // Switch to graphics screen.
           ui->ShowText(false);
           status = ApplyFromAdb(device, true /* rescue_mode */, &reboot_action);
+        } else if (chosen_action == Device::APPLY_ADB_SIDELOAD) {
+          status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
         } else if (chosen_action == Device::APPLY_UPDATE) {
           status = apply_update_menu(device, &reboot_action);
         }

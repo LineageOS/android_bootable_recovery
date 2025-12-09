@@ -53,7 +53,7 @@ class Device {
     REBOOT = 1,
     APPLY_UPDATE = 2,
     // APPLY_CACHE was 3.
-    // APPLY_ADB_SIDELOAD was 4.
+    APPLY_ADB_SIDELOAD = 4,
     WIPE_DATA = 5,
     WIPE_CACHE = 6,
     REBOOT_BOOTLOADER = 7,
