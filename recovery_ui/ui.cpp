@@ -273,8 +273,31 @@ void RecoveryUI::OnTouchPress() {
 
 void RecoveryUI::OnTouchTrack() {
   if (touch_pos_.y() <= gr_fb_height_real()) {
-    while (abs(touch_pos_.y() - touch_track_.y()) >= MenuItemHeight()) {
-      int dy = touch_pos_.y() - touch_track_.y();
+    const double scaleX = static_cast<double>(touch_pos_.x()) / gr_fb_width_real();
+    const double scaleY = static_cast<double>(touch_pos_.y()) / gr_fb_height_real();
+
+    Point point;
+    switch (gr_touch_rotation()) {
+      case GRRotation::NONE:
+        point.x(gr_fb_width_real() * scaleX);
+        point.y(gr_fb_height_real() * scaleY);
+        break;
+      case GRRotation::RIGHT:
+        point.x(gr_fb_width_real() * scaleY);
+        point.y(gr_fb_height_real() - (gr_fb_height_real() * scaleX));
+        break;
+      case GRRotation::DOWN:
+        point.x(gr_fb_width_real() - (gr_fb_width_real() * scaleX));
+        point.y(gr_fb_height_real() - (gr_fb_height_real() * scaleY));
+        break;
+      case GRRotation::LEFT:
+        point.x(gr_fb_width_real() - (gr_fb_width_real() * scaleY));
+        point.y(gr_fb_height_real() * scaleX);
+        break;
+    }
+
+    while (abs(point.y() - touch_track_.y()) >= MenuItemHeight()) {
+      int dy = point.y() - touch_track_.y();
       int key = (dy < 0) ? KEY_SCROLLDOWN : KEY_SCROLLUP;
       ProcessKey(key, 1);  // press key
       ProcessKey(key, 0);  // and release it
