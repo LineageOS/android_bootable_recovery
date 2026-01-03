@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "38047c37_4e4259dd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-01-03T03:35:46Z",
+      "side": 1,
+      "message": "We could probably create a single loop and utilize it in both places - but this would likely make mike\u0027s life on QPR harder.",
+      "revId": "457416ed80f53280ea9e2421027b96ac1ab9cb5d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
