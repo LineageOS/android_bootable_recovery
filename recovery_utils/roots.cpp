@@ -487,7 +487,7 @@ void map_logical_partitions() {
 
 bool dm_find_system() {
   auto rec = GetEntryForPath(&fstab, android::fs_mgr::GetSystemRoot());
-  if (!rec->fs_mgr_flags.logical) {
+  if (!rec || !rec->fs_mgr_flags.logical) {
     return false;
   }
   // If the fstab entry for system it's a path instead of a name, then it was already mapped
