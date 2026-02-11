@@ -16,6 +16,24 @@
       "message": "how could /system entry be missing on fstab?",
       "revId": "d3bf7c45776cac45348444715b259adde4096f6e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "24baeb27_2d0ff318",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29415
+      },
+      "writtenOn": "2026-02-11T01:52:34Z",
+      "side": 1,
+      "message": "Was building a recovery fstab for a mainline target, only included metadata/misc/userdata as a start since figured that\u0027s all recovery would need to touch since mapper should handle the logical partitions for fastbootd.\n\nCan flash the logical partitions fine without them in fstab after this change:\nfastboot flash vendor out/target/product/obiwan/vendor.img\nResizing \u0027vendor_a\u0027                                OKAY [  0.008s]\nSending \u0027vendor_a\u0027 (11056 KB)                      OKAY [  0.068s]\nWriting \u0027vendor_a\u0027                                 OKAY [  0.213s]\nFinished. Total time: 0.311s",
+      "parentUuid": "c76e6e10_6a242518",
+      "revId": "d3bf7c45776cac45348444715b259adde4096f6e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
