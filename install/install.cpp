@@ -449,17 +449,10 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
     spl_downgrade_approved = true;
   }
 
-  const auto reboot_to_recovery = [] {
-    if (std::string err; !clear_bootloader_message(&err)) {
-      LOG(ERROR) << "Failed to clear BCB message: " << err;
-    }
-    Reboot("recovery");
-  };
-
   static bool ab_package_installed = false;
   if (ab_package_installed) {
     if (ask_to_ab_reboot(device)) {
-      reboot_to_recovery();
+      return INSTALL_REBOOT_RECOVERY;
     }
     return INSTALL_ERROR;
   }
@@ -652,7 +645,7 @@ static InstallResult TryUpdateBinary(Package* package, bool* wipe_cache,
     ab_package_installed = true;
     PerformPowerwashIfRequired(zip, device);
     if (!ui->IsSideloadAutoReboot() && ask_to_ab_reboot(device)) {
-      reboot_to_recovery();
+      return INSTALL_REBOOT_RECOVERY;
     }
   }
 
