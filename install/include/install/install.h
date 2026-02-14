@@ -37,6 +37,7 @@ enum InstallResult {
   INSTALL_RETRY,
   INSTALL_KEY_INTERRUPTED,
   INSTALL_REBOOT,
+  INSTALL_REBOOT_RECOVERY,
 };
 
 enum class OtaType {
