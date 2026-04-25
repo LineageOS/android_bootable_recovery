@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "883522b4_3a35997d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-25T23:09:27Z",
+      "side": 1,
+      "message": "Hey, sorry, a few things:\n- This is 21.0, a legacy non shipping branch, QOL fixes like this would not be accepted here, only mandatory fixes.\n- Even on 22.2/23.2 we track upstream for recovery, so QOL stuff doesn\u0027t belong in our repos, it belongs set to AOSP gerrit on android-latest or whatever they use now.",
+      "revId": "23417ca2d6c669a0e385d83e1b3101a7d5f05500",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
