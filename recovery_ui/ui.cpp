@@ -207,15 +207,15 @@ bool RecoveryUI::InitScreensaver() {
 }
 
 bool RecoveryUI::Init(const std::string& /* locale */) {
-  ev_init(std::bind(&RecoveryUI::OnInputEvent, this, std::placeholders::_1, std::placeholders::_2),
+  ev_init([this](auto&&... args) { return OnInputEvent(std::forward<decltype(args)>(args)...); },
           touch_screen_allowed_);
 
-  ev_iterate_available_keys(std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+  ev_iterate_available_keys([this](int key) { OnKeyDetected(key); });
 
   if (touch_screen_allowed_) {
     ev_iterate_touch_inputs(
-        std::bind(&RecoveryUI::OnTouchDeviceDetected, this, std::placeholders::_1),
-        std::bind(&RecoveryUI::OnKeyDetected, this, std::placeholders::_1));
+        [this](auto&&... args) { return OnTouchDeviceDetected(std::forward<decltype(args)>(args)...); },
+        [this](int key) { OnKeyDetected(key); });
 
     // Parse /proc/cmdline to determine if it's booting into recovery with a bootreason of
     // "recovery_ui". This specific reason is set by some (wear) bootloaders, to allow an easier way

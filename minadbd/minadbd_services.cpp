@@ -317,7 +317,7 @@ unique_fd daemon_service_to_fd(std::string_view name, atransport* /* transport *
     if (args.empty() || args == "bootloader" || args == "rescue" || args == "recovery" ||
         args == "fastboot") {
       return create_service_thread("reboot",
-                                   std::bind(RebootHostService, std::placeholders::_1, args));
+                                   [args](MinadbdCommand c) { return RebootHostService(c, args); });
     }
     return unique_fd{};
   }
@@ -328,17 +328,17 @@ unique_fd daemon_service_to_fd(std::string_view name, atransport* /* transport *
       // rescue-install:<file-size>:<block-size>
       std::string args(name);
       return create_service_thread(
-          "rescue-install", std::bind(RescueInstallHostService, std::placeholders::_1, args));
+          "rescue-install", [args](MinadbdCommand c) { return RescueInstallHostService(c, args); });
     } else if (android::base::ConsumePrefix(&name, "rescue-getprop:")) {
       // rescue-getprop:<prop>
       std::string args(name);
       return create_service_thread(
-          "rescue-getprop", std::bind(RescueGetpropHostService, std::placeholders::_1, args));
+          "rescue-getprop", [args](MinadbdCommand c) { return RescueGetpropHostService(c, args); });
     } else if (android::base::ConsumePrefix(&name, "rescue-wipe:")) {
       // rescue-wipe:target:<message-size>
       std::string args(name);
       return create_service_thread("rescue-wipe",
-                                   std::bind(WipeDeviceService, std::placeholders::_1, args));
+                                   [args](MinadbdCommand c) { return WipeDeviceService(c, args); });
     }
 
     return unique_fd{};
@@ -353,7 +353,7 @@ unique_fd daemon_service_to_fd(std::string_view name, atransport* /* transport *
     // sideload-host:<file-size>:<block-size>
     std::string args(name);
     return create_service_thread("sideload-host",
-                                 std::bind(SideloadHostService, std::placeholders::_1, args));
+                                 [args](MinadbdCommand c) { return SideloadHostService(c, args); });
   }
   return unique_fd{};
 }

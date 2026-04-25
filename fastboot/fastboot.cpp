@@ -104,7 +104,7 @@ Device::BuiltinAction StartFastboot(Device* device, const std::vector<std::strin
 
   auto chosen_item = ui->ShowMenu(
       {}, fastboot_menu_items, 0, false,
-      std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+      [device](int key, bool vis) { return device->HandleMenuKey(key, vis); });
 
   if (chosen_item == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
     return Device::KEY_INTERRUPTED;

@@ -1398,8 +1398,7 @@ static int PerformCommandDiff(CommandParameters& params) {
       RangeSinkWriter writer(params.fd, tgt);
       if (params.cmdname[0] == 'i') {  // imgdiff
         if (ApplyImagePatch(params.buffer.data(), blocks * BLOCKSIZE, patch_value,
-                            std::bind(&RangeSinkWriter::Write, &writer, std::placeholders::_1,
-                                      std::placeholders::_2),
+                            [&writer](const auto&... args) { return writer.Write(args...); },
                             nullptr) != 0) {
           LOG(ERROR) << "Failed to apply image patch.";
           failure_type = kPatchApplicationFailure;
@@ -1407,8 +1406,7 @@ static int PerformCommandDiff(CommandParameters& params) {
         }
       } else {
         if (ApplyBSDiffPatch(params.buffer.data(), blocks * BLOCKSIZE, patch_value, 0,
-                             std::bind(&RangeSinkWriter::Write, &writer, std::placeholders::_1,
-                                       std::placeholders::_2)) != 0) {
+                             [&writer](const void* data, size_t len) { return writer.Write(data, len); }) != 0) {
           LOG(ERROR) << "Failed to apply bsdiff patch.";
           failure_type = kPatchApplicationFailure;
           return -1;

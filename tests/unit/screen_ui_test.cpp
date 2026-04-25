@@ -427,8 +427,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu) {
       KeyCode::ENTER,
   });
   ASSERT_EQ(3u, ui_->ShowMenu(HEADERS, ITEMS, 3, true,
-                              std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                        std::placeholders::_1, std::placeholders::_2)));
+                              [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 
   ui_->SetKeyBuffer({
       KeyCode::UP,
@@ -439,8 +438,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu) {
       KeyCode::ENTER,
   });
   ASSERT_EQ(2u, ui_->ShowMenu(HEADERS, ITEMS, 0, true,
-                              std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                        std::placeholders::_1, std::placeholders::_2)));
+                              [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 }
 
 TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu_NotMenuOnly) {
@@ -452,8 +450,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu_NotMenuOnly) {
   });
   ASSERT_EQ(static_cast<size_t>(kMagicAction),
             ui_->ShowMenu(HEADERS, ITEMS, 3, false,
-                          std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                    std::placeholders::_1, std::placeholders::_2)));
+                          [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 }
 
 TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu_TimedOut) {
@@ -481,8 +478,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenu_TimedOut_TextWasEverVisible) {
       KeyCode::ENTER,
   });
   ASSERT_EQ(4u, ui_->ShowMenu(HEADERS, ITEMS, 3, true,
-                              std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                        std::placeholders::_1, std::placeholders::_2)));
+                              [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 }
 
 TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenuWithInterrupt) {
@@ -500,8 +496,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenuWithInterrupt) {
   ui_->InterruptKey();
   ASSERT_EQ(static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED),
             ui_->ShowMenu(HEADERS, ITEMS, 3, true,
-                          std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                    std::placeholders::_1, std::placeholders::_2)));
+                          [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 
   ui_->SetKeyBuffer({
       KeyCode::UP,
@@ -513,8 +508,7 @@ TEST_F(DISABLED_ScreenRecoveryUITest, ShowMenuWithInterrupt) {
   });
   ASSERT_EQ(static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED),
             ui_->ShowMenu(HEADERS, ITEMS, 0, true,
-                          std::bind(&TestableScreenRecoveryUI::KeyHandler, ui_.get(),
-                                    std::placeholders::_1, std::placeholders::_2)));
+                          [this](int key, bool vis) { return ui_->KeyHandler(key, vis); }));
 }
 
 TEST_F(DISABLED_ScreenRecoveryUITest, LoadAnimation) {

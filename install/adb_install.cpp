@@ -115,7 +115,7 @@ static auto AdbInstallPackageHandler(Device* device, InstallResult* result) {
 
     auto package =
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
-                                   std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
+                                   [ui](float progress) { ui->SetProgress(progress); });
     *result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0, device);
     break;
   }
@@ -327,7 +327,7 @@ static void CreateMinadbdServiceAndExecuteCommands(
     std::vector<std::string> entries{ "Cancel" };
     size_t chosen_item = ui->ShowMenu(
         headers, entries, 0, true,
-        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+        [device](int key, bool visible) { return device->HandleMenuKey(key, visible); });
 
     if (chosen_item != Device::kDoSideload) {
       // Kill minadbd if 'cancel' was selected, to abort sideload.
@@ -365,18 +365,12 @@ InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinActi
 
   InstallResult install_result = INSTALL_NONE;
   std::map<MinadbdCommand, CommandFunction> command_map{
-    { MinadbdCommand::kInstall, std::bind(&AdbInstallPackageHandler, device, &install_result) },
-    { MinadbdCommand::kRebootAndroid, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootAndroid,
-                                                &install_result, reboot_action) },
-    { MinadbdCommand::kRebootBootloader,
-      std::bind(&AdbRebootHandler, MinadbdCommand::kRebootBootloader, &install_result,
-                reboot_action) },
-    { MinadbdCommand::kRebootFastboot, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootFastboot,
-                                                 &install_result, reboot_action) },
-    { MinadbdCommand::kRebootRecovery, std::bind(&AdbRebootHandler, MinadbdCommand::kRebootRecovery,
-                                                 &install_result, reboot_action) },
-    { MinadbdCommand::kRebootRescue,
-      std::bind(&AdbRebootHandler, MinadbdCommand::kRebootRescue, &install_result, reboot_action) },
+    { MinadbdCommand::kInstall, [device, &install_result](MinadbdCommand /* cmd */) { return AdbInstallPackageHandler(device, &install_result); } },
+    { MinadbdCommand::kRebootAndroid, [&install_result, reboot_action](MinadbdCommand cmd) { return AdbRebootHandler(cmd, &install_result, reboot_action); } },
+    { MinadbdCommand::kRebootBootloader, [&install_result, reboot_action](MinadbdCommand cmd) { return AdbRebootHandler(cmd, &install_result, reboot_action); } },
+    { MinadbdCommand::kRebootFastboot, [&install_result, reboot_action](MinadbdCommand cmd) { return AdbRebootHandler(cmd, &install_result, reboot_action); } },
+    { MinadbdCommand::kRebootRecovery, [&install_result, reboot_action](MinadbdCommand cmd) { return AdbRebootHandler(cmd, &install_result, reboot_action); } },
+    { MinadbdCommand::kRebootRescue, [&install_result, reboot_action](MinadbdCommand cmd) { return AdbRebootHandler(cmd, &install_result, reboot_action); } },
   };
 
   if (!rescue_mode) {
