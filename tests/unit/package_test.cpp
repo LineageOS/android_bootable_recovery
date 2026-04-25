@@ -89,8 +89,7 @@ TEST_F(PackageTest, UpdateHashAtOffset_sha1_hash) {
   for (const auto& package : packages_) {
     SHA_CTX ctx;
     SHA1_Init(&ctx);
-    std::vector<HasherUpdateCallback> hashers{ std::bind(&SHA1_Update, &ctx, std::placeholders::_1,
-                                                         std::placeholders::_2) };
+    std::vector<HasherUpdateCallback> hashers{ [&ctx](const void* d, size_t l) { return SHA1_Update(&ctx, d, l); } };
     package->UpdateHashAtOffset(hashers, 0, hash_size);
 
     std::vector<uint8_t> calculated_sha(SHA_DIGEST_LENGTH);

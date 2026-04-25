@@ -215,11 +215,11 @@ int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys
   std::vector<HasherUpdateCallback> hashers;
   if (need_sha1) {
     hashers.emplace_back(
-        std::bind(&SHA1_Update, &sha1_ctx, std::placeholders::_1, std::placeholders::_2));
+        [&sha1_ctx](const void* d, size_t l) { return SHA1_Update(&sha1_ctx, d, l); });
   }
   if (need_sha256) {
     hashers.emplace_back(
-        std::bind(&SHA256_Update, &sha256_ctx, std::placeholders::_1, std::placeholders::_2));
+        [&sha256_ctx](const void* d, size_t l) { return SHA256_Update(&sha256_ctx, d, l); });
   }
 
   double frac = -1.0;

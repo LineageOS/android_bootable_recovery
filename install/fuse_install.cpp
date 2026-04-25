@@ -97,7 +97,7 @@ std::string BrowseDirectory(const std::string& path, Device* device, RecoveryUI*
   while (true) {
     chosen_item = ui->ShowMenu(
         headers, entries, chosen_item, true,
-        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
+        [device](int key, bool vis) { return device->HandleMenuKey(key, vis); });
 
     // Return if WaitKey() was interrupted.
     if (chosen_item == static_cast<size_t>(RecoveryUI::KeyError::INTERRUPTED)) {
@@ -184,7 +184,7 @@ InstallResult InstallWithFuseFromPath(std::string_view path, Device* device) {
     }
     auto package =
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
-                                   std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
+                                   [ui](float p) { ui->SetProgress(p); });
     result = InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0 /* retry_count */,
                             device);
     break;

@@ -35,8 +35,7 @@ InstallResult ApplyFromVirtiofs(Device* device) {
   ui->Print("\n-- Install %s ...\n", path.c_str());
 
   auto package =
-      Package::CreateFilePackage(path, std::bind(&RecoveryUI::SetProgress, ui,
-                                                 std::placeholders::_1));
+      Package::CreateFilePackage(path, [ui](float p) { ui->SetProgress(p); });
   if (package == nullptr) {
     ui->Print("Failed to open package %s\n", path.c_str());
     return INSTALL_ERROR;
