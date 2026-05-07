@@ -21,6 +21,7 @@
 #include <linux/fs.h>
 #include <stdint.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
 
 #include <map>
 #include <memory>
@@ -90,9 +91,62 @@ std::vector<std::string> GetWipePartitionList(Package* wipe_package) {
   return result;
 }
 
+// Validate that a partition path points to a real block device and is safe to wipe.
+// Returns true if the partition is safe to wipe, false otherwise.
+static bool ValidatePartitionPath(const std::string& partition) {
+  struct stat st;
+  if (stat(partition.c_str(), &st) == -1) {
+    PLOG(ERROR) << "Failed to stat \"" << partition << "\"";
+    return false;
+  }
+
+  if (!S_ISBLK(st.st_mode)) {
+    LOG(ERROR) << "Partition \"" << partition << "\" is not a block device";
+    return false;
+  }
+
+  if (partition.empty() || partition == "/") {
+    LOG(ERROR) << "Invalid partition path: \"" << partition << "\"";
+    return false;
+  }
+
+  // Reject whitelisted dangerous block device paths that could brick the device.
+  static const std::vector<std::string> kBlocklist = {
+    "/dev/block/mmcblk0",
+    "/dev/block/sda",
+    "/dev/block/sdb",
+    "/dev/block/nvme0n1",
+    "/dev/block/xvda",
+    "/dev/block/vda",
+    "/dev/block/loop0",
+  };
+
+  for (const auto& blocked : kBlocklist) {
+    if (partition == blocked || android::base::StartsWith(partition, blocked)) {
+      LOG(ERROR) << "Partition \"" << partition
+                 << "\" is blocked (whole-disk device or loopback)";
+      return false;
+    }
+  }
+
+  // Ensure the path is under a valid block device directory.
+  if (!android::base::StartsWith(partition, "/dev/block/")) {
+    LOG(ERROR) << "Partition \"" << partition
+               << "\" is not under /dev/block/, refusing to wipe";
+    return false;
+  }
+
+  return true;
+}
+
 // Secure-wipes a given partition. It uses BLKSECDISCARD, if supported. Otherwise, it goes with
 // BLKDISCARD (if device supports BLKDISCARDZEROES) or BLKZEROOUT.
 static bool SecureWipePartition(const std::string& partition) {
+  if (!ValidatePartitionPath(partition)) {
+    LOG(ERROR) << "Partition \"" << partition << "\" failed validation, skipping wipe";
+    return false;
+  }
+
   android::base::unique_fd fd(TEMP_FAILURE_RETRY(open(partition.c_str(), O_WRONLY)));
   if (fd == -1) {
     PLOG(ERROR) << "Failed to open \"" << partition << "\"";
@@ -134,6 +188,11 @@ static bool SecureWipePartition(const std::string& partition) {
 static std::unique_ptr<Package> ReadWipePackage(size_t wipe_package_size) {
   if (wipe_package_size == 0) {
     LOG(ERROR) << "wipe_package_size is zero";
+    return nullptr;
+  }
+  if (wipe_package_size > 64 * 1024 * 1024) {
+    LOG(ERROR) << "wipe_package_size exceeds maximum allowed size (64MiB): "
+               << wipe_package_size;
     return nullptr;
   }
 
