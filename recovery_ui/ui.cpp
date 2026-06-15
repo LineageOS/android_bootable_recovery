@@ -340,6 +340,23 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
     return -1;
   }
 
+  // Analog Dpad handling.
+  if (ev.type == EV_ABS && (ev.code == ABS_HAT0Y || ev.code == ABS_HAT0X)) {
+    switch (ev.value) {
+      case 1:
+        ProcessKey(BTN_DPAD_DOWN, 1);
+        break;
+      case -1:
+        ProcessKey(BTN_DPAD_UP, 1);
+        break;
+      case 0:
+        if (IsKeyPressed(BTN_DPAD_DOWN)) ProcessKey(BTN_DPAD_DOWN, 0);
+        if (IsKeyPressed(BTN_DPAD_UP))   ProcessKey(BTN_DPAD_UP, 0);
+        break;
+    }
+    return 0;
+  }
+
   // Touch inputs handling.
   //
   // Per the doc Multi-touch Protocol at below, there are two protocols.
