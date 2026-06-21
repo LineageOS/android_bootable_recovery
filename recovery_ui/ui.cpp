@@ -254,15 +254,20 @@ void RecoveryUI::CalibrateTouch(int fd) {
   if (calibrated) return;
 
   memset(&info, 0, sizeof(info));
-  if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_X), &info) == 0) {
-    touch_min_.x(info.minimum);
-    touch_max_.x(info.maximum);
+  if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_X), &info) != 0 ||
+      info.maximum <= info.minimum) {
+    return;
   }
+  touch_min_.x(info.minimum);
+  touch_max_.x(info.maximum);
+
   memset(&info, 0, sizeof(info));
-  if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_Y), &info) == 0) {
-    touch_min_.y(info.minimum);
-    touch_max_.y(info.maximum);
+  if (ioctl(fd, EVIOCGABS(ABS_MT_POSITION_Y), &info) != 0 ||
+      info.maximum <= info.minimum) {
+    return;
   }
+  touch_min_.y(info.minimum);
+  touch_max_.y(info.maximum);
 
   calibrated = true;
 }
@@ -315,6 +320,12 @@ int RecoveryUI::OnInputEvent(int fd, uint32_t epevents) {
   struct input_event ev;
   if (ev_get_input(fd, epevents, &ev) == -1) {
     return -1;
+  }
+
+  if (ev.type == EV_ABS && ev.code != ABS_MT_POSITION_X &&
+      ev.code != ABS_MT_POSITION_Y && ev.code != ABS_MT_SLOT &&
+      ev.code != ABS_MT_TRACKING_ID) {
+    return 0;
   }
 
   // Touch inputs handling.
