@@ -183,35 +183,37 @@ int TextMenu::DrawHeader(int x, int y) const {
   return offset;
 }
 
-int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
+int TextMenu::DrawItems(int /*x*/, int y, int screen_width, bool long_press) const {
+  int horizontal_rule_height = 8;
   int offset = 0;
   int padding = draw_funcs_.MenuItemPadding();
+  int spacing = draw_funcs_.MenuItemSpacing();
 
   draw_funcs_.SetColor(UIElement::MENU);
-  offset += draw_funcs_.DrawHorizontalRule(y + offset) + 4;
+  offset += horizontal_rule_height + 4;
 
   int item_container_offset = offset; // store it for drawing scrollbar on most top
 
   for (size_t i = MenuStart(); i < MenuEnd(); ++i) {
-    if (i == selection()) {
-      // Draw the highlight bar.
-      draw_funcs_.SetColor(long_press ? UIElement::MENU_SEL_BG_ACTIVE : UIElement::MENU_SEL_BG);
+    const auto selected = i == selection();
 
-      int bar_height = padding + char_height_ + padding;
-      draw_funcs_.DrawHighlightBar(0, y + offset, screen_width, bar_height);
+    // Draw the highlight bar.
+    draw_funcs_.SetColor(long_press ? UIElement::MENU_SEL_BG_ACTIVE
+                         : selected ? UIElement::MENU_SEL_BG
+                                    : UIElement::MENU_BG);
 
-      // Colored text for the selected item.
-      draw_funcs_.SetColor(UIElement::MENU_SEL_FG);
-    }
-    offset += draw_funcs_.DrawTextLine(x, y + offset, TextItem(i), false /* bold */);
+    int bar_height = padding + char_height_ + padding;
+    draw_funcs_.DrawHighlightBar(padding, y + offset, screen_width - (padding * 2), bar_height);
 
-    draw_funcs_.SetColor(UIElement::MENU);
+    draw_funcs_.SetColor(selected ? UIElement::MENU_SEL_FG : UIElement::MENU);
+    offset += draw_funcs_.DrawTextLine(padding * 2, y + offset, TextItem(i), false /* bold */);
+    offset += spacing;
   }
-  offset += draw_funcs_.DrawHorizontalRule(y + offset);
+  offset += horizontal_rule_height;
 
   std::string unused;
   if (ItemsOverflow(&unused)) {
-    int container_height = max_display_items_ * (2 * padding + char_height_);
+    int container_height = max_display_items_ * (2 * padding + char_height_ + spacing);
     int bar_height = container_height / (text_items_.size() - max_display_items_ + 1);
     int start_y = y + item_container_offset + bar_height * menu_start_;
     draw_funcs_.SetColor(UIElement::SCROLLBAR);
@@ -606,6 +608,12 @@ void ScreenRecoveryUI::SetColor(UIElement e) const {
     case UIElement::MENU:
       gr_color(0xd8, 0xd8, 0xd8, 255);
       break;
+    case UIElement::MENU_BG:
+      if (fastbootd_logo_enabled_)
+        gr_color(0xe6 * 0.20, 0x51 * 0.20, 0x00 * 0.20, 255);
+      else
+        gr_color(0x7c * 0.20, 0x4d * 0.20, 0xff * 0.20, 255);
+      break;
     case UIElement::MENU_SEL_BG:
     case UIElement::SCROLLBAR:
       if (fastbootd_logo_enabled_)
@@ -863,7 +871,8 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     menu_->SetMenuHeight(std::max(0, ScreenHeight() - menu_start_y_));
     y += menu_->DrawItems(x, y, ScreenWidth(), IsLongPress());
     if (!help_message.empty()) {
-      y += MenuItemPadding();
+      y -= MenuItemSpacing();
+      y += 12; // Skip horizontal rule and some margin
       SetColor(UIElement::INFO);
       y += DrawTextLines(x, y, help_message);
     }
@@ -1549,10 +1558,18 @@ int ScreenRecoveryUI::SelectMenu(const Point& p) {
       }
     }
 
+    const int menu_item_height = MenuItemHeight();
+    const int menu_item_height_with_spacing = menu_item_height + MenuItemSpacing();
+
     if (point.y() >= menu_start_y_ &&
-        point.y() < menu_start_y_ + menu_->ItemsCount() * MenuItemHeight()) {
+        point.y() < menu_start_y_ + menu_->ItemsCount() * menu_item_height_with_spacing) {
       int old_sel = menu_->selection();
-      int relative_sel = (point.y() - menu_start_y_) / MenuItemHeight();
+      int relative_sel = (point.y() - menu_start_y_) / menu_item_height_with_spacing;
+      int menu_item_start_y = menu_start_y_ + (relative_sel * menu_item_height_with_spacing);
+      if (point.y() > menu_item_start_y + menu_item_height) {
+        // The touch is in the spacing area between two menu items.
+        return Device::kNoAction;
+      }
       new_sel = menu_->SelectVisible(relative_sel);
       if (new_sel != -1 && new_sel != old_sel) {
         update_screen_locked();
