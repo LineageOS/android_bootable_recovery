@@ -35,6 +35,7 @@ enum class UIElement {
   BATTERY_LOW,
   HEADER,
   MENU,
+  MENU_BG,
   MENU_SEL_BG,
   MENU_SEL_BG_ACTIVE,
   MENU_SEL_FG,
