@@ -186,9 +186,32 @@ int TextMenu::DrawHeader(int x, int y) const {
 int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
   int offset = 0;
   int padding = draw_funcs_.MenuItemPadding();
+  const int border_thickness = 2;
+  const int horizontal_margin = padding;
+  const int item_height = 2 * padding + char_height_;
+  const int visible_items = static_cast<int>(MenuEnd() - MenuStart());
 
   draw_funcs_.SetColor(UIElement::MENU);
-  offset += draw_funcs_.DrawHorizontalRule(y + offset) + 4;
+
+  const int container_top = y + offset;
+  const int container_bottom = container_top + 2 * border_thickness + visible_items * item_height;
+  const int container_left = std::max(0, horizontal_margin);
+  const int container_right =
+      std::max(container_left + border_thickness, screen_width - std::max(0, horizontal_margin));
+  const int item_text_x = x + horizontal_margin;
+  if (container_right > container_left && visible_items > 0) {
+    draw_funcs_.SetColor(UIElement::MENU_SEL_BG);
+    draw_funcs_.DrawFill(container_left, container_top, container_right,
+                         container_top + border_thickness);
+    draw_funcs_.DrawFill(container_left, container_bottom - border_thickness, container_right,
+                         container_bottom);
+    draw_funcs_.DrawFill(container_left, container_top, container_left + border_thickness,
+                         container_bottom);
+    draw_funcs_.DrawFill(container_right - border_thickness, container_top, container_right,
+                         container_bottom);
+    draw_funcs_.SetColor(UIElement::MENU);
+  }
+  offset += border_thickness;
 
   int item_container_offset = offset; // store it for drawing scrollbar on most top
 
@@ -198,24 +221,30 @@ int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
       draw_funcs_.SetColor(long_press ? UIElement::MENU_SEL_BG_ACTIVE : UIElement::MENU_SEL_BG);
 
       int bar_height = padding + char_height_ + padding;
-      draw_funcs_.DrawHighlightBar(0, y + offset, screen_width, bar_height);
+      draw_funcs_.DrawHighlightBar(
+          container_left + border_thickness, y + offset,
+          std::max(0, container_right - container_left - 2 * border_thickness), bar_height);
 
       // Colored text for the selected item.
       draw_funcs_.SetColor(UIElement::MENU_SEL_FG);
     }
-    offset += draw_funcs_.DrawTextLine(x, y + offset, TextItem(i), false /* bold */);
+    offset += draw_funcs_.DrawTextLine(item_text_x, y + offset, TextItem(i), false /* bold */);
 
     draw_funcs_.SetColor(UIElement::MENU);
   }
-  offset += draw_funcs_.DrawHorizontalRule(y + offset);
+  offset += border_thickness;
 
   std::string unused;
   if (ItemsOverflow(&unused)) {
     int container_height = max_display_items_ * (2 * padding + char_height_);
     int bar_height = container_height / (text_items_.size() - max_display_items_ + 1);
     int start_y = y + item_container_offset + bar_height * menu_start_;
+    const int scrollbar_width = 8;
+    const int scrollbar_right = std::max(container_left + border_thickness + scrollbar_width,
+                                         container_right - border_thickness);
+    const int scrollbar_left = scrollbar_right - scrollbar_width;
     draw_funcs_.SetColor(UIElement::SCROLLBAR);
-    draw_funcs_.DrawScrollBar(start_y, bar_height);
+    draw_funcs_.DrawFill(scrollbar_left, start_y, scrollbar_right, start_y + bar_height);
   }
 
   return offset;
