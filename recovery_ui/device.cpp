@@ -29,7 +29,7 @@
 
 typedef std::pair<std::string, Device::BuiltinAction> menu_action_t;
 
-static std::vector<std::string> g_main_header{};
+static std::vector<std::string> g_main_header{ " " };
 static std::vector<menu_action_t> g_main_actions{
   { "Reboot system now", Device::REBOOT },
   { "Apply update", Device::APPLY_UPDATE },
