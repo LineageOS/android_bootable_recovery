@@ -184,30 +184,35 @@ int TextMenu::DrawHeader(int x, int y) const {
 }
 
 int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
+  int horizontal_rule_height = 8;
   int offset = 0;
   int padding = draw_funcs_.MenuItemPadding();
 
   draw_funcs_.SetColor(UIElement::MENU);
-  offset += draw_funcs_.DrawHorizontalRule(y + offset) + 4;
+  offset += horizontal_rule_height + 4;
 
   int item_container_offset = offset; // store it for drawing scrollbar on most top
 
   for (size_t i = MenuStart(); i < MenuEnd(); ++i) {
-    if (i == selection()) {
-      // Draw the highlight bar.
-      draw_funcs_.SetColor(long_press ? UIElement::MENU_SEL_BG_ACTIVE : UIElement::MENU_SEL_BG);
+    const auto selected = i == selection();
 
-      int bar_height = padding + char_height_ + padding;
-      draw_funcs_.DrawHighlightBar(0, y + offset, screen_width, bar_height);
+    // Draw the highlight bar.
+    draw_funcs_.SetColor(long_press ? UIElement::MENU_SEL_BG_ACTIVE
+                         : selected ? UIElement::MENU_SEL_BG
+                                    : UIElement::MENU_BG);
 
-      // Colored text for the selected item.
-      draw_funcs_.SetColor(UIElement::MENU_SEL_FG);
-    }
-    offset += draw_funcs_.DrawTextLine(x, y + offset, TextItem(i), false /* bold */);
+    int bar_height = padding + char_height_ + padding;
+
+    draw_funcs_.DrawHighlightBar(
+        padding, y + offset,
+        screen_width - (padding * 2), bar_height);
+
+    draw_funcs_.SetColor(selected ? UIElement::MENU_SEL_FG : UIElement::MENU);
+    offset += draw_funcs_.DrawTextLine(x + padding, y + offset, TextItem(i), false /* bold */);
 
     draw_funcs_.SetColor(UIElement::MENU);
   }
-  offset += draw_funcs_.DrawHorizontalRule(y + offset);
+  offset += horizontal_rule_height;
 
   std::string unused;
   if (ItemsOverflow(&unused)) {
@@ -605,6 +610,12 @@ void ScreenRecoveryUI::SetColor(UIElement e) const {
       break;
     case UIElement::MENU:
       gr_color(0xd8, 0xd8, 0xd8, 255);
+      break;
+    case UIElement::MENU_BG:
+      if (fastbootd_logo_enabled_)
+        gr_color(0xe6 * 0.20, 0x51 * 0.20, 0x00 * 0.20, 255);
+      else
+        gr_color(0x7c * 0.20, 0x4d * 0.20, 0xff * 0.20, 255);
       break;
     case UIElement::MENU_SEL_BG:
     case UIElement::SCROLLBAR:
