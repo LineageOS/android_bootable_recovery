@@ -325,6 +325,8 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
 
   void KeyLongPress(int) override;
 
+  void SaveScreenshot() override;
+
   void Redraw();
 
   // Checks the background text image, for debugging purpose. It iterates the locales embedded in

@@ -24,6 +24,7 @@
 #include <memory>
 
 #include <android-base/properties.h>
+#include <png.h>
 
 #include "graphics_drm.h"
 #include "graphics_drm_qti.h"
@@ -64,6 +65,83 @@ const GRFont* gr_menu_font() {
 
 PixelFormat gr_pixel_format() {
   return pixel_format;
+}
+
+static void PixelToRgba(uint32_t pixel, uint8_t* rgba) {
+  switch (pixel_format) {
+    case PixelFormat::ARGB:
+    case PixelFormat::BGRA:
+    case PixelFormat::BGRX:
+      rgba[0] = static_cast<uint8_t>((pixel >> 16) & 0xff);
+      rgba[1] = static_cast<uint8_t>((pixel >> 8) & 0xff);
+      rgba[2] = static_cast<uint8_t>(pixel & 0xff);
+      rgba[3] =
+          pixel_format == PixelFormat::BGRX ? 0xff : static_cast<uint8_t>((pixel >> 24) & 0xff);
+      break;
+    case PixelFormat::RGBA:
+      rgba[0] = static_cast<uint8_t>((pixel >> 8) & 0xff);
+      rgba[1] = static_cast<uint8_t>((pixel >> 16) & 0xff);
+      rgba[2] = static_cast<uint8_t>((pixel >> 24) & 0xff);
+      rgba[3] = static_cast<uint8_t>(pixel & 0xff);
+      break;
+    case PixelFormat::ABGR:
+    case PixelFormat::RGBX:
+    case PixelFormat::UNKNOWN:
+    default:
+      rgba[0] = static_cast<uint8_t>(pixel & 0xff);
+      rgba[1] = static_cast<uint8_t>((pixel >> 8) & 0xff);
+      rgba[2] = static_cast<uint8_t>((pixel >> 16) & 0xff);
+      rgba[3] =
+          pixel_format == PixelFormat::RGBX ? 0xff : static_cast<uint8_t>((pixel >> 24) & 0xff);
+      break;
+  }
+}
+
+bool gr_save_screenshot(const std::string& path) {
+  if (gr_draw == nullptr || gr_draw->pixel_bytes != 4) {
+    printf("gr_save_screenshot: unsupported draw surface\n");
+    return false;
+  }
+
+  std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(path.c_str(), "wbe"), fclose);
+  if (!fp) {
+    perror("gr_save_screenshot: fopen");
+    return false;
+  }
+
+  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  if (png_ptr == nullptr) {
+    return false;
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+  if (info_ptr == nullptr) {
+    png_destroy_write_struct(&png_ptr, nullptr);
+    return false;
+  }
+
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    return false;
+  }
+
+  png_init_io(png_ptr, fp.get());
+  png_set_IHDR(png_ptr, info_ptr, gr_draw->width, gr_draw->height, 8, PNG_COLOR_TYPE_RGBA,
+               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+  png_write_info(png_ptr, info_ptr);
+
+  std::vector<uint8_t> row(gr_draw->width * 4);
+  for (size_t y = 0; y < gr_draw->height; ++y) {
+    const auto* src = reinterpret_cast<const uint32_t*>(gr_draw->data() + y * gr_draw->row_bytes);
+    for (size_t x = 0; x < gr_draw->width; ++x) {
+      PixelToRgba(src[x], &row[x * 4]);
+    }
+    png_write_row(png_ptr, row.data());
+  }
+
+  png_write_end(png_ptr, info_ptr);
+  png_destroy_write_struct(&png_ptr, &info_ptr);
+  return true;
 }
 
 int gr_measure(const GRFont* font, const char* s) {

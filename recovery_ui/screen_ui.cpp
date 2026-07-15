@@ -456,6 +456,23 @@ const GRSurface* ScreenRecoveryUI::GetCurrentText() const {
   }
 }
 
+void ScreenRecoveryUI::SaveScreenshot() {
+  std::string path = std::format("/tmp/screenshot_{}.png", time(nullptr));
+  bool saved = false;
+
+  {
+    std::lock_guard<std::mutex> lg(updateMutex);
+    draw_screen_locked();
+    saved = gr_save_screenshot(path);
+  }
+
+  if (saved) {
+    Print("Saved screenshot to %s\n", path.c_str());
+  } else {
+    Print("Failed to save screenshot\n");
+  }
+}
+
 int ScreenRecoveryUI::PixelsFromDp(int dp) const {
   return dp * density_;
 }
