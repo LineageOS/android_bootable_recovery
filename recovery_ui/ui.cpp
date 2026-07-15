@@ -509,6 +509,12 @@ void RecoveryUI::ProcessKey(int key_code, int updown) {
 
   bool reboot_enabled = enable_reboot;
   if (register_key) {
+    if ((key_code == KEY_VOLUMEDOWN && IsKeyPressed(KEY_POWER)) ||
+        (key_code == KEY_POWER && IsKeyPressed(KEY_VOLUMEDOWN))) {
+      SaveScreenshot();
+      return;
+    }
+
     switch (CheckKey(key_code, long_press)) {
       case RecoveryUI::IGNORE:
         break;

@@ -169,6 +169,9 @@ void gr_rotate_touch(GRRotation rotation);
 // Returns the current PixelFormat being used.
 PixelFormat gr_pixel_format();
 
+// Saves the current draw surface to a PNG file. Returns true on success.
+bool gr_save_screenshot(const std::string& path);
+
 //
 // Input events.
 //
