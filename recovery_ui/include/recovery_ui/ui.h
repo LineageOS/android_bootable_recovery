@@ -309,6 +309,8 @@ class RecoveryUI {
     sideload_auto_reboot_ = sar;
   }
 
+  virtual void SaveScreenshot() {}
+
  protected:
   void EnqueueKey(int key_code);
   void EnqueueTouch(const Point& pos);
