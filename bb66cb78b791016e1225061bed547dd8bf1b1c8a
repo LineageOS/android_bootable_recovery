@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dd18575_9fe27c9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-07-17T04:59:11Z",
+      "side": 1,
+      "message": "Looks a lot better to me.\n\nGood middle step while waiting for redesign stuff (if we get there).",
+      "revId": "bb66cb78b791016e1225061bed547dd8bf1b1c8a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
