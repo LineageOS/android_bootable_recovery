@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af92834e_9f8c6356",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-07-27T03:26:12Z",
+      "side": 1,
+      "message": "Not that it matters, better to have something like this given how thin it is - long dead https://github.com/search?q\u003dorg%3ALineageOS%20ro.recovery.skip_ev_rel_input\u0026type\u003dcode",
+      "revId": "c84a11fff9e7a6d8d6cfb8856837a5bce2e2422d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
