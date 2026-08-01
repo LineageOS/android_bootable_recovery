@@ -97,7 +97,7 @@ service console /system/bin/sh
     class core
     console
     disabled
-    user shell
+    user root
     group shell log readproc
     seclabel u:r:shell:s0
     setenv HOSTNAME console
