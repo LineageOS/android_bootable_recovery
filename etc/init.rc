@@ -95,6 +95,21 @@ service ueventd /system/bin/ueventd
     critical
     seclabel u:r:ueventd:s0
 
+<<<<<<< HEAD   (ea1b260ce0eedbcd162a138b11127456d288e51e roots: Correct mount flags in /etc/fstab)
+=======
+service console /system/bin/sh
+    class core
+    console
+    disabled
+    user root
+    group shell log readproc
+    seclabel u:r:shell:s0
+    setenv HOSTNAME console
+
+on init && property:ro.debuggable=1
+    start console
+
+>>>>>>> CHANGE (396a11f1deaae05bef9bd6589b788a8ad144880d recovery console root)
 service charger /system/bin/charger
     critical
     seclabel u:r:charger:s0
