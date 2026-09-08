@@ -431,8 +431,9 @@ GRSurface* MinuiBackendDrm::Init() {
 
       detect_drm_pixel_format(drm_fd, drm[i].monitor_crtc);
       if (gr_pixel_format() == PixelFormat::UNKNOWN) {
-        printf("Unable to detect DRM pixel format, defaulting to RGBX_8888\n");
-        gr_set_pixel_format(PixelFormat::RGBX);
+        // XRGB8888 is the standard DRM fallback and is emulated by sysfb drivers when needed.
+        printf("Unable to detect DRM pixel format, defaulting to XRGB8888\n");
+        gr_set_pixel_format(PixelFormat::BGRX);
       }
 
       int width = drm[i].monitor_crtc->mode.hdisplay;
