@@ -66,6 +66,10 @@ PixelFormat gr_pixel_format() {
   return pixel_format;
 }
 
+void gr_set_pixel_format(PixelFormat format) {
+  pixel_format = format;
+}
+
 int gr_measure(const GRFont* font, const char* s) {
   if (font == nullptr) {
     return -1;
@@ -414,7 +418,7 @@ int gr_init() {
 }
 
 int gr_init(std::initializer_list<GraphicsBackend> backends) {
-  // pixel_format needs to be set before loading any resources or initializing backends.
+  // A configured format takes precedence; otherwise the selected backend detects it during Init().
   std::string format = android::base::GetProperty("ro.minui.pixel_format", "");
   if (format == "ABGR_8888") {
     pixel_format = PixelFormat::ABGR;
@@ -432,16 +436,7 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
     pixel_format = PixelFormat::UNKNOWN;
   }
 
-  int ret = gr_init_font("font", &gr_font);
-  if (ret != 0) {
-    printf("Failed to init font: %d, continuing graphic backend initialization without font file\n",
-           ret);
-  }
-  ret = gr_init_font("font_menu", &gr_font_menu);
-  if (ret != 0) {
-    printf("Failed to init menu font: %d. Falling back to system font\n", ret);
-    gr_font_menu = gr_font;
-  }
+  const PixelFormat configured_pixel_format = pixel_format;
 
   std::unique_ptr<MinuiBackend> minui_backend;
   for (GraphicsBackend backend : backends) {
@@ -452,6 +447,7 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
     }
     gr_draw = minui_backend->Init();
     if (gr_draw) break;
+    pixel_format = configured_pixel_format;
   }
 
   if (!gr_draw) {
@@ -459,6 +455,17 @@ int gr_init(std::initializer_list<GraphicsBackend> backends) {
   }
 
   gr_backend = minui_backend.release();
+
+  int ret = gr_init_font("font", &gr_font);
+  if (ret != 0) {
+    printf("Failed to init font: %d, continuing graphic backend initialization without font file\n",
+           ret);
+  }
+  ret = gr_init_font("font_menu", &gr_font_menu);
+  if (ret != 0) {
+    printf("Failed to init menu font: %d. Falling back to system font\n", ret);
+    gr_font_menu = gr_font;
+  }
 
   int overscan_percent = android::base::GetIntProperty("ro.minui.overscan_percent", 0);
   overscan_offset_x = gr_draw->width * overscan_percent / 100;

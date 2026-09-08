@@ -47,4 +47,7 @@ class MinuiBackend {
   virtual ~MinuiBackend() = default;
 };
 
+// Allows a backend to report the pixel format it detected during initialization.
+void gr_set_pixel_format(PixelFormat format);
+
 #endif  // _GRAPHICS_H_

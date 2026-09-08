@@ -76,6 +76,42 @@ static int drm_format_to_bpp(uint32_t format) {
   }
 }
 
+static PixelFormat drm_format_to_pixel_format(uint32_t format) {
+  switch (format) {
+    case DRM_FORMAT_RGBA8888:
+      return PixelFormat::ABGR;
+    case DRM_FORMAT_ARGB8888:
+      return PixelFormat::BGRA;
+    case DRM_FORMAT_XBGR8888:
+      return PixelFormat::RGBX;
+    case DRM_FORMAT_BGRA8888:
+      return PixelFormat::ARGB;
+    case DRM_FORMAT_ABGR8888:
+      return PixelFormat::RGBA;
+    case DRM_FORMAT_XRGB8888:
+      return PixelFormat::BGRX;
+    default:
+      return PixelFormat::UNKNOWN;
+  }
+}
+
+static void detect_drm_pixel_format(int drm_fd, const drmModeCrtc* crtc) {
+  if (gr_pixel_format() != PixelFormat::UNKNOWN || crtc->buffer_id == 0) return;
+
+  drmModeFB2* fb = drmModeGetFB2(drm_fd, crtc->buffer_id);
+  if (fb == nullptr) return;
+
+  PixelFormat format = drm_format_to_pixel_format(fb->pixel_format);
+  if (format != PixelFormat::UNKNOWN) {
+    printf("Detected DRM pixel format %c%c%c%c\n", static_cast<char>(fb->pixel_format & 0xff),
+           static_cast<char>((fb->pixel_format >> 8) & 0xff),
+           static_cast<char>((fb->pixel_format >> 16) & 0xff),
+           static_cast<char>((fb->pixel_format >> 24) & 0x7f));
+    gr_set_pixel_format(format);
+  }
+  drmModeFreeFB2(fb);
+}
+
 std::unique_ptr<GRSurfaceDrm> GRSurfaceDrm::Create(int drm_fd, int width, int height) {
   uint32_t format;
   PixelFormat pixel_format = gr_pixel_format();
@@ -93,6 +129,8 @@ std::unique_ptr<GRSurfaceDrm> GRSurfaceDrm::Create(int drm_fd, int width, int he
     format = DRM_FORMAT_BGRA8888;
   } else if (pixel_format == PixelFormat::BGRX) {
     format = DRM_FORMAT_XRGB8888;
+  } else if (pixel_format == PixelFormat::RGBA) {
+    format = DRM_FORMAT_ABGR8888;
   } else {
     format = DRM_FORMAT_RGB565;
   }
@@ -385,6 +423,12 @@ GRSurface* MinuiBackendDrm::Init() {
       }
 
       drm[i].monitor_crtc->mode = drm[i].monitor_connector->modes[drm[i].selected_mode];
+
+      detect_drm_pixel_format(drm_fd, drm[i].monitor_crtc);
+      if (gr_pixel_format() == PixelFormat::UNKNOWN) {
+        printf("Unable to detect DRM pixel format, defaulting to RGBX_8888\n");
+        gr_set_pixel_format(PixelFormat::RGBX);
+      }
 
       int width = drm[i].monitor_crtc->mode.hdisplay;
       int height = drm[i].monitor_crtc->mode.vdisplay;

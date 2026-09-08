@@ -38,6 +38,28 @@ std::unique_ptr<GRSurfaceFbdev> GRSurfaceFbdev::Create(size_t width, size_t heig
   return std::unique_ptr<GRSurfaceFbdev>(new GRSurfaceFbdev(width, height, row_bytes, pixel_bytes));
 }
 
+static PixelFormat detect_fbdev_pixel_format(const fb_var_screeninfo& vi) {
+  if (vi.bits_per_pixel != 32 || vi.red.length != 8 || vi.green.length != 8 ||
+      vi.blue.length != 8) {
+    return PixelFormat::UNKNOWN;
+  }
+
+  if (vi.red.offset == 0 && vi.green.offset == 8 && vi.blue.offset == 16) {
+    return vi.transp.length == 8 && vi.transp.offset == 24 ? PixelFormat::ABGR
+                                                           : PixelFormat::RGBX;
+  }
+  if (vi.blue.offset == 0 && vi.green.offset == 8 && vi.red.offset == 16) {
+    return vi.transp.length == 8 && vi.transp.offset == 24 ? PixelFormat::BGRA
+                                                           : PixelFormat::BGRX;
+  }
+  if (vi.red.offset == 8 && vi.green.offset == 16 && vi.blue.offset == 24 &&
+      (vi.transp.length == 0 || (vi.transp.length == 8 && vi.transp.offset == 0))) {
+    return PixelFormat::RGBA;
+  }
+
+  return PixelFormat::UNKNOWN;
+}
+
 void MinuiBackendFbdev::Blank(bool blank) {
   int ret = ioctl(fb_fd, FBIOBLANK, blank ? FB_BLANK_POWERDOWN : FB_BLANK_UNBLANK);
   if (ret < 0) perror("ioctl(): blank");
@@ -85,19 +107,8 @@ GRSurface* MinuiBackendFbdev::Init() {
       goto next_fb;
     }
 
-    // We print this out for informational purposes only, but
-    // throughout we assume that the framebuffer device uses an RGBX
-    // pixel format.  This is the case for every development device I
-    // have access to.  For some of those devices (eg, hammerhead aka
-    // Nexus 5), FBIOGET_VSCREENINFO *reports* that it wants a
-    // different format (XBGR) but actually produces the correct
-    // results on the display when you write RGBX.
-    //
-    // If you have a device that actually *needs* another pixel format
-    // (ie, BGRX, or 565), patches welcome...
-
     printf(
-        "fb%d reports (possibly inaccurate):\n"
+        "fb%d reports:\n"
         "  vi.bits_per_pixel = %d\n"
         "  vi.red.offset   = %3d   .length = %3d\n"
         "  vi.green.offset = %3d   .length = %3d\n"
@@ -109,6 +120,17 @@ GRSurface* MinuiBackendFbdev::Init() {
     if (bits == MAP_FAILED) {
       perror("failed to mmap framebuffer");
       goto next_fb;
+    }
+
+    if (gr_pixel_format() == PixelFormat::UNKNOWN) {
+      PixelFormat format = detect_fbdev_pixel_format(vi);
+      if (format == PixelFormat::UNKNOWN) {
+        printf("Unable to detect fbdev pixel format, defaulting to RGBX_8888\n");
+        format = PixelFormat::RGBX;
+      } else {
+        printf("Detected fbdev pixel format %d\n", static_cast<int>(format));
+      }
+      gr_set_pixel_format(format);
     }
 
     // Found a valid fb
