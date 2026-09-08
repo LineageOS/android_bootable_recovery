@@ -138,8 +138,8 @@ PngHandler::~PngHandler() {
   }
 }
 
-// "display" surfaces are transformed into the framebuffer's required pixel format (currently only
-// RGBX is supported) at load time, so gr_blit() can be nothing more than a memcpy() for each row.
+// "display" surfaces are transformed into the framebuffer's required pixel format at load time,
+// so gr_blit() can be nothing more than a memcpy() for each row.
 
 // Copies 'input_row' to 'output_row', transforming it to the framebuffer pixel format. The input
 // format depends on the value of 'channels':
@@ -149,6 +149,13 @@ PngHandler::~PngHandler() {
 //   4 - input is 32-bit RGBA/RGBX
 //
 // 'width' is the number of pixels in the row.
+static uint32_t PackXrgb2101010(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+  return ((static_cast<uint32_t>(a) * 3 + 127) / 255 << 30) |
+         ((static_cast<uint32_t>(r) * 1023 + 127) / 255 << 20) |
+         ((static_cast<uint32_t>(g) * 1023 + 127) / 255 << 10) |
+         ((static_cast<uint32_t>(b) * 1023 + 127) / 255);
+}
+
 static void TransformRgbToDraw(const uint8_t* input_row, uint8_t* output_row, int channels,
                                int width) {
   const uint8_t* ip = input_row;
@@ -159,7 +166,9 @@ static void TransformRgbToDraw(const uint8_t* input_row, uint8_t* output_row, in
     case 1:
       // expand gray level to RGBX
       for (int x = 0; x < width; ++x) {
-        if (pixel_format == PixelFormat::RGBA) {
+        if (pixel_format == PixelFormat::XRGB2101010) {
+          reinterpret_cast<uint32_t*>(op)[x] = PackXrgb2101010(*ip, *ip, *ip, 255);
+        } else if (pixel_format == PixelFormat::RGBA) {
           *op++ = 0xff;
           *op++ = *ip;
           *op++ = *ip;
@@ -177,22 +186,30 @@ static void TransformRgbToDraw(const uint8_t* input_row, uint8_t* output_row, in
     case 3:
       for (int x = 0; x < width; ++x) {
         // expand RGBA to RGBX
-        if (pixel_format == PixelFormat::RGBA) {
-            *op++ = 0xff;
-            *op++ = *ip++;
-            *op++ = *ip++;
-            *op++ = *ip++;
+        if (pixel_format == PixelFormat::XRGB2101010) {
+          reinterpret_cast<uint32_t*>(op)[x] = PackXrgb2101010(ip[0], ip[1], ip[2], 255);
+          ip += 3;
+        } else if (pixel_format == PixelFormat::RGBA) {
+          *op++ = 0xff;
+          *op++ = *ip++;
+          *op++ = *ip++;
+          *op++ = *ip++;
         } else {
-            *op++ = *ip++;
-            *op++ = *ip++;
-            *op++ = *ip++;
-            *op++ = 0xff;
+          *op++ = *ip++;
+          *op++ = *ip++;
+          *op++ = *ip++;
+          *op++ = 0xff;
         }
       }
       break;
 
     case 4:
-      if (pixel_format == PixelFormat::RGBA) {
+      if (pixel_format == PixelFormat::XRGB2101010) {
+        for (int x = 0; x < width; ++x) {
+          reinterpret_cast<uint32_t*>(op)[x] = PackXrgb2101010(ip[0], ip[1], ip[2], ip[3]);
+          ip += 4;
+        }
+      } else if (pixel_format == PixelFormat::RGBA) {
         for (int x = 0; x < width; ++x) {
             *op++ = *(ip + 3);
             *op++ = *ip++;

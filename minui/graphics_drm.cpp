@@ -67,6 +67,7 @@ static int drm_format_to_bpp(uint32_t format) {
     case DRM_FORMAT_BGRX8888:
     case DRM_FORMAT_XBGR8888:
     case DRM_FORMAT_XRGB8888:
+    case DRM_FORMAT_XRGB2101010:
       return 32;
     case DRM_FORMAT_RGB565:
       return 16;
@@ -90,6 +91,8 @@ static PixelFormat drm_format_to_pixel_format(uint32_t format) {
       return PixelFormat::RGBA;
     case DRM_FORMAT_XRGB8888:
       return PixelFormat::BGRX;
+    case DRM_FORMAT_XRGB2101010:
+      return PixelFormat::XRGB2101010;
     default:
       return PixelFormat::UNKNOWN;
   }
@@ -131,6 +134,8 @@ std::unique_ptr<GRSurfaceDrm> GRSurfaceDrm::Create(int drm_fd, int width, int he
     format = DRM_FORMAT_XRGB8888;
   } else if (pixel_format == PixelFormat::RGBA) {
     format = DRM_FORMAT_ABGR8888;
+  } else if (pixel_format == PixelFormat::XRGB2101010) {
+    format = DRM_FORMAT_XRGB2101010;
   } else {
     format = DRM_FORMAT_RGB565;
   }

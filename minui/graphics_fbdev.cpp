@@ -39,8 +39,17 @@ std::unique_ptr<GRSurfaceFbdev> GRSurfaceFbdev::Create(size_t width, size_t heig
 }
 
 static PixelFormat detect_fbdev_pixel_format(const fb_var_screeninfo& vi) {
-  if (vi.bits_per_pixel != 32 || vi.red.length != 8 || vi.green.length != 8 ||
-      vi.blue.length != 8) {
+  if (vi.bits_per_pixel != 32) {
+    return PixelFormat::UNKNOWN;
+  }
+
+  if (vi.red.offset == 20 && vi.red.length == 10 && vi.green.offset == 10 &&
+      vi.green.length == 10 && vi.blue.offset == 0 && vi.blue.length == 10 &&
+      (vi.transp.length == 0 || (vi.transp.offset == 30 && vi.transp.length == 2))) {
+    return PixelFormat::XRGB2101010;
+  }
+
+  if (vi.red.length != 8 || vi.green.length != 8 || vi.blue.length != 8) {
     return PixelFormat::UNKNOWN;
   }
 
