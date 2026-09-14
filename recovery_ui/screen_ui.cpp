@@ -183,7 +183,7 @@ int TextMenu::DrawHeader(int x, int y) const {
   return offset;
 }
 
-int TextMenu::DrawItems(int /*x*/, int y, int screen_width, bool long_press) const {
+int TextMenu::DrawItems(int x, int y, int screen_width, bool long_press) const {
   int horizontal_rule_height = 8;
   int offset = 0;
   int padding = draw_funcs_.MenuItemPadding();
@@ -203,10 +203,10 @@ int TextMenu::DrawItems(int /*x*/, int y, int screen_width, bool long_press) con
                                     : UIElement::MENU_BG);
 
     int bar_height = padding + char_height_ + padding;
-    draw_funcs_.DrawHighlightBar(padding, y + offset, screen_width - (padding * 2), bar_height);
+    draw_funcs_.DrawHighlightBar(padding + x, y + offset, screen_width - (padding + x) * 2, bar_height);
 
     draw_funcs_.SetColor(selected ? UIElement::MENU_SEL_FG : UIElement::MENU);
-    offset += draw_funcs_.DrawTextLine(padding * 2, y + offset, TextItem(i), false /* bold */);
+    offset += draw_funcs_.DrawTextLine(padding * 2 + x, y + offset, TextItem(i), false /* bold */);
     offset += spacing;
   }
   offset += horizontal_rule_height;
@@ -855,7 +855,7 @@ void ScreenRecoveryUI::draw_menu_and_text_buffer_locked(
     if (!menu_->IsMain()) {
       auto icon_w = gr_get_width(back_icon_.get());
       auto icon_h = gr_get_height(back_icon_.get());
-      auto icon_x = centered_x / 2 - icon_w / 2;
+      auto icon_x = (centered_x - margin_width_) / 2 - icon_w / 2 + margin_width_;
       auto icon_y = y - logo_height / 2 - icon_h / 2;
       gr_blit(back_icon_sel_ && menu_->selection() == -1 ? back_icon_sel_.get() : back_icon_.get(),
               0, 0, icon_w, icon_h, icon_x, icon_y);
