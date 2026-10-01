@@ -173,7 +173,8 @@ class TextMenu : public Menu {
   // Make it settable after the menu is created
   void SetMenuHeight(int height) {
     if (!calibrated_height_) {
-      max_display_items_ = height / draw_funcs_.MenuItemHeight();
+      max_display_items_ = (height + draw_funcs_.MenuItemSpacing()) /
+                           (draw_funcs_.MenuItemHeight() + draw_funcs_.MenuItemSpacing());
       menu_start_ = std::max(0, (int)selection_ - (int)max_display_items_ + 1);
       calibrated_height_ = true;
     }
