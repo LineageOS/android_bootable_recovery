@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42154dbd_74795254",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 35850
+      },
+      "writtenOn": "2026-10-09T15:55:47Z",
+      "side": 1,
+      "message": "```suggestion\nProperly calculate the number of menu items that fit on the\n```",
+      "revId": "fd18aee8b60e9bdb0a210b152501c5820c396a03",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c11de9fb_9d3f0588",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 35850
+      },
+      "writtenOn": "2026-10-09T15:55:47Z",
+      "side": 1,
+      "message": "```suggestion\nscreen, while taking into account the spacing between them.\n```",
+      "revId": "fd18aee8b60e9bdb0a210b152501c5820c396a03",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
