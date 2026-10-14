@@ -300,11 +300,11 @@ TEST(VerifierTest, BadPackage_AlteredContent) {
   // Alter the content.
   std::string altered1(package);
   altered1[50] += 1;
-  VerifyFile(altered1, certs, VERIFY_FAILURE);
+  VerifyFile(altered1, certs, VERIFY_CHECKSUM_MISMATCH);
 
   std::string altered2(package);
   altered2[10] += 1;
-  VerifyFile(altered2, certs, VERIFY_FAILURE);
+  VerifyFile(altered2, certs, VERIFY_CHECKSUM_MISMATCH);
 }
 
 TEST(VerifierTest, BadPackage_SignatureStartOutOfBounds) {

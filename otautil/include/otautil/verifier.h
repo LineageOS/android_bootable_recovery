@@ -78,8 +78,10 @@ class VerifierInterface {
 };
 
 //  Looks for an RSA signature embedded in the .ZIP file comment given the path to the zip.
-//  Verifies that it matches one of the given public keys. Returns VERIFY_SUCCESS or
-//  VERIFY_FAILURE (if any error is encountered or no key matches the signature).
+//  Verifies that it matches one of the given public keys. Returns VERIFY_SUCCESS,
+//  VERIFY_CHECKSUM_MISMATCH (if the signature doesn't match the certificate embedded in the
+//  package, i.e. the package is corrupted) or VERIFY_FAILURE (if any other error is encountered
+//  or no key matches the signature).
 int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys);
 
 // Checks that the RSA key has a modulus of 2048 or 4096 bits long, and public exponent is 3 or
@@ -99,3 +101,4 @@ std::vector<Certificate> LoadKeysFromZipfile(const std::string& zip_name);
 
 #define VERIFY_SUCCESS 0
 #define VERIFY_FAILURE 1
+#define VERIFY_CHECKSUM_MISMATCH 2

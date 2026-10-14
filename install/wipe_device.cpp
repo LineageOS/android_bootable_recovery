@@ -36,6 +36,7 @@
 #include "bootloader_message/bootloader_message.h"
 #include "install/install.h"
 #include "otautil/package.h"
+#include "otautil/verifier.h"
 #include "recovery_ui/device.h"
 #include "recovery_ui/ui.h"
 
@@ -152,7 +153,7 @@ static std::unique_ptr<Package> ReadWipePackage(size_t wipe_package_size) {
 // 1. verify the package.
 // 2. check metadata (ota-type, pre-device and serial number if having one).
 static bool CheckWipePackage(Package* wipe_package, RecoveryUI* ui) {
-  if (!verify_package(wipe_package, ui)) {
+  if (verify_package(wipe_package, ui) != VERIFY_SUCCESS) {
     LOG(ERROR) << "Failed to verify package";
     return false;
   }

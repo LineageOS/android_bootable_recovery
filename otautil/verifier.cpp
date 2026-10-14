@@ -33,6 +33,7 @@
 #include <openssl/evp.h>
 #include <openssl/obj_mac.h>
 #include <openssl/pem.h>
+#include <openssl/pkcs7.h>
 #include <openssl/rsa.h>
 #include <ziparchive/zip_archive.h>
 
@@ -108,6 +109,20 @@ static bool read_pkcs7(const uint8_t* pkcs7_der, size_t pkcs7_der_len,
   sig_der->resize(sig_der_length);
   std::copy(sig_der_ptr, sig_der_ptr + sig_der_length, sig_der->begin());
   return true;
+}
+
+static bool LoadCertificateFromX509(X509* x509, Certificate* cert);
+
+// Extracts the signer certificate embedded in the PKCS#7 SignedData block.
+static bool read_pkcs7_certificate(const uint8_t* pkcs7_der, size_t pkcs7_der_len,
+                                   Certificate* cert) {
+  bssl::UniquePtr<STACK_OF(X509)> certs(sk_X509_new_null());
+  CBS cbs;
+  CBS_init(&cbs, pkcs7_der, pkcs7_der_len);
+  if (!certs || !PKCS7_get_certificates(certs.get(), &cbs) || sk_X509_num(certs.get()) == 0) {
+    return false;
+  }
+  return LoadCertificateFromX509(sk_X509_value(certs.get(), 0), cert);
 }
 
 int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys) {
@@ -194,8 +209,16 @@ int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys
     }
   }
 
-  bool need_sha1 = false;
-  bool need_sha256 = false;
+  const uint8_t* signature = eocd + eocd_size - signature_start;
+  size_t signature_size = signature_start - FOOTER_SIZE;
+
+  // The certificate embedded in the package lets us tell a corrupted package apart from one that
+  // is merely signed with an untrusted key.
+  Certificate embedded_cert(0, Certificate::KEY_TYPE_RSA, nullptr, nullptr);
+  bool has_embedded_cert = read_pkcs7_certificate(signature, signature_size, &embedded_cert);
+
+  bool need_sha1 = has_embedded_cert && embedded_cert.hash_len == SHA_DIGEST_LENGTH;
+  bool need_sha256 = has_embedded_cert && embedded_cert.hash_len == SHA256_DIGEST_LENGTH;
   for (const auto& key : keys) {
     switch (key.hash_len) {
       case SHA_DIGEST_LENGTH:
@@ -242,9 +265,6 @@ int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys
   SHA1_Final(sha1, &sha1_ctx);
   uint8_t sha256[SHA256_DIGEST_LENGTH];
   SHA256_Final(sha256, &sha256_ctx);
-
-  const uint8_t* signature = eocd + eocd_size - signature_start;
-  size_t signature_size = signature_start - FOOTER_SIZE;
 
   LOG(INFO) << "signature (offset: " << std::hex << (length - signature_start)
             << ", length: " << signature_size << "): " << print_hex(signature, signature_size);
@@ -305,6 +325,23 @@ int verify_file(VerifierInterface* package, const std::vector<Certificate>& keys
     LOG(INFO) << "SHA-256 digest: " << print_hex(sha256, SHA256_DIGEST_LENGTH);
   }
   LOG(ERROR) << "failed to verify whole-file signature";
+
+  if (has_embedded_cert) {
+    bool is_sha1 = embedded_cert.hash_len == SHA_DIGEST_LENGTH;
+    const uint8_t* hash = is_sha1 ? sha1 : sha256;
+    int hash_nid = is_sha1 ? NID_sha1 : NID_sha256;
+    bool verified =
+        embedded_cert.key_type == Certificate::KEY_TYPE_RSA
+            ? RSA_verify(hash_nid, hash, embedded_cert.hash_len, sig_der.data(), sig_der.size(),
+                         embedded_cert.rsa.get())
+            : is_sha1 || ECDSA_verify(0, hash, embedded_cert.hash_len, sig_der.data(),
+                                      sig_der.size(), embedded_cert.ec.get());
+    if (!verified) {
+      LOG(ERROR) << "failed to verify against embedded certificate (checksum mismatch)";
+      return VERIFY_CHECKSUM_MISMATCH;
+    }
+  }
+
   return VERIFY_FAILURE;
 }
 
@@ -421,7 +458,11 @@ bool LoadCertificateFromBuffer(const std::vector<uint8_t>& pem_content, Certific
     return false;
   }
 
-  int nid = X509_get_signature_nid(x509.get());
+  return LoadCertificateFromX509(x509.get(), cert);
+}
+
+static bool LoadCertificateFromX509(X509* x509, Certificate* cert) {
+  int nid = X509_get_signature_nid(x509);
   switch (nid) {
     // SignApk has historically accepted md5WithRSA certificates, but treated them as
     // sha1WithRSA anyway. Continue to do so for backwards compatibility.
@@ -440,7 +481,7 @@ bool LoadCertificateFromBuffer(const std::vector<uint8_t>& pem_content, Certific
       return false;
   }
 
-  std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> public_key(X509_get_pubkey(x509.get()),
+  std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)> public_key(X509_get_pubkey(x509),
                                                                  EVP_PKEY_free);
   if (!public_key) {
     LOG(ERROR) << "Failed to extract the public key from x509 certificate";

@@ -67,6 +67,7 @@ using namespace std::chrono_literals;
 bool ask_to_ab_reboot(Device* device);
 bool ask_to_cancel_ota(Device* device);
 bool ask_to_continue_unverified(Device* device);
+bool ask_to_continue_corrupted(Device* device);
 bool ask_to_continue_downgrade(Device* device);
 bool ask_to_continue_spl_downgrade(Device* device);
 
@@ -662,9 +663,11 @@ static InstallResult VerifyAndInstallPackage(Package* package, bool* wipe_cache,
   ui->ShowProgress(VERIFICATION_PROGRESS_FRACTION, VERIFICATION_PROGRESS_TIME);
 
   // Verify package.
-  if (!verify_package(package, ui)) {
+  if (int err = verify_package(package, ui); err != VERIFY_SUCCESS) {
     log_buffer->push_back(android::base::StringPrintf("error: %d", kZipVerificationFailure));
-    if (!ui->IsTextVisible() || !ask_to_continue_unverified(ui->GetDevice())) {
+    if (!ui->IsTextVisible() ||
+        !(err == VERIFY_CHECKSUM_MISMATCH ? ask_to_continue_corrupted(ui->GetDevice())
+                                          : ask_to_continue_unverified(ui->GetDevice()))) {
         return INSTALL_CORRUPT;
     }
   }
@@ -772,12 +775,12 @@ InstallResult InstallPackage(Package* package, const std::string_view package_id
   return result;
 }
 
-bool verify_package(Package* package, RecoveryUI* ui) {
+int verify_package(Package* package, RecoveryUI* ui) {
   static constexpr const char* CERTIFICATE_ZIP_FILE = "/system/etc/security/otacerts.zip";
   std::vector<Certificate> loaded_keys = LoadKeysFromZipfile(CERTIFICATE_ZIP_FILE);
   if (loaded_keys.empty()) {
     LOG(ERROR) << "Failed to load keys";
-    return false;
+    return VERIFY_FAILURE;
   }
   LOG(INFO) << loaded_keys.size() << " key(s) loaded from " << CERTIFICATE_ZIP_FILE;
 
@@ -790,9 +793,8 @@ bool verify_package(Package* package, RecoveryUI* ui) {
   if (err != VERIFY_SUCCESS) {
     LOG(ERROR) << "Signature verification failed";
     LOG(ERROR) << "error: " << kZipVerificationFailure;
-    return false;
   }
-  return true;
+  return err;
 }
 
 bool CheckPathCanonical(const std::string& path) {

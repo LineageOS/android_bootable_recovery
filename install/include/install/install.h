@@ -54,9 +54,9 @@ InstallResult InstallPackage(Package* package, const std::string_view package_id
                              bool should_wipe_cache, int retry_count,
                              Device* ui);
 
-// Verifies the package by ota keys. Returns true if the package is verified successfully,
-// otherwise returns false.
-bool verify_package(Package* package, RecoveryUI* ui);
+// Verifies the package by ota keys. Returns VERIFY_SUCCESS if the package is verified successfully,
+// VERIFY_CHECKSUM_MISMATCH if the package is corrupted, otherwise returns VERIFY_FAILURE.
+int verify_package(Package* package, RecoveryUI* ui);
 
 // Reads meta data file of the package; parses each line in the format "key=value"; and writes the
 // result to |metadata|. Return true if succeed, otherwise return false.
