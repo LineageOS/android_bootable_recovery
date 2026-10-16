@@ -600,6 +600,11 @@ int main(int argc, char** argv) {
         Reboot("recovery");
         break;
 
+      case Device::REBOOT_DOWNLOAD:
+        ui->Print("Rebooting to download mode...\n");
+        Reboot("download");
+        break;
+
       case Device::REBOOT_RESCUE: {
         // Not using `Reboot("rescue")`, as it requires matching support in kernel and/or
         // bootloader.

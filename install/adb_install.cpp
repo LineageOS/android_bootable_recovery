@@ -144,6 +144,9 @@ static auto AdbRebootHandler(MinadbdCommand command, InstallResult* result,
     case MinadbdCommand::kRebootRescue:
       *reboot_action = Device::REBOOT_RESCUE;
       break;
+    case MinadbdCommand::kRebootDownload:
+      *reboot_action = Device::REBOOT_DOWNLOAD;
+      break;
     case MinadbdCommand::kRebootAndroid:
     default:
       *reboot_action = Device::REBOOT;
@@ -377,6 +380,9 @@ InstallResult ApplyFromAdb(Device* device, bool rescue_mode, Device::BuiltinActi
                                                  &install_result, reboot_action) },
     { MinadbdCommand::kRebootRescue,
       std::bind(&AdbRebootHandler, MinadbdCommand::kRebootRescue, &install_result, reboot_action) },
+    { MinadbdCommand::kRebootDownload,
+      std::bind(&AdbRebootHandler, MinadbdCommand::kRebootDownload, &install_result,
+                reboot_action) },
   };
 
   if (!rescue_mode) {

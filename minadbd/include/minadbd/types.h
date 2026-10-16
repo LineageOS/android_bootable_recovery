@@ -54,6 +54,7 @@ enum class MinadbdCommand : uint32_t {
   kWipeCache = 7,
   kWipeData = 8,
   kNoOp = 9,
+  kRebootDownload = 10,
 
   // Last but invalid command.
   kError,

@@ -553,6 +553,7 @@ change_menu:
       case Device::REBOOT_FASTBOOT:
       case Device::REBOOT_RECOVERY:
       case Device::REBOOT_RESCUE:
+      case Device::REBOOT_DOWNLOAD:
         return chosen_action;
 
       case Device::REBOOT:
