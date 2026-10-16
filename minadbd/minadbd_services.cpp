@@ -257,7 +257,7 @@ static void RescueGetpropHostService(unique_fd sfd, const std::string& prop) {
 // the reboot.
 static void RebootHostService(unique_fd /* sfd */, const std::string& target) {
   MinadbdCommand command;
-  if (target == "bootloader") {
+  if (target == "bootloader" || target == "download") {
     command = MinadbdCommand::kRebootBootloader;
   } else if (target == "rescue") {
     command = MinadbdCommand::kRebootRescue;
@@ -314,8 +314,8 @@ unique_fd daemon_service_to_fd(std::string_view name, atransport* /* transport *
   if (android::base::ConsumePrefix(&name, "reboot:")) {
     // "reboot:<target>", where target must be one of the following.
     std::string args(name);
-    if (args.empty() || args == "bootloader" || args == "rescue" || args == "recovery" ||
-        args == "fastboot") {
+    if (args.empty() || args == "bootloader" || args == "download" || args == "rescue" ||
+        args == "recovery" || args == "fastboot") {
       return create_service_thread("reboot",
                                    std::bind(RebootHostService, std::placeholders::_1, args));
     }
