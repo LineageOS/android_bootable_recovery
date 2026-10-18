@@ -16,6 +16,23 @@
       "message": "This already works...?",
       "revId": "8300468bc0e16a297ccd0b82881ad567ecbf9249",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "351195f6_7032e416",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33569
+      },
+      "writtenOn": "2026-10-18T09:02:16Z",
+      "side": 1,
+      "message": "Also let\u0027s keep in mind that Samsung doesn\u0027t mean Exynos only. I believe Qualcomm straight boots into XBL interface if we run adb reboot bootloader. So implementing reboot download might be good.",
+      "revId": "8300468bc0e16a297ccd0b82881ad567ecbf9249",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
