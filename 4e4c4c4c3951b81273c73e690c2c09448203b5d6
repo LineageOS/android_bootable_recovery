@@ -16,6 +16,24 @@
       "message": "What does this fix?",
       "revId": "4e4c4c4c3951b81273c73e690c2c09448203b5d6",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0627c7a2_fdeff76b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 36705
+      },
+      "writtenOn": "2026-10-19T20:12:34Z",
+      "side": 1,
+      "message": "It fixes superfluous button box on screens where every button doesn\u0027t fit. Here is how it looks https://imgur.com/a/wDJ2wzF",
+      "parentUuid": "01b8f10a_5fc10260",
+      "revId": "4e4c4c4c3951b81273c73e690c2c09448203b5d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
