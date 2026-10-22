@@ -264,7 +264,9 @@ void RecoveryUI::CalibrateTouch(int fd) {
     touch_max_.y(info.maximum);
   }
 
-  calibrated = true;
+  if (touch_max_.x() > 0 && touch_max_.y() > 0) {
+    calibrated = true;
+  }
 }
 
 void RecoveryUI::OnTouchPress() {
