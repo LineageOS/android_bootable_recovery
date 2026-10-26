@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d29dfc17_b235f41b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-10-26T15:45:28Z",
+      "side": 1,
+      "message": "Works on muzel. Sent to AOSP along with the previous change",
+      "revId": "d6a2fd8a77f5ebac1f6dee22f411fa0d3f1a73c1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
