@@ -316,6 +316,30 @@ bool MinuiBackendDrm::FindAndSetMonitor(int fd, drmModeRes* resources) {
         break;
       }
     }
+
+    // A non-zero vscan marks a VRR timing. Panels stretch their frame period while
+    // idle, delaying the first commit after inactivity; recovery only flips on UI
+    // changes, so prefer an equivalent fixed-rate mode instead.
+    const drmModeConnector* connector = drmConnectors[drm_index];
+    const drmModeModeInfo& chosen = connector->modes[drm[drm_index].selected_mode];
+    const uint16_t width = chosen.hdisplay;
+    const uint16_t height = chosen.vdisplay;
+    int fixed_mode = -1;
+
+    if (chosen.vscan != 0) {
+      for (int modes = 0; modes < connector->count_modes; modes++) {
+        const drmModeModeInfo& mode = connector->modes[modes];
+        if (mode.vscan != 0 || mode.hdisplay != width || mode.vdisplay != height) continue;
+        if (fixed_mode == -1 || mode.vrefresh > connector->modes[fixed_mode].vrefresh) {
+          fixed_mode = modes;
+        }
+      }
+    }
+
+    if (fixed_mode != -1) {
+      printf("Choosing fixed-rate display mode #%d\n", fixed_mode);
+      drm[drm_index].selected_mode = fixed_mode;
+    }
   }
 
   return drmConnectors.size() > 0;
