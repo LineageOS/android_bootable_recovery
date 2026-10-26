@@ -33,6 +33,23 @@
       "message": "Can confirm recovery is significantly faster on Q25 with the scrollwheel.",
       "revId": "c1ccd0b4a17557f97ed864b96f160674609c1c54",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d65d2db6_a3669774",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2026-10-26T14:26:26Z",
+      "side": 1,
+      "message": "changes nothing on qcom.",
+      "revId": "c1ccd0b4a17557f97ed864b96f160674609c1c54",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
