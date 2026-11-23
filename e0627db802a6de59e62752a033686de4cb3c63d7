@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "baac0e17_67c3315c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32620
+      },
+      "writtenOn": "2026-11-23T19:09:18Z",
+      "side": 1,
+      "message": "Required on low RAM (e.g. 2 GB) devices. A ~1 GB zip fills the sideload cache, and when addon.d backs up GApps to /tmp the device OOMs and panics mid install.",
+      "revId": "e0627db802a6de59e62752a033686de4cb3c63d7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
